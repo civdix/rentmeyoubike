@@ -1,0 +1,277 @@
+// Unified API client connecting frontend to Node.js/Express backend
+
+const API_BASE = '/api';
+
+async function request(endpoint, options = {}) {
+  const url = `${API_BASE}${endpoint}`;
+
+  // RBAC Authentication headers
+  const role = typeof window !== 'undefined' ? localStorage.getItem('vr_role') || 'customer' : 'customer';
+  const token = typeof window !== 'undefined' ? (localStorage.getItem('vr_token') || localStorage.getItem('vr_admin_token')) : null;
+
+  const authHeaders = {};
+  if (role) {
+    authHeaders['x-user-role'] = role;
+  }
+  if (token) {
+    authHeaders['Authorization'] = `Bearer ${token}`;
+  }
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...authHeaders,
+      ...options.headers
+    },
+    ...options
+  };
+
+  try {
+    const response = await fetch(url, config);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (err) {
+    console.warn(`API request to ${url} failed:`, err.message);
+    throw err;
+  }
+}
+
+// ==================== VEHICLES ====================
+export async function apiFetchVehicles(params = {}) {
+  const query = new URLSearchParams();
+  if (params.type && params.type !== 'all') query.append('type', params.type);
+  if (params.category && params.category !== 'all') query.append('category', params.category);
+  if (params.transmission && params.transmission !== 'all') query.append('transmission', params.transmission);
+  if (params.area && params.area !== 'all') query.append('area', params.area);
+  if (params.maxPrice) query.append('maxPrice', params.maxPrice);
+  if (params.status && params.status !== 'all') query.append('status', params.status);
+  if (params.search) query.append('search', params.search);
+
+  const qs = query.toString();
+  return request(`/vehicles${qs ? `?${qs}` : ''}`);
+}
+
+export async function apiFetchVehicleById(id) {
+  return request(`/vehicles/${id}`);
+}
+
+export async function apiCreateVehicle(vehicleData) {
+  return request('/vehicles', {
+    method: 'POST',
+    body: JSON.stringify(vehicleData)
+  });
+}
+
+export async function apiToggleVehicleStatus(id) {
+  return request(`/vehicles/${id}/status`, {
+    method: 'PATCH'
+  });
+}
+
+export async function apiVerifyVehicle(id, action) {
+  return request(`/vehicles/${id}/verify`, {
+    method: 'PATCH',
+    body: JSON.stringify({ action })
+  });
+}
+
+// ==================== BOOKINGS ====================
+export async function apiFetchBookings(params = {}) {
+  const query = new URLSearchParams();
+  if (params.status && params.status !== 'all') query.append('status', params.status);
+  if (params.customerPhone) query.append('customerPhone', params.customerPhone);
+  if (params.search) query.append('search', params.search);
+
+  const qs = query.toString();
+  return request(`/bookings${qs ? `?${qs}` : ''}`);
+}
+
+export async function apiFetchBookingById(id) {
+  return request(`/bookings/${id}`);
+}
+
+export async function apiCreateBooking(bookingData) {
+  return request('/bookings', {
+    method: 'POST',
+    body: JSON.stringify(bookingData)
+  });
+}
+
+export async function apiUpdateBookingStatus(id, status, extra = {}) {
+  return request(`/bookings/${id}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status, extra })
+  });
+}
+
+export async function apiUpdatePaymentStatus(id, paymentStatus, paymentId = null, refundStatus = null) {
+  return request(`/bookings/${id}/payment`, {
+    method: 'PATCH',
+    body: JSON.stringify({ paymentStatus, paymentId, refundStatus })
+  });
+}
+
+export async function apiVerifyKYC(id, kycData = {}) {
+  return request(`/bookings/${id}/kyc`, {
+    method: 'PATCH',
+    body: JSON.stringify(kycData)
+  });
+}
+
+// ==================== INSPECTIONS ====================
+export async function apiFetchInspections(bookingId = null) {
+  if (bookingId) {
+    return request(`/inspections/${bookingId}`);
+  }
+  return request('/inspections');
+}
+
+export async function apiSaveInspection(bookingId, type, inspectionData) {
+  return request(`/inspections/${bookingId}`, {
+    method: 'POST',
+    body: JSON.stringify({ type, inspectionData })
+  });
+}
+
+// ==================== CUSTOMERS ====================
+export async function apiFetchCustomers(search = '') {
+  const qs = search ? `?search=${encodeURIComponent(search)}` : '';
+  return request(`/customers${qs}`);
+}
+
+export async function apiToggleCustomerStatus(id) {
+  return request(`/customers/${id}/status`, {
+    method: 'PATCH'
+  });
+}
+
+// ==================== OWNERS ====================
+export async function apiFetchOwners(search = '') {
+  const qs = search ? `?search=${encodeURIComponent(search)}` : '';
+  return request(`/owners${qs}`);
+}
+
+export async function apiToggleOwnerStatus(id) {
+  return request(`/owners/${id}/status`, {
+    method: 'PATCH'
+  });
+}
+
+// ==================== DISPUTES ====================
+export async function apiFetchDisputes() {
+  return request('/disputes');
+}
+
+export async function apiCreateDispute(disputeData) {
+  return request('/disputes', {
+    method: 'POST',
+    body: JSON.stringify(disputeData)
+  });
+}
+
+export async function apiAddDisputeNote(id, text, sender = 'Admin') {
+  return request(`/disputes/${id}/notes`, {
+    method: 'POST',
+    body: JSON.stringify({ text, sender })
+  });
+}
+
+export async function apiResolveDispute(id, outcome) {
+  return request(`/disputes/${id}/resolve`, {
+    method: 'PATCH',
+    body: JSON.stringify({ outcome })
+  });
+}
+
+// ==================== SETTINGS & STATS ====================
+export async function apiFetchSettings() {
+  return request('/settings');
+}
+
+export async function apiUpdateAdminSettings(settings) {
+  return request('/settings', {
+    method: 'PUT',
+    body: JSON.stringify(settings)
+  });
+}
+
+export async function apiUpdateLegalConfig(legal) {
+  return request('/settings/legal', {
+    method: 'PUT',
+    body: JSON.stringify(legal)
+  });
+}
+
+export async function apiResetDemoData() {
+  return request('/settings/reset', {
+    method: 'POST'
+  });
+}
+
+export async function apiFetchOverviewStats() {
+  return request('/stats/overview');
+}
+
+// ==================== AUTH / RBAC ====================
+export async function apiCustomerLogin(credentials) {
+  const res = await request('/auth/customer-login', {
+    method: 'POST',
+    body: JSON.stringify(credentials)
+  });
+  if (res?.token && typeof window !== 'undefined') {
+    localStorage.setItem('vr_token', res.token);
+    localStorage.setItem('vr_role', 'customer');
+    if (res.user) localStorage.setItem('vr_user', JSON.stringify(res.user));
+  }
+  return res;
+}
+
+export async function apiOwnerLogin(credentials) {
+  const res = await request('/auth/owner-login', {
+    method: 'POST',
+    body: JSON.stringify(credentials)
+  });
+  if (res?.token && typeof window !== 'undefined') {
+    localStorage.setItem('vr_token', res.token);
+    localStorage.setItem('vr_role', 'owner');
+    if (res.user) localStorage.setItem('vr_user', JSON.stringify(res.user));
+  }
+  return res;
+}
+
+export async function apiAdminLogin(pin) {
+  const res = await request('/auth/admin-login', {
+    method: 'POST',
+    body: JSON.stringify({ pin })
+  });
+  if (res?.token && typeof window !== 'undefined') {
+    localStorage.setItem('vr_token', res.token);
+    localStorage.setItem('vr_admin_token', res.token);
+    localStorage.setItem('vr_role', 'admin');
+    if (res.user) localStorage.setItem('vr_user', JSON.stringify(res.user));
+  }
+  return res;
+}
+
+export async function apiAdminLogout() {
+  try {
+    await request('/auth/logout', { method: 'POST' });
+  } catch (e) {
+    // Ignore network failure on logout
+  } finally {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('vr_token');
+      localStorage.removeItem('vr_admin_token');
+      localStorage.removeItem('vr_user');
+    }
+  }
+}
+
+export async function apiGetSession() {
+  return request('/auth/me');
+}
+
+
