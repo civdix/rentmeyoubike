@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { VerifiedOwnerBadge, VerifiedVehicleBadge, BookingStatusBadge } from '../components/TrustBadges';
+import { VehiclePhotoUpload } from '../components/VehiclePhotoUpload';
 import {
   PlusCircle, Upload, CheckCircle2, ShieldCheck, Clock, FileText, Bike, MapPin,
   IndianRupee, AlertCircle, Phone, User, Calendar, Camera, Check, XCircle,
@@ -61,19 +62,42 @@ export const OwnerView = () => {
   const [nearbyChargingStations, setNearbyChargingStations] = useState('Prem Mandir Gate 2 Hub, ISKCON Gate 3 Ather Grid, Chattikara EV Point');
   const [spareBatteryAvailable, setSpareBatteryAvailable] = useState(true);
 
-  // STEP 4: Vehicle Documents Upload Toggles
-  const [rcUploaded, setRcUploaded] = useState(true);
-  const [insuranceUploaded, setInsuranceUploaded] = useState(true);
-  const [otherDocsUploaded, setOtherDocsUploaded] = useState(true); // PUC / Permit
+  // STEP 4: Vehicle Documents Upload Files & State
+  const [rcDoc, setRcDoc] = useState({ name: 'UP85_RC_SmartCard.pdf', uploaded: true, preview: null });
+  const [insuranceDoc, setInsuranceDoc] = useState({ name: 'Bajaj_Allianz_Policy_2026.pdf', uploaded: true, preview: null });
+  const [otherDoc, setOtherDoc] = useState({ name: 'PUC_Pollution_Certificate.pdf', uploaded: true, preview: null });
+
+  const rcInputRef = useRef(null);
+  const insuranceInputRef = useRef(null);
+  const otherDocInputRef = useRef(null);
+
+  const handleDocFileUpload = (type, file) => {
+    if (!file) return;
+    const docData = { name: file.name, uploaded: true, preview: null };
+    if (file.type && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        docData.preview = e.target.result;
+        if (type === 'rc') setRcDoc({ ...docData });
+        if (type === 'insurance') setInsuranceDoc({ ...docData });
+        if (type === 'other') setOtherDoc({ ...docData });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      if (type === 'rc') setRcDoc(docData);
+      if (type === 'insurance') setInsuranceDoc(docData);
+      if (type === 'other') setOtherDoc(docData);
+    }
+  };
 
   // STEP 5: 6 Required Vehicle Photos State
   const [photos, setPhotos] = useState({
-    front: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80',
-    rear: 'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=600&q=80',
-    left: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=600&q=80',
-    right: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80',
-    dashboard: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80',
-    damageCloseUp: 'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=600&q=80'
+    front: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1000&q=80',
+    rear: 'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=1000&q=80',
+    left: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=1000&q=80',
+    right: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1000&q=80',
+    dashboard: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1000&q=80',
+    damageCloseUp: 'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=1000&q=80'
   });
 
   // STEP 6: Availability Dates & Days
@@ -96,10 +120,19 @@ export const OwnerView = () => {
       return;
     }
 
-    if (!rcUploaded || !insuranceUploaded) {
+    if (!rcDoc.uploaded || !insuranceDoc.uploaded) {
       alert('RC and Insurance document uploads are required!');
       return;
     }
+
+    const vehicleImages = [
+      photos.front,
+      photos.rear,
+      photos.left,
+      photos.right,
+      photos.dashboard,
+      photos.damageCloseUp
+    ].filter((img) => Boolean(img && typeof img === 'string' && img.trim() !== ''));
 
     const newVeh = addVehicle({
       name: `${make} ${model} (${variant})`,
@@ -129,7 +162,13 @@ export const OwnerView = () => {
       odometer: 11500,
       helmetIncluded: true,
       helmetsProvided: 2,
-      images: [photos.front, photos.rear, photos.left, photos.right, photos.dashboard],
+      images: vehicleImages.length > 0 ? vehicleImages : ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80'],
+      photos,
+      documents: {
+        rc: rcDoc.name,
+        insurance: insuranceDoc.name,
+        other: otherDoc.name
+      },
       features: ['USB Phone Charging Port', 'Mobile Phone Holder', '33L Prasad Boot Storage', 'Sanitized Helmets Included'],
       rentalRules: ['Valid Driving Licence required for self-ride', 'Helmets mandatory for safety'],
       availability: {
@@ -875,52 +914,105 @@ export const OwnerView = () => {
                   </h3>
 
                   <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                    <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200">
+                    {/* Hidden inputs */}
+                    <input
+                      type="file"
+                      ref={rcInputRef}
+                      accept="image/*,application/pdf"
+                      className="hidden"
+                      onChange={(e) => e.target.files?.[0] && handleDocFileUpload('rc', e.target.files[0])}
+                    />
+                    <input
+                      type="file"
+                      ref={insuranceInputRef}
+                      accept="image/*,application/pdf"
+                      className="hidden"
+                      onChange={(e) => e.target.files?.[0] && handleDocFileUpload('insurance', e.target.files[0])}
+                    />
+                    <input
+                      type="file"
+                      ref={otherDocInputRef}
+                      accept="image/*,application/pdf"
+                      className="hidden"
+                      onChange={(e) => e.target.files?.[0] && handleDocFileUpload('other', e.target.files[0])}
+                    />
+
+                    {/* RC Document */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 bg-white rounded-xl border border-slate-200 gap-3">
                       <div>
-                        <span className="font-bold text-slate-900 block">1. Registration Certificate (RC) *</span>
-                        <span className="text-slate-500 text-[11px]">Valid UP 85 Registration Document</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-slate-900 block">1. Registration Certificate (RC) *</span>
+                          <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono font-bold">UP 85</span>
+                        </div>
+                        <span className="text-slate-500 text-[11px] block mt-0.5">
+                          {rcDoc.uploaded ? `✓ File: ${rcDoc.name}` : 'Upload valid UP 85 Registration Document (PDF or Photo)'}
+                        </span>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => setRcUploaded(!rcUploaded)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                          rcUploaded ? 'bg-emerald-100 text-emerald-950 border-emerald-400' : 'bg-slate-100 text-slate-700'
-                        }`}
-                      >
-                        {rcUploaded ? '✓ Uploaded' : 'Upload File'}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => rcInputRef.current?.click()}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1.5 ${
+                            rcDoc.uploaded
+                              ? 'bg-emerald-100 text-emerald-950 border-emerald-400'
+                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300'
+                          }`}
+                        >
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>{rcDoc.uploaded ? 'Replace' : 'Upload File'}</span>
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200">
+                    {/* Insurance Policy */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 bg-white rounded-xl border border-slate-200 gap-3">
                       <div>
-                        <span className="font-bold text-slate-900 block">2. Insurance Policy Document *</span>
-                        <span className="text-slate-500 text-[11px]">Active Comprehensive / 3rd Party Cover</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-slate-900 block">2. Insurance Policy Document *</span>
+                          <span className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-bold border border-emerald-200">Active</span>
+                        </div>
+                        <span className="text-slate-500 text-[11px] block mt-0.5">
+                          {insuranceDoc.uploaded ? `✓ File: ${insuranceDoc.name}` : 'Comprehensive or 3rd Party Policy'}
+                        </span>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => setInsuranceUploaded(!insuranceUploaded)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                          insuranceUploaded ? 'bg-emerald-100 text-emerald-950 border-emerald-400' : 'bg-slate-100 text-slate-700'
-                        }`}
-                      >
-                        {insuranceUploaded ? '✓ Uploaded' : 'Upload File'}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => insuranceInputRef.current?.click()}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1.5 ${
+                            insuranceDoc.uploaded
+                              ? 'bg-emerald-100 text-emerald-950 border-emerald-400'
+                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300'
+                          }`}
+                        >
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>{insuranceDoc.uploaded ? 'Replace' : 'Upload File'}</span>
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200">
+                    {/* Other Documents */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 bg-white rounded-xl border border-slate-200 gap-3">
                       <div>
-                        <span className="font-bold text-slate-900 block">3. Other Legally Required Documents</span>
-                        <span className="text-slate-500 text-[11px]">Pollution PUC / Self-Drive Permit (If applicable)</span>
+                        <span className="font-bold text-slate-900 block">3. Pollution PUC / Self-Drive Permit</span>
+                        <span className="text-slate-500 text-[11px] block mt-0.5">
+                          {otherDoc.uploaded ? `✓ File: ${otherDoc.name}` : 'Pollution under control (PUC) or permit document'}
+                        </span>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => setOtherDocsUploaded(!otherDocsUploaded)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                          otherDocsUploaded ? 'bg-emerald-100 text-emerald-950 border-emerald-400' : 'bg-slate-100 text-slate-700'
-                        }`}
-                      >
-                        {otherDocsUploaded ? '✓ Uploaded' : 'Upload File'}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => otherDocInputRef.current?.click()}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1.5 ${
+                            otherDoc.uploaded
+                              ? 'bg-emerald-100 text-emerald-950 border-emerald-400'
+                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300'
+                          }`}
+                        >
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>{otherDoc.uploaded ? 'Replace' : 'Upload File'}</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -944,47 +1036,35 @@ export const OwnerView = () => {
                 </div>
               )}
 
-              {/* STEP 5: VEHICLE PHOTOS */}
+              {/* STEP 5: VEHICLE PHOTOS (INTERACTIVE 6-ANGLES PHOTO UPLOAD SYSTEM) */}
               {step === 5 && (
                 <div className="space-y-4 animate-in fade-in">
-                  <h3 className="font-heading font-extrabold text-slate-900 text-base flex items-center gap-2">
-                    <Camera className="w-5 h-5 text-emerald-600" strokeWidth={2.5} />
-                    STEP 5 — Vehicle Photos (6 Mandatory Angles)
-                  </h3>
+                  <VehiclePhotoUpload
+                    photos={photos}
+                    onChange={(updatedPhotos) => setPhotos(updatedPhotos)}
+                  />
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {[
-                      { key: 'front', title: '1. Front Photo *' },
-                      { key: 'rear', title: '2. Rear Photo *' },
-                      { key: 'left', title: '3. Left Side *' },
-                      { key: 'right', title: '4. Right Side *' },
-                      { key: 'dashboard', title: '5. Dashboard/Meter *' },
-                      { key: 'damageCloseUp', title: '6. Close-up Damage *' },
-                    ].map((item) => (
-                      <div key={item.key} className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 space-y-1">
-                        <img src={photos[item.key]} alt={item.title} className="w-full h-24 object-cover" />
-                        <div className="p-2 bg-white flex items-center justify-between">
-                          <span className="text-[10px] font-extrabold text-slate-800">{item.title}</span>
-                          <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-                            Captured
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex gap-2 pt-2">
+                  <div className="flex gap-2 pt-3 border-t border-slate-200">
                     <button
                       type="button"
                       onClick={() => setStep(4)}
-                      className="w-1/3 bg-slate-100 text-slate-700 font-bold py-3.5 rounded-xl"
+                      className="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl transition-colors"
                     >
                       Back
                     </button>
                     <button
                       type="button"
-                      onClick={() => setStep(6)}
-                      className="w-2/3 bg-slate-900 text-white font-extrabold py-3.5 rounded-xl shadow-md flex items-center justify-center gap-1"
+                      onClick={() => {
+                        const uploadedCount = Object.values(photos).filter(
+                          (p) => p && typeof p === 'string' && p.trim() !== ''
+                        ).length;
+                        if (uploadedCount === 0) {
+                          alert('Please upload vehicle photos or click "Load Demo Photos" before proceeding!');
+                          return;
+                        }
+                        setStep(6);
+                      }}
+                      className="w-2/3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3.5 rounded-xl shadow-md flex items-center justify-center gap-1 transition-colors active:scale-95"
                     >
                       <span>Proceed to Step 6: Availability</span>
                       <ChevronRight className="w-4 h-4" />
@@ -1090,9 +1170,57 @@ export const OwnerView = () => {
                       <span className="text-slate-500 font-bold">Daily Rental Rate:</span>
                       <strong className="text-emerald-700 text-sm font-extrabold">₹{dailyRate}/day</strong>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between border-b border-slate-200 pb-2">
                       <span className="text-slate-500 font-bold">Availability Window:</span>
                       <strong className="text-slate-900">{availableFrom} to {availableTo} ({availableDays.join(', ')})</strong>
+                    </div>
+
+                    {/* Uploaded Photos Gallery Preview */}
+                    <div className="pt-2">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-slate-700 font-extrabold text-xs flex items-center gap-1.5">
+                          <Camera className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Uploaded Vehicle Photos:</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setStep(5)}
+                          className="text-emerald-700 hover:text-emerald-800 font-extrabold text-[11px] underline"
+                        >
+                          Edit Photos
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                        {[
+                          { key: 'front', label: 'Front' },
+                          { key: 'rear', label: 'Rear' },
+                          { key: 'left', label: 'Left' },
+                          { key: 'right', label: 'Right' },
+                          { key: 'dashboard', label: 'Meter' },
+                          { key: 'damageCloseUp', label: 'Condition' }
+                        ].map((item) => (
+                          <div
+                            key={item.key}
+                            className="rounded-xl overflow-hidden border border-slate-200 bg-slate-100 aspect-video relative group"
+                          >
+                            {photos[item.key] ? (
+                              <img
+                                src={photos[item.key]}
+                                alt={item.label}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-[10px] text-slate-400 font-bold bg-slate-200">
+                                Missing
+                              </div>
+                            )}
+                            <span className="absolute bottom-0 inset-x-0 bg-slate-950/75 text-[9px] text-white text-center py-0.5 truncate font-medium">
+                              {item.label}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
