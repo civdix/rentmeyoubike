@@ -25,17 +25,17 @@ export const OwnerView = () => {
   const [submittedNotice, setSubmittedNotice] = useState(false);
 
   // STEP 1: Personal Information State
-  const [ownerName, setOwnerName] = useState(() => (currentUser?.role === 'owner' && currentUser.name) || 'Radhe Shyam Sharma');
-  const [ownerPhone, setOwnerPhone] = useState(() => (currentUser?.role === 'owner' && currentUser.phone) || '+91 98371 44520');
-  const [ownerEmail, setOwnerEmail] = useState(() => (currentUser?.role === 'owner' && currentUser.email) || 'radheshyam@example.com');
+  const [ownerName, setOwnerName] = useState(() => (currentUser?.role === 'owner' && currentUser.name) || '');
+  const [ownerPhone, setOwnerPhone] = useState(() => (currentUser?.role === 'owner' && currentUser.phone) || '');
+  const [ownerEmail, setOwnerEmail] = useState(() => (currentUser?.role === 'owner' && currentUser.email) || '');
   const [ownerCity, setOwnerCity] = useState('Vrindavan');
-  const [ownerAddress, setOwnerAddress] = useState('Radhe Kunj #12, Near Gate No. 2, Prem Mandir Road, Vrindavan');
+  const [ownerAddress, setOwnerAddress] = useState('');
 
   React.useEffect(() => {
     if (currentUser?.role === 'owner') {
-      if (currentUser.name) setOwnerName(currentUser.name);
-      if (currentUser.phone) setOwnerPhone(currentUser.phone);
-      if (currentUser.email) setOwnerEmail(currentUser.email);
+      if (currentUser.name && !ownerName) setOwnerName(currentUser.name);
+      if (currentUser.phone && !ownerPhone) setOwnerPhone(currentUser.phone);
+      if (currentUser.email && !ownerEmail) setOwnerEmail(currentUser.email);
     }
   }, [currentUser]);
 
@@ -44,28 +44,28 @@ export const OwnerView = () => {
   const [panVerified, setPanVerified] = useState(true);
 
   // STEP 3: Vehicle Information State
-  const [regNumber, setRegNumber] = useState('UP 85 BL 9912');
-  const [make, setMake] = useState('Honda');
-  const [model, setModel] = useState('Activa 6G');
-  const [variant, setVariant] = useState('DLX Premium');
-  const [year, setYear] = useState('2024');
+  const [regNumber, setRegNumber] = useState('');
+  const [make, setMake] = useState('');
+  const [model, setModel] = useState('');
+  const [variant, setVariant] = useState('');
+  const [year, setYear] = useState(() => String(new Date().getFullYear()));
   const [vehicleType, setVehicleType] = useState('scooter');
   const [fuelType, setFuelType] = useState('Petrol');
   const [transmission, setTransmission] = useState('automatic');
-  const [dailyRate, setDailyRate] = useState(450);
+  const [dailyRate, setDailyRate] = useState(400);
   const [ownerLocality, setOwnerLocality] = useState('Prem Mandir Road');
-  const [pickupAddress, setPickupAddress] = useState('Shop #12, Near Gate No. 2, Prem Mandir Road, Vrindavan');
+  const [pickupAddress, setPickupAddress] = useState('');
 
   // EV Specific Onboarding State
-  const [evRangeKm, setEvRangeKm] = useState(105);
+  const [evRangeKm, setEvRangeKm] = useState(80);
   const [chargingCostIncluded, setChargingCostIncluded] = useState(true);
-  const [nearbyChargingStations, setNearbyChargingStations] = useState('Prem Mandir Gate 2 Hub, ISKCON Gate 3 Ather Grid, Chattikara EV Point');
-  const [spareBatteryAvailable, setSpareBatteryAvailable] = useState(true);
+  const [nearbyChargingStations, setNearbyChargingStations] = useState('');
+  const [spareBatteryAvailable, setSpareBatteryAvailable] = useState(false);
 
   // STEP 4: Vehicle Documents Upload Files & State
-  const [rcDoc, setRcDoc] = useState({ name: 'UP85_RC_SmartCard.pdf', uploaded: true, preview: null });
-  const [insuranceDoc, setInsuranceDoc] = useState({ name: 'Bajaj_Allianz_Policy_2026.pdf', uploaded: true, preview: null });
-  const [otherDoc, setOtherDoc] = useState({ name: 'PUC_Pollution_Certificate.pdf', uploaded: true, preview: null });
+  const [rcDoc, setRcDoc] = useState({ name: '', uploaded: false, preview: null });
+  const [insuranceDoc, setInsuranceDoc] = useState({ name: '', uploaded: false, preview: null });
+  const [otherDoc, setOtherDoc] = useState({ name: '', uploaded: false, preview: null });
 
   const rcInputRef = useRef(null);
   const insuranceInputRef = useRef(null);
@@ -92,17 +92,17 @@ export const OwnerView = () => {
 
   // STEP 5: 6 Required Vehicle Photos State
   const [photos, setPhotos] = useState({
-    front: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1000&q=80',
-    rear: 'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=1000&q=80',
-    left: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=1000&q=80',
-    right: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1000&q=80',
-    dashboard: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1000&q=80',
-    damageCloseUp: 'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=1000&q=80'
+    front: '',
+    rear: '',
+    left: '',
+    right: '',
+    dashboard: '',
+    damageCloseUp: ''
   });
 
   // STEP 6: Availability Dates & Days
-  const [availableFrom, setAvailableFrom] = useState('2026-09-12');
-  const [availableTo, setAvailableTo] = useState('2026-12-31');
+  const [availableFrom, setAvailableFrom] = useState(() => new Date().toISOString().split('T')[0]);
+  const [availableTo, setAvailableTo] = useState(() => new Date(Date.now() + 90 * 86400000).toISOString().split('T')[0]);
   const [availableDays, setAvailableDays] = useState(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
 
   const toggleDay = (day) => {
@@ -159,10 +159,10 @@ export const OwnerView = () => {
       chargingCostIncluded,
       nearbyChargingStations,
       spareBatteryAvailable,
-      odometer: 11500,
+      odometer: 0,
       helmetIncluded: true,
       helmetsProvided: 2,
-      images: vehicleImages.length > 0 ? vehicleImages : ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80'],
+      images: vehicleImages.length > 0 ? vehicleImages : [],
       photos,
       documents: {
         rc: rcDoc.name,
@@ -328,7 +328,7 @@ export const OwnerView = () => {
                   </span>
                   <div className="bg-slate-950/80 border border-slate-700/80 px-2.5 py-1 rounded-full text-[11px] flex items-center gap-1.5 text-slate-300">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Host: <strong className="text-white">{ownerName}</strong></span>
+                    <span>Host: <strong className="text-white">{ownerName || 'Verified Host'}</strong></span>
                   </div>
                 </div>
 
@@ -342,7 +342,7 @@ export const OwnerView = () => {
                     onClick={() => openLoginModal('owner')}
                     className="text-xs text-amber-400 hover:text-amber-300 underline font-semibold flex items-center gap-1"
                   >
-                    <span>Not {ownerName}? Switch host account</span>
+                    <span>{ownerName ? `Not ${ownerName}? Switch host account` : 'Switch host account'}</span>
                   </button>
                 </div>
               </div>
@@ -404,7 +404,7 @@ export const OwnerView = () => {
 
                           <div className="text-[11px] bg-slate-50 p-2 rounded-xl border border-slate-100 text-slate-600">
                             <span className="font-bold text-slate-800 block">Availability:</span>
-                            <span>{v.availability?.from || '2026-09-12'} to {v.availability?.to || '2026-12-31'}</span>
+                            <span>{v.availability?.from || 'Available'} to {v.availability?.to || 'Ongoing'}</span>
                           </div>
                         </div>
                       </div>
@@ -437,7 +437,7 @@ export const OwnerView = () => {
                     <Bike className="w-7 h-7" />
                   </div>
                   <div className="max-w-md mx-auto space-y-1">
-                    <h4 className="font-heading font-extrabold text-lg text-slate-900">No Vehicles Listed for {ownerName}</h4>
+                    <h4 className="font-heading font-extrabold text-lg text-slate-900">No Vehicles Listed {ownerName ? `for ${ownerName}` : 'Yet'}</h4>
                     <p className="text-xs text-slate-500 leading-relaxed">
                       You haven't added any vehicles under this host account yet. Complete our quick 7-step onboarding to submit your bike for Admin Verification!
                     </p>
@@ -644,7 +644,7 @@ export const OwnerView = () => {
                     <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200">
                       <div>
                         <span className="font-bold text-slate-900 block">1. Government Photo ID (Aadhaar Check)</span>
-                        <span className="text-slate-500 text-[11px]">Aadhaar Linked (XXXX-XXXX-4921)</span>
+                        <span className="text-slate-500 text-[11px]">Government Photo ID Verification Checked</span>
                       </div>
                       <span className="bg-emerald-100 text-emerald-950 font-extrabold text-xs px-3 py-1 rounded-full border border-emerald-300 flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" strokeWidth={2.5} />
@@ -655,7 +655,7 @@ export const OwnerView = () => {
                     <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200">
                       <div>
                         <span className="font-bold text-slate-900 block">2. PAN Card Verification</span>
-                        <span className="text-slate-500 text-[11px]">PAN Verified (XXXXX4921A)</span>
+                        <span className="text-slate-500 text-[11px]">Tax Identity Verification Checked</span>
                       </div>
                       <span className="bg-emerald-100 text-emerald-950 font-extrabold text-xs px-3 py-1 rounded-full border border-emerald-300 flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" strokeWidth={2.5} />
@@ -1059,7 +1059,7 @@ export const OwnerView = () => {
                           (p) => p && typeof p === 'string' && p.trim() !== ''
                         ).length;
                         if (uploadedCount === 0) {
-                          alert('Please upload vehicle photos or click "Load Demo Photos" before proceeding!');
+                          alert('Please upload vehicle photos before proceeding!');
                           return;
                         }
                         setStep(6);

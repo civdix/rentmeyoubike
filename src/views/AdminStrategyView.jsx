@@ -50,12 +50,12 @@ export const AdminStrategyView = () => {
           <form onSubmit={handleUnlock} className="space-y-3">
             <input
               type="password"
-              placeholder="Enter PIN (Demo: 2026)"
+              placeholder="Enter PIN"
               value={inputPin}
               onChange={(e) => setInputPin(e.target.value)}
               className="w-full text-center text-sm font-mono tracking-widest px-4 py-3 rounded-xl border border-slate-700 bg-slate-950 text-white focus:outline-none focus:border-emerald-500"
             />
-            {pinError && <p className="text-xs text-rose-400">Incorrect PIN! Try '2026'.</p>}
+            {pinError && <p className="text-xs text-rose-400">Incorrect PIN! Please check your credentials.</p>}
             <button
               type="submit"
               className="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs py-3 rounded-xl shadow-md"

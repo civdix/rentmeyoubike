@@ -25,9 +25,9 @@ export const MobileInspectionView = ({ bookingId, type = 'pre', onClose, onSucce
 
   const booking = bookings.find((b) => b.id === bookingId) || bookings[0];
   const vehicle = vehicles.find((v) => v.id === booking?.vehicleId) || {
-    name: booking?.vehicleName || 'Honda Activa 6G',
-    registrationNumber: 'UP 85 BL 4921',
-    images: ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80']
+    name: booking?.vehicleName || 'Vehicle',
+    registrationNumber: '',
+    images: []
   };
 
   const existingInspection = inspections[booking?.id];
@@ -38,24 +38,24 @@ export const MobileInspectionView = ({ bookingId, type = 'pre', onClose, onSucce
   const [isCompleted, setIsCompleted] = useState(false);
 
   // Step 1: Registration
-  const [confirmedRegNum, setConfirmedRegNum] = useState(vehicle.registrationNumber || 'UP 85 BL 4921');
-  const [regConfirmed, setRegConfirmed] = useState(true);
+  const [confirmedRegNum, setConfirmedRegNum] = useState(vehicle.registrationNumber || '');
+  const [regConfirmed, setRegConfirmed] = useState(Boolean(vehicle.registrationNumber));
 
   // Step 2: Odometer
-  const [odometer, setOdometer] = useState(initialData?.odometer || (type === 'pre' ? 14250 : 14380));
+  const [odometer, setOdometer] = useState(initialData?.odometer || 0);
 
   // Step 3: Fuel level
-  const [fuelLevel, setFuelLevel] = useState(initialData?.fuelLevel || (type === 'pre' ? 85 : 80));
+  const [fuelLevel, setFuelLevel] = useState(initialData?.fuelLevel || 100);
 
   // Step 4: 7 Mandatory Photos
   const [photos, setPhotos] = useState({
-    front: initialData?.frontPhoto || 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80',
-    rear: initialData?.rearPhoto || 'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=600&q=80',
-    left: initialData?.leftPhoto || 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80',
-    right: initialData?.rightPhoto || 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=600&q=80',
-    dashboard: initialData?.dashboardPhoto || 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80',
-    frontTyre: initialData?.frontTyrePhoto || 'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=600&q=80',
-    rearTyre: initialData?.rearTyrePhoto || 'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=600&q=80'
+    front: initialData?.frontPhoto || '',
+    rear: initialData?.rearPhoto || '',
+    left: initialData?.leftPhoto || '',
+    right: initialData?.rightPhoto || '',
+    dashboard: initialData?.dashboardPhoto || '',
+    frontTyre: initialData?.frontTyrePhoto || '',
+    rearTyre: initialData?.rearTyrePhoto || ''
   });
 
   // Step 5: Damage checklist
@@ -69,16 +69,16 @@ export const MobileInspectionView = ({ bookingId, type = 'pre', onClose, onSucce
     other: false
   });
   const [damageNotes, setDamageNotes] = useState(
-    initialData?.existingDamage || 'Minor hairline scratch near silencer heat guard.'
+    initialData?.existingDamage || ''
   );
 
   // Step 6: 360-degree Video
   const [isVideoRecording, setIsVideoRecording] = useState(false);
-  const [videoRecorded, setVideoRecorded] = useState(true);
+  const [videoRecorded, setVideoRecorded] = useState(false);
 
   // Step 7 & 8: Confirmations
-  const [customerConfirmed, setCustomerConfirmed] = useState(true);
-  const [ownerConfirmed, setOwnerConfirmed] = useState(true);
+  const [customerConfirmed, setCustomerConfirmed] = useState(false);
+  const [ownerConfirmed, setOwnerConfirmed] = useState(false);
 
   const [copiedLink, setCopiedLink] = useState(false);
 
@@ -90,6 +90,10 @@ export const MobileInspectionView = ({ bookingId, type = 'pre', onClose, onSucce
 
   const handleSimulatePhotoUpload = (angleKey) => {
     const timeStr = new Date().toLocaleTimeString();
+    setPhotos((prev) => ({
+      ...prev,
+      [angleKey]: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80'
+    }));
     alert(`📸 Captured timestamped photo for ${angleKey.toUpperCase()} angle at ${timeStr}.`);
   };
 
@@ -417,10 +421,18 @@ export const MobileInspectionView = ({ bookingId, type = 'pre', onClose, onSucce
                     {photoFields.map((field) => (
                       <div key={field.key} className="bg-slate-950 p-3 rounded-2xl border border-slate-800 flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
-                          <img src={photos[field.key]} alt="" className="w-16 h-12 object-cover rounded-lg border border-slate-800" />
+                          {photos[field.key] ? (
+                            <img src={photos[field.key]} alt="" className="w-16 h-12 object-cover rounded-lg border border-slate-800" />
+                          ) : (
+                            <div className="w-16 h-12 bg-slate-900 rounded-lg border border-dashed border-slate-700 flex items-center justify-center text-slate-500">
+                              <Camera className="w-5 h-5" />
+                            </div>
+                          )}
                           <div>
                             <span className="font-bold text-xs text-white block">{field.label}</span>
-                            <span className="text-[10px] text-emerald-400 font-mono">✓ Timestamped Capture</span>
+                            <span className="text-[10px] text-emerald-400 font-mono">
+                              {photos[field.key] ? '✓ Timestamped Capture' : 'Pending Capture'}
+                            </span>
                           </div>
                         </div>
 

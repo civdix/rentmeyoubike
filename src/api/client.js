@@ -1,6 +1,7 @@
-// Unified API client connecting frontend to Node.js/Express backend
-
-const API_BASE = '/api';
+// Production API Base URL (Configurable via VITE_API_URL for remote hosting)
+const API_BASE = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL)
+  ? import.meta.env.VITE_API_URL
+  : '/api';
 
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;

@@ -61,15 +61,6 @@ export const compressImage = (file, maxWidth = 1200, maxHeight = 1200, quality =
   });
 };
 
-export const SAMPLE_VEHICLE_PHOTOS = {
-  front: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1000&q=80',
-  rear: 'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=1000&q=80',
-  left: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=1000&q=80',
-  right: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1000&q=80',
-  dashboard: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1000&q=80',
-  damageCloseUp: 'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=1000&q=80'
-};
-
 export const REQUIRED_PHOTO_SLOTS = [
   {
     key: 'front',
@@ -212,12 +203,6 @@ export const VehiclePhotoUpload = ({ photos = {}, onChange }) => {
     }
   };
 
-  // Preload Sample Demo Photos
-  const handleLoadSamplePhotos = () => {
-    onChange({ ...SAMPLE_VEHICLE_PHOTOS });
-    setUploadError(null);
-  };
-
   // Clear all photos
   const handleClearAllPhotos = () => {
     const empty = {};
@@ -254,16 +239,6 @@ export const VehiclePhotoUpload = ({ photos = {}, onChange }) => {
 
         {/* Quick action controls */}
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <button
-            type="button"
-            onClick={handleLoadSamplePhotos}
-            className="flex-1 sm:flex-none text-[11px] font-bold bg-slate-800 hover:bg-slate-750 text-amber-300 hover:text-amber-200 px-3 py-1.5 rounded-xl border border-amber-500/30 flex items-center justify-center gap-1.5 transition-colors"
-            title="Populate demo bike photos for instant verification"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>Load Demo Photos</span>
-          </button>
-
           {uploadedCount > 0 && (
             <button
               type="button"

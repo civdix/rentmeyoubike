@@ -11,11 +11,22 @@ export const KYCWizardModal = ({ bookingId, onClose, onSuccess }) => {
   const [panNumber, setPanNumber] = useState('');
   const [dlNumber, setDlNumber] = useState('');
   const [documentsUploaded, setDocumentsUploaded] = useState({
-    aadhaarFront: true,
-    panCard: true,
-    drivingLicence: true
+    aadhaarFront: false,
+    panCard: false,
+    drivingLicence: false
+  });
+  const [docNames, setDocNames] = useState({
+    aadhaarFront: '',
+    panCard: '',
+    drivingLicence: ''
   });
   const [isVerifying, setIsVerifying] = useState(false);
+
+  const handleFileChange = (field, file) => {
+    if (!file) return;
+    setDocNames((prev) => ({ ...prev, [field]: file.name }));
+    setDocumentsUploaded((prev) => ({ ...prev, [field]: true }));
+  };
 
   const handleSimulateKYCSubmit = (e) => {
     e.preventDefault();
@@ -24,9 +35,9 @@ export const KYCWizardModal = ({ bookingId, onClose, onSuccess }) => {
     setTimeout(() => {
       setIsVerifying(false);
       verifyKYC(bookingId, {
-        aadhaarNumber: aadhaarNumber || '5421-9908-1123',
-        panNumber: panNumber || 'ABCDE1234F',
-        dlNumber: dlNumber || 'UP85 20210049210'
+        aadhaarNumber: aadhaarNumber || '',
+        panNumber: panNumber || '',
+        dlNumber: dlNumber || ''
       });
       if (onSuccess) onSuccess();
       onClose();
@@ -43,7 +54,7 @@ export const KYCWizardModal = ({ bookingId, onClose, onSuccess }) => {
               <ShieldCheck className="w-6 h-6 text-emerald-400" />
               <h3 className="font-heading text-lg font-bold">Customer Identity Verification (KYC)</h3>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">Booking Ref: #{bookingId || 'VRB-9023'}</p>
+            <p className="text-xs text-slate-400 mt-0.5">Booking Ref: #{bookingId || 'N/A'}</p>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-white p-1 rounded-lg">
             <X className="w-5 h-5" />
@@ -104,7 +115,7 @@ export const KYCWizardModal = ({ bookingId, onClose, onSuccess }) => {
                 <input
                   type="text"
                   maxLength={14}
-                  placeholder="5421 - 9908 - 1123"
+                  placeholder="XXXX - XXXX - XXXX"
                   value={aadhaarNumber}
                   onChange={(e) => setAadhaarNumber(e.target.value)}
                   className="w-full text-sm px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
@@ -112,15 +123,32 @@ export const KYCWizardModal = ({ bookingId, onClose, onSuccess }) => {
                 />
               </div>
 
-              {/* Upload Simulation Card */}
+              {/* Upload Card */}
               <div className="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center bg-slate-50 hover:bg-slate-100/80 transition-colors">
+                <input
+                  type="file"
+                  id="aadhaar-file-input"
+                  accept="image/*,application/pdf"
+                  className="hidden"
+                  onChange={(e) => e.target.files?.[0] && handleFileChange('aadhaarFront', e.target.files[0])}
+                />
                 <Upload className="w-6 h-6 text-slate-400 mx-auto mb-2" />
                 <p className="text-xs font-medium text-slate-700">Upload Front & Back Photo of Aadhaar Card</p>
                 <p className="text-[10px] text-slate-400 mt-1">PNG, JPG, PDF up to 5MB</p>
-                <div className="mt-3 inline-flex items-center gap-1.5 bg-white text-emerald-700 text-xs px-3 py-1.5 rounded-lg border border-emerald-200 shadow-sm font-semibold">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  Sample Document Attached (Demo)
-                </div>
+                {documentsUploaded.aadhaarFront ? (
+                  <div className="mt-3 inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 text-xs px-3 py-1.5 rounded-lg border border-emerald-300 font-semibold">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <span>Attached: {docNames.aadhaarFront}</span>
+                  </div>
+                ) : (
+                  <label
+                    htmlFor="aadhaar-file-input"
+                    className="mt-3 inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs px-3.5 py-1.5 rounded-lg shadow-sm font-semibold cursor-pointer transition-colors"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Upload Document</span>
+                  </label>
+                )}
               </div>
 
               <button
@@ -157,12 +185,29 @@ export const KYCWizardModal = ({ bookingId, onClose, onSuccess }) => {
               </div>
 
               <div className="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center bg-slate-50">
+                <input
+                  type="file"
+                  id="pan-file-input"
+                  accept="image/*,application/pdf"
+                  className="hidden"
+                  onChange={(e) => e.target.files?.[0] && handleFileChange('panCard', e.target.files[0])}
+                />
                 <Upload className="w-6 h-6 text-slate-400 mx-auto mb-2" />
                 <p className="text-xs font-medium text-slate-700">Upload Front Photo of PAN Card</p>
-                <div className="mt-3 inline-flex items-center gap-1.5 bg-white text-emerald-700 text-xs px-3 py-1.5 rounded-lg border border-emerald-200 shadow-sm font-semibold">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  Sample PAN Attached (Demo)
-                </div>
+                {documentsUploaded.panCard ? (
+                  <div className="mt-3 inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 text-xs px-3 py-1.5 rounded-lg border border-emerald-300 font-semibold">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <span>Attached: {docNames.panCard}</span>
+                  </div>
+                ) : (
+                  <label
+                    htmlFor="pan-file-input"
+                    className="mt-3 inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs px-3.5 py-1.5 rounded-lg shadow-sm font-semibold cursor-pointer transition-colors"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Upload Document</span>
+                  </label>
+                )}
               </div>
 
               <div className="flex items-center gap-2">
@@ -207,12 +252,29 @@ export const KYCWizardModal = ({ bookingId, onClose, onSuccess }) => {
               </div>
 
               <div className="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center bg-slate-50">
+                <input
+                  type="file"
+                  id="dl-file-input"
+                  accept="image/*,application/pdf"
+                  className="hidden"
+                  onChange={(e) => e.target.files?.[0] && handleFileChange('drivingLicence', e.target.files[0])}
+                />
                 <Upload className="w-6 h-6 text-slate-400 mx-auto mb-2" />
                 <p className="text-xs font-medium text-slate-700">Upload Both Sides of Driving Licence</p>
-                <div className="mt-3 inline-flex items-center gap-1.5 bg-white text-emerald-700 text-xs px-3 py-1.5 rounded-lg border border-emerald-200 shadow-sm font-semibold">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  Sample Driving Licence Attached (Demo)
-                </div>
+                {documentsUploaded.drivingLicence ? (
+                  <div className="mt-3 inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 text-xs px-3 py-1.5 rounded-lg border border-emerald-300 font-semibold">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <span>Attached: {docNames.drivingLicence}</span>
+                  </div>
+                ) : (
+                  <label
+                    htmlFor="dl-file-input"
+                    className="mt-3 inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs px-3.5 py-1.5 rounded-lg shadow-sm font-semibold cursor-pointer transition-colors"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Upload Document</span>
+                  </label>
+                )}
               </div>
 
               <div className="bg-amber-50 p-3 rounded-xl border border-amber-200 text-amber-900 text-xs flex items-start gap-2">

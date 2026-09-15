@@ -24,9 +24,16 @@ export const MarketplaceView = () => {
   const [categoryFilter, setCategoryFilter] = useState('all'); // 'all' | 'scooter' | 'motorcycle'
   const [transmissionFilter, setTransmissionFilter] = useState('all'); // 'all' | 'automatic' | 'manual'
   const [priceMax, setPriceMax] = useState(1200);
+  const todayStr = useMemo(() => new Date().toISOString().split('T')[0], []);
+  const tomorrowStr = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().split('T')[0];
+  }, []);
+
   const [pickupAreaFilter, setPickupAreaFilter] = useState('all');
-  const [startDate, setStartDate] = useState('2026-09-12');
-  const [endDate, setEndDate] = useState('2026-09-14');
+  const [startDate, setStartDate] = useState(todayStr);
+  const [endDate, setEndDate] = useState(tomorrowStr);
 
   // Sort State
   const [sortBy, setSortBy] = useState('recommended'); // 'price_asc' | 'price_desc' | 'popular' | 'recommended'
@@ -36,13 +43,13 @@ export const MarketplaceView = () => {
 
   // Booking Form Modal State
   const [bookingDrawerVehicle, setBookingDrawerVehicle] = useState(null);
-  const [customerName, setCustomerName] = useState(() => currentUser?.name || 'Ananya Roy');
-  const [customerPhone, setCustomerPhone] = useState(() => currentUser?.phone || '+91 98199 44321');
+  const [customerName, setCustomerName] = useState(() => currentUser?.name || '');
+  const [customerPhone, setCustomerPhone] = useState(() => currentUser?.phone || '');
 
   React.useEffect(() => {
     if (currentUser) {
-      if (currentUser.name) setCustomerName(currentUser.name);
-      if (currentUser.phone) setCustomerPhone(currentUser.phone);
+      if (currentUser.name && !customerName) setCustomerName(currentUser.name);
+      if (currentUser.phone && !customerPhone) setCustomerPhone(currentUser.phone);
     }
   }, [currentUser]);
 

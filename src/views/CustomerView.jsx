@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { MarketplaceView } from './MarketplaceView';
 import { VehicleDetailView } from './VehicleDetailView';
 import { VerifiedOwnerBadge, VerifiedVehicleBadge, DivineVerifiedBadge, TemplePassBadge, BookingStatusBadge } from '../components/TrustBadges';
 import { ProtectionSection } from '../components/ProtectionSection';
 import {
-  Search, Filter, MapPin, Calendar, MessageSquare, ShieldCheck, Star, Bike, ArrowRight,
+  Search, Filter, MapPin, Calendar, MessageSquare, ShieldCheck, Star, Bike, ArrowRight, Plus,
   Info, CheckCircle2, ChevronRight, AlertCircle, Clock, Sparkles, Heart, Compass,
   HelpCircle, ChevronDown, Check, FileText, Camera, IndianRupee, PhoneCall, Key, Award,
   Smartphone, UserCheck, RefreshCw, Lock,
@@ -59,16 +59,28 @@ export const CustomerView = () => {
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
   // Search Module State
+  const todayStr = useMemo(() => new Date().toISOString().split('T')[0], []);
+  const tomorrowStr = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().split('T')[0];
+  }, []);
+
   const [searchLocation, setSearchLocation] = useState('all');
-  const [startDate, setStartDate] = useState('2026-09-12');
-  const [endDate, setEndDate] = useState('2026-09-14');
+  const [startDate, setStartDate] = useState(todayStr);
+  const [endDate, setEndDate] = useState(tomorrowStr);
   const [vehicleType, setVehicleType] = useState('all');
   const [maxPrice, setMaxPrice] = useState(1000);
 
   // Booking Form Drawer State
   const [bookingDrawerVehicle, setBookingDrawerVehicle] = useState(null);
-  const [customerName, setCustomerName] = useState('Ananya Roy');
-  const [customerPhone, setCustomerPhone] = useState('+91 98199 44321');
+  const [customerName, setCustomerName] = useState(() => currentUser?.name || '');
+  const [customerPhone, setCustomerPhone] = useState(() => currentUser?.phone || '');
+
+  useEffect(() => {
+    if (currentUser?.name && !customerName) setCustomerName(currentUser.name);
+    if (currentUser?.phone && !customerPhone) setCustomerPhone(currentUser.phone);
+  }, [currentUser]);
 
   // Featured 6 Bikes
   const featuredBikes = useMemo(() => {
@@ -298,86 +310,105 @@ export const CustomerView = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredBikes.map((vehicle) => (
-                <div
-                  key={vehicle.id}
-                  className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between"
+            {featuredBikes.length === 0 ? (
+              <div className="bg-white rounded-3xl border border-dashed border-slate-300 p-12 text-center max-w-xl mx-auto shadow-xs">
+                <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-emerald-100">
+                  <Bike className="w-8 h-8" />
+                </div>
+                <h3 className="font-heading font-extrabold text-lg text-slate-800 mb-1">No bikes listed yet</h3>
+                <p className="text-xs text-slate-500 mb-6 leading-relaxed">
+                  Be the first to list your two-wheeler in Mathura & Vrindavan and start earning daily!
+                </p>
+                <button
+                  onClick={() => setRole('owner')}
+                  className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-6 py-3 rounded-xl shadow-md transition-all active:scale-95"
                 >
-                  <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden cursor-pointer" onClick={() => setSelectedVehicle(vehicle)}>
-                    <img
-                      src={vehicle.images[0]}
-                      alt={vehicle.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-3 left-3 flex flex-wrap gap-1">
-                      <DivineVerifiedBadge size="xs" />
-                      {vehicle.ownerVerified && <VerifiedOwnerBadge size="xs" />}
-                    </div>
-                    <div className="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
-                      <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                      <span>{vehicle.rating} ({vehicle.reviewsCount})</span>
-                    </div>
-                  </div>
-
-                  <div className="p-5 space-y-3">
-                    <div>
-                      <div className="flex items-center justify-between gap-2">
-                        <h3
-                          onClick={() => setSelectedVehicle(vehicle)}
-                          className="font-heading font-bold text-base text-slate-900 hover:text-emerald-700 cursor-pointer line-clamp-1"
-                        >
-                          {vehicle.name} ({vehicle.year})
-                        </h3>
-                        <span className="bg-slate-100 text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded capitalize">
-                          {vehicle.type}
-                        </span>
+                  <Plus className="w-4 h-4" />
+                  <span>List Your Bike Now</span>
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {featuredBikes.map((vehicle) => (
+                  <div
+                    key={vehicle.id}
+                    className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between"
+                  >
+                    <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden cursor-pointer" onClick={() => setSelectedVehicle(vehicle)}>
+                      <img
+                        src={vehicle.images[0]}
+                        alt={vehicle.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute top-3 left-3 flex flex-wrap gap-1">
+                        <DivineVerifiedBadge size="xs" />
+                        {vehicle.ownerVerified && <VerifiedOwnerBadge size="xs" />}
                       </div>
-                      <p className="text-xs text-slate-500 flex items-center gap-1 mt-1 font-medium">
-                        <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                        {vehicle.locationArea}
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                      <div>
-                        <span className="text-slate-400 block text-[10px]">Helmets</span>
-                        <span className="font-semibold text-emerald-700">2 Free Included</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 block text-[10px]">Transmission</span>
-                        <span className="font-semibold text-slate-800 capitalize">{vehicle.transmission}</span>
+                      <div className="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
+                        <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                        <span>{vehicle.rating} ({vehicle.reviewsCount})</span>
                       </div>
                     </div>
 
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                    <div className="p-5 space-y-3">
                       <div>
-                        <span className="text-slate-400 text-[10px] block">Daily Price</span>
-                        <div className="font-heading font-extrabold text-lg text-slate-900">
-                          ₹{vehicle.dailyRate} <span className="text-xs font-normal text-slate-500">/day</span>
+                        <div className="flex items-center justify-between gap-2">
+                          <h3
+                            onClick={() => setSelectedVehicle(vehicle)}
+                            className="font-heading font-bold text-base text-slate-900 hover:text-emerald-700 cursor-pointer line-clamp-1"
+                          >
+                            {vehicle.name} ({vehicle.year})
+                          </h3>
+                          <span className="bg-slate-100 text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded capitalize">
+                            {vehicle.type}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500 flex items-center gap-1 mt-1 font-medium">
+                          <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          {vehicle.locationArea}
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                        <div>
+                          <span className="text-slate-400 block text-[10px]">Helmets</span>
+                          <span className="font-semibold text-emerald-700">2 Free Included</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px]">Transmission</span>
+                          <span className="font-semibold text-slate-800 capitalize">{vehicle.transmission}</span>
                         </div>
                       </div>
 
-                      <div className="flex gap-1.5">
-                        <button
-                          onClick={() => setSelectedVehicle(vehicle)}
-                          className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs px-2.5 py-2 rounded-xl transition-colors"
-                        >
-                          View Details
-                        </button>
-                        <button
-                          onClick={() => setBookingDrawerVehicle(vehicle)}
-                          className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 shadow-sm transition-transform active:scale-95"
-                        >
-                          <MessageSquare className="w-4 h-4 fill-white" />
-                          <span>Book</span>
-                        </button>
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                        <div>
+                          <span className="text-slate-400 text-[10px] block">Daily Price</span>
+                          <div className="font-heading font-extrabold text-lg text-slate-900">
+                            ₹{vehicle.dailyRate} <span className="text-xs font-normal text-slate-500">/day</span>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-1.5">
+                          <button
+                            onClick={() => setSelectedVehicle(vehicle)}
+                            className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs px-2.5 py-2 rounded-xl transition-colors"
+                          >
+                            View Details
+                          </button>
+                          <button
+                            onClick={() => setBookingDrawerVehicle(vehicle)}
+                            className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 shadow-sm transition-transform active:scale-95"
+                          >
+                            <MessageSquare className="w-4 h-4 fill-white" />
+                            <span>Book</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </section>
 
           {/* 2. HOW IT WORKS SECTION */}

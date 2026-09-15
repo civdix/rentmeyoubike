@@ -9,11 +9,11 @@ export const DigitalInspectionModal = ({ bookingId, type = 'pre', onClose, onSuc
 
   const initialData = type === 'pre' ? existingInspection?.preRental : existingInspection?.postRental;
 
-  const [odometer, setOdometer] = useState(initialData?.odometer || 14250);
-  const [fuelLevel, setFuelLevel] = useState(initialData?.fuelLevel || 80);
-  const [videoRecorded, setVideoRecorded] = useState(true);
-  const [customerConfirmed, setCustomerConfirmed] = useState(true);
-  const [ownerConfirmed, setOwnerConfirmed] = useState(true);
+  const [odometer, setOdometer] = useState(initialData?.odometer || 0);
+  const [fuelLevel, setFuelLevel] = useState(initialData?.fuelLevel || 100);
+  const [videoRecorded, setVideoRecorded] = useState(false);
+  const [customerConfirmed, setCustomerConfirmed] = useState(false);
+  const [ownerConfirmed, setOwnerConfirmed] = useState(false);
 
   // Damage logs state array
   const [damageLogs, setDamageLogs] = useState(() => {
@@ -26,9 +26,7 @@ export const DigitalInspectionModal = ({ bookingId, type = 'pre', onClose, onSuc
         notes: part.includes(']') ? part.split(']')[1].trim() : part
       }));
     }
-    return [
-      { id: 1, zone: 'Silencer Guard', type: 'Scratch', notes: 'Minor 2cm hairline scratch near silencer heat guard.' }
-    ];
+    return [];
   });
 
   const [selectedZone, setSelectedZone] = useState('Front Shield');
@@ -53,12 +51,12 @@ export const DigitalInspectionModal = ({ bookingId, type = 'pre', onClose, onSuc
 
   // Photos state with realistic default fallback photos
   const [photos, setPhotos] = useState({
-    front: initialData?.frontPhoto || 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80',
-    rear: initialData?.rearPhoto || 'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=600&q=80',
-    left: initialData?.leftPhoto || 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=600&q=80',
-    right: initialData?.rightPhoto || 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80',
-    dashboard: initialData?.dashboardPhoto || 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80',
-    tyres: initialData?.tyresPhoto || 'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=600&q=80'
+    front: initialData?.frontPhoto || '',
+    rear: initialData?.rearPhoto || '',
+    left: initialData?.leftPhoto || '',
+    right: initialData?.rightPhoto || '',
+    dashboard: initialData?.dashboardPhoto || '',
+    tyres: initialData?.tyresPhoto || ''
   });
 
   const handleSubmit = (e) => {
@@ -95,8 +93,11 @@ export const DigitalInspectionModal = ({ bookingId, type = 'pre', onClose, onSuc
   };
 
   const handleSimulatePhotoUpload = (key) => {
-    // Toggles photo timestamp simulation
-    alert(`Captured timestamped photo for ${key.toUpperCase()} angle.`);
+    setPhotos((prev) => ({
+      ...prev,
+      [key]: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80'
+    }));
+    alert(`Captured photo for ${key.toUpperCase()} angle.`);
   };
 
   return (
@@ -174,7 +175,13 @@ export const DigitalInspectionModal = ({ bookingId, type = 'pre', onClose, onSuc
                 { key: 'tyres', title: '6. Tyre Condition' },
               ].map((item) => (
                 <div key={item.key} className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 relative group">
-                  <img src={photos[item.key]} alt={item.title} className="w-full h-24 object-cover" />
+                  {photos[item.key] ? (
+                    <img src={photos[item.key]} alt={item.title} className="w-full h-24 object-cover" />
+                  ) : (
+                    <div className="w-full h-24 bg-slate-100 flex items-center justify-center text-slate-400">
+                      <Camera className="w-6 h-6" />
+                    </div>
+                  )}
                   <div className="p-2 bg-white flex items-center justify-between">
                     <span className="text-[11px] font-semibold text-slate-700">{item.title}</span>
                     <button
@@ -182,7 +189,7 @@ export const DigitalInspectionModal = ({ bookingId, type = 'pre', onClose, onSuc
                       onClick={() => handleSimulatePhotoUpload(item.key)}
                       className="text-[10px] bg-slate-100 hover:bg-emerald-50 text-emerald-700 px-2 py-1 rounded font-bold border border-slate-200"
                     >
-                      Retake
+                      {photos[item.key] ? 'Retake' : 'Capture'}
                     </button>
                   </div>
                 </div>

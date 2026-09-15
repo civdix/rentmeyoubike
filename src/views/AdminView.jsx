@@ -100,8 +100,12 @@ export const AdminView = () => {
   const [manualCustomerName, setManualCustomerName] = useState('');
   const [manualCustomerPhone, setManualCustomerPhone] = useState('');
   const [manualVehicleId, setManualVehicleId] = useState('');
-  const [manualStartDate, setManualStartDate] = useState('2026-09-12');
-  const [manualEndDate, setManualEndDate] = useState('2026-09-14');
+  const [manualStartDate, setManualStartDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [manualEndDate, setManualEndDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().split('T')[0];
+  });
 
   // 7-Step WhatsApp Pipeline Modal State
   const [selectedWhatsAppPipelineBooking, setSelectedWhatsAppPipelineBooking] = useState(null);
@@ -175,8 +179,8 @@ export const AdminView = () => {
 
     const newBooking = createBooking({
       vehicle: selVeh,
-      customerName: manualCustomerName || 'WhatsApp Renter',
-      customerPhone: manualCustomerPhone || '+91 98000 11223',
+      customerName: manualCustomerName || 'Walk-in Customer',
+      customerPhone: manualCustomerPhone || '',
       startDate: manualStartDate,
       endDate: manualEndDate,
       totalDays
@@ -333,9 +337,8 @@ export const AdminView = () => {
 
           <form onSubmit={handlePinSubmit} className="space-y-4 text-left">
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1.5 flex justify-between">
-                <span>Enter Admin Security PIN</span>
-                <span className="text-emerald-400 font-mono">Demo PIN: 7777</span>
+              <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                Enter Admin Security PIN
               </label>
               <div className="relative">
                 <Key className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
@@ -347,7 +350,7 @@ export const AdminView = () => {
                   className="w-full bg-slate-950 text-white pl-10 pr-4 py-3 rounded-xl border border-slate-700 text-sm focus:outline-none focus:border-emerald-500 font-mono tracking-widest"
                 />
               </div>
-              {pinError && <p className="text-[11px] text-rose-400 mt-1 font-semibold">Invalid PIN code. Try 7777.</p>}
+              {pinError && <p className="text-[11px] text-rose-400 mt-1 font-semibold">Invalid PIN code. Please check your credentials.</p>}
             </div>
 
             <button

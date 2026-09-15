@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { VerifiedOwnerBadge, VerifiedVehicleBadge, DocumentsVerifiedBadge, DivineVerifiedBadge } from '../components/TrustBadges';
 import { ProtectionSection } from '../components/ProtectionSection';
@@ -14,7 +14,7 @@ import {
 } from '../components/CustomIcons';
 
 export const VehicleDetailView = ({ vehicle, onClose }) => {
-  const { createBooking, setActiveWhatsAppModal, legalConfig } = useApp();
+  const { createBooking, setActiveWhatsAppModal, legalConfig, currentUser } = useApp();
 
   // Guard against null/undefined vehicle
   if (!vehicle) return null;
@@ -23,10 +23,24 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   // Booking Dates & Renter Details State
-  const [startDate, setStartDate] = useState('2026-09-12');
-  const [endDate, setEndDate] = useState('2026-09-14');
-  const [renterName, setRenterName] = useState('Ananya Roy');
-  const [renterPhone, setRenterPhone] = useState('+91 98199 44321');
+  const todayStr = useMemo(() => new Date().toISOString().split('T')[0], []);
+  const tomorrowStr = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().split('T')[0];
+  }, []);
+
+  const [startDate, setStartDate] = useState(todayStr);
+  const [endDate, setEndDate] = useState(tomorrowStr);
+  const [renterName, setRenterName] = useState(() => currentUser?.name || '');
+  const [renterPhone, setRenterPhone] = useState(() => currentUser?.phone || '');
+
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.name && !renterName) setRenterName(currentUser.name);
+      if (currentUser.phone && !renterPhone) setRenterPhone(currentUser.phone);
+    }
+  }, [currentUser]);
 
   // "Bike Saathi" Add-on State (₹500/day)
   const [addBikeSaathi, setAddBikeSaathi] = useState(false);
@@ -38,14 +52,14 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
 
   // Safe Property Access
   const dailyRate = Number(vehicle.dailyRate) || 400;
-  const vehicleName = vehicle.name || 'Honda Activa 6G';
+  const vehicleName = vehicle.name || 'Two Wheeler';
   const vehicleId = vehicle.id || 'veh-1';
-  const vehicleYear = vehicle.year || 2024;
+  const vehicleYear = vehicle.year || new Date().getFullYear();
   const vehicleType = vehicle.type || 'scooter';
   const transmission = vehicle.transmission || 'automatic';
-  const locationArea = vehicle.locationArea || 'Prem Mandir Road';
+  const locationArea = vehicle.locationArea || 'Vrindavan';
   const pickupAddress = vehicle.pickupAddress || `${locationArea}, Vrindavan, UP`;
-  const ownerName = vehicle.ownerName || 'Radhe Shyam Sharma';
+  const ownerName = vehicle.ownerName || 'Verified Host';
 
   // Calculate Total Days & Price
   const start = new Date(startDate);

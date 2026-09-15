@@ -72,45 +72,113 @@ export const AppProvider = ({ children }) => {
     return () => window.removeEventListener('vr_navigate', handleNav);
   }, []);
 
+  // Purge any legacy demo mock data cached in browser localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const legacyBookings = localStorage.getItem('vr_bookings');
+      if (legacyBookings && legacyBookings.includes('VRB-9021')) {
+        localStorage.removeItem('vr_bookings');
+        setBookings([]);
+      }
+      const legacyCustomers = localStorage.getItem('vr_customers');
+      if (legacyCustomers && legacyCustomers.includes('Ananya Roy')) {
+        localStorage.removeItem('vr_customers');
+        setCustomers([]);
+      }
+      const legacyOwners = localStorage.getItem('vr_owners');
+      if (legacyOwners && legacyOwners.includes('Radhe Shyam Sharma')) {
+        localStorage.removeItem('vr_owners');
+        setOwners([]);
+      }
+      const legacyDisputes = localStorage.getItem('vr_disputes');
+      if (legacyDisputes && legacyDisputes.includes('DISP-101')) {
+        localStorage.removeItem('vr_disputes');
+        setDisputes([]);
+      }
+      const legacyVehicles = localStorage.getItem('vr_vehicles');
+      if (legacyVehicles && legacyVehicles.includes('Radhe Divine Edition')) {
+        localStorage.removeItem('vr_vehicles');
+        setVehicles([]);
+      }
+    }
+  }, []);
+
   // State with LocalStorage persistence + API sync
   const [vehicles, setVehicles] = useState(() => {
-    const saved = localStorage.getItem('vr_vehicles');
-    return saved ? JSON.parse(saved) : INITIAL_VEHICLES;
+    try {
+      const saved = localStorage.getItem('vr_vehicles');
+      if (saved && saved.includes('Radhe Divine Edition')) return [];
+      return saved ? JSON.parse(saved) : INITIAL_VEHICLES;
+    } catch {
+      return [];
+    }
   });
 
   const [bookings, setBookings] = useState(() => {
-    const saved = localStorage.getItem('vr_bookings');
-    return saved ? JSON.parse(saved) : INITIAL_BOOKINGS;
+    try {
+      const saved = localStorage.getItem('vr_bookings');
+      if (saved && saved.includes('VRB-9021')) return [];
+      return saved ? JSON.parse(saved) : INITIAL_BOOKINGS;
+    } catch {
+      return [];
+    }
   });
 
   const [inspections, setInspections] = useState(() => {
-    const saved = localStorage.getItem('vr_inspections');
-    return saved ? JSON.parse(saved) : INITIAL_INSPECTIONS;
+    try {
+      const saved = localStorage.getItem('vr_inspections');
+      return saved ? JSON.parse(saved) : INITIAL_INSPECTIONS;
+    } catch {
+      return {};
+    }
   });
 
   const [customers, setCustomers] = useState(() => {
-    const saved = localStorage.getItem('vr_customers');
-    return saved ? JSON.parse(saved) : INITIAL_CUSTOMERS;
+    try {
+      const saved = localStorage.getItem('vr_customers');
+      if (saved && saved.includes('Ananya Roy')) return [];
+      return saved ? JSON.parse(saved) : INITIAL_CUSTOMERS;
+    } catch {
+      return [];
+    }
   });
 
   const [owners, setOwners] = useState(() => {
-    const saved = localStorage.getItem('vr_owners');
-    return saved ? JSON.parse(saved) : INITIAL_OWNERS;
+    try {
+      const saved = localStorage.getItem('vr_owners');
+      if (saved && saved.includes('Radhe Shyam Sharma')) return [];
+      return saved ? JSON.parse(saved) : INITIAL_OWNERS;
+    } catch {
+      return [];
+    }
   });
 
   const [disputes, setDisputes] = useState(() => {
-    const saved = localStorage.getItem('vr_disputes');
-    return saved ? JSON.parse(saved) : INITIAL_DISPUTES;
+    try {
+      const saved = localStorage.getItem('vr_disputes');
+      if (saved && saved.includes('DISP-101')) return [];
+      return saved ? JSON.parse(saved) : INITIAL_DISPUTES;
+    } catch {
+      return [];
+    }
   });
 
   const [adminSettings, setAdminSettingsState] = useState(() => {
-    const saved = localStorage.getItem('vr_admin_settings');
-    return saved ? JSON.parse(saved) : INITIAL_ADMIN_SETTINGS;
+    try {
+      const saved = localStorage.getItem('vr_admin_settings');
+      return saved ? JSON.parse(saved) : INITIAL_ADMIN_SETTINGS;
+    } catch {
+      return INITIAL_ADMIN_SETTINGS;
+    }
   });
 
   const [legalConfig, setLegalConfigState] = useState(() => {
-    const saved = localStorage.getItem('vr_legal');
-    return saved ? JSON.parse(saved) : INITIAL_LEGAL_CONFIG;
+    try {
+      const saved = localStorage.getItem('vr_legal');
+      return saved ? JSON.parse(saved) : INITIAL_LEGAL_CONFIG;
+    } catch {
+      return INITIAL_LEGAL_CONFIG;
+    }
   });
 
   // Modals & UI Selection state
@@ -149,22 +217,22 @@ export const AppProvider = ({ children }) => {
         apiFetchSettings().catch(() => null)
       ]);
 
-      if (backendVehicles && backendVehicles.length > 0) {
+      if (backendVehicles && Array.isArray(backendVehicles)) {
         setVehicles(backendVehicles);
       }
-      if (backendBookings && backendBookings.length > 0) {
+      if (backendBookings && Array.isArray(backendBookings)) {
         setBookings(backendBookings);
       }
-      if (backendInspections && Object.keys(backendInspections).length > 0) {
+      if (backendInspections && typeof backendInspections === 'object') {
         setInspections(backendInspections);
       }
-      if (backendCustomers && backendCustomers.length > 0) {
+      if (backendCustomers && Array.isArray(backendCustomers)) {
         setCustomers(backendCustomers);
       }
-      if (backendOwners && backendOwners.length > 0) {
+      if (backendOwners && Array.isArray(backendOwners)) {
         setOwners(backendOwners);
       }
-      if (backendDisputes && backendDisputes.length > 0) {
+      if (backendDisputes && Array.isArray(backendDisputes)) {
         setDisputes(backendDisputes);
       }
       if (backendSettings) {

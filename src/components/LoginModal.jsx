@@ -26,14 +26,14 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
   const [errorMsg, setErrorMsg] = useState('');
 
   // Renter Form State
-  const [customerPhone, setCustomerPhone] = useState('+91 98199 44321');
-  const [customerName, setCustomerName] = useState('Amit Sharma');
-  const [customerOtp, setCustomerOtp] = useState('1234');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerOtp, setCustomerOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
 
   // Host Form State
-  const [ownerPhone, setOwnerPhone] = useState('+91 98371 44520');
-  const [ownerName, setOwnerName] = useState('Radhe Shyam Sharma');
+  const [ownerPhone, setOwnerPhone] = useState('');
+  const [ownerName, setOwnerName] = useState('');
 
   // Admin Form State
   const [adminPin, setAdminPin] = useState('');
@@ -68,7 +68,7 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
       // Fallback offline mock login
       const fallbackUser = {
         id: `cust-${Date.now()}`,
-        name: customerName.trim() || 'Amit Sharma',
+        name: customerName.trim() || 'Renter',
         phone: customerPhone.trim(),
         role: 'customer',
         kycStatus: 'Verified'
@@ -112,7 +112,7 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
       // Fallback offline host login
       const fallbackOwner = {
         id: `own-${Date.now()}`,
-        name: ownerName.trim() || 'Radhe Shyam Sharma',
+        name: ownerName.trim() || 'Fleet Host',
         phone: ownerPhone.trim(),
         role: 'owner',
         verificationStatus: 'Verified'
@@ -148,7 +148,7 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
         if (onSuccess) onSuccess(res.user);
         onClose();
       } else {
-        setErrorMsg(res?.error || 'Invalid Admin PIN. Use demo PIN 7777.');
+        setErrorMsg(res?.error || 'Invalid Admin Security PIN. Access denied.');
       }
     } catch (err) {
       if (pin === '7777' || pin === '2026') {
@@ -163,19 +163,6 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
     } finally {
       setLoading(false);
     }
-  };
-
-  // Quick Demo Fast-Login Helpers
-  const fillDemoCustomer = (name, phone) => {
-    setCustomerName(name);
-    setCustomerPhone(phone);
-    setErrorMsg('');
-  };
-
-  const fillDemoOwner = (name, phone) => {
-    setOwnerName(name);
-    setOwnerPhone(phone);
-    setErrorMsg('');
   };
 
   return (
@@ -274,7 +261,7 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
                     type="text"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
-                    placeholder="e.g. Amit Sharma"
+                    placeholder="e.g. Rahul Sharma"
                     className="w-full bg-slate-950 text-white pl-10 pr-4 py-2.5 rounded-xl border border-slate-700 text-sm focus:outline-none focus:border-emerald-500"
                   />
                 </div>
@@ -291,35 +278,10 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
                     type="tel"
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
-                    placeholder="+91 98199 44321"
+                    placeholder="+91 Mobile Number"
                     className="w-full bg-slate-950 text-white pl-10 pr-4 py-2.5 rounded-xl border border-slate-700 text-sm font-mono focus:outline-none focus:border-emerald-500"
+                    required
                   />
-                </div>
-              </div>
-
-              {/* Quick 1-Click Demo Profiles */}
-              <div className="pt-1">
-                <span className="text-[11px] font-semibold text-slate-400 block mb-1.5 flex items-center gap-1">
-                  <Zap className="w-3 h-3 text-amber-400" />
-                  Quick 1-Click Demo Renter Profiles:
-                </span>
-                <div className="grid grid-cols-2 gap-2 text-[11px]">
-                  <button
-                    type="button"
-                    onClick={() => fillDemoCustomer('Amit Sharma', '+91 98199 44321')}
-                    className="bg-slate-800/80 hover:bg-slate-800 border border-slate-700 p-2 rounded-xl text-left transition-colors"
-                  >
-                    <strong className="text-white block">Amit Sharma</strong>
-                    <span className="text-emerald-400 font-mono text-[10px]">Verified • Active</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => fillDemoCustomer('Priya Patel', '+91 98200 55432')}
-                    className="bg-slate-800/80 hover:bg-slate-800 border border-slate-700 p-2 rounded-xl text-left transition-colors"
-                  >
-                    <strong className="text-white block">Priya Patel</strong>
-                    <span className="text-emerald-400 font-mono text-[10px]">KYC Verified</span>
-                  </button>
                 </div>
               </div>
 
@@ -351,8 +313,9 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
                     type="text"
                     value={ownerName}
                     onChange={(e) => setOwnerName(e.target.value)}
-                    placeholder="e.g. Radhe Shyam Sharma"
+                    placeholder="e.g. Krishna Fleet Rentals"
                     className="w-full bg-slate-950 text-white pl-10 pr-4 py-2.5 rounded-xl border border-slate-700 text-sm focus:outline-none focus:border-amber-500"
+                    required
                   />
                 </div>
               </div>
@@ -368,35 +331,10 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
                     type="tel"
                     value={ownerPhone}
                     onChange={(e) => setOwnerPhone(e.target.value)}
-                    placeholder="+91 98371 44520"
+                    placeholder="+91 Registered Mobile Number"
                     className="w-full bg-slate-950 text-white pl-10 pr-4 py-2.5 rounded-xl border border-slate-700 text-sm font-mono focus:outline-none focus:border-amber-500"
+                    required
                   />
-                </div>
-              </div>
-
-              {/* Quick 1-Click Demo Host Profiles */}
-              <div className="pt-1">
-                <span className="text-[11px] font-semibold text-slate-400 block mb-1.5 flex items-center gap-1">
-                  <Zap className="w-3 h-3 text-amber-400" />
-                  Quick 1-Click Demo Hosts:
-                </span>
-                <div className="grid grid-cols-2 gap-2 text-[11px]">
-                  <button
-                    type="button"
-                    onClick={() => fillDemoOwner('Radhe Shyam Sharma', '+91 98371 44520')}
-                    className="bg-slate-800/80 hover:bg-slate-800 border border-slate-700 p-2 rounded-xl text-left transition-colors"
-                  >
-                    <strong className="text-white block">Radhe Shyam</strong>
-                    <span className="text-amber-400 font-mono text-[10px]">4 Bikes • Verified</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => fillDemoOwner('Bankey Bihari Rentals', '+91 98372 66789')}
-                    className="bg-slate-800/80 hover:bg-slate-800 border border-slate-700 p-2 rounded-xl text-left transition-colors"
-                  >
-                    <strong className="text-white block">Bankey Bihari</strong>
-                    <span className="text-amber-400 font-mono text-[10px]">6 Bikes • Top Host</span>
-                  </button>
                 </div>
               </div>
 
@@ -428,9 +366,8 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5 flex justify-between">
-                  <span>Enter 4-Digit Security PIN</span>
-                  <span className="text-emerald-400 font-mono font-bold">Demo PIN: 7777</span>
+                <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                  Enter Security PIN
                 </label>
                 <div className="relative">
                   <Key className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
@@ -438,21 +375,12 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
                     type="password"
                     value={adminPin}
                     onChange={(e) => setAdminPin(e.target.value)}
-                    placeholder="Enter PIN (e.g. 7777)"
+                    placeholder="Enter Security PIN"
                     maxLength={6}
                     className="w-full bg-slate-950 text-white pl-10 pr-4 py-2.5 rounded-xl border border-slate-700 text-sm font-mono tracking-widest focus:outline-none focus:border-purple-500"
+                    required
                   />
                 </div>
-              </div>
-
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setAdminPin('7777')}
-                  className="w-full bg-slate-800 hover:bg-slate-700 text-xs py-2 rounded-xl text-slate-300 font-mono transition-colors"
-                >
-                  Fill Demo PIN (7777)
-                </button>
               </div>
 
               <button

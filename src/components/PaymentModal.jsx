@@ -115,7 +115,6 @@ export const PaymentModal = ({ bookingId, onClose, onSuccess }) => {
                   type="text"
                   placeholder="4532 •••• •••• 8921"
                   className="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 bg-white"
-                  defaultValue="4532 8910 2341 8921"
                 />
               </div>
               <div className="flex gap-2">
@@ -125,7 +124,6 @@ export const PaymentModal = ({ bookingId, onClose, onSuccess }) => {
                     type="text"
                     placeholder="MM/YY"
                     className="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 bg-white"
-                    defaultValue="08/28"
                   />
                 </div>
                 <div className="flex-1">
@@ -135,51 +133,31 @@ export const PaymentModal = ({ bookingId, onClose, onSuccess }) => {
                     maxLength={3}
                     placeholder="•••"
                     className="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 bg-white"
-                    defaultValue="891"
                   />
                 </div>
               </div>
             </div>
           )}
 
-          {/* Action Simulation Buttons */}
+          {/* Action Payment Button */}
           <div className="mt-5 space-y-2">
             <button
               onClick={() => handleSimulatePayment('Paid')}
               disabled={isProcessing}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3 rounded-xl flex items-center justify-center gap-2 shadow-md transition-transform active:scale-95 disabled:opacity-50"
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md transition-transform active:scale-95 disabled:opacity-50"
             >
               {isProcessing ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Processing Razorpay Webhook...</span>
+                  <span>Processing Payment...</span>
                 </>
               ) : (
                 <>
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>Simulate Successful Payment (₹{booking?.totalAmount})</span>
+                  <span>Confirm & Pay (₹{booking?.totalAmount})</span>
                 </>
               )}
             </button>
-
-            <div className="flex gap-2 pt-2">
-              <button
-                onClick={() => handleSimulatePayment('Failed')}
-                disabled={isProcessing}
-                className="flex-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-[11px] font-semibold py-2 rounded-lg flex items-center justify-center gap-1"
-              >
-                <XCircle className="w-3.5 h-3.5" />
-                Simulate Payment Failed
-              </button>
-              <button
-                onClick={() => handleSimulatePayment('Refunded')}
-                disabled={isProcessing}
-                className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-[11px] font-semibold py-2 rounded-lg flex items-center justify-center gap-1"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                Simulate Refunded
-              </button>
-            </div>
           </div>
         </div>
       </div>
