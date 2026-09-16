@@ -37,6 +37,9 @@ async function getTransporter() {
     host,
     port: 465,
     secure: true,
+    connectionTimeout: 2500, // Fast 2.5s timeout in case host drops outbound SMTP ports
+    greetingTimeout: 2500,
+    socketTimeout: 5000,
     auth: { user, pass },
     tls: {
       servername: 'smtp.gmail.com'
@@ -67,6 +70,35 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
     `
   };
 
+  // 1. If RESEND_API_KEY is configured, use Resend HTTPS REST API (Port 443, never blocked by Render Free)
+  if (process.env.RESEND_API_KEY) {
+    try {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: process.env.RESEND_FROM || 'Vrindavan Rides <onboarding@resend.dev>',
+          to: [normalized],
+          subject: `🌸 Your Vrindavan Rides Verification Code: ${otp}`,
+          html: mailOptions.html
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        console.log(`✉️ [Resend] OTP sent to ${normalized} (Message ID: ${data.id})`);
+        return { success: true, messageId: data.id, devOtp: otp };
+      } else {
+        console.warn('⚠️ [Resend] API error:', data);
+      }
+    } catch (resendErr) {
+      console.warn('⚠️ [Resend] Request failed:', resendErr.message);
+    }
+  }
+
+  // 2. Nodemailer SMTP (uses IPv4 direct connect with fast 2.5s timeout)
   try {
     const transporter = await getTransporter();
     if (transporter) {
@@ -77,11 +109,11 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
       console.log(`ℹ️ [DEV OTP] ${normalized} -> ${otp}`);
     }
   } catch (err) {
-    console.error(`⚠️ SMTP error for ${normalized}:`, err.message);
+    console.error(`⚠️ SMTP error for ${normalized}: ${err.message}. (Render Free tier blocks outbound SMTP ports 25/465/587)`);
     cachedTransporter = null; // Invalidate cache so next attempt refreshes
   }
 
-  // Return devOtp so the user is never blocked
+  // 3. Fallback devOtp return so the user is never blocked
   return {
     success: true,
     devOtp: otp,
