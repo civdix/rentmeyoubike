@@ -167,7 +167,37 @@ export function initDatabase() {
       citiesAvailable TEXT,
       supportWhatsApp TEXT
     );
+
+    CREATE TABLE IF NOT EXISTS sessions (
+      token TEXT PRIMARY KEY,
+      role TEXT NOT NULL,
+      userId TEXT,
+      userData TEXT,
+      createdAt TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS email_verifications (
+      email TEXT PRIMARY KEY,
+      otp TEXT NOT NULL,
+      role TEXT DEFAULT 'customer',
+      expiresAt INTEGER NOT NULL,
+      verified INTEGER DEFAULT 0,
+      attempts INTEGER DEFAULT 0,
+      createdAt TEXT DEFAULT CURRENT_TIMESTAMP
+    );
   `);
+
+  // Non-destructive migrations for emailVerified status
+  try {
+    db.prepare('ALTER TABLE customers ADD COLUMN emailVerified INTEGER DEFAULT 0').run();
+  } catch (e) {
+    // Column already exists
+  }
+  try {
+    db.prepare('ALTER TABLE owners ADD COLUMN emailVerified INTEGER DEFAULT 0').run();
+  } catch (e) {
+    // Column already exists
+  }
 
   // Seed default data if empty
   seedInitialData();

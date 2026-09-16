@@ -1,5 +1,6 @@
 import express from 'express';
 import { db } from '../db.js';
+import { requireAuth } from '../middleware/rbac.js';
 
 const router = express.Router();
 
@@ -61,7 +62,7 @@ router.get('/:id', (req, res) => {
 });
 
 // POST /api/bookings - Create new rental booking
-router.post('/', (req, res) => {
+router.post('/', requireAuth, (req, res) => {
   try {
     const b = req.body;
     const refNum = b.id || `VRB-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -100,9 +101,9 @@ router.post('/', (req, res) => {
       id: refNum,
       vehicleId,
       vehicleName,
-      customerName: b.customerName || 'Customer',
-      customerPhone: b.customerPhone || '+91 98199 44321',
-      customerEmail: b.customerEmail || `${(b.customerName || 'customer').toLowerCase().replace(/\s+/g, '')}@example.com`,
+      customerName: req.user.role === 'customer' ? (req.user.name || b.customerName || 'Customer') : (b.customerName || 'Customer'),
+      customerPhone: req.user.role === 'customer' ? (req.user.phone || b.customerPhone || '') : (b.customerPhone || ''),
+      customerEmail: req.user.role === 'customer' ? (req.user.email || b.customerEmail || '') : (b.customerEmail || ''),
       ownerName: b.ownerName || vehicle.ownerName || 'Radhe Shyam Sharma',
       ownerPhone: b.ownerPhone || vehicle.ownerPhone || '+91 98371 44520',
       startDate: b.startDate,
@@ -145,7 +146,7 @@ router.post('/', (req, res) => {
 });
 
 // PATCH /api/bookings/:id/status - Update booking lifecycle state
-router.patch('/:id/status', (req, res) => {
+router.patch('/:id/status', requireAuth, (req, res) => {
   try {
     const { status, extra } = req.body;
     if (!status) {
@@ -166,7 +167,7 @@ router.patch('/:id/status', (req, res) => {
 });
 
 // PATCH /api/bookings/:id/payment - Update payment status
-router.patch('/:id/payment', (req, res) => {
+router.patch('/:id/payment', requireAuth, (req, res) => {
   try {
     const { paymentStatus, paymentId, refundStatus } = req.body;
     const current = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
@@ -198,7 +199,7 @@ router.patch('/:id/payment', (req, res) => {
 });
 
 // PATCH /api/bookings/:id/kyc - Verify KYC
-router.patch('/:id/kyc', (req, res) => {
+router.patch('/:id/kyc', requireAuth, (req, res) => {
   try {
     const { kycStatus = 'Verified' } = req.body;
     const current = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);

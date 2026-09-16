@@ -17,7 +17,8 @@ export const MarketplaceView = () => {
     createBooking,
     setActiveWhatsAppModal,
     legalConfig,
-    currentUser
+    currentUser,
+    openLoginModal
   } = useApp();
 
   // Filters State
@@ -95,6 +96,11 @@ export const MarketplaceView = () => {
     e.preventDefault();
     if (!bookingDrawerVehicle) return;
 
+    if (!currentUser) {
+      openLoginModal('customer');
+      return;
+    }
+
     const start = new Date(startDate);
     const end = new Date(endDate);
     const diffTime = Math.abs(end - start);
@@ -102,8 +108,8 @@ export const MarketplaceView = () => {
 
     const newBooking = createBooking({
       vehicle: bookingDrawerVehicle,
-      customerName,
-      customerPhone,
+      customerName: customerName || currentUser.name,
+      customerPhone: customerPhone || currentUser.phone,
       startDate,
       endDate,
       totalDays: diffDays
@@ -527,6 +533,18 @@ export const MarketplaceView = () => {
               <button onClick={() => setBookingDrawerVehicle(null)}>✕</button>
             </div>
             <form onSubmit={handleInitiateBooking} className="space-y-3 text-xs">
+              {!currentUser && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-amber-900 text-xs flex items-center justify-between gap-2">
+                  <span>🔒 Sign in with your phone to complete your booking.</span>
+                  <button
+                    type="button"
+                    onClick={() => openLoginModal('customer')}
+                    className="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs shrink-0 hover:bg-emerald-500 cursor-pointer"
+                  >
+                    Sign In
+                  </button>
+                </div>
+              )}
               <div>
                 <label className="block font-semibold mb-1">Your Full Name</label>
                 <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="w-full px-3 py-2 rounded-xl border" required />
@@ -535,9 +553,9 @@ export const MarketplaceView = () => {
                 <label className="block font-semibold mb-1">WhatsApp Phone Number</label>
                 <input type="text" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} className="w-full px-3 py-2 rounded-xl border" required />
               </div>
-              <button type="submit" className="w-full bg-[#25D366] text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2">
+              <button type="submit" className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer shadow-md">
                 <MessageSquare className="w-4 h-4 fill-white" />
-                <span>Launch WhatsApp Booking</span>
+                <span>{currentUser ? 'Launch WhatsApp Booking' : 'Sign In to Book on WhatsApp'}</span>
               </button>
             </form>
           </div>

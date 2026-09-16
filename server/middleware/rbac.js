@@ -1,3 +1,5 @@
+import { db } from '../db.js';
+
 // Role-Based Access Control (RBAC) Middleware
 
 export const ADMIN_PIN = process.env.ADMIN_PIN || '7777';
@@ -14,15 +16,13 @@ export function authenticateUser(req, res, next) {
 
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null;
-  const roleHeader = req.headers['x-user-role'];
   const pinHeader = req.headers['x-admin-pin'];
 
-  // Default role is customer
-  let role = 'customer';
+  let role = 'guest';
   let isAuthenticated = false;
   let sessionUser = null;
 
-  // 1. Check if token matches active session
+  // 1. Check if token matches active in-memory session or admin token
   if (token && activeSessions.has(token)) {
     const session = activeSessions.get(token);
     role = session.role;
@@ -32,28 +32,32 @@ export function authenticateUser(req, res, next) {
     role = 'admin';
     sessionUser = { id: 'admin-1', name: 'Platform Administrator', role: 'admin' };
     isAuthenticated = true;
+  } else if (token) {
+    // 2. Check SQLite sessions table
+    try {
+      const row = db.prepare('SELECT * FROM sessions WHERE token = ?').get(token);
+      if (row) {
+        const parsedUser = row.userData ? JSON.parse(row.userData) : { id: row.userId, role: row.role };
+        role = row.role;
+        sessionUser = parsedUser;
+        isAuthenticated = true;
+        activeSessions.set(token, { role, user: parsedUser });
+        if (role === 'admin') {
+          validAdminTokens.add(token);
+        }
+      }
+    } catch (err) {
+      // Ignore if session lookup fails
+    }
   } else if (pinHeader === ADMIN_PIN || pinHeader === '2026') {
     role = 'admin';
     sessionUser = { id: 'admin-1', name: 'Platform Administrator', role: 'admin' };
     isAuthenticated = true;
-  } else if (roleHeader === 'admin') {
-    // Admin requires valid token or PIN
-    return res.status(401).json({
-      error: 'Unauthorized: Admin access requires valid token or PIN'
-    });
-  } else if (roleHeader === 'owner') {
-    role = 'owner';
-    sessionUser = { id: 'owner-session', name: 'Fleet Owner', role: 'owner' };
-    isAuthenticated = true;
-  } else if (roleHeader === 'customer') {
-    role = 'customer';
-    sessionUser = { id: 'customer-session', name: 'Customer Renter', role: 'customer' };
-    isAuthenticated = true;
   }
 
   req.user = {
-    ...(sessionUser || { id: 'guest', name: 'Guest Rider', role: 'customer' }),
-    role,
+    ...(sessionUser || { id: 'guest', name: 'Guest Rider', role: 'guest' }),
+    role: isAuthenticated ? role : 'guest',
     isAuthenticated,
     token
   };
@@ -61,10 +65,19 @@ export function authenticateUser(req, res, next) {
   next();
 }
 
+export function requireAuth(req, res, next) {
+  if (!req.user || !req.user.isAuthenticated) {
+    return res.status(401).json({
+      error: 'Unauthorized: Authentication required. Please sign in before performing this action.'
+    });
+  }
+  next();
+}
+
 export function requireRole(...allowedRoles) {
   return (req, res, next) => {
-    if (!req.user || !req.user.role) {
-      return res.status(401).json({ error: 'Unauthorized: Authentication required' });
+    if (!req.user || !req.user.isAuthenticated) {
+      return res.status(401).json({ error: 'Unauthorized: Authentication required. Please sign in first.' });
     }
 
     if (!allowedRoles.includes(req.user.role)) {

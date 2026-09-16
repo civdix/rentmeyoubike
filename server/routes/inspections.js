@@ -1,5 +1,6 @@
 import express from 'express';
 import { db } from '../db.js';
+import { requireAuth } from '../middleware/rbac.js';
 
 const router = express.Router();
 
@@ -75,7 +76,7 @@ router.get('/:bookingId', (req, res) => {
 });
 
 // POST /api/inspections/:bookingId - Save pre or post inspection
-router.post('/:bookingId', (req, res) => {
+router.post('/:bookingId', requireAuth, (req, res) => {
   try {
     const { type, inspectionData } = req.body; // type: 'pre' | 'post'
     const bookingId = req.params.bookingId;

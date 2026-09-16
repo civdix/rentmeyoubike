@@ -14,7 +14,7 @@ import {
 } from '../components/CustomIcons';
 
 export const VehicleDetailView = ({ vehicle, onClose }) => {
-  const { createBooking, setActiveWhatsAppModal, legalConfig, currentUser } = useApp();
+  const { createBooking, setActiveWhatsAppModal, legalConfig, currentUser, openLoginModal } = useApp();
 
   // Guard against null/undefined vehicle
   if (!vehicle) return null;
@@ -76,10 +76,15 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
   const handleWhatsAppBooking = (e) => {
     e.preventDefault();
 
+    if (!currentUser) {
+      openLoginModal('customer');
+      return;
+    }
+
     const newBooking = createBooking({
       vehicle,
-      customerName: renterName,
-      customerPhone: renterPhone,
+      customerName: renterName || currentUser.name,
+      customerPhone: renterPhone || currentUser.phone,
       startDate,
       endDate,
       totalDays,
@@ -263,12 +268,29 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
                   </label>
                 </div>
 
+                {!currentUser && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-amber-900 text-xs flex items-center justify-between gap-2">
+                    <span>🔒 Sign in with your mobile number to book this bike.</span>
+                    <button
+                      type="button"
+                      onClick={() => openLoginModal('customer')}
+                      className="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs shrink-0 hover:bg-emerald-500 cursor-pointer"
+                    >
+                      Sign In
+                    </button>
+                  </div>
+                )}
+
                 <button
                   onClick={handleWhatsAppBooking}
-                  className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-xs py-3 rounded-xl flex items-center justify-center gap-2 shadow-md transition-transform active:scale-95"
+                  className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-xs py-3 rounded-xl flex items-center justify-center gap-2 shadow-md transition-transform active:scale-95 cursor-pointer"
                 >
                   <WhatsAppBrandIcon className="w-4.5 h-4.5 fill-white" />
-                  <span>Book on WhatsApp ({addBikeSaathi ? 'With Bike Saathi' : 'Self Ride'})</span>
+                  <span>
+                    {currentUser
+                      ? `Book on WhatsApp (${addBikeSaathi ? 'With Bike Saathi' : 'Self Ride'})`
+                      : 'Sign In to Book on WhatsApp'}
+                  </span>
                 </button>
               </div>
             </div>

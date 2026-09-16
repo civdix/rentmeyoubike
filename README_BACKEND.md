@@ -6,7 +6,13 @@ This repository contains the complete full-stack implementation for **Vrindavan 
 
 ## 🚀 Quick Start
 
-### 1. Start the Backend API Server
+### 1. Environment Configuration
+Copy the sample environment configuration:
+```bash
+cp .env.example .env
+```
+
+### 2. Start the Backend API Server
 ```bash
 npm run server
 ```
@@ -14,7 +20,7 @@ npm run server
 - **Health Check**: `http://localhost:5000/api/health`
 - **Database**: SQLite embedded at [`server/vrindavan.db`](file:///D:/com.meridhanno/server/vrindavan.db) with automatic seeding on first run.
 
-### 2. Start the Frontend Client
+### 3. Start the Frontend Client
 ```bash
 npm run dev
 ```
@@ -122,12 +128,18 @@ The platform enforces end-to-end RBAC on both the Express backend middleware ([`
 | Financial & Operations Overview (`GET /api/stats/overview`) | ❌ (403) | ❌ (403) | ✅ |
 
 ### Authentication & Token Verification
-- **Renter / Customer Login**: `POST /api/auth/customer-login` with `{ "phone": "+91 98199 44321", "name": "Amit Sharma" }`. Issues a `vr_cust_...` bearer session token and returns the customer profile.
-- **Host / Fleet Owner Login**: `POST /api/auth/owner-login` with `{ "phone": "+91 98371 44520", "name": "Radhe Shyam Sharma" }`. Issues a `vr_owner_...` bearer session token and returns the host profile.
+- **Renter / Customer Login**: `POST /api/auth/customer-login` with `{ "phone": "+91 98199 44321", "name": "Amit Sharma", "email": "amit@example.com" }`. Issues a `vr_cust_...` bearer session token and returns the customer profile.
+- **Host / Fleet Owner Login**: `POST /api/auth/owner-login` with `{ "phone": "+91 98371 44520", "name": "Radhe Shyam Sharma", "email": "radhe@example.com" }`. Issues a `vr_owner_...` bearer session token and returns the host profile.
 - **Admin Authentication**: `POST /api/auth/admin-login` with `{ "pin": "7777" }`. Returns a cryptographically unique `vr_admin_...` bearer session token.
 - **Session Profile Verification**: `GET /api/auth/me` with `Authorization: Bearer <token>`.
 - **Session Revocation**: `POST /api/auth/logout` revokes the token from the active session store.
 - **Header Injection**: Requests automatically carry `Authorization: Bearer <token>` and `x-user-role: customer | owner | admin`. Unauthorized attempts to assume admin without a valid token or PIN are rejected with `401 Unauthorized`.
+
+### 📧 Email Verification & Account Distinction (`/api/auth`)
+- `POST /api/auth/check-email`: Real-time debounced format validation and account distinction check. Returns whether the email is `available` (fresh for registration), `registered_same_role` (already exists under that role with masked phone hint, e.g. `+91 98****4321`), or `registered_other_role` (registered as host vs renter).
+- `POST /api/auth/send-email-otp`: Generates a cryptographically secure 6-digit numeric OTP (10-minute expiry) with a 60-second rate-limiting cooldown. Sends an HTML email via Nodemailer/SMTP or falls back to local console simulation in dev mode.
+- `POST /api/auth/verify-email-otp`: Verifies the submitted 6-digit code against `email_verifications` table (max 5 attempts allowed), marking `verified = 1` and synchronizing the verification flag in customer/owner accounts.
+
 
 ---
 

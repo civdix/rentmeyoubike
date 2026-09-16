@@ -3,7 +3,7 @@ import { Camera, Fuel, Gauge, CheckCircle2, ShieldCheck, Video, AlertTriangle, X
 import { useApp } from '../context/AppContext';
 
 export const DigitalInspectionModal = ({ bookingId, type = 'pre', onClose, onSuccess }) => {
-  const { bookings, inspections, saveInspection } = useApp();
+  const { bookings, inspections, saveInspection, currentUser, openLoginModal } = useApp();
   const booking = bookings.find((b) => b.id === bookingId) || bookings[0];
   const existingInspection = inspections[bookingId];
 
@@ -61,6 +61,10 @@ export const DigitalInspectionModal = ({ bookingId, type = 'pre', onClose, onSuc
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!currentUser) {
+      openLoginModal();
+      return;
+    }
     if (!customerConfirmed || !ownerConfirmed) {
       alert('Both Customer & Owner confirmations are mandatory!');
       return;

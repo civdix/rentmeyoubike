@@ -169,6 +169,9 @@ export const Header = () => {
           ) : (
             <button
               onClick={() => {
+                if (!currentUser || (currentUser.role !== 'owner' && currentUser.role !== 'admin')) {
+                  openLoginModal('owner');
+                }
                 setRole('owner');
               }}
               className="inline-flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-800 text-amber-300 hover:text-amber-200 font-bold text-xs px-3 py-2 rounded-xl border border-amber-500/30 hover:border-amber-400/60 transition-all shadow-sm active:scale-95 shrink-0 group"

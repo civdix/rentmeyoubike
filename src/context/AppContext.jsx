@@ -72,6 +72,16 @@ export const AppProvider = ({ children }) => {
     return () => window.removeEventListener('vr_navigate', handleNav);
   }, []);
 
+  // Listen for unauthorized 401 events from API
+  useEffect(() => {
+    const handleUnauthorized = (e) => {
+      console.warn('Authentication required:', e.detail?.message);
+      openLoginModal(role || 'customer');
+    };
+    window.addEventListener('vr_unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('vr_unauthorized', handleUnauthorized);
+  }, [role]);
+
   // Purge any legacy demo mock data cached in browser localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -324,6 +334,11 @@ export const AppProvider = ({ children }) => {
   };
 
   const addVehicle = (vehicleData) => {
+    if (!currentUser) {
+      openLoginModal('owner');
+      throw new Error('Host login required to list a bike.');
+    }
+
     const newId = `veh-${Date.now()}`;
     const newVeh = {
       id: newId,
@@ -354,6 +369,11 @@ export const AppProvider = ({ children }) => {
   };
 
   const verifyVehicle = (vehicleId, actionState) => {
+    if (!currentUser || currentUser.role !== 'admin') {
+      openLoginModal('admin');
+      return;
+    }
+
     let isVerified = false;
     let statusText = 'pending_approval';
     let vStatus = 'Pending';
@@ -395,6 +415,11 @@ export const AppProvider = ({ children }) => {
   };
 
   const toggleVehicleStatus = (vehicleId) => {
+    if (!currentUser) {
+      openLoginModal('owner');
+      return;
+    }
+
     setVehicles((prev) =>
       prev.map((v) =>
         v.id === vehicleId
@@ -407,6 +432,11 @@ export const AppProvider = ({ children }) => {
   };
 
   const toggleCustomerStatus = (customerId) => {
+    if (!currentUser || currentUser.role !== 'admin') {
+      openLoginModal('admin');
+      return;
+    }
+
     setCustomers((prev) =>
       prev.map((c) => (c.id === customerId ? { ...c, status: c.status === 'active' ? 'suspended' : 'active' } : c))
     );
@@ -415,6 +445,11 @@ export const AppProvider = ({ children }) => {
   };
 
   const toggleOwnerStatus = (ownerId) => {
+    if (!currentUser || currentUser.role !== 'admin') {
+      openLoginModal('admin');
+      return;
+    }
+
     setOwners((prev) =>
       prev.map((o) => (o.id === ownerId ? { ...o, status: o.status === 'active' ? 'suspended' : 'active' } : o))
     );
@@ -423,14 +458,19 @@ export const AppProvider = ({ children }) => {
   };
 
   const createBooking = (bookingInput) => {
+    if (!currentUser) {
+      openLoginModal('customer');
+      throw new Error('Please sign in before making a booking.');
+    }
+
     const refNum = `VRB-${Math.floor(1000 + Math.random() * 9000)}`;
     const newBooking = {
       id: refNum,
       vehicleId: bookingInput.vehicle.id,
       vehicleName: bookingInput.vehicle.name,
-      customerName: bookingInput.customerName,
-      customerPhone: bookingInput.customerPhone,
-      customerEmail: bookingInput.customerEmail || `${bookingInput.customerName.toLowerCase().replace(/\s+/g, '')}@example.com`,
+      customerName: bookingInput.customerName || currentUser.name || 'Customer',
+      customerPhone: bookingInput.customerPhone || currentUser.phone || '',
+      customerEmail: bookingInput.customerEmail || currentUser.email || `${(bookingInput.customerName || currentUser.name || 'customer').toLowerCase().replace(/\s+/g, '')}@example.com`,
       ownerName: bookingInput.vehicle.ownerName,
       ownerPhone: bookingInput.vehicle.ownerPhone || '+91 98371 44520',
       startDate: bookingInput.startDate,
@@ -459,6 +499,11 @@ export const AppProvider = ({ children }) => {
   };
 
   const updateBookingStatus = (bookingId, newStatus, extra = {}) => {
+    if (!currentUser) {
+      openLoginModal('customer');
+      return;
+    }
+
     setBookings((prev) =>
       prev.map((b) => (b.id === bookingId ? { ...b, status: newStatus, ...extra } : b))
     );
@@ -467,6 +512,11 @@ export const AppProvider = ({ children }) => {
   };
 
   const updatePaymentStatus = (bookingId, paymentStatus, paymentId = null, extraRefundStatus = null) => {
+    if (!currentUser) {
+      openLoginModal('customer');
+      return;
+    }
+
     setBookings((prev) =>
       prev.map((b) => {
         if (b.id === bookingId) {
@@ -489,6 +539,11 @@ export const AppProvider = ({ children }) => {
   };
 
   const saveInspection = (bookingId, type, inspectionData) => {
+    if (!currentUser) {
+      openLoginModal(role || 'customer');
+      throw new Error('Please sign in before saving an inspection.');
+    }
+
     setInspections((prev) => {
       const existing = prev[bookingId] || { bookingId, preRental: null, postRental: null };
       const updated = {
@@ -515,6 +570,10 @@ export const AppProvider = ({ children }) => {
   };
 
   const openDispute = ({ bookingId, issue, notesText, evidenceUrl }) => {
+    if (!currentUser || currentUser.role !== 'admin') {
+      openLoginModal('admin');
+      return;
+    }
     const targetBooking = bookings.find((b) => b.id === bookingId);
     const newDisp = {
       id: `DISP-${Math.floor(100 + Math.random() * 899)}`,
@@ -547,6 +606,11 @@ export const AppProvider = ({ children }) => {
   };
 
   const addDisputeNote = (disputeId, text, sender = 'Admin') => {
+    if (!currentUser || currentUser.role !== 'admin') {
+      openLoginModal('admin');
+      return;
+    }
+
     setDisputes((prev) =>
       prev.map((d) =>
         d.id === disputeId
@@ -565,6 +629,11 @@ export const AppProvider = ({ children }) => {
   };
 
   const resolveDispute = (disputeId, outcome) => {
+    if (!currentUser || currentUser.role !== 'admin') {
+      openLoginModal('admin');
+      return;
+    }
+
     setDisputes((prev) =>
       prev.map((d) => (d.id === disputeId ? { ...d, status: 'Resolved', outcome } : d))
     );
@@ -573,6 +642,11 @@ export const AppProvider = ({ children }) => {
   };
 
   const verifyKYC = (bookingId, kycData = {}) => {
+    if (!currentUser) {
+      openLoginModal('customer');
+      return;
+    }
+
     setBookings((prev) =>
       prev.map((b) => {
         if (b.id === bookingId) {
@@ -590,16 +664,30 @@ export const AppProvider = ({ children }) => {
   };
 
   const setAdminSettings = (newSettings) => {
+    if (!currentUser || currentUser.role !== 'admin') {
+      openLoginModal('admin');
+      return;
+    }
+
     setAdminSettingsState(newSettings);
     apiUpdateAdminSettings(newSettings).catch((err) => console.warn('API setAdminSettings error:', err));
   };
 
   const setLegalConfig = (newLegal) => {
+    if (!currentUser || currentUser.role !== 'admin') {
+      openLoginModal('admin');
+      return;
+    }
+
     setLegalConfigState(newLegal);
     apiUpdateLegalConfig(newLegal).catch((err) => console.warn('API setLegalConfig error:', err));
   };
 
   const resetDemoData = () => {
+    if (!currentUser || currentUser.role !== 'admin') {
+      openLoginModal('admin');
+      return;
+    }
     setVehicles(INITIAL_VEHICLES);
     setBookings(INITIAL_BOOKINGS);
     setInspections(INITIAL_INSPECTIONS);

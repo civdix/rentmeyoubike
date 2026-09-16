@@ -17,6 +17,7 @@ import {
   Building2
 } from 'lucide-react';
 import { VrindavanScooterIcon, VrindavanFeatherIcon } from './CustomIcons';
+import { EmailVerificationField } from './EmailVerificationField';
 
 export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => {
   const { setRole, setCurrentUser, refreshData } = useApp();
@@ -28,12 +29,16 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
   // Renter Form State
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerName, setCustomerName] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
+  const [isCustomerEmailVerified, setIsCustomerEmailVerified] = useState(false);
   const [customerOtp, setCustomerOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
 
   // Host Form State
   const [ownerPhone, setOwnerPhone] = useState('');
   const [ownerName, setOwnerName] = useState('');
+  const [ownerEmail, setOwnerEmail] = useState('');
+  const [isOwnerEmailVerified, setIsOwnerEmailVerified] = useState(false);
 
   // Admin Form State
   const [adminPin, setAdminPin] = useState('');
@@ -52,7 +57,8 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
     try {
       const res = await apiCustomerLogin({
         phone: customerPhone.trim(),
-        name: customerName.trim() || 'Vrindavan Yatri'
+        name: customerName.trim() || 'Vrindavan Yatri',
+        email: customerEmail.trim() || undefined
       });
 
       if (res?.success) {
@@ -70,6 +76,8 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
         id: `cust-${Date.now()}`,
         name: customerName.trim() || 'Renter',
         phone: customerPhone.trim(),
+        email: customerEmail.trim() || undefined,
+        emailVerified: isCustomerEmailVerified,
         role: 'customer',
         kycStatus: 'Verified'
       };
@@ -96,7 +104,8 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
     try {
       const res = await apiOwnerLogin({
         phone: ownerPhone.trim(),
-        name: ownerName.trim() || 'Fleet Host'
+        name: ownerName.trim() || 'Fleet Host',
+        email: ownerEmail.trim() || undefined
       });
 
       if (res?.success) {
@@ -114,6 +123,8 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
         id: `own-${Date.now()}`,
         name: ownerName.trim() || 'Fleet Host',
         phone: ownerPhone.trim(),
+        email: ownerEmail.trim() || undefined,
+        emailVerified: isOwnerEmailVerified,
         role: 'owner',
         verificationStatus: 'Verified'
       };
@@ -285,6 +296,20 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
                 </div>
               </div>
 
+              <EmailVerificationField
+                value={customerEmail}
+                onChange={setCustomerEmail}
+                role="customer"
+                isVerified={isCustomerEmailVerified}
+                onVerified={(verifiedEmail) => {
+                  setIsCustomerEmailVerified(Boolean(verifiedEmail));
+                  if (verifiedEmail) setErrorMsg('');
+                }}
+                theme="emerald"
+                required={false}
+                helperText="Live verification & booking receipts"
+              />
+
               <button
                 type="submit"
                 disabled={loading}
@@ -337,6 +362,20 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
                   />
                 </div>
               </div>
+
+              <EmailVerificationField
+                value={ownerEmail}
+                onChange={setOwnerEmail}
+                role="owner"
+                isVerified={isOwnerEmailVerified}
+                onVerified={(verifiedEmail) => {
+                  setIsOwnerEmailVerified(Boolean(verifiedEmail));
+                  if (verifiedEmail) setErrorMsg('');
+                }}
+                theme="amber"
+                required={false}
+                helperText="Live verification & payout statements"
+              />
 
               <button
                 type="submit"

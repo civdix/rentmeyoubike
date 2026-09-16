@@ -2,10 +2,11 @@ import React, { useState, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { VerifiedOwnerBadge, VerifiedVehicleBadge, BookingStatusBadge } from '../components/TrustBadges';
 import { VehiclePhotoUpload } from '../components/VehiclePhotoUpload';
+import { EmailVerificationField } from '../components/EmailVerificationField';
 import {
   PlusCircle, Upload, CheckCircle2, ShieldCheck, Clock, FileText, Bike, MapPin,
   IndianRupee, AlertCircle, Phone, User, Calendar, Camera, Check, XCircle,
-  AlertOctagon, Building2, Sparkles, ChevronRight, X, Lock, CheckSquare, Eye
+  AlertOctagon, Building2, Sparkles, ChevronRight, X, Lock, CheckSquare, Eye, LogIn
 } from 'lucide-react';
 import {
   VrindavanScooterIcon, VrindavanFeatherIcon, WhatsAppBrandIcon, HelmetsIcon,
@@ -13,7 +14,7 @@ import {
 } from '../components/CustomIcons';
 
 export const OwnerView = () => {
-  const { vehicles, bookings, addVehicle, toggleVehicleStatus, currentUser, openLoginModal } = useApp();
+  const { vehicles, bookings, addVehicle, toggleVehicleStatus, currentUser, openLoginModal, setRole, setCustomerTab } = useApp();
 
   // Navigation tab: 'my_listings' | 'add_new'
   const [activeTab, setActiveTab] = useState('my_listings');
@@ -28,6 +29,7 @@ export const OwnerView = () => {
   const [ownerName, setOwnerName] = useState(() => (currentUser?.role === 'owner' && currentUser.name) || '');
   const [ownerPhone, setOwnerPhone] = useState(() => (currentUser?.role === 'owner' && currentUser.phone) || '');
   const [ownerEmail, setOwnerEmail] = useState(() => (currentUser?.role === 'owner' && currentUser.email) || '');
+  const [ownerEmailVerified, setOwnerEmailVerified] = useState(() => Boolean(currentUser?.role === 'owner' && currentUser.emailVerified));
   const [ownerCity, setOwnerCity] = useState('Vrindavan');
   const [ownerAddress, setOwnerAddress] = useState('');
 
@@ -36,6 +38,7 @@ export const OwnerView = () => {
       if (currentUser.name && !ownerName) setOwnerName(currentUser.name);
       if (currentUser.phone && !ownerPhone) setOwnerPhone(currentUser.phone);
       if (currentUser.email && !ownerEmail) setOwnerEmail(currentUser.email);
+      if (currentUser.emailVerified) setOwnerEmailVerified(true);
     }
   }, [currentUser]);
 
@@ -115,8 +118,26 @@ export const OwnerView = () => {
   const handleFinalSubmit = (e) => {
     e.preventDefault();
 
+    if (!currentUser) {
+      openLoginModal('owner');
+      return;
+    }
+
+    if (currentUser.role !== 'owner' && currentUser.role !== 'admin') {
+      alert('You must be signed in with a Fleet Host account to list a vehicle.');
+      openLoginModal('owner');
+      return;
+    }
+
     if (!identityVerified || !panVerified) {
       alert('Please complete Identity & PAN Verification steps first!');
+      return;
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!ownerEmail || !emailRegex.test(ownerEmail.trim())) {
+      alert('A valid Host email address is required to list a vehicle. Please check Step 1.');
+      setStep(1);
       return;
     }
 
@@ -147,10 +168,10 @@ export const OwnerView = () => {
       depositAmount: 0,
       locationArea: ownerLocality,
       pickupAddress,
-      ownerId: `owner-${Date.now()}`,
-      ownerName,
-      ownerPhone,
-      ownerEmail,
+      ownerId: currentUser.id || `owner-${Date.now()}`,
+      ownerName: currentUser.name || ownerName,
+      ownerPhone: currentUser.phone || ownerPhone,
+      ownerEmail: currentUser.email || ownerEmail,
       ownerCity,
       ownerAddress,
       fuelType,
@@ -251,6 +272,68 @@ export const OwnerView = () => {
   // Calculate Owner Earnings Metrics exclusively for this owner
   const totalRevenue = myBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
   const netEarnings = Math.round(totalRevenue * 0.85);
+
+  // AUTHENTICATION GATE: Require Host or Admin login before accessing Host Portal or Listing Bikes
+  if (!currentUser || (currentUser.role !== 'owner' && currentUser.role !== 'admin')) {
+    return (
+      <div className="min-h-screen bg-slate-50 pb-16 font-sans">
+        <div className="max-w-xl mx-auto px-4 py-16 text-center space-y-6 animate-in fade-in">
+          <div className="w-16 h-16 rounded-3xl bg-amber-500/10 border border-amber-500/30 text-amber-600 mx-auto flex items-center justify-center shadow-lg">
+            <KeyHandoverIcon className="w-8 h-8 text-amber-500" />
+          </div>
+
+          <div className="space-y-2">
+            <span className="bg-amber-100 text-amber-950 font-extrabold text-[10px] uppercase px-3 py-1 rounded-full border border-amber-300">
+              Host Sign In Required
+            </span>
+            <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900">
+              Sign In to List Your Bike in Vrindavan
+            </h2>
+            <p className="text-xs text-slate-600 leading-relaxed max-w-md mx-auto">
+              {currentUser?.role === 'customer'
+                ? `You are signed in as a Renter (${currentUser.name}). To list vehicles, track earnings, and manage fleet bookings, please switch to a Fleet Host account.`
+                : 'To list your scooter or motorcycle, manage fleet availability, and receive 85% payouts, please sign in with your Host mobile number.'}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm text-left text-xs space-y-3">
+            <div className="flex items-center gap-3 text-slate-700">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span><strong>85% Direct Net Payouts:</strong> Earn up to ₹22,000/month per vehicle via daily UPI settlements.</span>
+            </div>
+            <div className="flex items-center gap-3 text-slate-700">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span><strong>Digital Inspection Protection:</strong> Photo audits protect your bike before & after every rental ride.</span>
+            </div>
+            <div className="flex items-center gap-3 text-slate-700">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span><strong>Verified Renters Only:</strong> Every pilgrim is verified with Government ID & Driving Licence.</span>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <button
+              onClick={() => openLoginModal('owner')}
+              className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-3.5 rounded-xl shadow-md transition-transform active:scale-95 text-xs flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <LogIn className="w-4 h-4 text-slate-950" />
+              <span>{currentUser?.role === 'customer' ? 'Switch to Host Account' : 'Sign In as Fleet Host'}</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setRole('customer');
+                if (setCustomerTab) setCustomerTab('browse');
+              }}
+              className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs transition-colors cursor-pointer"
+            >
+              Return to Rental Marketplace
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 pb-16 font-sans">
@@ -557,14 +640,20 @@ export const OwnerView = () => {
                       />
                     </div>
 
-                    <div>
-                      <label className="block font-bold text-slate-700 mb-1">Email Address *</label>
-                      <input
-                        type="email"
+                    <div className="sm:col-span-1">
+                      <EmailVerificationField
                         value={ownerEmail}
-                        onChange={(e) => setOwnerEmail(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-semibold"
-                        required
+                        onChange={setOwnerEmail}
+                        role="owner"
+                        isVerified={ownerEmailVerified}
+                        onVerified={(verifiedEmail) => {
+                          setOwnerEmailVerified(Boolean(verifiedEmail));
+                        }}
+                        theme="emerald"
+                        variant="light"
+                        required={true}
+                        label="Host Email Address"
+                        helperText="Live format check & OTP code"
                       />
                     </div>
                   </div>
@@ -613,7 +702,26 @@ export const OwnerView = () => {
 
                   <button
                     type="button"
-                    onClick={() => setStep(2)}
+                    onClick={() => {
+                      if (!ownerName.trim()) {
+                        alert('Please enter your full name in Step 1.');
+                        return;
+                      }
+                      if (!ownerPhone.trim()) {
+                        alert('Please enter your mobile phone number in Step 1.');
+                        return;
+                      }
+                      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                      if (!ownerEmail.trim() || !emailRegex.test(ownerEmail.trim())) {
+                        alert('Please enter a valid Host email address before proceeding.');
+                        return;
+                      }
+                      if (!ownerAddress.trim()) {
+                        alert('Please enter your residential address in Step 1.');
+                        return;
+                      }
+                      setStep(2);
+                    }}
                     className="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2"
                   >
                     <span>Proceed to Step 2: Identity Verification</span>

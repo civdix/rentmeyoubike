@@ -3,7 +3,7 @@ import { CreditCard, QrCode, CheckCircle2, XCircle, RefreshCw, IndianRupee, Shie
 import { useApp } from '../context/AppContext';
 
 export const PaymentModal = ({ bookingId, onClose, onSuccess }) => {
-  const { bookings, updatePaymentStatus } = useApp();
+  const { bookings, updatePaymentStatus, currentUser, openLoginModal } = useApp();
   const booking = bookings.find((b) => b.id === bookingId) || bookings[0];
 
   const [paymentMethod, setPaymentMethod] = useState('upi'); // upi, qr, card
@@ -11,6 +11,11 @@ export const PaymentModal = ({ bookingId, onClose, onSuccess }) => {
   const [simulateFail, setSimulateFail] = useState(false);
 
   const handleSimulatePayment = (statusToSet = 'Paid') => {
+    if (!currentUser) {
+      openLoginModal('customer');
+      return;
+    }
+
     setIsProcessing(true);
     setTimeout(() => {
       setIsProcessing(false);

@@ -26,6 +26,32 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(authenticateUser);
 
+// Enforce authentication on ALL database-mutating requests (POST, PUT, PATCH, DELETE)
+// except public authentication endpoints and health check
+app.use((req, res, next) => {
+  const publicPaths = [
+    '/api/auth/customer-login',
+    '/api/auth/owner-login',
+    '/api/auth/admin-login',
+    '/api/auth/logout',
+    '/api/auth/send-email-otp',
+    '/api/auth/verify-email-otp',
+    '/api/auth/check-email',
+    '/api/health'
+  ];
+
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+    const isPublic = publicPaths.some((p) => req.path.startsWith(p));
+    if (!isPublic && (!req.user || !req.user.isAuthenticated)) {
+      return res.status(401).json({
+        error: 'Unauthorized: You must be logged in before submitting data or modifying records.'
+      });
+    }
+  }
+
+  next();
+});
+
 // Health Check
 app.get('/api/health', (req, res) => {
   res.json({

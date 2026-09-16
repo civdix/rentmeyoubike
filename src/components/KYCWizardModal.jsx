@@ -3,7 +3,7 @@ import { ShieldCheck, FileText, CheckCircle2, Upload, AlertCircle, Lock, ArrowRi
 import { useApp } from '../context/AppContext';
 
 export const KYCWizardModal = ({ bookingId, onClose, onSuccess }) => {
-  const { bookings, verifyKYC } = useApp();
+  const { bookings, verifyKYC, currentUser, openLoginModal } = useApp();
   const booking = bookings.find((b) => b.id === bookingId);
 
   const [activeStep, setActiveStep] = useState(1); // 1: Aadhaar, 2: PAN, 3: Driving Licence
@@ -30,6 +30,12 @@ export const KYCWizardModal = ({ bookingId, onClose, onSuccess }) => {
 
   const handleSimulateKYCSubmit = (e) => {
     e.preventDefault();
+
+    if (!currentUser) {
+      openLoginModal('customer');
+      return;
+    }
+
     setIsVerifying(true);
 
     setTimeout(() => {

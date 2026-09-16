@@ -31,7 +31,11 @@ async function request(endpoint, options = {}) {
     const response = await fetch(url, config);
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      const errorMsg = errorData.error || `HTTP error! status: ${response.status}`;
+      if (response.status === 401 && typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('vr_unauthorized', { detail: { message: errorMsg, endpoint } }));
+      }
+      throw new Error(errorMsg);
     }
     return await response.json();
   } catch (err) {
@@ -275,4 +279,24 @@ export async function apiGetSession() {
   return request('/auth/me');
 }
 
+// ==================== EMAIL VERIFICATION & DISTINCTION ====================
+export async function apiCheckEmail(email, role = 'customer') {
+  return request('/auth/check-email', {
+    method: 'POST',
+    body: JSON.stringify({ email, role })
+  });
+}
 
+export async function apiSendEmailOtp(email, role = 'customer') {
+  return request('/auth/send-email-otp', {
+    method: 'POST',
+    body: JSON.stringify({ email, role })
+  });
+}
+
+export async function apiVerifyEmailOtp(email, otp) {
+  return request('/auth/verify-email-otp', {
+    method: 'POST',
+    body: JSON.stringify({ email, otp })
+  });
+}
