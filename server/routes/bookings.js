@@ -1,6 +1,7 @@
 import express from 'express';
 import { db } from '../db.js';
 import { requireAuth } from '../middleware/rbac.js';
+import { deleteSettlementImagesForBooking } from '../imagekit.js';
 
 const router = express.Router();
 
@@ -146,7 +147,7 @@ router.post('/', requireAuth, (req, res) => {
 });
 
 // PATCH /api/bookings/:id/status - Update booking lifecycle state
-router.patch('/:id/status', requireAuth, (req, res) => {
+router.patch('/:id/status', requireAuth, async (req, res) => {
   try {
     const { status, extra } = req.body;
     if (!status) {
@@ -154,6 +155,18 @@ router.patch('/:id/status', requireAuth, (req, res) => {
     }
 
     db.prepare('UPDATE bookings SET status = ? WHERE id = ?').run(status, req.params.id);
+
+    // If marked as Completed, check if settled without active disputes to purge temporary inspection photos
+    if (status === 'Completed') {
+      const activeDispute = db.prepare("SELECT id FROM disputes WHERE bookingId = ? AND status != 'Resolved'").get(req.params.id);
+      if (!activeDispute) {
+        try {
+          await deleteSettlementImagesForBooking(req.params.id);
+        } catch (purgeErr) {
+          console.warn(`Could not purge images on status completion for ${req.params.id}:`, purgeErr.message);
+        }
+      }
+    }
 
     const updated = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
     if (!updated) {

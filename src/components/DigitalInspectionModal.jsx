@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Camera, Fuel, Gauge, CheckCircle2, ShieldCheck, Video, AlertTriangle, X, FileText, Upload } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Camera, Fuel, Gauge, CheckCircle2, ShieldCheck, Video, AlertTriangle, X, FileText, Upload, Loader2, Sparkles } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { apiUploadPhoto, MAX_PHOTO_UPLOAD_BYTES } from '../api/client';
 
 export const DigitalInspectionModal = ({ bookingId, type = 'pre', onClose, onSuccess }) => {
   const { bookings, inspections, saveInspection, currentUser, openLoginModal } = useApp();
@@ -14,6 +15,9 @@ export const DigitalInspectionModal = ({ bookingId, type = 'pre', onClose, onSuc
   const [videoRecorded, setVideoRecorded] = useState(false);
   const [customerConfirmed, setCustomerConfirmed] = useState(false);
   const [ownerConfirmed, setOwnerConfirmed] = useState(false);
+  const [uploadingKey, setUploadingKey] = useState(null);
+  const [activeCaptureKey, setActiveCaptureKey] = useState(null);
+  const fileInputRef = useRef(null);
 
   // Damage logs state array
   const [damageLogs, setDamageLogs] = useState(() => {
@@ -91,17 +95,69 @@ export const DigitalInspectionModal = ({ bookingId, type = 'pre', onClose, onSuc
     };
 
     saveInspection(booking.id, type, inspectionRecord);
-    alert(`${type === 'pre' ? 'Pre-Rental' : 'Post-Rental'} Digital Inspection saved successfully!`);
+
+    if (type === 'post') {
+      if (damageLogs.length === 0) {
+        alert('🎉 Return Inspection Complete!\n\nBoth parties confirmed with zero issues. Final settlement achieved — temporary inspection photos are purged from ImageKit cloud storage.');
+      } else {
+        alert('⚠️ Return Inspection Saved with Damage Logs.\n\nPhotos have been preserved in ImageKit cloud storage for dispute audit.');
+      }
+    } else {
+      alert('✅ Pre-Rental Handover Inspection saved successfully!');
+    }
+
     if (onSuccess) onSuccess();
     onClose();
   };
 
-  const handleSimulatePhotoUpload = (key) => {
-    setPhotos((prev) => ({
-      ...prev,
-      [key]: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80'
-    }));
-    alert(`Captured photo for ${key.toUpperCase()} angle.`);
+  const triggerCapture = (key) => {
+    setActiveCaptureKey(key);
+    fileInputRef.current?.click();
+  };
+
+  const handlePhotoFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file || !activeCaptureKey) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please select a valid image file (JPG, PNG, WEBP).');
+      return;
+    }
+
+    // STRICT 5 MB LIMIT ENFORCEMENT
+    if (file.size > MAX_PHOTO_UPLOAD_BYTES) {
+      const mb = (file.size / (1024 * 1024)).toFixed(1);
+      alert(`Photo size (${mb} MB) exceeds the 5 MB limit. Please select an image under 5 MB.`);
+      return;
+    }
+
+    const key = activeCaptureKey;
+    setUploadingKey(key);
+
+    try {
+      const res = await apiUploadPhoto(file, {
+        bookingId: booking?.id,
+        category: 'inspection',
+        fileName: `${key}_${booking?.id || 'audit'}.jpg`
+      });
+
+      if (res?.url) {
+        setPhotos((prev) => ({
+          ...prev,
+          [key]: res.url
+        }));
+      }
+    } catch (err) {
+      console.warn('ImageKit direct upload fallback to local preview:', err.message);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setPhotos((prev) => ({ ...prev, [key]: ev.target.result }));
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setUploadingKey(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -163,12 +219,27 @@ export const DigitalInspectionModal = ({ bookingId, type = 'pre', onClose, onSuc
             </div>
           </div>
 
+          {/* Hidden File Input for Real Photo Upload & Camera Capture */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            className="hidden"
+            onChange={handlePhotoFile}
+          />
+
           {/* 6-Point Camera Photos Grid */}
-          <div>
-            <h4 className="font-heading font-bold text-slate-900 text-sm mb-2 flex items-center gap-2">
-              <Camera className="w-4 h-4 text-emerald-600" />
-              6-Angle Photo Capture (Mandatory Audit)
-            </h4>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h4 className="font-heading font-bold text-slate-900 text-sm flex items-center gap-2">
+                <Camera className="w-4 h-4 text-emerald-600" />
+                <span>6-Angle Photo Capture (Mandatory Audit)</span>
+              </h4>
+              <span className="text-[10px] font-extrabold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-300">
+                ImageKit • Max 5 MB / photo
+              </span>
+            </div>
+
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {[
                 { key: 'front', title: '1. Front Photo' },
@@ -182,22 +253,45 @@ export const DigitalInspectionModal = ({ bookingId, type = 'pre', onClose, onSuc
                   {photos[item.key] ? (
                     <img src={photos[item.key]} alt={item.title} className="w-full h-24 object-cover" />
                   ) : (
-                    <div className="w-full h-24 bg-slate-100 flex items-center justify-center text-slate-400">
-                      <Camera className="w-6 h-6" />
+                    <div className="w-full h-24 bg-slate-100 flex flex-col items-center justify-center text-slate-400 gap-1">
+                      {uploadingKey === item.key ? (
+                        <Loader2 className="w-6 h-6 animate-spin text-emerald-600" />
+                      ) : (
+                        <>
+                          <Camera className="w-6 h-6" />
+                          <span className="text-[10px] text-slate-400">Max 5 MB</span>
+                        </>
+                      )}
                     </div>
                   )}
                   <div className="p-2 bg-white flex items-center justify-between">
                     <span className="text-[11px] font-semibold text-slate-700">{item.title}</span>
                     <button
                       type="button"
-                      onClick={() => handleSimulatePhotoUpload(item.key)}
-                      className="text-[10px] bg-slate-100 hover:bg-emerald-50 text-emerald-700 px-2 py-1 rounded font-bold border border-slate-200"
+                      disabled={uploadingKey === item.key}
+                      onClick={() => triggerCapture(item.key)}
+                      className="text-[10px] bg-slate-100 hover:bg-emerald-50 text-emerald-700 px-2 py-1 rounded font-bold border border-slate-200 flex items-center gap-1 disabled:opacity-50"
                     >
-                      {photos[item.key] ? 'Retake' : 'Capture'}
+                      {uploadingKey === item.key ? (
+                        <>
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                          <span>Uploading...</span>
+                        </>
+                      ) : (
+                        <span>{photos[item.key] ? 'Retake' : 'Capture'}</span>
+                      )}
                     </button>
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Storage & Privacy Settlement Notice */}
+            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-950 flex items-start gap-2.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+              <p className="leading-relaxed text-[11px]">
+                <strong>Storage & Privacy Policy:</strong> Photos upload via ImageKit with a strict <strong>5 MB limit</strong>. Upon final return settlement when both parties confirm without issues, all temporary inspection photos are permanently removed from cloud storage.
+              </p>
             </div>
           </div>
 

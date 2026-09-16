@@ -1,5 +1,6 @@
 import express from 'express';
 import { db } from '../db.js';
+import { deleteSettlementImagesForBooking } from '../imagekit.js';
 import { requireRole } from '../middleware/rbac.js';
 
 const router = express.Router();
@@ -114,7 +115,7 @@ router.post('/:id/notes', (req, res) => {
 });
 
 // PATCH /api/disputes/:id/resolve - Mark dispute resolved with outcome
-router.patch('/:id/resolve', (req, res) => {
+router.patch('/:id/resolve', async (req, res) => {
   try {
     const { outcome = 'Resolved by Administrator' } = req.body;
 
@@ -124,6 +125,17 @@ router.patch('/:id/resolve', (req, res) => {
     if (!updated) {
       return res.status(404).json({ error: 'Dispute not found' });
     }
+
+    // Final settlement: mark booking completed and purge temporary dispute photos
+    if (updated.bookingId) {
+      db.prepare('UPDATE bookings SET status = "Completed" WHERE id = ?').run(updated.bookingId);
+      try {
+        await deleteSettlementImagesForBooking(updated.bookingId);
+      } catch (purgeErr) {
+        console.warn(`Could not purge images after resolving dispute for ${updated.bookingId}:`, purgeErr.message);
+      }
+    }
+
     res.json(formatDispute(updated));
   } catch (error) {
     console.error('Error resolving dispute:', error);

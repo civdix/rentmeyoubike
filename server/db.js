@@ -185,6 +185,20 @@ export function initDatabase() {
       attempts INTEGER DEFAULT 0,
       createdAt TEXT DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS uploaded_images (
+      id TEXT PRIMARY KEY,
+      fileId TEXT NOT NULL,
+      url TEXT NOT NULL,
+      thumbnailUrl TEXT,
+      bookingId TEXT,
+      vehicleId TEXT,
+      category TEXT DEFAULT 'inspection',
+      size INTEGER,
+      deleted INTEGER DEFAULT 0,
+      createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+      deletedAt TEXT
+    );
   `);
 
   // Non-destructive migrations for emailVerified status
@@ -195,6 +209,23 @@ export function initDatabase() {
   }
   try {
     db.prepare('ALTER TABLE owners ADD COLUMN emailVerified INTEGER DEFAULT 0').run();
+  } catch (e) {
+    // Column already exists
+  }
+
+  // Non-destructive migrations for image settlement tracking
+  try {
+    db.prepare('ALTER TABLE inspections ADD COLUMN imagesSettled INTEGER DEFAULT 0').run();
+  } catch (e) {
+    // Column already exists
+  }
+  try {
+    db.prepare('ALTER TABLE inspections ADD COLUMN imagesDeletedAt TEXT').run();
+  } catch (e) {
+    // Column already exists
+  }
+  try {
+    db.prepare('ALTER TABLE bookings ADD COLUMN imagesSettled INTEGER DEFAULT 0').run();
   } catch (e) {
     // Column already exists
   }

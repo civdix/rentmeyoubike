@@ -140,6 +140,14 @@ The platform enforces end-to-end RBAC on both the Express backend middleware ([`
 - `POST /api/auth/send-email-otp`: Generates a cryptographically secure 6-digit numeric OTP (10-minute expiry) with a 60-second rate-limiting cooldown. Sends an HTML email via Nodemailer/SMTP or falls back to local console simulation in dev mode.
 - `POST /api/auth/verify-email-otp`: Verifies the submitted 6-digit code against `email_verifications` table (max 5 attempts allowed), marking `verified = 1` and synchronizing the verification flag in customer/owner accounts.
 
+### 🖼️ ImageKit Cloud Storage & Settlement Purge (`/api/upload`)
+- **Strict 5 MB Limit**: All photo uploads (inspection angles, vehicle photos) enforce a strict maximum size limit of **5 MB** on both client and server (Multer memoryStorage + buffer verification). Oversized files are rejected with `400 Bad Request`.
+- `GET /api/upload/auth`: Generates authentication parameters (`token`, `expire`, `signature`) for ImageKit client-side uploads.
+- `POST /api/upload`: Uploads a photo buffer or base64 data URL to ImageKit cloud (tagged with `bookingId`, `vehicleId`, and category). Falls back to local dev storage if API keys are not provided.
+- `DELETE /api/upload/:fileId`: Deletes an individual photo from ImageKit storage.
+- **Settlement Purge Policy**: When a post-rental inspection is submitted and both parties confirm with **no damage issues / no dispute**, or when a booking is finalized and settled as `Completed`, all temporary inspection photos are permanently removed from ImageKit storage (`POST /api/upload/settlement-cleanup/:bookingId`). If damage or a dispute is reported, photos are preserved as evidence until dispute resolution.
+
+
 
 ---
 

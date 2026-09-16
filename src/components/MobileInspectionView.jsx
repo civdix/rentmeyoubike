@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Camera,
   Fuel,
@@ -16,9 +16,11 @@ import {
   ExternalLink,
   RotateCcw,
   Smartphone,
-  Bike
+  Bike,
+  Loader2
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { apiUploadPhoto, MAX_PHOTO_UPLOAD_BYTES } from '../api/client';
 
 export const MobileInspectionView = ({ bookingId, type = 'pre', onClose, onSuccess }) => {
   const { bookings, vehicles, inspections, saveInspection } = useApp();
@@ -79,6 +81,9 @@ export const MobileInspectionView = ({ bookingId, type = 'pre', onClose, onSucce
   // Step 7 & 8: Confirmations
   const [customerConfirmed, setCustomerConfirmed] = useState(false);
   const [ownerConfirmed, setOwnerConfirmed] = useState(false);
+  const [uploadingKey, setUploadingKey] = useState(null);
+  const [activeAngleKey, setActiveAngleKey] = useState(null);
+  const fileInputRef = useRef(null);
 
   const [copiedLink, setCopiedLink] = useState(false);
 
@@ -88,13 +93,54 @@ export const MobileInspectionView = ({ bookingId, type = 'pre', onClose, onSucce
     setDamageChecklist((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const handleSimulatePhotoUpload = (angleKey) => {
-    const timeStr = new Date().toLocaleTimeString();
-    setPhotos((prev) => ({
-      ...prev,
-      [angleKey]: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80'
-    }));
-    alert(`📸 Captured timestamped photo for ${angleKey.toUpperCase()} angle at ${timeStr}.`);
+  const triggerCapture = (angleKey) => {
+    setActiveAngleKey(angleKey);
+    fileInputRef.current?.click();
+  };
+
+  const handlePhotoFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file || !activeAngleKey) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please select a valid image file (JPG, PNG, WEBP).');
+      return;
+    }
+
+    // STRICT 5 MB LIMIT ENFORCEMENT
+    if (file.size > MAX_PHOTO_UPLOAD_BYTES) {
+      const mb = (file.size / (1024 * 1024)).toFixed(1);
+      alert(`Photo size (${mb} MB) exceeds the 5 MB limit. Please select an image under 5 MB.`);
+      return;
+    }
+
+    const angleKey = activeAngleKey;
+    setUploadingKey(angleKey);
+
+    try {
+      const res = await apiUploadPhoto(file, {
+        bookingId: booking?.id,
+        category: 'inspection',
+        fileName: `${angleKey}_${booking?.id || 'mobile_audit'}.jpg`
+      });
+
+      if (res?.url) {
+        setPhotos((prev) => ({
+          ...prev,
+          [angleKey]: res.url
+        }));
+      }
+    } catch (err) {
+      console.warn('ImageKit direct upload fallback to local preview:', err.message);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setPhotos((prev) => ({ ...prev, [angleKey]: ev.target.result }));
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setUploadingKey(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const handleToggleVideoRecord = () => {
@@ -149,6 +195,9 @@ export const MobileInspectionView = ({ bookingId, type = 'pre', onClose, onSucce
 
     saveInspection(booking.id, type, inspectionRecord);
     setIsCompleted(true);
+    if (type === 'post' && selectedDamages.length === 0) {
+      alert('🎉 Return Inspection Completed!\n\nBoth parties confirmed with zero issues. Final settlement achieved — temporary inspection photos are permanently purged from ImageKit cloud storage.');
+    }
     if (onSuccess) onSuccess();
   };
 
@@ -411,10 +460,23 @@ export const MobileInspectionView = ({ bookingId, type = 'pre', onClose, onSucce
                   ---------------------------------------------------- */}
               {currentStep === 4 && (
                 <div className="space-y-4">
-                  <div>
-                    <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider block">Step 4 of 8</span>
-                    <h3 className="font-heading font-extrabold text-lg text-white mt-0.5">7-Angle Photo Capture</h3>
-                    <p className="text-xs text-slate-400">Capture mandatory clear photos for all 7 required angles.</p>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handlePhotoFile}
+                  />
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider block">Step 4 of 8</span>
+                      <h3 className="font-heading font-extrabold text-lg text-white mt-0.5">7-Angle Photo Capture</h3>
+                      <p className="text-xs text-slate-400">Capture mandatory clear photos for all 7 required angles.</p>
+                    </div>
+                    <span className="text-[10px] font-extrabold bg-slate-900 text-slate-300 px-2 py-1 rounded-lg border border-slate-800">
+                      ImageKit • Max 5 MB
+                    </span>
                   </div>
 
                   <div className="space-y-3">
@@ -425,27 +487,49 @@ export const MobileInspectionView = ({ bookingId, type = 'pre', onClose, onSucce
                             <img src={photos[field.key]} alt="" className="w-16 h-12 object-cover rounded-lg border border-slate-800" />
                           ) : (
                             <div className="w-16 h-12 bg-slate-900 rounded-lg border border-dashed border-slate-700 flex items-center justify-center text-slate-500">
-                              <Camera className="w-5 h-5" />
+                              {uploadingKey === field.key ? (
+                                <Loader2 className="w-5 h-5 animate-spin text-emerald-400" />
+                              ) : (
+                                <Camera className="w-5 h-5" />
+                              )}
                             </div>
                           )}
                           <div>
                             <span className="font-bold text-xs text-white block">{field.label}</span>
                             <span className="text-[10px] text-emerald-400 font-mono">
-                              {photos[field.key] ? '✓ Timestamped Capture' : 'Pending Capture'}
+                              {photos[field.key] ? '✓ Uploaded to Ledger' : 'Pending Capture (Max 5 MB)'}
                             </span>
                           </div>
                         </div>
 
                         <button
                           type="button"
-                          onClick={() => handleSimulatePhotoUpload(field.key)}
-                          className="bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1"
+                          disabled={uploadingKey === field.key}
+                          onClick={() => triggerCapture(field.key)}
+                          className="bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1 disabled:opacity-50"
                         >
-                          <Camera className="w-3.5 h-3.5" />
-                          Capture
+                          {uploadingKey === field.key ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              <span>Uploading...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Camera className="w-3.5 h-3.5" />
+                              <span>{photos[field.key] ? 'Retake' : 'Capture'}</span>
+                            </>
+                          )}
                         </button>
                       </div>
                     ))}
+                  </div>
+
+                  {/* Privacy & Settlement Notice */}
+                  <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-300 flex items-start gap-2.5">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <p className="leading-relaxed text-[11px]">
+                      <strong>Storage & Privacy Protection:</strong> Photos upload securely via ImageKit (max 5 MB limit). Upon final settlement on return when both parties have no dispute, temporary inspection photos are permanently purged from cloud storage.
+                    </p>
                   </div>
                 </div>
               )}

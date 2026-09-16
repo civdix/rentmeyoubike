@@ -1,6 +1,7 @@
 import express from 'express';
 import { db } from '../db.js';
 import { requireAuth } from '../middleware/rbac.js';
+import { deleteSettlementImagesForBooking } from '../imagekit.js';
 
 const router = express.Router();
 
@@ -76,7 +77,7 @@ router.get('/:bookingId', (req, res) => {
 });
 
 // POST /api/inspections/:bookingId - Save pre or post inspection
-router.post('/:bookingId', requireAuth, (req, res) => {
+router.post('/:bookingId', requireAuth, async (req, res) => {
   try {
     const { type, inspectionData } = req.body; // type: 'pre' | 'post'
     const bookingId = req.params.bookingId;
@@ -126,10 +127,47 @@ router.post('/:bookingId', requireAuth, (req, res) => {
     });
 
     // Update booking flags and lifecycle status
+    let settlementResult = null;
+
     if (type === 'pre') {
-      db.prepare('UPDATE bookings SET preInspectionDone = 1, status = "Active Rental" WHERE id = ?').run(bookingId);
+      db.prepare("UPDATE bookings SET preInspectionDone = 1, status = 'Active Rental' WHERE id = ?").run(bookingId);
     } else {
-      db.prepare('UPDATE bookings SET postInspectionDone = 1, status = "Completed" WHERE id = ?').run(bookingId);
+      // POST-RENTAL RETURN INSPECTION
+      const customerConfirmed = Boolean(inspectionData.customerConfirmed);
+      const ownerConfirmed = Boolean(inspectionData.ownerConfirmed);
+      const bothConfirmed = customerConfirmed && ownerConfirmed;
+
+      // Check if either party reported damage or dispute
+      const existingDamageText = (inspectionData.existingDamage || '').trim();
+      const hasDamageIssue = Boolean(
+        inspectionData.hasDispute ||
+        (existingDamageText &&
+         existingDamageText !== 'No pre-existing exterior damage.' &&
+         existingDamageText !== 'No damage found on return.' &&
+         existingDamageText !== 'None' &&
+         existingDamageText !== 'No issues')
+      );
+
+      // Check if an open dispute already exists in the database
+      const existingDispute = db.prepare("SELECT id FROM disputes WHERE bookingId = ? AND status != 'Resolved'").get(bookingId);
+
+      if (bothConfirmed && !hasDamageIssue && !existingDispute) {
+        // FINAL SETTLEMENT: Both parties confirmed return with NO issues!
+        db.prepare("UPDATE bookings SET postInspectionDone = 1, status = 'Completed' WHERE id = ?").run(bookingId);
+        
+        // Purge temporary inspection photos from ImageKit storage to protect privacy and conserve storage
+        settlementResult = await deleteSettlementImagesForBooking(bookingId);
+      } else if (hasDamageIssue || existingDispute) {
+        // Issues reported: preserve images for evidence review
+        db.prepare("UPDATE bookings SET postInspectionDone = 1, status = 'Dispute' WHERE id = ?").run(bookingId);
+        settlementResult = {
+          settled: false,
+          imagesPurged: false,
+          reason: 'Issues or damages reported on return. Photos preserved in cloud storage for dispute resolution.'
+        };
+      } else {
+        db.prepare('UPDATE bookings SET postInspectionDone = 1 WHERE id = ?').run(bookingId);
+      }
     }
 
     // Return updated booking inspections
@@ -137,7 +175,8 @@ router.post('/:bookingId', requireAuth, (req, res) => {
     const result = {
       bookingId,
       preRental: null,
-      postRental: null
+      postRental: null,
+      settlement: settlementResult
     };
     for (const r of updatedRows) {
       if (r.type === 'pre') result.preRental = formatInspectionRow(r);

@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { initDatabase } from './db.js';
 
 import vehiclesRouter from './routes/vehicles.js';
@@ -12,7 +14,11 @@ import disputesRouter from './routes/disputes.js';
 import settingsRouter from './routes/settings.js';
 import statsRouter from './routes/stats.js';
 import authRouter from './routes/auth.js';
+import uploadRouter from './routes/upload.js';
 import { authenticateUser } from './middleware/rbac.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -24,10 +30,11 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(authenticateUser);
 
 // Enforce authentication on ALL database-mutating requests (POST, PUT, PATCH, DELETE)
-// except public authentication endpoints and health check
+// except public authentication endpoints, health check, and photo upload
 app.use((req, res, next) => {
   const publicPaths = [
     '/api/auth/customer-login',
@@ -37,6 +44,7 @@ app.use((req, res, next) => {
     '/api/auth/send-email-otp',
     '/api/auth/verify-email-otp',
     '/api/auth/check-email',
+    '/api/upload',
     '/api/health'
   ];
 
@@ -66,6 +74,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/vehicles', vehiclesRouter);
 app.use('/api/bookings', bookingsRouter);
 app.use('/api/inspections', inspectionsRouter);
+app.use('/api/upload', uploadRouter);
 app.use('/api/customers', customersRouter);
 app.use('/api/owners', ownersRouter);
 app.use('/api/disputes', disputesRouter);

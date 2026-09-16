@@ -18,13 +18,16 @@ async function request(endpoint, options = {}) {
     authHeaders['Authorization'] = `Bearer ${token}`;
   }
 
+  const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+  const contentTypeHeader = isFormData ? {} : { 'Content-Type': 'application/json' };
+
   const config = {
+    ...options,
     headers: {
-      'Content-Type': 'application/json',
+      ...contentTypeHeader,
       ...authHeaders,
       ...options.headers
-    },
-    ...options
+    }
   };
 
   try {
@@ -298,5 +301,66 @@ export async function apiVerifyEmailOtp(email, otp) {
   return request('/auth/verify-email-otp', {
     method: 'POST',
     body: JSON.stringify({ email, otp })
+  });
+}
+
+// ==================== IMAGEKIT PHOTO UPLOADS & SETTLEMENT ====================
+export const MAX_PHOTO_UPLOAD_BYTES = 5 * 1024 * 1024; // 5 MB
+
+export async function apiGetUploadAuth() {
+  return request('/upload/auth');
+}
+
+export async function apiUploadPhoto(fileOrBase64, metadata = {}) {
+  // Client-side 5 MB limit enforcement
+  if (fileOrBase64 instanceof File || fileOrBase64 instanceof Blob) {
+    if (fileOrBase64.size > MAX_PHOTO_UPLOAD_BYTES) {
+      const mb = (fileOrBase64.size / (1024 * 1024)).toFixed(1);
+      throw new Error(`Photo size exceeds 5 MB limit (${mb} MB). Please select an image under 5 MB.`);
+    }
+
+    const formData = new FormData();
+    formData.append('photo', fileOrBase64);
+    if (metadata.bookingId) formData.append('bookingId', metadata.bookingId);
+    if (metadata.vehicleId) formData.append('vehicleId', metadata.vehicleId);
+    if (metadata.category) formData.append('category', metadata.category);
+    if (metadata.fileName) formData.append('fileName', metadata.fileName);
+
+    return request('/upload', {
+      method: 'POST',
+      body: formData
+    });
+  } else if (typeof fileOrBase64 === 'string') {
+    // Base64 or Data URI string
+    const stringLength = fileOrBase64.length - (fileOrBase64.indexOf(',') + 1);
+    const approxBytes = 4 * Math.ceil(stringLength / 3) * 0.5624896334383687;
+    if (approxBytes > MAX_PHOTO_UPLOAD_BYTES) {
+      throw new Error('Photo size exceeds 5 MB limit. Please select an image under 5 MB.');
+    }
+
+    return request('/upload', {
+      method: 'POST',
+      body: JSON.stringify({
+        image: fileOrBase64,
+        fileName: metadata.fileName || 'photo.jpg',
+        bookingId: metadata.bookingId || null,
+        vehicleId: metadata.vehicleId || null,
+        category: metadata.category || 'inspection'
+      })
+    });
+  } else {
+    throw new Error('Invalid photo upload argument: must be a File, Blob, or base64 string.');
+  }
+}
+
+export async function apiDeletePhoto(fileId) {
+  return request(`/upload/${fileId}`, {
+    method: 'DELETE'
+  });
+}
+
+export async function apiCleanupBookingImages(bookingId) {
+  return request(`/upload/settlement-cleanup/${bookingId}`, {
+    method: 'POST'
   });
 }

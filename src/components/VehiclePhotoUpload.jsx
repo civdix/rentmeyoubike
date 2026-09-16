@@ -15,6 +15,7 @@ import {
   Smartphone,
   ArrowUpRight
 } from 'lucide-react';
+import { apiUploadPhoto, MAX_PHOTO_UPLOAD_BYTES } from '../api/client';
 
 // Client-side image compression using HTML5 Canvas
 export const compressImage = (file, maxWidth = 1200, maxHeight = 1200, quality = 0.85) => {
@@ -133,22 +134,42 @@ export const VehiclePhotoUpload = ({ photos = {}, onChange }) => {
       return;
     }
 
-    if (file.size > 12 * 1024 * 1024) {
-      setUploadError('File exceeds 12MB limit. Please choose a smaller photo.');
+    // STRICT 5 MB LIMIT ENFORCEMENT
+    if (file.size > MAX_PHOTO_UPLOAD_BYTES) {
+      const mb = (file.size / (1024 * 1024)).toFixed(1);
+      setUploadError(`Photo exceeds 5 MB limit (${mb} MB). Please choose a smaller photo under 5 MB.`);
       return;
     }
 
     try {
       setUploadError(null);
       setUploadingSlot(slotKey);
-      const compressedDataUrl = await compressImage(file, 1280, 1280, 0.85);
+
+      let finalUrl;
+      try {
+        // Attempt ImageKit cloud upload
+        const uploadRes = await apiUploadPhoto(file, {
+          category: 'vehicle',
+          fileName: `${slotKey}_${Date.now()}.jpg`
+        });
+        if (uploadRes?.url) {
+          finalUrl = uploadRes.url;
+        }
+      } catch (cloudErr) {
+        console.warn('ImageKit direct upload fallback to local compression:', cloudErr.message);
+      }
+
+      // Fallback to local canvas compression if cloud upload not reachable
+      if (!finalUrl) {
+        finalUrl = await compressImage(file, 1280, 1280, 0.85);
+      }
 
       onChange({
         ...photos,
-        [slotKey]: compressedDataUrl
+        [slotKey]: finalUrl
       });
     } catch (err) {
-      console.error('Photo compression error:', err);
+      console.error('Photo processing error:', err);
       setUploadError('Could not process this image. Please try another.');
     } finally {
       setUploadingSlot(null);
@@ -174,6 +195,13 @@ export const VehiclePhotoUpload = ({ photos = {}, onChange }) => {
       return;
     }
 
+    // STRICT 5 MB LIMIT ENFORCEMENT FOR BATCH
+    const oversized = fileList.filter((f) => f.size > MAX_PHOTO_UPLOAD_BYTES);
+    if (oversized.length > 0) {
+      setUploadError('One or more selected photos exceed the 5 MB limit. All photos must be under 5 MB.');
+      return;
+    }
+
     setUploadError(null);
     setUploadingSlot('batch');
 
@@ -189,8 +217,24 @@ export const VehiclePhotoUpload = ({ photos = {}, onChange }) => {
 
       for (let i = 0; i < Math.min(fileList.length, targetSlots.length); i++) {
         const slot = targetSlots[i];
-        const compressed = await compressImage(fileList[i], 1280, 1280, 0.85);
-        newPhotos[slot.key] = compressed;
+        const file = fileList[i];
+        let finalUrl;
+
+        try {
+          const uploadRes = await apiUploadPhoto(file, {
+            category: 'vehicle',
+            fileName: `${slot.key}_${Date.now()}.jpg`
+          });
+          if (uploadRes?.url) finalUrl = uploadRes.url;
+        } catch (e) {
+          // fallback
+        }
+
+        if (!finalUrl) {
+          finalUrl = await compressImage(file, 1280, 1280, 0.85);
+        }
+
+        newPhotos[slot.key] = finalUrl;
       }
 
       onChange(newPhotos);
