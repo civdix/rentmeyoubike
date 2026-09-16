@@ -9,7 +9,7 @@ import {
   Info, CheckCircle2, ChevronRight, AlertCircle, Clock, Sparkles, Heart, Compass,
   HelpCircle, ChevronDown, Check, FileText, Camera, IndianRupee, PhoneCall, Key, Award,
   Smartphone, UserCheck, RefreshCw, Lock,
-  Home
+  Home, LogIn, User
 } from 'lucide-react';
 import {
   VrindavanScooterIcon, VrindavanFeatherIcon, WhatsAppBrandIcon, HelmetsIcon,
@@ -207,6 +207,53 @@ export const CustomerView = () => {
                     <WhatsAppBrandIcon className="w-5 h-5 fill-white" />
                     <span>WhatsApp Support</span>
                   </a>
+
+                  {!currentUser ? (
+                    <button
+                      onClick={() => openLoginModal('customer')}
+                      className="bg-slate-900/90 hover:bg-slate-800 text-white font-extrabold text-sm py-3.5 px-6 rounded-xl flex items-center gap-2 border border-slate-700 shadow-md transition-transform active:scale-95"
+                    >
+                      <LogIn className="w-5 h-5 text-emerald-400" />
+                      <span>Login to Account</span>
+                    </button>
+                  ) : (
+                    <div className="bg-slate-900/80 border border-emerald-500/40 text-emerald-300 font-bold text-xs py-3 px-4 rounded-xl flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                      <span>Logged in: <strong>{currentUser.name}</strong></span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Quick Login / Account Access Bar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-slate-900/80 border border-slate-800 backdrop-blur-md rounded-2xl p-3 px-4 mb-4 text-xs text-slate-300 shadow-lg">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>
+                    {currentUser ? (
+                      <>Logged in as <strong className="text-white">{currentUser.name}</strong> ({currentUser.phone || currentUser.email}) • View your active rental bookings & inspections.</>
+                    ) : (
+                      <>Already have a booking or host account? Sign in to access your vouchers, KYC & digital handover inspection.</>
+                    )}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {currentUser ? (
+                    <button
+                      onClick={() => setActiveTab('my_bookings')}
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-sm transition-all"
+                    >
+                      View My Bookings
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => openLoginModal('customer')}
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-1.5 rounded-xl shadow-sm transition-all flex items-center gap-1.5"
+                    >
+                      <LogIn className="w-3.5 h-3.5" />
+                      <span>Login Now</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -805,11 +852,31 @@ export const CustomerView = () => {
           href={`https://wa.me/${legalConfig.supportWhatsApp.replace(/[^0-9]/g, '')}`}
           target="_blank"
           rel="noreferrer"
-          className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-[10px] py-1.5 px-3 rounded-xl flex flex-col items-center justify-center gap-0.5 shadow-sm active:scale-95 transition-transform shrink-0"
+          className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-[10px] py-1.5 px-2.5 rounded-xl flex flex-col items-center justify-center gap-0.5 shadow-sm active:scale-95 transition-transform shrink-0"
         >
           <MessageSquare className="w-4 h-4 fill-white" />
           <span>Support</span>
         </a>
+
+        {currentUser ? (
+          <button
+            onClick={() => openLoginModal(currentUser.role || 'customer')}
+            className="flex-1 py-1.5 px-1.5 rounded-xl flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold text-slate-300 hover:text-white transition-all"
+            title="Manage account"
+          >
+            <User className="w-4 h-4 text-emerald-400" />
+            <span className="truncate max-w-[48px]">{currentUser.name?.split(' ')[0] || 'Account'}</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => openLoginModal('customer')}
+            className="flex-1 py-1.5 px-1.5 rounded-xl flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold text-emerald-300 hover:text-emerald-200 bg-emerald-950/70 border border-emerald-500/50 shadow-sm transition-all active:scale-95"
+            title="Login to your account"
+          >
+            <LogIn className="w-4 h-4 text-emerald-400" />
+            <span className="font-extrabold text-emerald-400">Login</span>
+          </button>
+        )}
       </div>
 
       {/* DETAILED VEHICLE LISTING PAGE MODAL VIEW */}

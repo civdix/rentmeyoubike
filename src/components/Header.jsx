@@ -60,7 +60,7 @@ export const Header = () => {
             </span>
           </div>
 
-          <div className="flex items-center gap-4 text-[11px]">
+          <div className="flex items-center gap-3 sm:gap-4 text-[11px]">
             <a
               href={`https://wa.me/${(legalConfig?.supportWhatsApp || '+919876543210').replace(/[^0-9]/g, '')}?text=Radhe%20Radhe!%20I%20have%20an%20inquiry%20regarding%20bike%20rentals.`}
               target="_blank"
@@ -68,8 +68,41 @@ export const Header = () => {
               className="inline-flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-bold"
             >
               <WhatsAppBrandIcon className="w-3.5 h-3.5 fill-emerald-400" />
-              <span>WhatsApp Help: {legalConfig?.supportWhatsApp || '+91 98765 43210'}</span>
+              <span className="hidden sm:inline">WhatsApp Help: {legalConfig?.supportWhatsApp || '+91 98765 43210'}</span>
+              <span className="sm:hidden">WhatsApp</span>
             </a>
+
+            <span className="text-slate-700 hidden sm:inline">•</span>
+
+            {currentUser ? (
+              <div className="flex items-center gap-2">
+                <span className="text-slate-400 text-[11px]">
+                  Hi, <strong className="text-white">{currentUser.name?.split(' ')[0] || 'User'}</strong>
+                </span>
+                <button
+                  onClick={() => openLoginModal(role)}
+                  className="text-amber-400 hover:text-amber-300 font-bold underline text-[10px]"
+                >
+                  Switch Account
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => openLoginModal('customer')}
+                  className="inline-flex items-center gap-1 text-slate-200 hover:text-white font-bold"
+                >
+                  <LogIn className="w-3 h-3 text-emerald-400" />
+                  <span>Renter Login</span>
+                </button>
+                <button
+                  onClick={() => openLoginModal('owner')}
+                  className="text-amber-400 hover:text-amber-300 font-bold hidden sm:inline"
+                >
+                  Host Login
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -152,6 +185,16 @@ export const Header = () => {
               </span>
             )}
           </button>
+
+          {!currentUser && (
+            <button
+              onClick={() => openLoginModal('customer')}
+              className="px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 text-emerald-400 hover:text-white hover:bg-slate-800/50 font-bold"
+            >
+              <LogIn className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Login</span>
+            </button>
+          )}
         </nav>
 
         {/* Right Side Actions: Host CTA + Profile / Sign In */}
@@ -269,12 +312,34 @@ export const Header = () => {
                       <button
                         onClick={() => {
                           setProfileDropdownOpen(false);
-                          openLoginModal(role);
+                          openLoginModal('customer');
                         }}
                         className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2"
                       >
-                        <User className="w-3.5 h-3.5 text-slate-400" />
-                        <span>Switch Account</span>
+                        <LogIn className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Login as Renter</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setProfileDropdownOpen(false);
+                          openLoginModal('owner');
+                        }}
+                        className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2"
+                      >
+                        <KeyHandoverIcon className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Login as Fleet Host</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setProfileDropdownOpen(false);
+                          openLoginModal('admin');
+                        }}
+                        className="w-full text-left px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2"
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5 text-slate-500" />
+                        <span>Admin Login</span>
                       </button>
                     </div>
 
@@ -296,10 +361,12 @@ export const Header = () => {
             ) : (
               <button
                 onClick={() => openLoginModal('customer')}
-                className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-4 py-2 rounded-xl transition-all shadow-md active:scale-95 shrink-0"
+                className="inline-flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs px-3 sm:px-4 py-2 rounded-xl transition-all shadow-md shadow-emerald-950/40 active:scale-95 shrink-0 border border-emerald-400/40"
+                title="Login to your account"
               >
-                <LogIn className="w-3.5 h-3.5 text-white" />
-                <span>Sign In</span>
+                <LogIn className="w-4 h-4 text-white" />
+                <span className="sm:hidden">Login</span>
+                <span className="hidden sm:inline">Login / Sign In</span>
               </button>
             )}
           </div>

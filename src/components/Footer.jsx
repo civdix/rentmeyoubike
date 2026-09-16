@@ -42,8 +42,16 @@ export const Footer = () => {
               </button>
             </li>
             <li>
-              <button onClick={() => setRole('owner')} className="hover:text-white text-amber-400 font-bold transition-colors">
-                List Your Bike (Host)
+              <button
+                onClick={() => openLoginModal('customer')}
+                className="hover:text-white text-emerald-400 font-bold transition-colors"
+              >
+                Renter Login / Sign In
+              </button>
+            </li>
+            <li>
+              <button onClick={() => openLoginModal('owner')} className="hover:text-white text-amber-400 font-bold transition-colors">
+                Host Login / List Bike
               </button>
             </li>
             <li>
@@ -56,9 +64,9 @@ export const Footer = () => {
                     openLoginModal('admin');
                   }
                 }}
-                className="hover:text-white text-slate-500 hover:text-slate-300 transition-colors"
+                className="hover:text-white text-slate-400 hover:text-slate-300 transition-colors"
               >
-                Admin Console
+                Admin Console Login
               </button>
             </li>
             <li>
@@ -125,7 +133,7 @@ export const Footer = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 mt-10 pt-6 border-t border-slate-800 text-[11px] text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
-        <p>© 2026 Vrindavan Rides MVP. All rights reserved.</p>
+        <p>© 2026 Vrindavan Rides. All rights reserved.</p>
         <p className="flex items-center gap-1">
           Built for Vrindavan Pilgrims & Local Vehicle Owners
         </p>
