@@ -43,6 +43,7 @@ async function request(endpoint, options = {}) {
     const response = await fetch(url, config);
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      const errorMsg = errorData.error || errorData.message || `HTTP error! status: ${response.status}`;
       if (response.status === 401 && typeof window !== 'undefined') {
         if (!endpoint.startsWith('/auth/')) {
           window.dispatchEvent(new CustomEvent('vr_unauthorized', { detail: { message: errorMsg, endpoint } }));

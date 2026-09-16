@@ -24,12 +24,24 @@ let cachedTransporter = null;
 
 function buildTransporter(portOverride = null, secureOverride = null) {
   const host = process.env.SMTP_HOST || 'smtp.gmail.com';
-  const port = portOverride !== null ? portOverride : (Number(process.env.SMTP_PORT) || 587);
-  const secure = secureOverride !== null ? secureOverride : (process.env.SMTP_SECURE === 'true' || port === 465);
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
 
   if (!user || !pass) return null;
+
+  // Use nodemailer's official Gmail service preset for robust cloud container delivery
+  if (host.includes('gmail') || (user && user.includes('@gmail.com'))) {
+    return nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user, pass },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
+  }
+
+  const port = portOverride !== null ? portOverride : (Number(process.env.SMTP_PORT) || 465);
+  const secure = secureOverride !== null ? secureOverride : (process.env.SMTP_SECURE === 'true' || port === 465);
 
   return nodemailer.createTransport({
     host,
@@ -37,9 +49,9 @@ function buildTransporter(portOverride = null, secureOverride = null) {
     secure,
     auth: { user, pass },
     family: 4, // CRITICAL: Force IPv4 connection to prevent ENETUNREACH on IPv6-disabled networks
-    connectionTimeout: 12000,
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
+    connectionTimeout: 8000,
+    greetingTimeout: 6000,
+    socketTimeout: 10000,
     tls: {
       rejectUnauthorized: false
     }
@@ -49,12 +61,12 @@ function buildTransporter(portOverride = null, secureOverride = null) {
 function getEmailTransporter() {
   if (cachedTransporter) return cachedTransporter;
 
-  const host = process.env.SMTP_HOST;
-  const port = Number(process.env.SMTP_PORT) || 587;
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const port = Number(process.env.SMTP_PORT) || 465;
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
 
-  if (host && user && pass) {
+  if (user && pass) {
     cachedTransporter = buildTransporter();
     console.log(`📡 SMTP Email Transporter initialized (${host}:${port}, IPv4 forced)`);
   } else {

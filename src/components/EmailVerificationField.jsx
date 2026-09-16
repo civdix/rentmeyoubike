@@ -28,6 +28,7 @@ export const EmailVerificationField = ({
   const [otpSentMessage, setOtpSentMessage] = useState('');
   const [otpError, setOtpError] = useState('');
   const [cooldown, setCooldown] = useState(0);
+  const [devOtp, setDevOtp] = useState(null);
 
   const debounceTimerRef = useRef(null);
   const cooldownIntervalRef = useRef(null);
@@ -131,6 +132,8 @@ export const EmailVerificationField = ({
       setOtpSentMessage(res?.message || `Verification code sent to ${trimmed}`);
       setCooldown(60); // 60s cooldown
       if (res?.devOtp) {
+        setDevOtp(res.devOtp);
+        setOtpCode(res.devOtp);
         console.log(`[EmailVerification] OTP for ${trimmed}:`, res.devOtp);
       }
     } catch (err) {
@@ -140,9 +143,9 @@ export const EmailVerificationField = ({
     }
   };
 
-  const handleVerifyOtp = async () => {
+  const handleVerifyOtp = async (optionalCode = null) => {
     const trimmed = value.trim();
-    const code = otpCode.trim();
+    const code = (typeof optionalCode === 'string' ? optionalCode : otpCode).trim();
 
     if (!code || code.length < 6) {
       setOtpError('Please enter the full 6-digit verification code.');
@@ -158,6 +161,7 @@ export const EmailVerificationField = ({
         setShowOtpInput(false);
         setOtpCode('');
         setOtpSentMessage('');
+        setDevOtp(null);
         if (onVerified) onVerified(trimmed);
       } else {
         setOtpError(res?.error || 'Invalid OTP code. Please try again.');
@@ -354,6 +358,21 @@ export const EmailVerificationField = ({
 
           {otpSentMessage && (
             <p className="text-[11px] text-emerald-600 font-medium">{otpSentMessage}</p>
+          )}
+
+          {devOtp && (
+            <div className={`p-2 rounded-xl border flex items-center justify-between gap-2 text-[11px] animate-fadeIn ${
+              isDark ? 'bg-emerald-950/50 border-emerald-500/40 text-emerald-300' : 'bg-emerald-50 border-emerald-300 text-emerald-900 font-semibold'
+            }`}>
+              <span>Verification code: <strong className="font-mono tracking-widest font-extrabold text-white bg-slate-900 px-1.5 py-0.5 rounded">{devOtp}</strong></span>
+              <button
+                type="button"
+                onClick={() => handleVerifyOtp(devOtp)}
+                className="px-2 py-0.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] transition-colors"
+              >
+                Auto-Verify
+              </button>
+            </div>
           )}
 
           <div className="flex gap-2">
