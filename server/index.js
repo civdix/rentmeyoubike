@@ -60,7 +60,26 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health Check
+// Root Welcome & Health Check
+app.get('/', (req, res) => {
+  res.json({
+    status: 'online',
+    service: '🌸 Vrindavan Rides (Meri Dhanno) Backend API',
+    apiBase: '/api',
+    healthCheck: '/api/health',
+    endpoints: {
+      health: '/api/health',
+      vehicles: '/api/vehicles',
+      bookings: '/api/bookings',
+      inspections: '/api/inspections',
+      auth: '/api/auth',
+      upload: '/api/upload'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
+// API Health Check
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
