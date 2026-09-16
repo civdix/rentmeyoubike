@@ -19,6 +19,12 @@ export function normalizeEmail(email) {
   return email.trim().toLowerCase();
 }
 
+// Strict DNS lookup that exclusively forces IPv4 address resolution (family 4)
+// This guarantees that Node.js will never attempt to connect to an IPv6 address (like 2404:6800:4003:...)
+const ipv4Lookup = (hostname, options, callback) => {
+  return dns.lookup(hostname, { family: 4 }, callback);
+};
+
 // Create Nodemailer Transporter with strict IPv4 and robust cloud configuration
 let cachedTransporter = null;
 
@@ -29,17 +35,6 @@ function buildTransporter(portOverride = null, secureOverride = null) {
 
   if (!user || !pass) return null;
 
-  // Use nodemailer's official Gmail service preset for robust cloud container delivery
-  if (host.includes('gmail') || (user && user.includes('@gmail.com'))) {
-    return nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user, pass },
-      tls: {
-        rejectUnauthorized: false
-      }
-    });
-  }
-
   const port = portOverride !== null ? portOverride : (Number(process.env.SMTP_PORT) || 465);
   const secure = secureOverride !== null ? secureOverride : (process.env.SMTP_SECURE === 'true' || port === 465);
 
@@ -48,7 +43,8 @@ function buildTransporter(portOverride = null, secureOverride = null) {
     port,
     secure,
     auth: { user, pass },
-    family: 4, // CRITICAL: Force IPv4 connection to prevent ENETUNREACH on IPv6-disabled networks
+    lookup: ipv4Lookup, // CRITICAL: Strictly forces IPv4 at socket layer, eliminating ENETUNREACH
+    family: 4,
     connectionTimeout: 8000,
     greetingTimeout: 6000,
     socketTimeout: 10000,
@@ -146,14 +142,14 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
       console.log(`✉️ Email OTP sent successfully to ${normalized} (Message ID: ${info.messageId})`);
       return { success: true, messageId: info.messageId };
     } catch (err) {
-      console.warn(`⚠️ Primary SMTP attempt failed for ${normalized} (${err.message}). Retrying via alternative SSL port (465, IPv4)...`);
+      console.warn(`⚠️ Primary SMTP attempt failed for ${normalized} (${err.message}). Retrying via alternative port (587, IPv4)...`);
 
-      // Fallback: If port 587 or default failed, try direct SSL port 465 with IPv4
+      // Fallback: If port 465 or default failed, try port 587 with IPv4
       try {
-        const fallbackTransporter = buildTransporter(465, true);
+        const fallbackTransporter = buildTransporter(587, false);
         if (fallbackTransporter) {
           const fallbackInfo = await fallbackTransporter.sendMail(mailOptions);
-          console.log(`✉️ Email OTP sent successfully via fallback SSL port 465 to ${normalized} (Message ID: ${fallbackInfo.messageId})`);
+          console.log(`✉️ Email OTP sent successfully via fallback port 587 to ${normalized} (Message ID: ${fallbackInfo.messageId})`);
           cachedTransporter = fallbackTransporter;
           return { success: true, messageId: fallbackInfo.messageId };
         }
