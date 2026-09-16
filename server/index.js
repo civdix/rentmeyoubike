@@ -2,8 +2,14 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import dns from 'node:dns';
 import { fileURLToPath } from 'url';
 import { initDatabase } from './db.js';
+
+// Prioritize IPv4 DNS lookups to eliminate ENETUNREACH errors on cloud hosts/containers without IPv6 routing
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder('ipv4first');
+}
 
 import vehiclesRouter from './routes/vehicles.js';
 import bookingsRouter from './routes/bookings.js';

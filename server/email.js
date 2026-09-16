@@ -1,4 +1,10 @@
 import nodemailer from 'nodemailer';
+import dns from 'node:dns';
+
+// Strict preference for IPv4 to eliminate ENETUNREACH on cloud containers and hosts without IPv6 routing
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder('ipv4first');
+}
 
 // Strict email regex validation
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -13,26 +19,44 @@ export function normalizeEmail(email) {
   return email.trim().toLowerCase();
 }
 
-// Create Nodemailer Transporter with SMTP or fallback
+// Create Nodemailer Transporter with strict IPv4 and robust cloud configuration
 let cachedTransporter = null;
+
+function buildTransporter(portOverride = null, secureOverride = null) {
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const port = portOverride !== null ? portOverride : (Number(process.env.SMTP_PORT) || 587);
+  const secure = secureOverride !== null ? secureOverride : (process.env.SMTP_SECURE === 'true' || port === 465);
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+
+  if (!user || !pass) return null;
+
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    auth: { user, pass },
+    family: 4, // CRITICAL: Force IPv4 connection to prevent ENETUNREACH on IPv6-disabled networks
+    connectionTimeout: 12000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
+    tls: {
+      rejectUnauthorized: false
+    }
+  });
+}
 
 function getEmailTransporter() {
   if (cachedTransporter) return cachedTransporter;
 
   const host = process.env.SMTP_HOST;
   const port = Number(process.env.SMTP_PORT) || 587;
-  const secure = process.env.SMTP_SECURE === 'true' || port === 465;
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
 
   if (host && user && pass) {
-    cachedTransporter = nodemailer.createTransport({
-      host,
-      port,
-      secure,
-      auth: { user, pass }
-    });
-    console.log(`📡 SMTP Email Transporter initialized (${host}:${port})`);
+    cachedTransporter = buildTransporter();
+    console.log(`📡 SMTP Email Transporter initialized (${host}:${port}, IPv4 forced)`);
   } else {
     cachedTransporter = null;
   }
@@ -61,7 +85,7 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
         .instructions { font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 24px; }
         .otp-box { background: #ecfdf5; border: 2px dashed #059669; border-radius: 16px; padding: 18px 24px; display: inline-block; margin: 0 auto 24px; }
         .otp-code { font-family: 'Courier New', Courier, monospace; font-size: 36px; font-weight: 900; letter-spacing: 8px; color: #065f46; margin: 0; }
-        .badge { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; background: #fef3c7; color: #92400e; padding: 4px 12px; rounded: 9999px; border-radius: 20px; margin-bottom: 16px; }
+        .badge { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 20px; margin-bottom: 16px; }
         .note { font-size: 12px; color: #64748b; margin-top: 16px; line-height: 1.5; }
         .footer { background: #f1f5f9; padding: 16px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; }
       </style>
@@ -94,27 +118,40 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
     </html>
   `;
 
-  const transporter = getEmailTransporter();
+  const mailOptions = {
+    from: senderFrom,
+    to: normalized,
+    subject: `🌸 ${otp} is your Vrindavan Rides Verification Code`,
+    text: `Radhe Radhe! Your verification code for Vrindavan Rides is: ${otp}. It expires in 10 minutes.`,
+    html: htmlContent
+  };
 
-  if (transporter) {
+  const primaryTransporter = getEmailTransporter();
+
+  if (primaryTransporter) {
     try {
-      const info = await transporter.sendMail({
-        from: senderFrom,
-        to: normalized,
-        subject: `🌸 ${otp} is your Vrindavan Rides Verification Code`,
-        text: `Radhe Radhe! Your verification code for Vrindavan Rides is: ${otp}. It expires in 10 minutes.`,
-        html: htmlContent
-      });
-
+      const info = await primaryTransporter.sendMail(mailOptions);
       console.log(`✉️ Email OTP sent successfully to ${normalized} (Message ID: ${info.messageId})`);
       return { success: true, messageId: info.messageId };
     } catch (err) {
-      console.error(`⚠️ Failed to deliver SMTP email to ${normalized}:`, err.message);
-      // Fall through to simulated development fallback so the flow is not disrupted
+      console.warn(`⚠️ Primary SMTP attempt failed for ${normalized} (${err.message}). Retrying via alternative SSL port (465, IPv4)...`);
+
+      // Fallback: If port 587 or default failed, try direct SSL port 465 with IPv4
+      try {
+        const fallbackTransporter = buildTransporter(465, true);
+        if (fallbackTransporter) {
+          const fallbackInfo = await fallbackTransporter.sendMail(mailOptions);
+          console.log(`✉️ Email OTP sent successfully via fallback SSL port 465 to ${normalized} (Message ID: ${fallbackInfo.messageId})`);
+          cachedTransporter = fallbackTransporter;
+          return { success: true, messageId: fallbackInfo.messageId };
+        }
+      } catch (fallbackErr) {
+        console.error(`⚠️ Fallback SMTP delivery also failed for ${normalized}:`, fallbackErr.message);
+      }
     }
   }
 
-  // Fallback in development or if SMTP is not yet configured
+  // Development simulation log if SMTP is not configured or network blocked
   console.log('---------------------------------------------------------');
   console.log(`📧 [EMAIL OTP DISPATCH SIMULATOR]`);
   console.log(`Recipient: ${normalized} (${roleLabel})`);
