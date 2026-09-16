@@ -87,28 +87,9 @@ export const Header = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => openLoginModal('customer', 'login')}
-                  className="inline-flex items-center gap-1 text-slate-200 hover:text-white font-bold"
-                >
-                  <LogIn className="w-3 h-3 text-emerald-400" />
-                  <span>Log In</span>
-                </button>
-                <button
-                  onClick={() => openLoginModal('customer', 'signup')}
-                  className="inline-flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-bold"
-                >
-                  <UserPlus className="w-3 h-3" />
-                  <span>Sign Up</span>
-                </button>
-                <button
-                  onClick={() => openLoginModal('owner', 'login')}
-                  className="text-amber-400 hover:text-amber-300 font-bold hidden sm:inline"
-                >
-                  Host Portal
-                </button>
-              </div>
+              <span className="text-slate-400 text-[11px] hidden sm:inline">
+                Verified Pilgrims & Fleet Host Marketplace
+              </span>
             )}
           </div>
         </div>
@@ -192,25 +173,6 @@ export const Header = () => {
               </span>
             )}
           </button>
-
-          {!currentUser && (
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => openLoginModal('customer', 'login')}
-                className="px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1 text-slate-300 hover:text-white hover:bg-slate-800/60 font-bold"
-              >
-                <LogIn className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Log In</span>
-              </button>
-              <button
-                onClick={() => openLoginModal('customer', 'signup')}
-                className="px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/40 font-bold"
-              >
-                <UserPlus className="w-3.5 h-3.5" />
-                <span>Sign Up</span>
-              </button>
-            </div>
-          )}
         </nav>
 
         {/* Right Side Actions: Host CTA + Profile / Sign In */}
@@ -375,24 +337,14 @@ export const Header = () => {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => openLoginModal('customer', 'login')}
-                  className="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white font-bold text-xs px-2.5 sm:px-3 py-2 rounded-xl transition-all border border-slate-700 shadow-sm active:scale-95 shrink-0"
-                  title="Log in to your existing account"
-                >
-                  <LogIn className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Log In</span>
-                </button>
-                <button
-                  onClick={() => openLoginModal('customer', 'signup')}
-                  className="inline-flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs px-2.5 sm:px-3.5 py-2 rounded-xl transition-all shadow-md shadow-emerald-950/40 active:scale-95 shrink-0 border border-emerald-400/40"
-                  title="Create a new account"
-                >
-                  <UserPlus className="w-3.5 h-3.5 text-white" />
-                  <span>Sign Up</span>
-                </button>
-              </div>
+              <button
+                onClick={() => openLoginModal('customer', 'login')}
+                className="inline-flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs px-3.5 sm:px-4 py-2 rounded-xl transition-all shadow-md shadow-emerald-950/40 active:scale-95 shrink-0 border border-emerald-400/40"
+                title="Log In or Sign Up"
+              >
+                <LogIn className="w-3.5 h-3.5 text-white" />
+                <span>Log In / Sign Up</span>
+              </button>
             )}
           </div>
         </div>
