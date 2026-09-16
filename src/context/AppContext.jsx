@@ -57,6 +57,7 @@ export const AppProvider = ({ children }) => {
   // Login Modal State
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [loginRoleTarget, setLoginRoleTarget] = useState('customer');
+  const [loginModalMode, setLoginModalMode] = useState('login'); // 'login' | 'signup'
 
   // Active Customer Tab: 'home' | 'browse' | 'my_bookings'
   const [customerTab, setCustomerTab] = useState('home');
@@ -304,8 +305,9 @@ export const AppProvider = ({ children }) => {
   }, [currentUser]);
 
   // Auth & RBAC Actions
-  const openLoginModal = (targetRole = 'customer') => {
+  const openLoginModal = (targetRole = 'customer', mode = 'login') => {
     setLoginRoleTarget(targetRole);
+    setLoginModalMode(mode);
     setIsLoginModalOpen(true);
   };
 
@@ -769,6 +771,8 @@ export const AppProvider = ({ children }) => {
         isLoginModalOpen,
         setIsLoginModalOpen,
         loginRoleTarget,
+        loginModalMode,
+        setLoginModalMode,
         openLoginModal,
         closeLoginModal,
         logoutUser,

@@ -43,9 +43,10 @@ async function request(endpoint, options = {}) {
     const response = await fetch(url, config);
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMsg = errorData.error || `HTTP error! status: ${response.status}`;
       if (response.status === 401 && typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('vr_unauthorized', { detail: { message: errorMsg, endpoint } }));
+        if (!endpoint.startsWith('/auth/')) {
+          window.dispatchEvent(new CustomEvent('vr_unauthorized', { detail: { message: errorMsg, endpoint } }));
+        }
       }
       throw new Error(errorMsg);
     }
@@ -233,6 +234,33 @@ export async function apiFetchOverviewStats() {
 }
 
 // ==================== AUTH / RBAC ====================
+export async function apiLogin({ identifier, password, role = 'customer' }) {
+  const res = await request('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ identifier, password, role })
+  });
+  if (res?.token && typeof window !== 'undefined') {
+    localStorage.setItem('vr_token', res.token);
+    localStorage.setItem('vr_role', res.role || role);
+    if (res.role === 'admin') localStorage.setItem('vr_admin_token', res.token);
+    if (res.user) localStorage.setItem('vr_user', JSON.stringify(res.user));
+  }
+  return res;
+}
+
+export async function apiRegister({ name, phone, email, password, role = 'customer' }) {
+  const res = await request('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ name, phone, email, password, role })
+  });
+  if (res?.token && typeof window !== 'undefined') {
+    localStorage.setItem('vr_token', res.token);
+    localStorage.setItem('vr_role', res.role || role);
+    if (res.user) localStorage.setItem('vr_user', JSON.stringify(res.user));
+  }
+  return res;
+}
+
 export async function apiCustomerLogin(credentials) {
   const res = await request('/auth/customer-login', {
     method: 'POST',

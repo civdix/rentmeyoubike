@@ -30,7 +30,8 @@ const MainContent = () => {
     setActiveLegalModal,
     isLoginModalOpen,
     closeLoginModal,
-    loginRoleTarget
+    loginRoleTarget,
+    loginModalMode
   } = useApp();
 
   return (
@@ -98,6 +99,7 @@ const MainContent = () => {
       {isLoginModalOpen && (
         <LoginModal
           initialRole={loginRoleTarget}
+          initialMode={loginModalMode}
           onClose={closeLoginModal}
         />
       )}

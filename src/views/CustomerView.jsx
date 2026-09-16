@@ -9,7 +9,7 @@ import {
   Info, CheckCircle2, ChevronRight, AlertCircle, Clock, Sparkles, Heart, Compass,
   HelpCircle, ChevronDown, Check, FileText, Camera, IndianRupee, PhoneCall, Key, Award,
   Smartphone, UserCheck, RefreshCw, Lock,
-  Home, LogIn, User
+  Home, LogIn, User, UserPlus
 } from 'lucide-react';
 import {
   VrindavanScooterIcon, VrindavanFeatherIcon, WhatsAppBrandIcon, HelmetsIcon,
@@ -209,13 +209,22 @@ export const CustomerView = () => {
                   </a>
 
                   {!currentUser ? (
-                    <button
-                      onClick={() => openLoginModal('customer')}
-                      className="bg-slate-900/90 hover:bg-slate-800 text-white font-extrabold text-sm py-3.5 px-6 rounded-xl flex items-center gap-2 border border-slate-700 shadow-md transition-transform active:scale-95"
-                    >
-                      <LogIn className="w-5 h-5 text-emerald-400" />
-                      <span>Login to Account</span>
-                    </button>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        onClick={() => openLoginModal('customer', 'login')}
+                        className="bg-slate-900/90 hover:bg-slate-800 text-white font-extrabold text-sm py-3.5 px-5 rounded-xl flex items-center gap-2 border border-slate-700 shadow-md transition-transform active:scale-95"
+                      >
+                        <LogIn className="w-4 h-4 text-emerald-400" />
+                        <span>Log In</span>
+                      </button>
+                      <button
+                        onClick={() => openLoginModal('customer', 'signup')}
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm py-3.5 px-5 rounded-xl flex items-center gap-2 shadow-md transition-transform active:scale-95"
+                      >
+                        <UserPlus className="w-4 h-4" />
+                        <span>Sign Up</span>
+                      </button>
+                    </div>
                   ) : (
                     <div className="bg-slate-900/80 border border-emerald-500/40 text-emerald-300 font-bold text-xs py-3 px-4 rounded-xl flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -233,7 +242,7 @@ export const CustomerView = () => {
                     {currentUser ? (
                       <>Logged in as <strong className="text-white">{currentUser.name}</strong> ({currentUser.phone || currentUser.email}) • View your active rental bookings & inspections.</>
                     ) : (
-                      <>Already have a booking or host account? Sign in to access your vouchers, KYC & digital handover inspection.</>
+                      <>New to Vrindavan Rides or returning? Log in to access your bookings, or sign up in under 60 seconds.</>
                     )}
                   </span>
                 </div>
@@ -246,13 +255,22 @@ export const CustomerView = () => {
                       View My Bookings
                     </button>
                   ) : (
-                    <button
-                      onClick={() => openLoginModal('customer')}
-                      className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-1.5 rounded-xl shadow-sm transition-all flex items-center gap-1.5"
-                    >
-                      <LogIn className="w-3.5 h-3.5" />
-                      <span>Login Now</span>
-                    </button>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => openLoginModal('customer', 'login')}
+                        className="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-3 py-1.5 rounded-xl shadow-sm transition-all flex items-center gap-1 border border-slate-700"
+                      >
+                        <LogIn className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Log In</span>
+                      </button>
+                      <button
+                        onClick={() => openLoginModal('customer', 'signup')}
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-sm transition-all flex items-center gap-1"
+                      >
+                        <UserPlus className="w-3.5 h-3.5" />
+                        <span>Sign Up</span>
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>

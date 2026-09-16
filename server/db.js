@@ -116,6 +116,8 @@ export function initDatabase() {
       name TEXT NOT NULL,
       phone TEXT NOT NULL,
       email TEXT,
+      password TEXT,
+      emailVerified INTEGER DEFAULT 0,
       kycStatus TEXT DEFAULT 'Pending',
       bookingsCount INTEGER DEFAULT 0,
       status TEXT DEFAULT 'active',
@@ -127,6 +129,8 @@ export function initDatabase() {
       name TEXT NOT NULL,
       phone TEXT NOT NULL,
       email TEXT,
+      password TEXT,
+      emailVerified INTEGER DEFAULT 0,
       verificationStatus TEXT DEFAULT 'Pending',
       vehiclesCount INTEGER DEFAULT 0,
       earnings INTEGER DEFAULT 0,
@@ -201,7 +205,7 @@ export function initDatabase() {
     );
   `);
 
-  // Non-destructive migrations for emailVerified status
+  // Non-destructive migrations for emailVerified status and password
   try {
     db.prepare('ALTER TABLE customers ADD COLUMN emailVerified INTEGER DEFAULT 0').run();
   } catch (e) {
@@ -209,6 +213,16 @@ export function initDatabase() {
   }
   try {
     db.prepare('ALTER TABLE owners ADD COLUMN emailVerified INTEGER DEFAULT 0').run();
+  } catch (e) {
+    // Column already exists
+  }
+  try {
+    db.prepare('ALTER TABLE customers ADD COLUMN password TEXT').run();
+  } catch (e) {
+    // Column already exists
+  }
+  try {
+    db.prepare('ALTER TABLE owners ADD COLUMN password TEXT').run();
   } catch (e) {
     // Column already exists
   }

@@ -13,7 +13,8 @@ export const EmailVerificationField = ({
   theme = 'emerald', // 'emerald' | 'amber'
   variant = 'dark',  // 'dark' | 'light'
   helperText,
-  disabled = false
+  disabled = false,
+  showDistinction = false
 }) => {
   const [checking, setChecking] = useState(false);
   const [distinction, setDistinction] = useState(null); // { status, message, maskedPhone, registeredAs }
@@ -288,7 +289,7 @@ export const EmailVerificationField = ({
           </div>
         )}
 
-        {!formatError && distinction && (
+        {!formatError && distinction && showDistinction && (
           <div className="animate-fadeIn">
             {distinction.status === 'available' && (
               <div className={`flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg border ${
