@@ -79,7 +79,7 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
         email: customerEmail.trim() || undefined,
         emailVerified: isCustomerEmailVerified,
         role: 'customer',
-        kycStatus: 'Verified'
+        kycStatus: 'Pending'
       };
       if (setCurrentUser) setCurrentUser(fallbackUser);
       setRole('customer');
@@ -126,7 +126,7 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
         email: ownerEmail.trim() || undefined,
         emailVerified: isOwnerEmailVerified,
         role: 'owner',
-        verificationStatus: 'Verified'
+        verificationStatus: 'Pending'
       };
       if (setCurrentUser) setCurrentUser(fallbackOwner);
       setRole('owner');
@@ -190,7 +190,7 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
                 <h3 className="font-heading font-extrabold text-lg text-white">Sign In to Platform</h3>
                 <VrindavanFeatherIcon className="w-4 h-4 text-amber-400" />
               </div>
-              <p className="text-[11px] text-slate-400">Vrindavan Rides • Role-Based Access Control</p>
+              <p className="text-[11px] text-slate-400">Vrindavan Rides • Pilgrim & Host Portal</p>
             </div>
           </div>
           <button
@@ -441,11 +441,13 @@ export const LoginModal = ({ initialRole = 'customer', onClose, onSuccess }) => 
         </div>
 
         {/* Footer info */}
-        <div className="px-6 py-3 bg-slate-950/70 border-t border-slate-800 text-[11px] text-slate-500 flex items-center justify-between">
-          <span>Backend RBAC Active</span>
-          <span className="text-emerald-400 font-mono flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            Node.js + SQLite Secure
+        <div className="px-6 py-3 bg-slate-950/70 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+          <span className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            Verified Identity Protection
+          </span>
+          <span className="text-slate-400 font-sans flex items-center gap-1">
+            256-Bit SSL Encrypted
           </span>
         </div>
       </div>

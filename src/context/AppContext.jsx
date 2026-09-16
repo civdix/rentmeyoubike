@@ -660,6 +660,15 @@ export const AppProvider = ({ children }) => {
       })
     );
 
+    setCurrentUser((prev) => (prev ? { ...prev, kycStatus: 'Verified' } : prev));
+    setCustomers((prev) =>
+      prev.map((c) =>
+        c.phone === currentUser.phone || c.id === currentUser.id
+          ? { ...c, kycStatus: 'Verified' }
+          : c
+      )
+    );
+
     apiVerifyKYC(bookingId, kycData).catch((err) => console.warn('API verifyKYC error:', err));
   };
 

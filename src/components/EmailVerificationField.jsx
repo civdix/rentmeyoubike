@@ -27,7 +27,6 @@ export const EmailVerificationField = ({
   const [otpSentMessage, setOtpSentMessage] = useState('');
   const [otpError, setOtpError] = useState('');
   const [cooldown, setCooldown] = useState(0);
-  const [devOtpHint, setDevOtpHint] = useState('');
 
   const debounceTimerRef = useRef(null);
   const cooldownIntervalRef = useRef(null);
@@ -131,9 +130,7 @@ export const EmailVerificationField = ({
       setOtpSentMessage(res?.message || `Verification code sent to ${trimmed}`);
       setCooldown(60); // 60s cooldown
       if (res?.devOtp) {
-        setDevOtpHint(res.devOtp);
-      } else {
-        setDevOtpHint('');
+        console.log(`[EmailVerification] OTP for ${trimmed}:`, res.devOtp);
       }
     } catch (err) {
       setOtpError(err.message || 'Failed to send OTP. Please check your connection.');
@@ -160,7 +157,6 @@ export const EmailVerificationField = ({
         setShowOtpInput(false);
         setOtpCode('');
         setOtpSentMessage('');
-        setDevOtpHint('');
         if (onVerified) onVerified(trimmed);
       } else {
         setOtpError(res?.error || 'Invalid OTP code. Please try again.');
@@ -357,23 +353,6 @@ export const EmailVerificationField = ({
 
           {otpSentMessage && (
             <p className="text-[11px] text-emerald-600 font-medium">{otpSentMessage}</p>
-          )}
-
-          {devOtpHint && (
-            <div className={`p-2 rounded-xl text-[11px] flex items-center justify-between border ${
-              isDark
-                ? 'bg-amber-500/10 border-amber-500/30 text-amber-300'
-                : 'bg-amber-50 border-amber-300 text-amber-900'
-            }`}>
-              <span>Dev Simulation Code: <strong className="font-mono text-xs font-black">{devOtpHint}</strong></span>
-              <button
-                type="button"
-                onClick={() => setOtpCode(devOtpHint)}
-                className="text-[10px] text-amber-700 underline font-bold hover:text-amber-800"
-              >
-                Auto-fill
-              </button>
-            </div>
           )}
 
           <div className="flex gap-2">

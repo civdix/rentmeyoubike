@@ -331,7 +331,7 @@ export const AdminView = () => {
           <div>
             <h2 className="font-heading font-extrabold text-2xl text-white">Admin Authorization Required</h2>
             <p className="text-xs text-slate-400 mt-2">
-              Role-based access control enabled. Only authorized platform administrators can access the Vrindavan Rides MVP Admin Dashboard.
+              Authorized platform administrators only. Please authenticate with your security PIN to access the Vrindavan Rides Management Console.
             </p>
           </div>
 
