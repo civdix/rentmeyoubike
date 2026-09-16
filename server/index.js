@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+dotenv.config();
 import path from 'path';
 import dns from 'node:dns';
 import { fileURLToPath } from 'url';
@@ -25,8 +26,6 @@ import { authenticateUser } from './middleware/rbac.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-dotenv.config();
 
 // Initialize SQLite database and tables
 initDatabase();

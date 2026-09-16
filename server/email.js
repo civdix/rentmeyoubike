@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import dns from 'node:dns/promises';
 
 // Simple email regex validation
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -13,20 +14,37 @@ export function normalizeEmail(email) {
   return email.trim().toLowerCase();
 }
 
-// Simple Nodemailer Transporter using standard Gmail service
-function getTransporter() {
+let cachedTransporter = null;
+
+async function getTransporter() {
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
 
   if (!user || !pass) return null;
 
-  return nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user, pass }
-  });
-}
+  if (cachedTransporter) return cachedTransporter;
 
-const transporter = getTransporter();
+  // Resolve IPv4 directly to eliminate ENETUNREACH on cloud environments (like Render) that lack IPv6
+  let host = 'smtp.gmail.com';
+  try {
+    const [ipv4] = await dns.resolve4('smtp.gmail.com');
+    if (ipv4) host = ipv4;
+  } catch {
+    host = '142.251.10.108'; // Google SMTP IPv4 fallback
+  }
+
+  cachedTransporter = nodemailer.createTransport({
+    host,
+    port: 465,
+    secure: true,
+    auth: { user, pass },
+    tls: {
+      servername: 'smtp.gmail.com'
+    }
+  });
+
+  return cachedTransporter;
+}
 
 export async function sendEmailOtp(toEmail, otp, role = 'customer') {
   const normalized = normalizeEmail(toEmail);
@@ -49,16 +67,18 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
     `
   };
 
-  if (transporter) {
-    try {
+  try {
+    const transporter = await getTransporter();
+    if (transporter) {
       const info = await transporter.sendMail(mailOptions);
       console.log(`✉️ OTP sent to ${normalized} (Message ID: ${info.messageId})`);
       return { success: true, messageId: info.messageId, devOtp: otp };
-    } catch (err) {
-      console.error(`⚠️ SMTP error for ${normalized}:`, err.message);
+    } else {
+      console.log(`ℹ️ [DEV OTP] ${normalized} -> ${otp}`);
     }
-  } else {
-    console.log(`ℹ️ [DEV OTP] ${normalized} -> ${otp}`);
+  } catch (err) {
+    console.error(`⚠️ SMTP error for ${normalized}:`, err.message);
+    cachedTransporter = null; // Invalidate cache so next attempt refreshes
   }
 
   // Return devOtp so the user is never blocked
