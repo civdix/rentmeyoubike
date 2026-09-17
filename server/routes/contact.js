@@ -2,7 +2,7 @@ import express from 'express';
 
 const router = express.Router();
 
-// Email format regex (RFC 5322 compatible format check)
+// Email format regex (RFC 5322 compatible check)
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 /**
@@ -48,6 +48,18 @@ function formatHeaderSubject(subject) {
 }
 
 /**
+ * Formats plain text for an HTTP Header value.
+ * Collapses newlines to space and encodes non-ASCII characters safely.
+ */
+function formatHeaderText(text) {
+  if (!text || typeof text !== 'string') return '';
+  const clean = text.replace(/[\r\n]+/g, ' ').trim();
+  const hasNonAscii = /[^\x20-\x7E]/.test(clean);
+  if (!hasNonAscii) return clean;
+  return `=?UTF-8?B?${Buffer.from(clean, 'utf-8').toString('base64')}?=`;
+}
+
+/**
  * POST /api/contact
  * Handles contact form submissions and securely forwards them to the external email API.
  */
@@ -55,19 +67,7 @@ router.post('/', async (req, res) => {
   try {
     const { name, email, subject, message } = req.body || {};
 
-    // 1. Validate Visitor Name
-    if (!name || typeof name !== 'string' || !name.trim()) {
-      return res.status(400).json({ error: 'Please enter your name.' });
-    }
-    const cleanName = name.trim();
-    if (cleanName.length < 2) {
-      return res.status(400).json({ error: 'Name must be at least 2 characters long.' });
-    }
-    if (cleanName.length > 100) {
-      return res.status(400).json({ error: 'Name cannot exceed 100 characters.' });
-    }
-
-    // 2. Validate Email
+    // 1. Validation (Returns HTTP 400 on failure)
     if (!email || typeof email !== 'string' || !email.trim()) {
       return res.status(400).json({ error: 'Please enter your email address.' });
     }
@@ -76,7 +76,6 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Please enter a valid email address (e.g. name@domain.com).' });
     }
 
-    // 3. Validate Subject
     if (!subject || typeof subject !== 'string' || !subject.trim()) {
       return res.status(400).json({ error: 'Please enter a subject.' });
     }
@@ -88,7 +87,6 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Subject cannot exceed 200 characters.' });
     }
 
-    // 4. Validate Message
     if (!message || typeof message !== 'string' || !message.trim()) {
       return res.status(400).json({ error: 'Please enter your message.' });
     }
@@ -100,16 +98,29 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Message cannot exceed 5000 characters.' });
     }
 
-    // 5. Verify server-side authorization token exists
+    // Optional visitor name validation
+    const cleanName = (name && typeof name === 'string') ? name.trim() : cleanEmail.split('@')[0];
+
+    // 2. Authentication: Verify server-side EMAIL_API_TOKEN (Returns HTTP 401 if missing)
     const emailApiToken = process.env.EMAIL_API_TOKEN;
     if (!emailApiToken || !emailApiToken.trim()) {
       console.error('[ContactAPI] Missing EMAIL_API_TOKEN in server environment variables.');
-      return res.status(500).json({
-        error: 'Email service is not configured on the server (missing authorization token).'
+      return res.status(401).json({
+        error: 'Unauthorized: EMAIL_API_TOKEN is not configured on the server.'
       });
     }
 
-    // 6. Safely sanitize and escape all user-provided values before HTML embedding
+    // 3. Configure Recipient & Endpoint
+    const recipientEmail = (
+      process.env.EMAIL_API_TO ||
+      process.env.CONTACT_EMAIL_RECIPIENT ||
+      process.env.SMTP_USER ||
+      'support@vrindavanrides.in'
+    ).trim();
+
+    const targetEndpoint = process.env.EMAIL_API_ENDPOINT || 'https://shivamdixit.vercel.app/api/send-email';
+
+    // 4. Safely sanitize and build HTML body
     const safeName = escapeHtml(cleanName);
     const safeEmail = escapeHtml(cleanEmail);
     const safeSubject = escapeHtml(cleanSubject);
@@ -124,29 +135,21 @@ router.post('/', async (req, res) => {
       </head>
       <body style="margin: 0; padding: 24px; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b;">
         <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-          <!-- Header Banner -->
           <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); padding: 24px; color: #ffffff;">
             <h2 style="margin: 0; font-size: 20px; font-weight: 700;">&#127800; Vrindavan Rides &mdash; Contact Inquiry</h2>
             <p style="margin: 6px 0 0 0; font-size: 13px; opacity: 0.9;">New message submitted via website contact form</p>
           </div>
-
-          <!-- Content Body -->
           <div style="padding: 24px;">
-            <!-- Metadata Box -->
             <div style="margin-bottom: 20px; padding: 16px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #edf2f7;">
               <p style="margin: 0 0 8px 0; font-size: 14px;"><strong>From:</strong> ${safeName} &lt;<a href="mailto:${safeEmail}" style="color: #059669; text-decoration: none;">${safeEmail}</a>&gt;</p>
               <p style="margin: 0 0 8px 0; font-size: 14px;"><strong>Subject:</strong> ${safeSubject}</p>
               <p style="margin: 0; font-size: 12px; color: #64748b;"><strong>Received:</strong> ${new Date().toUTCString()}</p>
             </div>
-
-            <!-- Message Box -->
             <div style="border-left: 4px solid #059669; padding: 12px 16px; background-color: #ffffff; margin: 20px 0;">
               <h4 style="margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b;">Message Content:</h4>
               <div style="font-size: 15px; line-height: 1.6; color: #0f172a;">${safeMessageBody}</div>
             </div>
           </div>
-
-          <!-- Footer Note -->
           <div style="background-color: #f1f5f9; padding: 16px 24px; font-size: 12px; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0;">
             Reply directly to this email to contact <strong>${safeName}</strong> at 
             <a href="mailto:${safeEmail}" style="color: #059669; text-decoration: none;">${safeEmail}</a>.
@@ -156,28 +159,47 @@ router.post('/', async (req, res) => {
       </html>
     `.trim();
 
-    // 7. Prepare ByteString-safe header values
+    // 5. Prepare Headers
+    // Required headers:
+    //   Authorization: Bearer ${EMAIL_API_TOKEN}
+    //   X-Email-To: recipient@example.com
+    //   X-Email-Subject: New contact form message
+    //   X-Email-Text: Plain text message content
+    // Optional headers:
+    //   X-Email-HTML: <h2>New message</h2><p>Message content</p>
+    //   X-Email-Reply-To: visitor@example.com
     const headerSubject = formatHeaderSubject(cleanSubject);
+    const headerText = formatHeaderText(cleanMessage);
     const headerHtml = toAsciiHtml(sanitizedHtml);
 
-    // 8. Submit request server-side to external email API
-    const targetEndpoint = process.env.EMAIL_API_ENDPOINT || 'https://shivamdixit.vercel.app/api/send-email';
+    const emailHeaders = {
+      'Authorization': `Bearer ${emailApiToken.trim()}`,
+      'X-Email-To': recipientEmail,
+      'X-Email-Subject': headerSubject,
+      'X-Email-Text': headerText,
+      'X-Email-Reply-To': cleanEmail,
+      'X-Email-HTML': headerHtml
+    };
 
-    const externalResponse = await fetch(targetEndpoint, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${emailApiToken.trim()}`,
-        'X-Email-Subject': headerSubject,
-        'X-Email-HTML': headerHtml,
-        'X-Email-Reply-To': cleanEmail
-      }
-    });
+    // 6. Submit request server-side
+    let externalResponse;
+    try {
+      externalResponse = await fetch(targetEndpoint, {
+        method: 'POST',
+        headers: emailHeaders
+      });
+    } catch (networkErr) {
+      console.error('[ContactAPI] Network connection error to email service:', networkErr.message);
+      // Requirement: Handle HTTP 502 error for network / upstream failure
+      return res.status(502).json({
+        error: `Bad Gateway: Unable to connect to email API (${networkErr.message}). Please try again later.`
+      });
+    }
 
-    // 9. Handle responses per requirements:
-    // "Show a success message only when the API returns HTTP 200."
-    // "Show a useful error message for validation, unauthorized, or server errors."
+    // 7. Handle response status codes
+    // Requirement: Show success only for HTTP 200
     if (externalResponse.status === 200) {
-      console.log(`✉️ [ContactAPI] Message successfully forwarded for ${cleanEmail}`);
+      console.log(`✉️ [ContactAPI] Message successfully dispatched for ${cleanEmail}`);
       return res.status(200).json({
         success: true,
         message: 'Your message has been sent successfully. We will get back to you shortly!'
@@ -191,29 +213,32 @@ router.post('/', async (req, res) => {
       responseBodyText = '';
     }
 
+    // Requirement: Handle HTTP 400
+    if (externalResponse.status === 400) {
+      console.error('[ContactAPI] Upstream email service rejected request (400):', responseBodyText);
+      return res.status(400).json({
+        error: `Bad Request: Email service rejected the parameters (${responseBodyText || 'Invalid request'}).`
+      });
+    }
+
+    // Requirement: Handle HTTP 401
     if (externalResponse.status === 401 || externalResponse.status === 403) {
-      console.error(`[ContactAPI] External email API unauthorized (${externalResponse.status}):`, responseBodyText);
+      console.error(`[ContactAPI] Upstream email API unauthorized (${externalResponse.status}):`, responseBodyText);
       return res.status(401).json({
-        error: 'Email service authorization failed. Please check server authorization token.'
+        error: 'Unauthorized: Email service authorization failed. Please check EMAIL_API_TOKEN.'
       });
     }
 
-    if (externalResponse.status === 404) {
-      console.error(`[ContactAPI] External email endpoint not found (${externalResponse.status}):`, targetEndpoint);
-      return res.status(404).json({
-        error: 'External email service endpoint not found (HTTP 404). Please contact support.'
-      });
-    }
-
-    console.error(`[ContactAPI] External email API error status ${externalResponse.status}:`, responseBodyText);
-    return res.status(externalResponse.status >= 400 && externalResponse.status < 600 ? externalResponse.status : 502).json({
-      error: `Email delivery failed: ${responseBodyText || `External service returned HTTP ${externalResponse.status}`}`
+    // Requirement: Handle HTTP 502 (and other upstream failures)
+    console.error(`[ContactAPI] Upstream email API returned status ${externalResponse.status}:`, responseBodyText);
+    return res.status(502).json({
+      error: `Bad Gateway: Email delivery failed upstream (HTTP ${externalResponse.status}: ${responseBodyText || 'Service error'}).`
     });
 
   } catch (error) {
     console.error('[ContactAPI] Internal server error handling contact submission:', error);
-    return res.status(500).json({
-      error: `Server error while processing your request: ${error.message}`
+    return res.status(502).json({
+      error: `Bad Gateway: Server error processing email delivery (${error.message}).`
     });
   }
 });

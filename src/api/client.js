@@ -49,7 +49,10 @@ async function request(endpoint, options = {}) {
           window.dispatchEvent(new CustomEvent('vr_unauthorized', { detail: { message: errorMsg, endpoint } }));
         }
       }
-      throw new Error(errorMsg);
+      const err = new Error(errorMsg);
+      err.status = response.status;
+      err.data = errorData;
+      throw err;
     }
     return await response.json();
   } catch (err) {

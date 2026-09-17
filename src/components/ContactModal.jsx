@@ -125,10 +125,16 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
       }
     } catch (err) {
       console.error('[ContactModal] Submission failed:', err);
-      // Show useful error message for validation, unauthorized, or server errors
-      setErrorMessage(
-        err.message || 'Failed to submit contact message. Please check your internet connection or try again later.'
-      );
+      // Explicitly handle HTTP 400, 401, and 502 errors per requirements
+      let formattedError = err.message || 'Failed to send message. Please try again later.';
+      if (err.status === 400) {
+        formattedError = `Bad Request (400): ${err.message || 'Please check your inputs and try again.'}`;
+      } else if (err.status === 401) {
+        formattedError = `Unauthorized (401): ${err.message || 'Email service authentication failed. Invalid token.'}`;
+      } else if (err.status === 502) {
+        formattedError = `Gateway Error (502): ${err.message || 'Upstream email service is currently unavailable. Please try again in a few moments.'}`;
+      }
+      setErrorMessage(formattedError);
     } finally {
       setIsSubmitting(false);
     }
