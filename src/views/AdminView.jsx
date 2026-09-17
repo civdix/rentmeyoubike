@@ -916,7 +916,7 @@ export const AdminView = () => {
                     <button
                       onClick={() => verifyVehicle(veh.id, 'Verified')}
                       className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
-                        veh.status === 'active' || veh.verificationStatus === 'Verified'
+                        veh.verificationStatus === 'Verified' || Boolean(veh.vehicleVerified)
                           ? 'bg-emerald-950 text-emerald-400 border border-emerald-800 cursor-default opacity-80'
                           : 'bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold shadow-md'
                       }`}
@@ -929,7 +929,7 @@ export const AdminView = () => {
                     <button
                       onClick={() => verifyVehicle(veh.id, 'Rejected')}
                       className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
-                        veh.status === 'rejected' || veh.verificationStatus === 'Rejected'
+                        veh.verificationStatus === 'Rejected'
                           ? 'bg-rose-950 text-rose-400 border border-rose-800 cursor-default opacity-80'
                           : 'bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-800'
                       }`}

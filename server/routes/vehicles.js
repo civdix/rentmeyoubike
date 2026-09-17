@@ -181,15 +181,152 @@ router.post('/', requireRole('owner', 'admin'), async (req, res) => {
   }
 });
 
-// PATCH /api/vehicles/:id/status - Toggle active/suspended (Owner & Admin only)
-router.patch('/:id/status', requireRole('owner', 'admin'), async (req, res) => {
+// PUT /api/vehicles/:id - Edit bike details (Owner & Admin only)
+router.put('/:id', requireRole('owner', 'admin'), async (req, res) => {
   try {
-    const current = await db.prepare('SELECT status FROM vehicles WHERE id = ?').get(req.params.id);
+    const current = await db.prepare('SELECT * FROM vehicles WHERE id = ?').get(req.params.id);
     if (!current) {
       return res.status(404).json({ error: 'Vehicle not found' });
     }
 
-    const newStatus = req.body.status || (current.status === 'active' ? 'suspended' : 'active');
+    // If role is owner, enforce that they own this vehicle
+    if (req.user.role === 'owner') {
+      const isOwnerMatch = current.ownerId === req.user.id ||
+                           (current.ownerEmail && current.ownerEmail.toLowerCase() === (req.user.email || '').toLowerCase()) ||
+                           (current.ownerPhone && current.ownerPhone === req.user.phone);
+      if (!isOwnerMatch) {
+        return res.status(403).json({ error: 'Unauthorized: You can only edit your own vehicles.' });
+      }
+    }
+
+    const b = req.body;
+
+    // If registration number was modified or vehicle had 'Changes Requested', set back to Pending for review
+    const regChanged = b.registrationNumber && b.registrationNumber.toUpperCase() !== current.registrationNumber;
+    let newVerificationStatus = current.verificationStatus;
+    let newVehicleVerified = current.vehicleVerified;
+    let newStatus = current.status;
+
+    if (regChanged || current.verificationStatus === 'Changes Requested') {
+      newVerificationStatus = 'Pending';
+      newVehicleVerified = 0;
+      newStatus = 'pending_approval';
+    }
+
+    // Admin override if specified
+    if (req.user.role === 'admin' && b.verificationStatus) {
+      newVerificationStatus = b.verificationStatus;
+      newVehicleVerified = b.verificationStatus === 'Verified' ? 1 : 0;
+      if (b.status) newStatus = b.status;
+    }
+
+    const updatedData = {
+      id: req.params.id,
+      name: b.name !== undefined ? b.name : current.name,
+      type: b.type !== undefined ? b.type : current.type,
+      transmission: b.transmission !== undefined ? b.transmission : current.transmission,
+      make: b.make !== undefined ? b.make : current.make,
+      model: b.model !== undefined ? b.model : current.model,
+      variant: b.variant !== undefined ? b.variant : current.variant,
+      year: b.year !== undefined ? Number(b.year) : current.year,
+      registrationNumber: b.registrationNumber !== undefined ? b.registrationNumber.toUpperCase() : current.registrationNumber,
+      dailyRate: b.dailyRate !== undefined ? Number(b.dailyRate) : current.dailyRate,
+      hourlyRate: b.hourlyRate !== undefined ? Number(b.hourlyRate) : current.hourlyRate,
+      depositAmount: b.depositAmount !== undefined ? Number(b.depositAmount) : current.depositAmount,
+      locationArea: b.locationArea !== undefined ? b.locationArea : current.locationArea,
+      pickupAddress: b.pickupAddress !== undefined ? b.pickupAddress : current.pickupAddress,
+      fuelType: b.fuelType !== undefined ? b.fuelType : current.fuelType,
+      isEV: b.isEV !== undefined ? (b.isEV ? 1 : 0) : current.isEV,
+      evRangeKm: b.evRangeKm !== undefined ? Number(b.evRangeKm) : current.evRangeKm,
+      chargingCostIncluded: b.chargingCostIncluded !== undefined ? (b.chargingCostIncluded ? 1 : 0) : current.chargingCostIncluded,
+      nearbyChargingStations: b.nearbyChargingStations !== undefined ? b.nearbyChargingStations : current.nearbyChargingStations,
+      spareBatteryAvailable: b.spareBatteryAvailable !== undefined ? (b.spareBatteryAvailable ? 1 : 0) : current.spareBatteryAvailable,
+      odometer: b.odometer !== undefined ? Number(b.odometer) : current.odometer,
+      helmetIncluded: b.helmetIncluded !== undefined ? (b.helmetIncluded ? 1 : 0) : current.helmetIncluded,
+      helmetsProvided: b.helmetsProvided !== undefined ? Number(b.helmetsProvided) : current.helmetsProvided,
+      images: b.images !== undefined ? (typeof b.images === 'string' ? b.images : JSON.stringify(b.images)) : (typeof current.images === 'string' ? current.images : JSON.stringify(current.images || [])),
+      features: b.features !== undefined ? (typeof b.features === 'string' ? b.features : JSON.stringify(b.features)) : (typeof current.features === 'string' ? current.features : JSON.stringify(current.features || [])),
+      rentalRules: b.rentalRules !== undefined ? (typeof b.rentalRules === 'string' ? b.rentalRules : JSON.stringify(b.rentalRules)) : (typeof current.rentalRules === 'string' ? current.rentalRules : JSON.stringify(current.rentalRules || [])),
+      availability: b.availability !== undefined ? (typeof b.availability === 'string' ? b.availability : JSON.stringify(b.availability)) : (typeof current.availability === 'string' ? current.availability : JSON.stringify(current.availability || {})),
+      city: b.city !== undefined ? b.city : current.city,
+      verificationStatus: newVerificationStatus,
+      vehicleVerified: newVehicleVerified,
+      status: newStatus
+    };
+
+    await db.prepare(`
+      UPDATE vehicles SET
+        name = @name,
+        type = @type,
+        transmission = @transmission,
+        make = @make,
+        model = @model,
+        variant = @variant,
+        year = @year,
+        registrationNumber = @registrationNumber,
+        dailyRate = @dailyRate,
+        hourlyRate = @hourlyRate,
+        depositAmount = @depositAmount,
+        locationArea = @locationArea,
+        pickupAddress = @pickupAddress,
+        fuelType = @fuelType,
+        isEV = @isEV,
+        evRangeKm = @evRangeKm,
+        chargingCostIncluded = @chargingCostIncluded,
+        nearbyChargingStations = @nearbyChargingStations,
+        spareBatteryAvailable = @spareBatteryAvailable,
+        odometer = @odometer,
+        helmetIncluded = @helmetIncluded,
+        helmetsProvided = @helmetsProvided,
+        images = @images,
+        features = @features,
+        rentalRules = @rentalRules,
+        availability = @availability,
+        city = @city,
+        verificationStatus = @verificationStatus,
+        vehicleVerified = @vehicleVerified,
+        status = @status
+      WHERE id = @id
+    `).run(updatedData);
+
+    const updated = await db.prepare('SELECT * FROM vehicles WHERE id = ?').get(req.params.id);
+    res.json(formatVehicle(updated));
+  } catch (error) {
+    console.error('Error updating vehicle:', error);
+    res.status(500).json({ error: 'Failed to update vehicle details' });
+  }
+});
+
+// PATCH /api/vehicles/:id/status - Toggle active/suspended (Owner & Admin only)
+router.patch('/:id/status', requireRole('owner', 'admin'), async (req, res) => {
+  try {
+    const current = await db.prepare('SELECT * FROM vehicles WHERE id = ?').get(req.params.id);
+    if (!current) {
+      return res.status(404).json({ error: 'Vehicle not found' });
+    }
+
+    const isOwner = req.user.role === 'owner';
+    const isApproved = current.vehicleVerified === 1 || current.verificationStatus === 'Verified';
+
+    let newStatus = req.body.status;
+    if (!newStatus) {
+      if (current.status === 'active') {
+        newStatus = 'suspended';
+      } else {
+        // Owner cannot activate unapproved vehicle
+        if (isOwner && !isApproved) {
+          return res.status(403).json({
+            error: 'Cannot activate vehicle: This vehicle is awaiting Admin verification. Once approved, you can activate it.'
+          });
+        }
+        newStatus = 'active';
+      }
+    } else if (newStatus === 'active' && isOwner && !isApproved) {
+      return res.status(403).json({
+        error: 'Cannot activate vehicle: This vehicle is awaiting Admin verification. Once approved, you can activate it.'
+      });
+    }
+
     await db.prepare('UPDATE vehicles SET status = ? WHERE id = ?').run(newStatus, req.params.id);
 
     const updated = await db.prepare('SELECT * FROM vehicles WHERE id = ?').get(req.params.id);

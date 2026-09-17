@@ -82,9 +82,11 @@ export const CustomerView = () => {
     if (currentUser?.phone && !customerPhone) setCustomerPhone(currentUser.phone);
   }, [currentUser]);
 
-  // Featured 6 Bikes
+  // Featured 6 Bikes (Only Admin-Verified & Active listings)
   const featuredBikes = useMemo(() => {
-    const activeV = vehicles.filter((v) => v.status === 'active');
+    const activeV = vehicles.filter(
+      (v) => v.status === 'active' && (v.vehicleVerified || v.verificationStatus === 'Verified')
+    );
     return activeV.slice(0, 6);
   }, [vehicles]);
 
@@ -346,7 +348,7 @@ export const CustomerView = () => {
                 onClick={() => setActiveTab('browse')}
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800"
               >
-                <span>View All {vehicles.filter(v => v.status === 'active').length} Bikes</span>
+                <span>View All {vehicles.filter(v => v.status === 'active' && (v.vehicleVerified || v.verificationStatus === 'Verified')).length} Bikes</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -816,7 +818,7 @@ export const CustomerView = () => {
           }`}
         >
           <Bike className="w-4 h-4" />
-          <span>Fleet ({vehicles.filter((v) => v.status === 'active').length})</span>
+          <span>Fleet ({vehicles.filter((v) => v.status === 'active' && (v.vehicleVerified || v.verificationStatus === 'Verified')).length})</span>
         </button>
 
         <button

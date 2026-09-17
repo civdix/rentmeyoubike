@@ -57,7 +57,10 @@ export const MarketplaceView = () => {
   // Filter & Sort Logic
   const filteredAndSortedVehicles = useMemo(() => {
     let result = vehicles.filter((v) => {
+      // Must be active AND approved by Admin
       if (v.status !== 'active') return false;
+      const isApproved = v.vehicleVerified || v.verificationStatus === 'Verified';
+      if (!isApproved) return false;
 
       // Category filter
       if (categoryFilter !== 'all' && v.type !== categoryFilter) return false;

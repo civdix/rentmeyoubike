@@ -3,11 +3,12 @@ import { useApp } from '../context/AppContext';
 import { VerifiedOwnerBadge, VerifiedVehicleBadge, BookingStatusBadge } from '../components/TrustBadges';
 import { VehiclePhotoUpload } from '../components/VehiclePhotoUpload';
 import { EmailVerificationField } from '../components/EmailVerificationField';
+import { EditVehicleModal } from '../components/EditVehicleModal';
 import {
   PlusCircle, Upload, CheckCircle2, ShieldCheck, Clock, FileText, Bike, MapPin,
   IndianRupee, AlertCircle, Phone, User, Calendar, Camera, Check, XCircle,
   AlertOctagon, Building2, Sparkles, ChevronRight, X, Lock, CheckSquare, Eye, LogIn,
-  Loader2, Trash2, ArrowLeft
+  Loader2, Trash2, ArrowLeft, Edit3, AlertTriangle
 } from 'lucide-react';
 import { apiUploadPhoto, MAX_PHOTO_UPLOAD_BYTES } from '../api/client';
 import {
@@ -16,10 +17,13 @@ import {
 } from '../components/CustomIcons';
 
 export const OwnerView = () => {
-  const { vehicles, bookings, addVehicle, toggleVehicleStatus, currentUser, openLoginModal, setRole, setCustomerTab } = useApp();
+  const { vehicles, bookings, addVehicle, updateVehicle, toggleVehicleStatus, currentUser, openLoginModal, setRole, setCustomerTab } = useApp();
 
   // Navigation tab: 'my_listings' | 'add_new'
   const [activeTab, setActiveTab] = useState('my_listings');
+
+  // Edit vehicle modal state
+  const [editingVehicle, setEditingVehicle] = useState(null);
 
   // Form Step State (1 through 7)
   const [step, setStep] = useState(1);
@@ -292,42 +296,54 @@ export const OwnerView = () => {
     setActiveTab('my_listings');
   };
 
-  // Status helper renderer for Dashboard badges
-  const renderVerificationBadge = (vStatus) => {
-    switch (vStatus) {
-      case 'active':
+  // Status helper renderer for Dashboard badges (accurately checks Admin verification vs. Operational status)
+  const renderVerificationBadge = (v) => {
+    const vStatus = v?.verificationStatus || 'Pending';
+    const isApproved = v?.vehicleVerified || vStatus === 'Verified';
+    const isActive = v?.status === 'active';
+
+    if (vStatus === 'Verified' || isApproved) {
+      if (isActive) {
         return (
           <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-950 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-emerald-400 shadow-xs">
             <CheckCircle2 className="w-3 h-3 text-emerald-700" strokeWidth={2.5} />
-            Verified
+            Verified & Active
           </span>
         );
-      case 'pending_approval':
-      case 'Pending Verification':
-        return (
-          <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-950 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-amber-400 shadow-xs">
-            <Clock className="w-3 h-3 text-amber-700" strokeWidth={2.5} />
-            Pending Verification
-          </span>
-        );
-      case 'rejected':
-      case 'Rejected':
-        return (
-          <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-950 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-rose-400 shadow-xs">
-            <XCircle className="w-3 h-3 text-rose-700" strokeWidth={2.5} />
-            Rejected
-          </span>
-        );
-      case 'suspended':
-      case 'Suspended':
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-900 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-slate-400 shadow-xs">
-            <AlertOctagon className="w-3 h-3 text-slate-700" strokeWidth={2.5} />
-            Suspended
-          </span>
-        );
+      }
+      return (
+        <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-800 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-slate-300 shadow-xs">
+          <AlertOctagon className="w-3 h-3 text-slate-600" strokeWidth={2.5} />
+          Verified (Suspended)
+        </span>
+      );
     }
+
+    if (vStatus === 'Changes Requested') {
+      return (
+        <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-950 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-amber-400 shadow-xs">
+          <AlertTriangle className="w-3 h-3 text-amber-700" strokeWidth={2.5} />
+          Changes Requested
+        </span>
+      );
+    }
+
+    if (vStatus === 'Rejected') {
+      return (
+        <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-950 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-rose-400 shadow-xs">
+          <XCircle className="w-3 h-3 text-rose-700" strokeWidth={2.5} />
+          Rejected
+        </span>
+      );
+    }
+
+    // Default: Pending review
+    return (
+      <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-900 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-amber-300 shadow-xs">
+        <Clock className="w-3 h-3 text-amber-600" strokeWidth={2.5} />
+        Awaiting Admin Approval
+      </span>
+    );
   };
 
   // Filter ONLY vehicles belonging to this specific host/owner
@@ -562,7 +578,7 @@ export const OwnerView = () => {
                         <div className="flex-1 space-y-1.5">
                           <div className="flex items-start justify-between gap-2">
                             <h4 className="font-heading font-bold text-slate-900 text-sm line-clamp-1">{v.name}</h4>
-                            {renderVerificationBadge(v.status)}
+                            {renderVerificationBadge(v)}
                           </div>
 
                           <p className="text-xs text-slate-500 font-mono">Reg: {v.registrationNumber}</p>
@@ -585,17 +601,39 @@ export const OwnerView = () => {
                           <span className="font-heading font-extrabold text-base text-slate-900">₹{v.dailyRate}/day</span>
                         </div>
 
-                        <div className="flex gap-2">
+                        <div className="flex items-center gap-2">
                           <button
-                            onClick={() => toggleVehicleStatus(v.id)}
-                            className={`font-bold text-xs px-3 py-1.5 rounded-xl border transition-colors ${
-                              v.status === 'active'
-                                ? 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
-                                : 'bg-emerald-50 text-emerald-900 border-emerald-300 hover:bg-emerald-100'
-                            }`}
+                            type="button"
+                            onClick={() => setEditingVehicle(v)}
+                            className="font-bold text-xs px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition-colors flex items-center gap-1.5 shadow-2xs cursor-pointer"
                           >
-                            {v.status === 'active' ? 'Suspend Vehicle' : 'Activate Vehicle'}
+                            <Edit3 className="w-3.5 h-3.5 text-slate-500" />
+                            <span>Edit Details</span>
                           </button>
+
+                          {(v.vehicleVerified || v.verificationStatus === 'Verified') ? (
+                            <button
+                              type="button"
+                              onClick={() => toggleVehicleStatus(v.id)}
+                              className={`font-bold text-xs px-3 py-1.5 rounded-xl border transition-colors cursor-pointer ${
+                                v.status === 'active'
+                                  ? 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
+                                  : 'bg-emerald-50 text-emerald-900 border-emerald-300 hover:bg-emerald-100'
+                              }`}
+                            >
+                              {v.status === 'active' ? 'Suspend Vehicle' : 'Activate Vehicle'}
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              disabled
+                              title="Awaiting Admin Approval: Once approved by admin, you can activate or suspend this bike."
+                              className="font-bold text-xs px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed flex items-center gap-1"
+                            >
+                              <Lock className="w-3 h-3 text-slate-400" />
+                              <span>Awaiting Review</span>
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -1704,6 +1742,18 @@ export const OwnerView = () => {
           </div>
         )}
       </div>
+
+      {/* Edit Vehicle Modal */}
+      {editingVehicle && (
+        <EditVehicleModal
+          vehicle={editingVehicle}
+          isOpen={Boolean(editingVehicle)}
+          onClose={() => setEditingVehicle(null)}
+          onSave={async (payload) => {
+            await updateVehicle(editingVehicle.id, payload);
+          }}
+        />
+      )}
     </div>
   );
 };

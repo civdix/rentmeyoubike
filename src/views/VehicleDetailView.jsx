@@ -283,12 +283,12 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
 
                 <button
                   onClick={handleWhatsAppBooking}
-                  className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-xs py-3 rounded-xl flex items-center justify-center gap-2 shadow-md transition-transform active:scale-95 cursor-pointer"
+                  className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all active:scale-[0.98] cursor-pointer"
                 >
-                  <WhatsAppBrandIcon className="w-4.5 h-4.5 fill-white" />
-                  <span>
+                  <WhatsAppBrandIcon className="w-4 h-4 fill-white shrink-0" />
+                  <span className="truncate">
                     {currentUser
-                      ? `Book on WhatsApp (${addBikeSaathi ? 'With Bike Saathi' : 'Self Ride'})`
+                      ? `Book on WhatsApp (${addBikeSaathi ? 'With Guide' : 'Self Ride'})`
                       : 'Sign In to Book on WhatsApp'}
                   </span>
                 </button>

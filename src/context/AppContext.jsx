@@ -12,6 +12,7 @@ import {
 import {
   apiFetchVehicles,
   apiCreateVehicle,
+  apiUpdateVehicle,
   apiToggleVehicleStatus,
   apiVerifyVehicle,
   apiFetchBookings,
@@ -436,21 +437,67 @@ export const AppProvider = ({ children }) => {
     apiVerifyVehicle(vehicleId, actionState).catch((err) => console.warn('API verifyVehicle error:', err));
   };
 
+  const updateVehicle = async (vehicleId, updatedData) => {
+    if (!currentUser) {
+      openLoginModal('owner');
+      throw new Error('Host login required to edit vehicle.');
+    }
+
+    setVehicles((prev) =>
+      prev.map((v) => (v.id === vehicleId ? { ...v, ...updatedData } : v))
+    );
+
+    try {
+      const updated = await apiUpdateVehicle(vehicleId, updatedData);
+      if (updated) {
+        setVehicles((prev) =>
+          prev.map((v) => (v.id === vehicleId ? { ...v, ...updated } : v))
+        );
+      }
+      return updated;
+    } catch (err) {
+      console.error('Failed to update vehicle on backend:', err);
+      throw err;
+    }
+  };
+
   const toggleVehicleStatus = (vehicleId) => {
     if (!currentUser) {
       openLoginModal('owner');
       return;
     }
 
+    const currentVeh = vehicles.find((v) => v.id === vehicleId);
+    if (!currentVeh) return;
+
+    const isApproved = currentVeh.vehicleVerified || currentVeh.verificationStatus === 'Verified';
+
+    // Prevent owners from activating vehicles that have not been approved by an Admin
+    if (currentVeh.status !== 'active' && !isApproved && currentUser.role !== 'admin') {
+      alert('⚠️ This vehicle cannot be activated yet because it is awaiting Admin verification. Once our team approves your listing, you can activate or suspend it anytime.');
+      return;
+    }
+
+    const nextStatus = currentVeh.status === 'active' ? 'suspended' : 'active';
+
     setVehicles((prev) =>
       prev.map((v) =>
         v.id === vehicleId
-          ? { ...v, status: v.status === 'active' ? 'suspended' : 'active' }
+          ? { ...v, status: nextStatus }
           : v
       )
     );
 
-    apiToggleVehicleStatus(vehicleId).catch((err) => console.warn('API toggleVehicleStatus error:', err));
+    apiToggleVehicleStatus(vehicleId).catch((err) => {
+      console.warn('API toggleVehicleStatus error:', err);
+      // Revert if rejected
+      setVehicles((prev) =>
+        prev.map((v) =>
+          v.id === vehicleId ? { ...v, status: currentVeh.status } : v
+        )
+      );
+      alert(err.message || 'Failed to update vehicle status.');
+    });
   };
 
   const toggleCustomerStatus = (customerId) => {
@@ -776,6 +823,7 @@ export const AppProvider = ({ children }) => {
         activeFilter,
         setActiveFilter,
         addVehicle,
+        updateVehicle,
         verifyVehicle,
         toggleVehicleStatus,
         toggleCustomerStatus,

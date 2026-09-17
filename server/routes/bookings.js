@@ -70,6 +70,18 @@ router.post('/', requireAuth, async (req, res) => {
 
     const vehicle = b.vehicle || {};
     const vehicleId = b.vehicleId || vehicle.id || 'veh-1';
+
+    // Verify vehicle exists, is approved, and is currently active
+    const vehRecord = await db.prepare('SELECT status, vehicleVerified, verificationStatus FROM vehicles WHERE id = ?').get(vehicleId);
+    if (vehRecord) {
+      const isApproved = vehRecord.vehicleVerified === 1 || vehRecord.verificationStatus === 'Verified';
+      if (!isApproved || vehRecord.status !== 'active') {
+        return res.status(400).json({
+          error: 'This vehicle is currently unavailable or awaiting administrative verification.'
+        });
+      }
+    }
+
     const vehicleName = b.vehicleName || vehicle.name || 'Honda Activa 6G';
     const dailyPrice = Number(b.dailyPrice || vehicle.dailyRate || 400);
 

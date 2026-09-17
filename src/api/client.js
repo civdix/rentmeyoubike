@@ -87,6 +87,13 @@ export async function apiCreateVehicle(vehicleData) {
   });
 }
 
+export async function apiUpdateVehicle(id, vehicleData) {
+  return request(`/vehicles/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(vehicleData)
+  });
+}
+
 export async function apiToggleVehicleStatus(id) {
   return request(`/vehicles/${id}/status`, {
     method: 'PATCH'
