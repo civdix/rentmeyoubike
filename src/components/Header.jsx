@@ -113,15 +113,15 @@ export const Header = () => {
           onClick={() => navigateTo('home')}
         >
           <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white flex items-center justify-center p-1 sm:p-1.5 shadow-md border border-emerald-400/40 shrink-0 group-hover:scale-105 transition-transform">
-            <img src="/logo_square_share_area.png" alt="Rentoncent Logo" className="w-full h-full object-contain" />
+            <img src="/logo_square_share_area.png" alt="Rent to Cent Logo" className="w-full h-full object-contain" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 sm:gap-2">
               <span className="font-heading font-extrabold text-base sm:text-xl tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap">
-                Vrindavan Rides
+                Rent to Cent
               </span>
               <span className="hidden md:inline-block bg-emerald-950/90 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-800">
-                by rentoncent
+                P2P Rental
               </span>
             </div>
             <p className="text-[10px] sm:text-[11px] text-slate-400 hidden sm:flex items-center gap-1">

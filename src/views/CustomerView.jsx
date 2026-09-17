@@ -135,7 +135,7 @@ export const CustomerView = () => {
     },
     {
       q: 'Is a driving licence required?',
-      a: 'Yes, a valid Indian or International Driving Licence (MCWG / LMV class) is mandatory for renting any scooter or motorcycle on Vrindavan Rides.'
+      a: 'Yes, a valid Indian or International Driving Licence (MCWG / LMV class) is mandatory for renting any scooter or motorcycle on Rent to Cent.'
     },
     {
       q: 'How does booking work?',

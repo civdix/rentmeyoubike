@@ -12,15 +12,15 @@ export const Footer = () => {
         <div className="col-span-2 space-y-3">
           <div className="flex items-center gap-3 text-white font-heading font-extrabold text-lg">
             <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center p-1.5 border border-emerald-400/50 shadow-md">
-              <img src="/logo_square_share_area.png" alt="Rentoncent Logo" className="w-full h-full object-contain" />
+              <img src="/logo_square_share_area.png" alt="Rent to Cent Logo" className="w-full h-full object-contain" />
             </div>
             <div>
-              <span className="block leading-tight">Vrindavan Rides</span>
-              <span className="text-[11px] font-semibold text-emerald-400 font-sans tracking-wide">by rentoncent</span>
+              <span className="block leading-tight">Rent to Cent</span>
+              <span className="text-[11px] font-semibold text-emerald-400 font-sans tracking-wide">P2P Bike Sharing</span>
             </div>
           </div>
           <p className="text-slate-400 leading-relaxed text-xs max-w-sm">
-            "Verified bikes. Simple rentals. Explore Vrindavan." The premier peer-to-peer bike and scooter rental platform connecting local hosts with visiting pilgrims and tourists in Vrindavan & Mathura.
+            "Rent to Cent" — The premier peer-to-peer bike and scooter rental platform connecting local hosts with visiting pilgrims and tourists in Vrindavan & Mathura.
           </p>
           <div className="flex items-center gap-2 text-amber-400 font-bold text-xs">
             <span className="bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded border border-amber-400/40">🪶 Radhe Radhe!</span>
@@ -156,7 +156,7 @@ export const Footer = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 mt-10 pt-6 border-t border-slate-800 text-[11px] text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
-        <p>© 2026 Vrindavan Rides. All rights reserved.</p>
+        <p>© 2026 Rent to Cent. All rights reserved.</p>
         <p className="flex items-center gap-1">
           Built for Vrindavan Pilgrims & Local Vehicle Owners
         </p>

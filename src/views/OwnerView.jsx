@@ -494,7 +494,7 @@ export const OwnerView = () => {
                   Your vehicle has been submitted for verification.
                 </h3>
                 <p className="text-xs text-slate-700 mt-1 leading-relaxed">
-                  Our Vrindavan Rides admin team is auditing your RC, Insurance, and 6-angle photos. <strong>Admin must approve the listing before it becomes publicly visible</strong> on the marketplace (/bikes).
+                  Our Rent to Cent admin team is auditing your RC, Insurance, and 6-angle photos. <strong>Admin must approve the listing before it becomes publicly visible</strong> on the marketplace (/bikes).
                 </p>
               </div>
             </div>

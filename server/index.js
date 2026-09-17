@@ -62,7 +62,7 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   res.json({
     status: 'online',
-    service: '🌸 Vrindavan Rides (Meri Dhanno) Backend API',
+    service: '🌸 Rent to Cent Backend API',
     apiBase: '/api',
     healthCheck: '/api/health',
     endpoints: {
@@ -82,7 +82,7 @@ app.get('/', (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
-    service: 'Vrindavan Rides P2P Backend API',
+    service: 'Rent to Cent P2P Backend API',
     timestamp: new Date().toISOString()
   });
 });
@@ -107,6 +107,6 @@ app.use((req, res) => {
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`🌸 Vrindavan Rides Backend running at http://localhost:${PORT}`);
+  console.log(`🌸 Rent to Cent Backend running at http://localhost:${PORT}`);
   console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
 });

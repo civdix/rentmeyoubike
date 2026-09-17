@@ -44,10 +44,10 @@ export const BrandLogo = ({
         <div className="min-w-0">
           <div className="flex items-center gap-1.5 sm:gap-2">
             <span className={`font-heading font-extrabold tracking-tight ${theme === 'light' ? 'text-slate-900' : 'text-white'} text-base sm:text-xl leading-tight whitespace-nowrap`}>
-              Vrindavan Rides
+              Rent to Cent
             </span>
             <span className="hidden md:inline-block bg-emerald-950/90 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-800">
-              rentoncent
+              P2P Bikes
             </span>
           </div>
           {showTagline && (

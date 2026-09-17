@@ -166,7 +166,7 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
                 Contact & Support
               </h3>
               <p className="text-slate-400 text-xs">
-                Send a direct inquiry to the Vrindavan Rides team
+                Send a direct inquiry to the Rent to Cent team
               </p>
             </div>
           </div>

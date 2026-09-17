@@ -10,7 +10,7 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
   const [chatMessages, setChatMessages] = useState([
     {
       sender: 'bot',
-      text: `Radhe Radhe! 🙏 Welcome to Vrindavan Rides.\n\nYour Booking Inquiry for *${vehicle?.name || booking?.vehicleName}* has been received!\n\n📋 *Booking Reference*: #${booking?.id}\n📍 *Pickup Area*: ${booking?.pickupLocation}\n📅 *Dates*: ${booking?.startDate} to ${booking?.endDate} (${booking?.totalDays} day(s))\n💰 *Total Amount*: ₹${booking?.totalAmount}\n\nTo complete your booking, please complete Customer Identity (KYC) verification.`,
+      text: `Radhe Radhe! 🙏 Welcome to Rent to Cent.\n\nYour Booking Inquiry for *${vehicle?.name || booking?.vehicleName}* has been received!\n\n📋 *Booking Reference*: #${booking?.id}\n📍 *Pickup Area*: ${booking?.pickupLocation}\n📅 *Dates*: ${booking?.startDate} to ${booking?.endDate} (${booking?.totalDays} day(s))\n💰 *Total Amount*: ₹${booking?.totalAmount}\n\nTo complete your booking, please complete Customer Identity (KYC) verification.`,
       time: 'Just now'
     }
   ]);
@@ -54,7 +54,7 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-base text-white">Vrindavan Rides WhatsApp Assistant</h3>
+                <h3 className="font-bold text-base text-white">Rent to Cent WhatsApp Assistant</h3>
                 <ShieldCheck className="w-4 h-4 text-emerald-300" />
               </div>
               <p className="text-xs text-emerald-100 flex items-center gap-1">
