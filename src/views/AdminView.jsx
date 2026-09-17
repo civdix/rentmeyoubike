@@ -32,7 +32,9 @@ import {
   Filter,
   Check,
   MessageSquare,
-  ArrowRight
+  ArrowRight,
+  Database,
+  Download
 } from 'lucide-react';
 
 export const AdminView = () => {
@@ -1555,6 +1557,39 @@ export const AdminView = () => {
                 Save Platform Settings
               </button>
             </form>
+
+            {/* Database Export & Backup Card */}
+            <div className="bg-slate-950/80 border border-purple-500/30 rounded-2xl p-5 space-y-3 pt-4 border-t border-slate-800">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400 shrink-0">
+                    <Database className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-white font-bold text-sm">Download Live SQLite Database (.db)</h4>
+                    <p className="text-slate-400 text-xs mt-0.5 leading-relaxed">
+                      Download a live, point-in-time copy of the SQLite database (<code className="text-purple-300 font-mono">vrindavan.db</code>) running on Render or your local server. Includes all verified customers, fleet hosts, vehicle listings, booking vouchers, and inspection records.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const token = localStorage.getItem('vr_token') || localStorage.getItem('vr_admin_token') || '';
+                    const baseApi = import.meta.env.VITE_API_URL || '/api';
+                    const downloadUrl = `${baseApi}/settings/download-db?token=${encodeURIComponent(token)}`;
+                    window.open(downloadUrl, '_blank');
+                  }}
+                  className="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download Live Database File</span>
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
