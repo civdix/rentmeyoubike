@@ -70,7 +70,47 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
     `
   };
 
-  // 1. If RESEND_API_KEY is configured, use Resend HTTPS REST API (Port 443, never blocked by Render Free)
+  // 1. Primary: If EMAIL_API_TOKEN is configured, use the HTTPS email API (Port 443, never blocked by Render Free)
+  if (process.env.EMAIL_API_TOKEN) {
+    try {
+      const endpoint = process.env.EMAIL_API_ENDPOINT || 'https://shivamdixit.vercel.app/api/send-email';
+      const cleanSubject = `Your Vrindavan Rides Verification Code: ${otp}`;
+      const headerSubject = /[^\x20-\x7E]/.test(cleanSubject)
+        ? `=?UTF-8?B?${Buffer.from(cleanSubject, 'utf-8').toString('base64')}?=`
+        : cleanSubject;
+
+      const singleLineHtml = mailOptions.html.replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+      const headerHtml = Array.from(singleLineHtml)
+        .map((char) => (char.codePointAt(0) > 127 ? `&#${char.codePointAt(0)};` : char))
+        .join('');
+
+      const plainText = `Radhe Radhe! Your 6-digit verification code is: ${otp}. Valid for 10 minutes.`;
+
+      const apiRes = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.EMAIL_API_TOKEN.trim()}`,
+          'X-Email-To': normalized,
+          'X-Email-Subject': headerSubject,
+          'X-Email-Text': plainText,
+          'X-Email-HTML': headerHtml,
+          'X-Email-Reply-To': senderEmail
+        }
+      });
+
+      if (apiRes.status === 200) {
+        console.log(`✉️ [EmailAPI] OTP email delivered to ${normalized} via ${endpoint}`);
+        return { success: true, devOtp: otp };
+      } else {
+        const errText = await apiRes.text().catch(() => '');
+        console.warn(`⚠️ [EmailAPI] OTP send returned HTTP ${apiRes.status}:`, errText);
+      }
+    } catch (apiErr) {
+      console.warn('⚠️ [EmailAPI] Request failed:', apiErr.message);
+    }
+  }
+
+  // 2. Secondary: If RESEND_API_KEY is configured, use Resend HTTPS REST API (Port 443)
   if (process.env.RESEND_API_KEY) {
     try {
       const res = await fetch('https://api.resend.com/emails', {
@@ -98,7 +138,7 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
     }
   }
 
-  // 2. Nodemailer SMTP (uses IPv4 direct connect with fast 2.5s timeout)
+  // 3. Fallback: Nodemailer SMTP (uses IPv4 direct connect with fast 2.5s timeout)
   try {
     const transporter = await getTransporter();
     if (transporter) {
@@ -113,7 +153,7 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
     cachedTransporter = null; // Invalidate cache so next attempt refreshes
   }
 
-  // 3. Fallback devOtp return so the user is never blocked
+  // 4. Safe devOtp return so the user is never blocked
   return {
     success: true,
     devOtp: otp,
