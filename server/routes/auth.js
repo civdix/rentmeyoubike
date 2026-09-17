@@ -142,10 +142,9 @@ router.post('/send-email-otp', async (req, res) => {
 
     return res.json({
       success: true,
-      message: `Verification code sent to ${normalized}`,
+      message: `Verification code sent to ${normalized}. Please check your email inbox.`,
       email: normalized,
-      expiresInMinutes: 10,
-      devOtp: emailResult.devOtp
+      expiresInMinutes: 10
     });
   } catch (error) {
     console.error('Error during send-email-otp:', error);

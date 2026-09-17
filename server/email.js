@@ -100,7 +100,7 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
 
       if (apiRes.status === 200) {
         console.log(`✉️ [EmailAPI] OTP email delivered to ${normalized} via ${endpoint}`);
-        return { success: true, devOtp: otp };
+        return { success: true };
       } else {
         const errText = await apiRes.text().catch(() => '');
         console.warn(`⚠️ [EmailAPI] OTP send returned HTTP ${apiRes.status}:`, errText);
@@ -129,7 +129,7 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
       const data = await res.json();
       if (res.ok) {
         console.log(`✉️ [Resend] OTP sent to ${normalized} (Message ID: ${data.id})`);
-        return { success: true, messageId: data.id, devOtp: otp };
+        return { success: true, messageId: data.id };
       } else {
         console.warn('⚠️ [Resend] API error:', data);
       }
@@ -144,19 +144,15 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
     if (transporter) {
       const info = await transporter.sendMail(mailOptions);
       console.log(`✉️ OTP sent to ${normalized} (Message ID: ${info.messageId})`);
-      return { success: true, messageId: info.messageId, devOtp: otp };
-    } else {
-      console.log(`ℹ️ [DEV OTP] ${normalized} -> ${otp}`);
+      return { success: true, messageId: info.messageId };
     }
   } catch (err) {
     console.error(`⚠️ SMTP error for ${normalized}: ${err.message}. (Render Free tier blocks outbound SMTP ports 25/465/587)`);
     cachedTransporter = null; // Invalidate cache so next attempt refreshes
   }
 
-  // 4. Safe devOtp return so the user is never blocked
   return {
     success: true,
-    devOtp: otp,
     message: `Verification code generated for ${normalized}`
   };
 }
