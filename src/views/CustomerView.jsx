@@ -186,46 +186,27 @@ export const CustomerView = () => {
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <button
                     onClick={() => setActiveTab('browse')}
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm py-3 sm:py-3.5 px-4 sm:px-7 rounded-xl flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition-transform active:scale-95 shrink-0"
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm py-3 sm:py-3.5 px-5 sm:px-7 rounded-xl flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition-transform active:scale-95 shrink-0"
                   >
                     <VrindavanScooterIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.2} />
                     <span>Browse Bikes</span>
-                  </button>
-
-                  <button
-                    onClick={() => setRole('owner')}
-                    className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs sm:text-sm py-3 sm:py-3.5 px-4 sm:px-6 rounded-xl flex items-center gap-2 shadow-md transition-transform active:scale-95 shrink-0"
-                  >
-                    <KeyHandoverIcon className="w-4 h-4 sm:w-5 sm:h-5 text-slate-950" />
-                    <span>List Your Bike</span>
                   </button>
 
                   <a
                     href={`https://wa.me/${legalConfig.supportWhatsApp.replace(/[^0-9]/g, '')}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-xs sm:text-sm py-3 sm:py-3.5 px-4 sm:px-6 rounded-xl flex items-center gap-2 shadow-md transition-transform active:scale-95 shrink-0"
+                    className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-xs sm:text-sm py-3 sm:py-3.5 px-5 sm:px-6 rounded-xl flex items-center gap-2 shadow-md transition-transform active:scale-95 shrink-0"
                   >
                     <WhatsAppBrandIcon className="w-4 h-4 sm:w-5 sm:h-5 fill-white" />
                     <span>WhatsApp Support</span>
                   </a>
 
-                  {currentUser ? (
+                  {currentUser && (
                     <div className="bg-slate-900/80 border border-emerald-500/40 text-emerald-300 font-bold text-xs py-2.5 sm:py-3 px-3.5 sm:px-4 rounded-xl flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                       <span>Logged in: <strong>{currentUser.name}</strong></span>
                     </div>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        const el = document.getElementById('featured-scooters');
-                        if (el) el.scrollIntoView({ behavior: 'smooth' });
-                      }}
-                      className="bg-slate-900/90 hover:bg-slate-800 text-white font-extrabold text-xs sm:text-sm py-3 sm:py-3.5 px-4 sm:px-6 rounded-xl flex items-center gap-2 border border-slate-700 shadow-md transition-transform active:scale-95 shrink-0"
-                    >
-                      <Search className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
-                      <span>Browse Available</span>
-                    </button>
                   )}
                 </div>
               </div>
