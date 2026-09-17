@@ -24,7 +24,7 @@ function formatVehicle(row) {
 }
 
 // GET /api/vehicles - List all vehicles with optional filters
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { type, category, transmission, area, maxPrice, status, search } = req.query;
 
@@ -64,7 +64,7 @@ router.get('/', (req, res) => {
 
     query += ' ORDER BY rating DESC, id DESC';
 
-    const rows = db.prepare(query).all(params);
+    const rows = await db.prepare(query).all(params);
     const vehicles = rows.map(formatVehicle);
     res.json(vehicles);
   } catch (error) {
@@ -74,9 +74,9 @@ router.get('/', (req, res) => {
 });
 
 // GET /api/vehicles/:id - Get vehicle details
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const row = db.prepare('SELECT * FROM vehicles WHERE id = ?').get(req.params.id);
+    const row = await db.prepare('SELECT * FROM vehicles WHERE id = ?').get(req.params.id);
     if (!row) {
       return res.status(404).json({ error: 'Vehicle not found' });
     }
@@ -88,7 +88,7 @@ router.get('/:id', (req, res) => {
 });
 
 // POST /api/vehicles - Add new vehicle (Host Onboarding - Owner & Admin only)
-router.post('/', requireRole('owner', 'admin'), (req, res) => {
+router.post('/', requireRole('owner', 'admin'), async (req, res) => {
   try {
     const v = req.body;
     const newId = v.id || `veh-${Date.now()}`;
@@ -160,20 +160,20 @@ router.post('/', requireRole('owner', 'admin'), (req, res) => {
       city: v.city || 'Vrindavan'
     };
 
-    stmt.run(newVehicleData);
+    await stmt.run(newVehicleData);
 
     // Update owner vehicle count if owner exists, or register owner
-    const existingOwner = db.prepare('SELECT * FROM owners WHERE name = ?').get(newVehicleData.ownerName);
+    const existingOwner = await db.prepare('SELECT * FROM owners WHERE name = ?').get(newVehicleData.ownerName);
     if (existingOwner) {
-      db.prepare('UPDATE owners SET vehiclesCount = vehiclesCount + 1 WHERE id = ?').run(existingOwner.id);
+      await db.prepare('UPDATE owners SET vehiclesCount = vehiclesCount + 1 WHERE id = ?').run(existingOwner.id);
     } else {
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO owners (id, name, phone, email, verificationStatus, vehiclesCount, earnings, status)
         VALUES (?, ?, ?, ?, 'Pending', 1, 0, 'active')
       `).run(newVehicleData.ownerId, newVehicleData.ownerName, newVehicleData.ownerPhone, newVehicleData.ownerEmail);
     }
 
-    const created = db.prepare('SELECT * FROM vehicles WHERE id = ?').get(newId);
+    const created = await db.prepare('SELECT * FROM vehicles WHERE id = ?').get(newId);
     res.status(201).json(formatVehicle(created));
   } catch (error) {
     console.error('Error adding vehicle:', error);
@@ -182,17 +182,17 @@ router.post('/', requireRole('owner', 'admin'), (req, res) => {
 });
 
 // PATCH /api/vehicles/:id/status - Toggle active/suspended (Owner & Admin only)
-router.patch('/:id/status', requireRole('owner', 'admin'), (req, res) => {
+router.patch('/:id/status', requireRole('owner', 'admin'), async (req, res) => {
   try {
-    const current = db.prepare('SELECT status FROM vehicles WHERE id = ?').get(req.params.id);
+    const current = await db.prepare('SELECT status FROM vehicles WHERE id = ?').get(req.params.id);
     if (!current) {
       return res.status(404).json({ error: 'Vehicle not found' });
     }
 
     const newStatus = req.body.status || (current.status === 'active' ? 'suspended' : 'active');
-    db.prepare('UPDATE vehicles SET status = ? WHERE id = ?').run(newStatus, req.params.id);
+    await db.prepare('UPDATE vehicles SET status = ? WHERE id = ?').run(newStatus, req.params.id);
 
-    const updated = db.prepare('SELECT * FROM vehicles WHERE id = ?').get(req.params.id);
+    const updated = await db.prepare('SELECT * FROM vehicles WHERE id = ?').get(req.params.id);
     res.json(formatVehicle(updated));
   } catch (error) {
     console.error('Error toggling vehicle status:', error);
@@ -201,7 +201,7 @@ router.patch('/:id/status', requireRole('owner', 'admin'), (req, res) => {
 });
 
 // PATCH /api/vehicles/:id/verify - Admin Verify / Reject / Request Changes (Admin only)
-router.patch('/:id/verify', requireRole('admin'), (req, res) => {
+router.patch('/:id/verify', requireRole('admin'), async (req, res) => {
   try {
     const { action } = req.body; // 'Verified' | 'Rejected' | 'Changes Requested' | 'Suspended' | boolean
 
@@ -227,13 +227,13 @@ router.patch('/:id/verify', requireRole('admin'), (req, res) => {
       vStatus = 'Suspended';
     }
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE vehicles
       SET vehicleVerified = ?, documentsVerified = ?, verificationStatus = ?, status = ?
       WHERE id = ?
     `).run(isVerified, isVerified, vStatus, statusText, req.params.id);
 
-    const updated = db.prepare('SELECT * FROM vehicles WHERE id = ?').get(req.params.id);
+    const updated = await db.prepare('SELECT * FROM vehicles WHERE id = ?').get(req.params.id);
     res.json(formatVehicle(updated));
   } catch (error) {
     console.error('Error verifying vehicle:', error);

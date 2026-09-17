@@ -5,7 +5,7 @@ import { requireRole } from '../middleware/rbac.js';
 const router = express.Router();
 
 // GET /api/customers - List customers with search (Admin only)
-router.get('/', requireRole('admin'), (req, res) => {
+router.get('/', requireRole('admin'), async (req, res) => {
   try {
     const { search } = req.query;
     let query = 'SELECT * FROM customers WHERE 1=1';
@@ -17,7 +17,7 @@ router.get('/', requireRole('admin'), (req, res) => {
     }
 
     query += ' ORDER BY registeredDate DESC';
-    const rows = db.prepare(query).all(params);
+    const rows = await db.prepare(query).all(params);
     res.json(rows);
   } catch (error) {
     console.error('Error fetching customers:', error);
@@ -26,9 +26,9 @@ router.get('/', requireRole('admin'), (req, res) => {
 });
 
 // GET /api/customers/:id
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const row = db.prepare('SELECT * FROM customers WHERE id = ?').get(req.params.id);
+    const row = await db.prepare('SELECT * FROM customers WHERE id = ?').get(req.params.id);
     if (!row) {
       return res.status(404).json({ error: 'Customer not found' });
     }
@@ -40,17 +40,17 @@ router.get('/:id', (req, res) => {
 });
 
 // PATCH /api/customers/:id/status - Toggle active/suspended (Admin only)
-router.patch('/:id/status', requireRole('admin'), (req, res) => {
+router.patch('/:id/status', requireRole('admin'), async (req, res) => {
   try {
-    const current = db.prepare('SELECT status FROM customers WHERE id = ?').get(req.params.id);
+    const current = await db.prepare('SELECT status FROM customers WHERE id = ?').get(req.params.id);
     if (!current) {
       return res.status(404).json({ error: 'Customer not found' });
     }
 
     const newStatus = req.body.status || (current.status === 'active' ? 'suspended' : 'active');
-    db.prepare('UPDATE customers SET status = ? WHERE id = ?').run(newStatus, req.params.id);
+    await db.prepare('UPDATE customers SET status = ? WHERE id = ?').run(newStatus, req.params.id);
 
-    const updated = db.prepare('SELECT * FROM customers WHERE id = ?').get(req.params.id);
+    const updated = await db.prepare('SELECT * FROM customers WHERE id = ?').get(req.params.id);
     res.json(updated);
   } catch (error) {
     console.error('Error toggling customer status:', error);

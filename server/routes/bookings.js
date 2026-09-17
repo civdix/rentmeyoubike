@@ -16,7 +16,7 @@ function formatBooking(row) {
 }
 
 // GET /api/bookings - List all bookings
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { status, customerPhone, search } = req.query;
 
@@ -40,7 +40,7 @@ router.get('/', (req, res) => {
 
     query += ' ORDER BY createdAt DESC';
 
-    const rows = db.prepare(query).all(params);
+    const rows = await db.prepare(query).all(params);
     res.json(rows.map(formatBooking));
   } catch (error) {
     console.error('Error fetching bookings:', error);
@@ -49,9 +49,9 @@ router.get('/', (req, res) => {
 });
 
 // GET /api/bookings/:id - Single booking
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const row = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
+    const row = await db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
     if (!row) {
       return res.status(404).json({ error: 'Booking not found' });
     }
@@ -63,7 +63,7 @@ router.get('/:id', (req, res) => {
 });
 
 // POST /api/bookings - Create new rental booking
-router.post('/', requireAuth, (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
   try {
     const b = req.body;
     const refNum = b.id || `VRB-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -125,20 +125,20 @@ router.post('/', requireAuth, (req, res) => {
       createdAt: new Date().toISOString().replace('T', ' ').substring(0, 16)
     };
 
-    stmt.run(bookingData);
+    await stmt.run(bookingData);
 
     // Increment customer booking count if customer exists, or register
-    const existingCust = db.prepare('SELECT * FROM customers WHERE phone = ?').get(bookingData.customerPhone);
+    const existingCust = await db.prepare('SELECT * FROM customers WHERE phone = ?').get(bookingData.customerPhone);
     if (existingCust) {
-      db.prepare('UPDATE customers SET bookingsCount = bookingsCount + 1 WHERE id = ?').run(existingCust.id);
+      await db.prepare('UPDATE customers SET bookingsCount = bookingsCount + 1 WHERE id = ?').run(existingCust.id);
     } else {
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO customers (id, name, phone, email, kycStatus, bookingsCount, status)
         VALUES (?, ?, ?, ?, 'Pending', 1, 'active')
       `).run(`cust-${Date.now()}`, bookingData.customerName, bookingData.customerPhone, bookingData.customerEmail);
     }
 
-    const created = db.prepare('SELECT * FROM bookings WHERE id = ?').get(refNum);
+    const created = await db.prepare('SELECT * FROM bookings WHERE id = ?').get(refNum);
     res.status(201).json(formatBooking(created));
   } catch (error) {
     console.error('Error creating booking:', error);
@@ -149,16 +149,16 @@ router.post('/', requireAuth, (req, res) => {
 // PATCH /api/bookings/:id/status - Update booking lifecycle state
 router.patch('/:id/status', requireAuth, async (req, res) => {
   try {
-    const { status, extra } = req.body;
+    const { status } = req.body;
     if (!status) {
       return res.status(400).json({ error: 'Status is required' });
     }
 
-    db.prepare('UPDATE bookings SET status = ? WHERE id = ?').run(status, req.params.id);
+    await db.prepare('UPDATE bookings SET status = ? WHERE id = ?').run(status, req.params.id);
 
     // If marked as Completed, check if settled without active disputes to purge temporary inspection photos
     if (status === 'Completed') {
-      const activeDispute = db.prepare("SELECT id FROM disputes WHERE bookingId = ? AND status != 'Resolved'").get(req.params.id);
+      const activeDispute = await db.prepare("SELECT id FROM disputes WHERE bookingId = ? AND status != 'Resolved'").get(req.params.id);
       if (!activeDispute) {
         try {
           await deleteSettlementImagesForBooking(req.params.id);
@@ -168,7 +168,7 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
       }
     }
 
-    const updated = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
+    const updated = await db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
     if (!updated) {
       return res.status(404).json({ error: 'Booking not found' });
     }
@@ -180,10 +180,10 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
 });
 
 // PATCH /api/bookings/:id/payment - Update payment status
-router.patch('/:id/payment', requireAuth, (req, res) => {
+router.patch('/:id/payment', requireAuth, async (req, res) => {
   try {
     const { paymentStatus, paymentId, refundStatus } = req.body;
-    const current = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
+    const current = await db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
 
     if (!current) {
       return res.status(404).json({ error: 'Booking not found' });
@@ -197,13 +197,13 @@ router.patch('/:id/payment', requireAuth, (req, res) => {
     const finalPaymentId = paymentId || current.paymentId || `pay_${req.params.id}_${Math.floor(100 + Math.random() * 899)}`;
     const finalRefundStatus = refundStatus !== undefined ? refundStatus : current.refundStatus;
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE bookings
       SET paymentStatus = ?, paymentId = ?, refundStatus = ?, status = ?
       WHERE id = ?
     `).run(paymentStatus, finalPaymentId, finalRefundStatus, nextStatus, req.params.id);
 
-    const updated = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
+    const updated = await db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
     res.json(formatBooking(updated));
   } catch (error) {
     console.error('Error updating payment status:', error);
@@ -212,10 +212,10 @@ router.patch('/:id/payment', requireAuth, (req, res) => {
 });
 
 // PATCH /api/bookings/:id/kyc - Verify KYC
-router.patch('/:id/kyc', requireAuth, (req, res) => {
+router.patch('/:id/kyc', requireAuth, async (req, res) => {
   try {
     const { kycStatus = 'Verified' } = req.body;
-    const current = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
+    const current = await db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
 
     if (!current) {
       return res.status(404).json({ error: 'Booking not found' });
@@ -223,7 +223,7 @@ router.patch('/:id/kyc', requireAuth, (req, res) => {
 
     const nextStatus = current.status === 'KYC Pending' ? 'Payment Pending' : current.status;
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE bookings
       SET kycStatus = ?, status = ?
       WHERE id = ?
@@ -231,10 +231,10 @@ router.patch('/:id/kyc', requireAuth, (req, res) => {
 
     // Also update customer table
     if (current.customerPhone) {
-      db.prepare('UPDATE customers SET kycStatus = ? WHERE phone = ?').run(kycStatus, current.customerPhone);
+      await db.prepare('UPDATE customers SET kycStatus = ? WHERE phone = ?').run(kycStatus, current.customerPhone);
     }
 
-    const updated = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
+    const updated = await db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
     res.json(formatBooking(updated));
   } catch (error) {
     console.error('Error updating KYC status:', error);

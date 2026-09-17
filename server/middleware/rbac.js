@@ -8,7 +8,7 @@ export const ADMIN_PIN = process.env.ADMIN_PIN || '7777';
 export const validAdminTokens = new Set();
 export const activeSessions = new Map(); // token -> { role, user }
 
-export function authenticateUser(req, res, next) {
+export async function authenticateUser(req, res, next) {
   // Allow login endpoints without prior token
   if (req.path.includes('/login')) {
     return next();
@@ -33,9 +33,9 @@ export function authenticateUser(req, res, next) {
     sessionUser = { id: 'admin-1', name: 'Platform Administrator', role: 'admin' };
     isAuthenticated = true;
   } else if (token) {
-    // 2. Check SQLite sessions table
+    // 2. Check sessions table in DB
     try {
-      const row = db.prepare('SELECT * FROM sessions WHERE token = ?').get(token);
+      const row = await db.prepare('SELECT * FROM sessions WHERE token = ?').get(token);
       if (row) {
         const parsedUser = row.userData ? JSON.parse(row.userData) : { id: row.userId, role: row.role };
         role = row.role;

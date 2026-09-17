@@ -18,9 +18,9 @@ function formatDispute(row) {
 }
 
 // GET /api/disputes - List all disputes
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const rows = db.prepare('SELECT * FROM disputes ORDER BY createdAt DESC').all();
+    const rows = await db.prepare('SELECT * FROM disputes ORDER BY createdAt DESC').all();
     res.json(rows.map(formatDispute));
   } catch (error) {
     console.error('Error fetching disputes:', error);
@@ -29,14 +29,14 @@ router.get('/', (req, res) => {
 });
 
 // POST /api/disputes - Open new dispute
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { bookingId, issue, notesText, evidenceUrl } = req.body;
     if (!bookingId) {
       return res.status(400).json({ error: 'bookingId is required' });
     }
 
-    const booking = db.prepare('SELECT * FROM bookings WHERE id = ?').get(bookingId);
+    const booking = await db.prepare('SELECT * FROM bookings WHERE id = ?').get(bookingId);
     const newId = `DISP-${Math.floor(100 + Math.random() * 899)}`;
     const nowTime = new Date().toISOString().replace('T', ' ').substring(0, 16);
 
@@ -60,7 +60,7 @@ router.post('/', (req, res) => {
       )
     `);
 
-    stmt.run({
+    await stmt.run({
       id: newId,
       bookingId,
       customerName: booking?.customerName || 'Customer',
@@ -73,9 +73,9 @@ router.post('/', (req, res) => {
     });
 
     // Update booking status to 'Dispute'
-    db.prepare('UPDATE bookings SET status = "Dispute" WHERE id = ?').run(bookingId);
+    await db.prepare("UPDATE bookings SET status = 'Dispute' WHERE id = ?").run(bookingId);
 
-    const created = db.prepare('SELECT * FROM disputes WHERE id = ?').get(newId);
+    const created = await db.prepare('SELECT * FROM disputes WHERE id = ?').get(newId);
     res.status(201).json(formatDispute(created));
   } catch (error) {
     console.error('Error opening dispute:', error);
@@ -84,14 +84,14 @@ router.post('/', (req, res) => {
 });
 
 // POST /api/disputes/:id/notes - Append note to dispute
-router.post('/:id/notes', (req, res) => {
+router.post('/:id/notes', async (req, res) => {
   try {
     const { text, sender = 'Admin' } = req.body;
     if (!text) {
       return res.status(400).json({ error: 'Note text is required' });
     }
 
-    const current = db.prepare('SELECT * FROM disputes WHERE id = ?').get(req.params.id);
+    const current = await db.prepare('SELECT * FROM disputes WHERE id = ?').get(req.params.id);
     if (!current) {
       return res.status(404).json({ error: 'Dispute not found' });
     }
@@ -104,9 +104,9 @@ router.post('/:id/notes', (req, res) => {
     };
     notes.push(newNote);
 
-    db.prepare('UPDATE disputes SET notes = ? WHERE id = ?').run(JSON.stringify(notes), req.params.id);
+    await db.prepare('UPDATE disputes SET notes = ? WHERE id = ?').run(JSON.stringify(notes), req.params.id);
 
-    const updated = db.prepare('SELECT * FROM disputes WHERE id = ?').get(req.params.id);
+    const updated = await db.prepare('SELECT * FROM disputes WHERE id = ?').get(req.params.id);
     res.json(formatDispute(updated));
   } catch (error) {
     console.error('Error adding dispute note:', error);
@@ -119,16 +119,16 @@ router.patch('/:id/resolve', async (req, res) => {
   try {
     const { outcome = 'Resolved by Administrator' } = req.body;
 
-    db.prepare('UPDATE disputes SET status = "Resolved", outcome = ? WHERE id = ?').run(outcome, req.params.id);
+    await db.prepare("UPDATE disputes SET status = 'Resolved', outcome = ? WHERE id = ?").run(outcome, req.params.id);
 
-    const updated = db.prepare('SELECT * FROM disputes WHERE id = ?').get(req.params.id);
+    const updated = await db.prepare('SELECT * FROM disputes WHERE id = ?').get(req.params.id);
     if (!updated) {
       return res.status(404).json({ error: 'Dispute not found' });
     }
 
     // Final settlement: mark booking completed and purge temporary dispute photos
     if (updated.bookingId) {
-      db.prepare('UPDATE bookings SET status = "Completed" WHERE id = ?').run(updated.bookingId);
+      await db.prepare("UPDATE bookings SET status = 'Completed' WHERE id = ?").run(updated.bookingId);
       try {
         await deleteSettlementImagesForBooking(updated.bookingId);
       } catch (purgeErr) {

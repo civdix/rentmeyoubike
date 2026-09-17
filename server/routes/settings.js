@@ -1,15 +1,15 @@
 import express from 'express';
 import fs from 'fs';
-import { db, dbPath, seedInitialData } from '../db.js';
+import { db, dbPath, seedInitialData, isPostgres } from '../db.js';
 import { requireRole, ADMIN_PIN, validAdminTokens } from '../middleware/rbac.js';
 
 const router = express.Router();
 
 // GET /api/settings - Get platform settings and legal config
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const adminSettings = db.prepare('SELECT * FROM admin_settings WHERE id = 1').get() || {};
-    const legalConfigRow = db.prepare('SELECT * FROM legal_config WHERE id = 1').get() || {};
+    const adminSettings = (await db.prepare('SELECT * FROM admin_settings WHERE id = 1').get()) || {};
+    const legalConfigRow = (await db.prepare('SELECT * FROM legal_config WHERE id = 1').get()) || {};
 
     const legalConfig = {
       ...legalConfigRow,
@@ -22,7 +22,7 @@ router.get('/', (req, res) => {
       adminSettings: {
         platformCommission: adminSettings.platformCommission ?? 15,
         minRentalDuration: adminSettings.minRentalDuration || '1 Day',
-        whatsAppNumber: adminSettings.whatsAppNumber || '+919837144520',
+        whatsAppNumber: adminSettings.whatsAppNumber || '+919720965985',
         supportContact: adminSettings.supportContact || 'support@vrindavanrides.in',
         protectionInfo: adminSettings.protectionInfo || '',
         rentalRules: adminSettings.rentalRules || '',
@@ -37,10 +37,10 @@ router.get('/', (req, res) => {
 });
 
 // PUT /api/settings - Update admin settings
-router.put('/', requireRole('admin'), (req, res) => {
+router.put('/', requireRole('admin'), async (req, res) => {
   try {
     const s = req.body;
-    db.prepare(`
+    await db.prepare(`
       INSERT OR REPLACE INTO admin_settings (
         id, platformCommission, minRentalDuration, whatsAppNumber, supportContact,
         protectionInfo, rentalRules, cancellationRules
@@ -51,14 +51,14 @@ router.put('/', requireRole('admin'), (req, res) => {
     `).run({
       platformCommission: Number(s.platformCommission) || 15,
       minRentalDuration: s.minRentalDuration || '1 Day',
-      whatsAppNumber: s.whatsAppNumber || '+919837144520',
+      whatsAppNumber: s.whatsAppNumber || '+919720965985',
       supportContact: s.supportContact || 'support@vrindavanrides.in',
       protectionInfo: s.protectionInfo || '',
       rentalRules: s.rentalRules || '',
       cancellationRules: s.cancellationRules || ''
     });
 
-    const updated = db.prepare('SELECT * FROM admin_settings WHERE id = 1').get();
+    const updated = await db.prepare('SELECT * FROM admin_settings WHERE id = 1').get();
     res.json(updated);
   } catch (error) {
     console.error('Error updating admin settings:', error);
@@ -67,10 +67,10 @@ router.put('/', requireRole('admin'), (req, res) => {
 });
 
 // PUT /api/settings/legal - Update legal config
-router.put('/legal', requireRole('admin'), (req, res) => {
+router.put('/legal', requireRole('admin'), async (req, res) => {
   try {
     const l = req.body;
-    db.prepare(`
+    await db.prepare(`
       INSERT OR REPLACE INTO legal_config (
         id, protectionTitle, protectionDisclaimer, legalPolicyNote, citiesAvailable, supportWhatsApp
       ) VALUES (
@@ -81,10 +81,10 @@ router.put('/legal', requireRole('admin'), (req, res) => {
       protectionDisclaimer: l.protectionDisclaimer || '',
       legalPolicyNote: l.legalPolicyNote || '',
       citiesAvailable: JSON.stringify(Array.isArray(l.citiesAvailable) ? l.citiesAvailable : ['Vrindavan', 'Mathura']),
-      supportWhatsApp: l.supportWhatsApp || '+919876543210'
+      supportWhatsApp: l.supportWhatsApp || '+919720965985'
     });
 
-    const updated = db.prepare('SELECT * FROM legal_config WHERE id = 1').get();
+    const updated = await db.prepare('SELECT * FROM legal_config WHERE id = 1').get();
     res.json({
       ...updated,
       citiesAvailable: JSON.parse(updated.citiesAvailable || '[]')
@@ -96,9 +96,9 @@ router.put('/legal', requireRole('admin'), (req, res) => {
 });
 
 // POST /api/settings/reset - Reset demo database
-router.post('/reset', requireRole('admin'), (req, res) => {
+router.post('/reset', requireRole('admin'), async (req, res) => {
   try {
-    db.exec(`
+    await db.exec(`
       DELETE FROM vehicles;
       DELETE FROM bookings;
       DELETE FROM inspections;
@@ -114,8 +114,11 @@ router.post('/reset', requireRole('admin'), (req, res) => {
   } catch (error) {
     console.error('Error resetting database:', error);
     res.status(500).json({ error: 'Failed to reset database' });
-// GET /api/settings/download-db - Securely download the live SQLite database file (.db)
-router.get('/download-db', (req, res) => {
+  }
+});
+
+// GET /api/settings/download-db - Securely download database snapshot or status
+router.get('/download-db', async (req, res) => {
   try {
     const pin = req.query.pin || req.headers['x-admin-pin'];
     const authHeader = req.headers.authorization;
@@ -126,7 +129,7 @@ router.get('/download-db', (req, res) => {
 
     if (!isTokenValid && token) {
       try {
-        const sess = db.prepare('SELECT role FROM sessions WHERE token = ?').get(token);
+        const sess = await db.prepare('SELECT role FROM sessions WHERE token = ?').get(token);
         if (sess && sess.role === 'admin') isTokenValid = true;
       } catch (sessErr) {}
     }
@@ -134,6 +137,16 @@ router.get('/download-db', (req, res) => {
     if (!isPinValid && !isTokenValid) {
       return res.status(401).json({
         error: 'Unauthorized: Valid Admin PIN (via ?pin=) or Admin Bearer token is required to download the database.'
+      });
+    }
+
+    if (isPostgres) {
+      // Running on external Supabase PostgreSQL
+      return res.json({
+        service: 'Supabase PostgreSQL',
+        status: 'online',
+        host: 'db.xgehhlmkhzekhakmcrcg.supabase.co',
+        note: 'Your database is persistently hosted on Supabase Cloud. You can view, export, or manage all tables directly in your Supabase Dashboard at https://supabase.com/dashboard/project/xgehhlmkhzekhakmcrcg'
       });
     }
 

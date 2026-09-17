@@ -5,7 +5,7 @@ import { requireRole } from '../middleware/rbac.js';
 const router = express.Router();
 
 // GET /api/owners - List fleet owners
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { search } = req.query;
     let query = 'SELECT * FROM owners WHERE 1=1';
@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
     }
 
     query += ' ORDER BY joinedDate DESC';
-    const rows = db.prepare(query).all(params);
+    const rows = await db.prepare(query).all(params);
     res.json(rows);
   } catch (error) {
     console.error('Error fetching owners:', error);
@@ -26,9 +26,9 @@ router.get('/', (req, res) => {
 });
 
 // GET /api/owners/:id
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const row = db.prepare('SELECT * FROM owners WHERE id = ?').get(req.params.id);
+    const row = await db.prepare('SELECT * FROM owners WHERE id = ?').get(req.params.id);
     if (!row) {
       return res.status(404).json({ error: 'Owner not found' });
     }
@@ -40,17 +40,17 @@ router.get('/:id', (req, res) => {
 });
 
 // PATCH /api/owners/:id/status - Toggle active/suspended (Admin only)
-router.patch('/:id/status', requireRole('admin'), (req, res) => {
+router.patch('/:id/status', requireRole('admin'), async (req, res) => {
   try {
-    const current = db.prepare('SELECT status FROM owners WHERE id = ?').get(req.params.id);
+    const current = await db.prepare('SELECT status FROM owners WHERE id = ?').get(req.params.id);
     if (!current) {
       return res.status(404).json({ error: 'Owner not found' });
     }
 
     const newStatus = req.body.status || (current.status === 'active' ? 'suspended' : 'active');
-    db.prepare('UPDATE owners SET status = ? WHERE id = ?').run(newStatus, req.params.id);
+    await db.prepare('UPDATE owners SET status = ? WHERE id = ?').run(newStatus, req.params.id);
 
-    const updated = db.prepare('SELECT * FROM owners WHERE id = ?').get(req.params.id);
+    const updated = await db.prepare('SELECT * FROM owners WHERE id = ?').get(req.params.id);
     res.json(updated);
   } catch (error) {
     console.error('Error toggling owner status:', error);

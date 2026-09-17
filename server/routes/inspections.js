@@ -16,9 +16,9 @@ function formatInspectionRow(row) {
 }
 
 // GET /api/inspections - List all inspections grouped by bookingId
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const rows = db.prepare('SELECT * FROM inspections ORDER BY createdAt ASC').all();
+    const rows = await db.prepare('SELECT * FROM inspections ORDER BY createdAt ASC').all();
     const result = {};
 
     for (const row of rows) {
@@ -47,10 +47,10 @@ router.get('/', (req, res) => {
 });
 
 // GET /api/inspections/:bookingId - Pre & post inspections for a booking
-router.get('/:bookingId', (req, res) => {
+router.get('/:bookingId', async (req, res) => {
   try {
-    const rows = db.prepare('SELECT * FROM inspections WHERE bookingId = ?').all(req.params.bookingId);
-    const booking = db.prepare('SELECT vehicleId, vehicleName FROM bookings WHERE id = ?').get(req.params.bookingId);
+    const rows = await db.prepare('SELECT * FROM inspections WHERE bookingId = ?').all(req.params.bookingId);
+    const booking = await db.prepare('SELECT vehicleId, vehicleName FROM bookings WHERE id = ?').get(req.params.bookingId);
 
     const result = {
       bookingId: req.params.bookingId,
@@ -86,7 +86,7 @@ router.post('/:bookingId', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'type and inspectionData are required' });
     }
 
-    const booking = db.prepare('SELECT * FROM bookings WHERE id = ?').get(bookingId);
+    const booking = await db.prepare('SELECT * FROM bookings WHERE id = ?').get(bookingId);
     const id = `insp-${bookingId}-${type}`;
 
     const stmt = db.prepare(`
@@ -103,7 +103,7 @@ router.post('/:bookingId', requireAuth, async (req, res) => {
       )
     `);
 
-    stmt.run({
+    await stmt.run({
       id,
       bookingId,
       type,
@@ -130,7 +130,7 @@ router.post('/:bookingId', requireAuth, async (req, res) => {
     let settlementResult = null;
 
     if (type === 'pre') {
-      db.prepare("UPDATE bookings SET preInspectionDone = 1, status = 'Active Rental' WHERE id = ?").run(bookingId);
+      await db.prepare("UPDATE bookings SET preInspectionDone = 1, status = 'Active Rental' WHERE id = ?").run(bookingId);
     } else {
       // POST-RENTAL RETURN INSPECTION
       const customerConfirmed = Boolean(inspectionData.customerConfirmed);
@@ -149,29 +149,29 @@ router.post('/:bookingId', requireAuth, async (req, res) => {
       );
 
       // Check if an open dispute already exists in the database
-      const existingDispute = db.prepare("SELECT id FROM disputes WHERE bookingId = ? AND status != 'Resolved'").get(bookingId);
+      const existingDispute = await db.prepare("SELECT id FROM disputes WHERE bookingId = ? AND status != 'Resolved'").get(bookingId);
 
       if (bothConfirmed && !hasDamageIssue && !existingDispute) {
         // FINAL SETTLEMENT: Both parties confirmed return with NO issues!
-        db.prepare("UPDATE bookings SET postInspectionDone = 1, status = 'Completed' WHERE id = ?").run(bookingId);
+        await db.prepare("UPDATE bookings SET postInspectionDone = 1, status = 'Completed' WHERE id = ?").run(bookingId);
         
         // Purge temporary inspection photos from ImageKit storage to protect privacy and conserve storage
         settlementResult = await deleteSettlementImagesForBooking(bookingId);
       } else if (hasDamageIssue || existingDispute) {
         // Issues reported: preserve images for evidence review
-        db.prepare("UPDATE bookings SET postInspectionDone = 1, status = 'Dispute' WHERE id = ?").run(bookingId);
+        await db.prepare("UPDATE bookings SET postInspectionDone = 1, status = 'Dispute' WHERE id = ?").run(bookingId);
         settlementResult = {
           settled: false,
           imagesPurged: false,
           reason: 'Issues or damages reported on return. Photos preserved in cloud storage for dispute resolution.'
         };
       } else {
-        db.prepare('UPDATE bookings SET postInspectionDone = 1 WHERE id = ?').run(bookingId);
+        await db.prepare('UPDATE bookings SET postInspectionDone = 1 WHERE id = ?').run(bookingId);
       }
     }
 
     // Return updated booking inspections
-    const updatedRows = db.prepare('SELECT * FROM inspections WHERE bookingId = ?').all(bookingId);
+    const updatedRows = await db.prepare('SELECT * FROM inspections WHERE bookingId = ?').all(bookingId);
     const result = {
       bookingId,
       preRental: null,

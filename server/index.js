@@ -28,8 +28,8 @@ import { authenticateUser } from './middleware/rbac.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Initialize SQLite database and tables
-initDatabase();
+// Initialize database connection and tables
+await initDatabase();
 
 const app = express();
 const PORT = process.env.PORT || 5000;

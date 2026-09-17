@@ -120,10 +120,10 @@ export async function uploadPhotoToImageKit({
     console.log(`[ImageKit Dev Mode] Photo stored locally at /uploads/${safeName} (${(size / 1024).toFixed(1)} KB)`);
   }
 
-  // Record into uploaded_images SQLite table
+  // Record into uploaded_images database table
   const imageRecordId = `img-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
   try {
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO uploaded_images (id, fileId, url, thumbnailUrl, bookingId, vehicleId, category, size, deleted)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)
     `).run(imageRecordId, fileId, url, thumbnailUrl, bookingId, vehicleId, category, size);
@@ -160,7 +160,7 @@ export async function deletePhotoFromImageKit(fileId) {
     }
   } else if (fileId.startsWith('ik_dev_')) {
     // Check if recorded in db to find local file
-    const record = db.prepare('SELECT url FROM uploaded_images WHERE fileId = ?').get(fileId);
+    const record = await db.prepare('SELECT url FROM uploaded_images WHERE fileId = ?').get(fileId);
     if (record?.url && record.url.startsWith('/uploads/')) {
       const localPath = path.join(DEV_UPLOADS_DIR, path.basename(record.url));
       if (fs.existsSync(localPath)) {
@@ -170,7 +170,7 @@ export async function deletePhotoFromImageKit(fileId) {
   }
 
   // Update DB status
-  db.prepare('UPDATE uploaded_images SET deleted = 1, deletedAt = CURRENT_TIMESTAMP WHERE fileId = ?').run(fileId);
+  await db.prepare('UPDATE uploaded_images SET deleted = 1, deletedAt = CURRENT_TIMESTAMP WHERE fileId = ?').run(fileId);
 
   return { success: true, fileId, deletedFromCloud };
 }
@@ -183,7 +183,7 @@ export async function deletePhotoFromImageKit(fileId) {
 export async function deleteSettlementImagesForBooking(bookingId) {
   if (!bookingId) return { success: false, error: 'bookingId is required' };
 
-  const records = db.prepare(`
+  const records = await db.prepare(`
     SELECT * FROM uploaded_images
     WHERE bookingId = ? AND deleted = 0
   `).all(bookingId);
@@ -191,8 +191,8 @@ export async function deleteSettlementImagesForBooking(bookingId) {
   if (!records || records.length === 0) {
     // Mark inspection as settled even if no external images were recorded
     try {
-      db.prepare('UPDATE inspections SET imagesSettled = 1, imagesDeletedAt = CURRENT_TIMESTAMP WHERE bookingId = ?').run(bookingId);
-      db.prepare('UPDATE bookings SET imagesSettled = 1 WHERE id = ?').run(bookingId);
+      await db.prepare('UPDATE inspections SET imagesSettled = 1, imagesDeletedAt = CURRENT_TIMESTAMP WHERE bookingId = ?').run(bookingId);
+      await db.prepare('UPDATE bookings SET imagesSettled = 1 WHERE id = ?').run(bookingId);
     } catch (e) { /* ignore */ }
     return { success: true, deletedCount: 0, message: 'No active images to purge' };
   }
@@ -225,16 +225,16 @@ export async function deleteSettlementImagesForBooking(bookingId) {
     }
   }
 
-  // Mark all images deleted in SQLite
-  db.prepare(`
+  // Mark all images deleted in DB
+  await db.prepare(`
     UPDATE uploaded_images
     SET deleted = 1, deletedAt = CURRENT_TIMESTAMP
     WHERE bookingId = ?
   `).run(bookingId);
 
   // Mark inspection and booking records as settled and purged
-  db.prepare('UPDATE inspections SET imagesSettled = 1, imagesDeletedAt = CURRENT_TIMESTAMP WHERE bookingId = ?').run(bookingId);
-  db.prepare('UPDATE bookings SET imagesSettled = 1 WHERE id = ?').run(bookingId);
+  await db.prepare('UPDATE inspections SET imagesSettled = 1, imagesDeletedAt = CURRENT_TIMESTAMP WHERE bookingId = ?').run(bookingId);
+  await db.prepare('UPDATE bookings SET imagesSettled = 1 WHERE id = ?').run(bookingId);
 
   console.log(`[Settlement Complete] All ${records.length} inspection photos purged from storage for settled booking ${bookingId}.`);
 
