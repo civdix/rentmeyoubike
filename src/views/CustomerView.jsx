@@ -365,7 +365,7 @@ export const CustomerView = () => {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute top-3 left-3 flex flex-wrap gap-1">
-                        <DivineVerifiedBadge size="xs" />
+                        {/* <DivineVerifiedBadge size="xs" /> */}
                         {vehicle.ownerVerified && <VerifiedOwnerBadge size="xs" />}
                       </div>
                       <div className="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
@@ -404,29 +404,39 @@ export const CustomerView = () => {
                         </div>
                       </div>
 
-                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                      {/* Amount & Host Section */}
+                      <div className="pt-3 border-t border-slate-100 flex items-end justify-between">
                         <div>
-                          <span className="text-slate-400 text-[10px] block">Daily Price</span>
-                          <div className="font-heading font-extrabold text-lg text-slate-900">
-                            ₹{vehicle.dailyRate} <span className="text-xs font-normal text-slate-500">/day</span>
+                          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Daily Rental</span>
+                          <div className="flex items-baseline gap-1">
+                            <span className="font-heading font-black text-2xl text-emerald-600">₹{vehicle.dailyRate}</span>
+                            <span className="text-xs text-slate-500 font-semibold">/ day</span>
                           </div>
                         </div>
-
-                        <div className="flex gap-1.5">
-                          <button
-                            onClick={() => setSelectedVehicle(vehicle)}
-                            className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs px-2.5 py-2 rounded-xl transition-colors"
-                          >
-                            View Details
-                          </button>
-                          <button
-                            onClick={() => setBookingDrawerVehicle(vehicle)}
-                            className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 shadow-sm transition-transform active:scale-95"
-                          >
-                            <MessageSquare className="w-4 h-4 fill-white" />
-                            <span>Book</span>
-                          </button>
+                        <div className="text-right">
+                          <span className="text-[10px] text-slate-400 block">Host: <strong className="text-slate-700 font-bold">{vehicle.ownerName}</strong></span>
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                            Verified Host
+                          </span>
                         </div>
+                      </div>
+
+                      {/* Action Buttons (Clean Grid) */}
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        <button
+                          onClick={() => setSelectedVehicle(vehicle)}
+                          className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs py-2.5 px-3 rounded-xl transition-all active:scale-[0.98] text-center border border-slate-200/80"
+                        >
+                          View Details
+                        </button>
+                        <button
+                          onClick={() => setBookingDrawerVehicle(vehicle)}
+                          className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all active:scale-[0.98]"
+                        >
+                          <WhatsAppBrandIcon className="w-4 h-4 fill-white shrink-0" />
+                          <span>Book WhatsApp</span>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -447,8 +457,8 @@ export const CustomerView = () => {
                   <button
                     onClick={() => setHowItWorksRole('customer')}
                     className={`px-5 py-2 rounded-lg transition-all ${howItWorksRole === 'customer'
-                        ? 'bg-slate-900 text-white shadow-sm'
-                        : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-slate-900 text-white shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
                       }`}
                   >
                     For Customers (Renters)
@@ -456,8 +466,8 @@ export const CustomerView = () => {
                   <button
                     onClick={() => setHowItWorksRole('owner')}
                     className={`px-5 py-2 rounded-lg transition-all ${howItWorksRole === 'owner'
-                        ? 'bg-amber-500 text-slate-950 shadow-sm'
-                        : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-amber-500 text-slate-950 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
                       }`}
                   >
                     For Bike Owners (Hosts)
@@ -777,11 +787,10 @@ export const CustomerView = () => {
             setActiveTab('home');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className={`flex-1 py-1.5 px-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold transition-all ${
-            activeTab === 'home'
+          className={`flex-1 py-1.5 px-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold transition-all ${activeTab === 'home'
               ? 'bg-emerald-600 text-white shadow-sm'
               : 'text-slate-400 hover:text-white'
-          }`}
+            }`}
         >
           <Home className="w-4 h-4" />
           <span>Home</span>
@@ -792,11 +801,10 @@ export const CustomerView = () => {
             setActiveTab('browse');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className={`flex-1 py-1.5 px-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold transition-all ${
-            activeTab === 'browse'
+          className={`flex-1 py-1.5 px-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold transition-all ${activeTab === 'browse'
               ? 'bg-emerald-600 text-white shadow-sm'
               : 'text-slate-400 hover:text-white'
-          }`}
+            }`}
         >
           <Bike className="w-4 h-4" />
           <span>Fleet ({vehicles.filter((v) => v.status === 'active' && (v.vehicleVerified || v.verificationStatus === 'Verified')).length})</span>
@@ -807,11 +815,10 @@ export const CustomerView = () => {
             setActiveTab('my_bookings');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className={`flex-1 py-1.5 px-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold relative transition-all ${
-            activeTab === 'my_bookings'
+          className={`flex-1 py-1.5 px-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold relative transition-all ${activeTab === 'my_bookings'
               ? 'bg-emerald-600 text-white shadow-sm'
               : 'text-slate-400 hover:text-white'
-          }`}
+            }`}
         >
           <Clock className="w-4 h-4" />
           <span>Bookings</span>

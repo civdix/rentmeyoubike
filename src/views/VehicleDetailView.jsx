@@ -121,10 +121,10 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
   const galleryImages = Array.isArray(vehicle.images) && vehicle.images.length > 0
     ? vehicle.images
     : [
-        'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1000&q=80',
-        'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=1000&q=80',
-        'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=1000&q=80'
-      ];
+      'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1558980664-3a031cf67ea8?auto=format&fit=crop&w=1000&q=80'
+    ];
 
   const currentImage = galleryImages[activeImageIndex] || galleryImages[0];
 
@@ -158,9 +158,9 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
                   alt={vehicleName}
                   className="w-full h-full object-cover transition-all duration-300"
                 />
-                <div className="absolute top-3 left-3 flex flex-wrap gap-1">
+                {/* <div className="absolute top-3 left-3 flex flex-wrap gap-1">
                   <DivineVerifiedBadge size="xs" />
-                </div>
+                </div> */}
               </div>
 
               {/* Thumbnails */}
@@ -169,11 +169,10 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
                   <button
                     key={idx}
                     onClick={() => setActiveImageIndex(idx)}
-                    className={`w-20 h-14 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
-                      activeImageIndex === idx
-                        ? 'border-emerald-600 ring-2 ring-emerald-500/20'
-                        : 'border-slate-200 opacity-70 hover:opacity-100'
-                    }`}
+                    className={`w-20 h-14 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${activeImageIndex === idx
+                      ? 'border-emerald-600 ring-2 ring-emerald-500/20'
+                      : 'border-slate-200 opacity-70 hover:opacity-100'
+                      }`}
                   >
                     <img src={imgUrl} alt="" className="w-full h-full object-cover" />
                   </button>
