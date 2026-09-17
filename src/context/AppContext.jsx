@@ -200,6 +200,26 @@ export const AppProvider = ({ children }) => {
   const [activeInspectionModal, setActiveInspectionModal] = useState(null);
   const [activeDiffModal, setActiveDiffModal] = useState(null);
   const [activeLegalModal, setActiveLegalModal] = useState(null);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [contactModalInitialData, setContactModalInitialData] = useState({});
+
+  const openContactModal = (initialData = {}) => {
+    setContactModalInitialData(initialData || {});
+    setIsContactModalOpen(true);
+  };
+
+  const closeContactModal = () => {
+    setIsContactModalOpen(false);
+    setContactModalInitialData({});
+  };
+
+  useEffect(() => {
+    const handleOpenContact = (e) => {
+      openContactModal(e.detail || {});
+    };
+    window.addEventListener('vr_open_contact', handleOpenContact);
+    return () => window.removeEventListener('vr_open_contact', handleOpenContact);
+  }, []);
   const [activeFilter, setActiveFilter] = useState({
     type: 'all',
     maxPrice: 1200,
@@ -749,6 +769,10 @@ export const AppProvider = ({ children }) => {
         setActiveDiffModal,
         activeLegalModal,
         setActiveLegalModal,
+        isContactModalOpen,
+        contactModalInitialData,
+        openContactModal,
+        closeContactModal,
         activeFilter,
         setActiveFilter,
         addVehicle,

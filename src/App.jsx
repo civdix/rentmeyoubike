@@ -12,6 +12,7 @@ import { MobileInspectionView } from './components/MobileInspectionView';
 import { InspectionDiffViewer } from './components/InspectionDiffViewer';
 import { LegalPoliciesModal } from './components/LegalPoliciesModal';
 import { LoginModal } from './components/LoginModal';
+import { ContactModal } from './components/ContactModal';
 
 const MainContent = () => {
   const {
@@ -31,7 +32,10 @@ const MainContent = () => {
     isLoginModalOpen,
     closeLoginModal,
     loginRoleTarget,
-    loginModalMode
+    loginModalMode,
+    isContactModalOpen,
+    closeContactModal,
+    contactModalInitialData
   } = useApp();
 
   return (
@@ -101,6 +105,14 @@ const MainContent = () => {
           initialRole={loginRoleTarget}
           initialMode={loginModalMode}
           onClose={closeLoginModal}
+        />
+      )}
+
+      {isContactModalOpen && (
+        <ContactModal
+          isOpen={isContactModalOpen}
+          initialData={contactModalInitialData}
+          onClose={closeContactModal}
         />
       )}
     </div>

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Bike, ShieldCheck, MapPin, MessageSquare, Heart } from 'lucide-react';
+import { Bike, ShieldCheck, MapPin, MessageSquare, Heart, Mail } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export const Footer = () => {
-  const { setRole, legalConfig, setActiveLegalModal, openLoginModal } = useApp();
+  const { setRole, legalConfig, setActiveLegalModal, openLoginModal, openContactModal } = useApp();
 
   return (
     <footer className="bg-slate-950 text-slate-400 border-t border-slate-800 py-12 text-xs relative z-20">
@@ -79,6 +79,16 @@ export const Footer = () => {
                 WhatsApp Support
               </a>
             </li>
+            <li>
+              <button
+                type="button"
+                onClick={() => openContactModal()}
+                className="hover:text-white text-teal-400 font-bold transition-colors flex items-center gap-1.5"
+              >
+                <Mail className="w-3.5 h-3.5" />
+                <span>Contact Support Form</span>
+              </button>
+            </li>
           </ul>
         </div>
 
@@ -120,15 +130,25 @@ export const Footer = () => {
           <p className="mb-3 text-slate-400 leading-relaxed">
             Vrindavan Dham, Mathura Region, Uttar Pradesh
           </p>
-          <a
-            href={`https://wa.me/${legalConfig.supportWhatsApp.replace(/[^0-9]/g, '')}?text=Radhe%20Radhe!%20I%20need%20assistance.`}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white px-4 py-2.5 rounded-xl font-extrabold transition-transform active:scale-95 shadow-md border border-emerald-400/40"
-          >
-            <MessageSquare className="w-4 h-4 fill-white" strokeWidth={2.5} />
-            <span>WhatsApp Support</span>
-          </a>
+          <div className="space-y-2">
+            <button
+              type="button"
+              onClick={() => openContactModal()}
+              className="w-full inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-xl font-bold transition-transform active:scale-95 shadow-md border border-slate-700 text-xs"
+            >
+              <Mail className="w-4 h-4 text-emerald-400" />
+              <span>Send Us a Message</span>
+            </button>
+            <a
+              href={`https://wa.me/${legalConfig.supportWhatsApp.replace(/[^0-9]/g, '')}?text=Radhe%20Radhe!%20I%20need%20assistance.`}
+              target="_blank"
+              rel="noreferrer"
+              className="w-full inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white px-4 py-2.5 rounded-xl font-extrabold transition-transform active:scale-95 shadow-md border border-emerald-400/40 text-xs"
+            >
+              <MessageSquare className="w-4 h-4 fill-white" strokeWidth={2.5} />
+              <span>WhatsApp Support</span>
+            </a>
+          </div>
         </div>
       </div>
 

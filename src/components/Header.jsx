@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { MapPin, User, LogIn, LogOut, ChevronDown, ShieldCheck, Bike, Search, CalendarCheck, UserPlus } from 'lucide-react';
+import { MapPin, User, LogIn, LogOut, ChevronDown, ShieldCheck, Bike, Search, CalendarCheck, UserPlus, Mail } from 'lucide-react';
 import { VrindavanScooterIcon, VrindavanFeatherIcon, WhatsAppBrandIcon, KeyHandoverIcon } from './CustomIcons';
 
 export const Header = () => {
@@ -10,6 +10,7 @@ export const Header = () => {
     legalConfig,
     currentUser,
     openLoginModal,
+    openContactModal,
     logoutUser,
     customerTab,
     setCustomerTab,
@@ -71,6 +72,17 @@ export const Header = () => {
               <span className="hidden sm:inline">WhatsApp Help: {legalConfig?.supportWhatsApp || '+91 98765 43210'}</span>
               <span className="sm:hidden">WhatsApp</span>
             </a>
+
+            <span className="text-slate-700 hidden sm:inline">•</span>
+
+            <button
+              type="button"
+              onClick={() => openContactModal()}
+              className="inline-flex items-center gap-1.5 text-teal-400 hover:text-teal-300 font-bold transition-colors cursor-pointer"
+            >
+              <Mail className="w-3.5 h-3.5 text-teal-400" />
+              <span>Contact Us</span>
+            </button>
 
             <span className="text-slate-700 hidden sm:inline">•</span>
 

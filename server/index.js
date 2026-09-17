@@ -22,6 +22,7 @@ import settingsRouter from './routes/settings.js';
 import statsRouter from './routes/stats.js';
 import authRouter from './routes/auth.js';
 import uploadRouter from './routes/upload.js';
+import contactRouter from './routes/contact.js';
 import { authenticateUser } from './middleware/rbac.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -44,6 +45,7 @@ app.use((req, res, next) => {
   if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
     const isPublic = req.path.startsWith('/api/auth/') ||
                      req.path.startsWith('/api/upload') ||
+                     req.path.startsWith('/api/contact') ||
                      req.path.startsWith('/api/health');
 
     if (!isPublic && (!req.user || !req.user.isAuthenticated)) {
@@ -69,7 +71,8 @@ app.get('/', (req, res) => {
       bookings: '/api/bookings',
       inspections: '/api/inspections',
       auth: '/api/auth',
-      upload: '/api/upload'
+      upload: '/api/upload',
+      contact: '/api/contact'
     },
     timestamp: new Date().toISOString()
   });
@@ -95,6 +98,7 @@ app.use('/api/owners', ownersRouter);
 app.use('/api/disputes', disputesRouter);
 app.use('/api/settings', settingsRouter);
 app.use('/api/stats', statsRouter);
+app.use('/api/contact', contactRouter);
 
 // 404 Handler for API
 app.use((req, res) => {

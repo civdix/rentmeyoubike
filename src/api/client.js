@@ -45,7 +45,7 @@ async function request(endpoint, options = {}) {
       const errorData = await response.json().catch(() => ({}));
       const errorMsg = errorData.error || errorData.message || `HTTP error! status: ${response.status}`;
       if (response.status === 401 && typeof window !== 'undefined') {
-        if (!endpoint.startsWith('/auth/')) {
+        if (!endpoint.startsWith('/auth/') && !endpoint.startsWith('/contact')) {
           window.dispatchEvent(new CustomEvent('vr_unauthorized', { detail: { message: errorMsg, endpoint } }));
         }
       }
@@ -400,5 +400,13 @@ export async function apiDeletePhoto(fileId) {
 export async function apiCleanupBookingImages(bookingId) {
   return request(`/upload/settlement-cleanup/${bookingId}`, {
     method: 'POST'
+  });
+}
+
+// Contact Form API: Submits inquiry server-side
+export async function apiSendContactMessage({ name, email, subject, message }) {
+  return request('/contact', {
+    method: 'POST',
+    body: JSON.stringify({ name, email, subject, message })
   });
 }
