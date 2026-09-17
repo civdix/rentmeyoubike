@@ -65,7 +65,7 @@ function formatHeaderText(text) {
  */
 router.post('/', async (req, res) => {
   try {
-    const { name, email, subject, message } = req.body || {};
+    const { name, email, to, subject, message } = req.body || {};
 
     // 1. Validation (Returns HTTP 400 on failure)
     if (!email || typeof email !== 'string' || !email.trim()) {
@@ -98,10 +98,29 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Message cannot exceed 5000 characters.' });
     }
 
-    // Optional visitor name validation
+    // Optional visitor name
     const cleanName = (name && typeof name === 'string') ? name.trim() : cleanEmail.split('@')[0];
 
-    // 2. Authentication: Verify server-side EMAIL_API_TOKEN (Returns HTTP 401 if missing)
+    // 2. Resolve Recipient Email (X-Email-To)
+    // Supports dynamic recipient provided in body (e.g. vehicle host, specific admin, or department)
+    // with fallback to EMAIL_API_TO environment variable or site owner email
+    let recipientEmail = '';
+    if (to && typeof to === 'string' && to.trim()) {
+      const cleanTo = to.trim().toLowerCase();
+      if (!EMAIL_REGEX.test(cleanTo)) {
+        return res.status(400).json({ error: 'Recipient email address (to) is invalid.' });
+      }
+      recipientEmail = cleanTo;
+    } else {
+      recipientEmail = (
+        process.env.EMAIL_API_TO ||
+        process.env.CONTACT_EMAIL_RECIPIENT ||
+        process.env.SMTP_USER ||
+        'dixitshivam249@gmail.com'
+      ).trim();
+    }
+
+    // 3. Authentication: Verify server-side EMAIL_API_TOKEN (Returns HTTP 401 if missing)
     const emailApiToken = process.env.EMAIL_API_TOKEN;
     if (!emailApiToken || !emailApiToken.trim()) {
       console.error('[ContactAPI] Missing EMAIL_API_TOKEN in server environment variables.');
@@ -110,19 +129,12 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // 3. Configure Recipient & Endpoint
-    const recipientEmail = (
-      process.env.EMAIL_API_TO ||
-      process.env.CONTACT_EMAIL_RECIPIENT ||
-      process.env.SMTP_USER ||
-      'support@vrindavanrides.in'
-    ).trim();
-
     const targetEndpoint = process.env.EMAIL_API_ENDPOINT || 'https://shivamdixit.vercel.app/api/send-email';
 
     // 4. Safely sanitize and build HTML body
     const safeName = escapeHtml(cleanName);
     const safeEmail = escapeHtml(cleanEmail);
+    const safeRecipient = escapeHtml(recipientEmail);
     const safeSubject = escapeHtml(cleanSubject);
     const safeMessageBody = escapeHtml(cleanMessage).replace(/\n/g, '<br/>');
 
@@ -141,6 +153,7 @@ router.post('/', async (req, res) => {
           </div>
           <div style="padding: 24px;">
             <div style="margin-bottom: 20px; padding: 16px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #edf2f7;">
+              <p style="margin: 0 0 8px 0; font-size: 14px;"><strong>To:</strong> <a href="mailto:${safeRecipient}" style="color: #059669; text-decoration: none;">${safeRecipient}</a></p>
               <p style="margin: 0 0 8px 0; font-size: 14px;"><strong>From:</strong> ${safeName} &lt;<a href="mailto:${safeEmail}" style="color: #059669; text-decoration: none;">${safeEmail}</a>&gt;</p>
               <p style="margin: 0 0 8px 0; font-size: 14px;"><strong>Subject:</strong> ${safeSubject}</p>
               <p style="margin: 0; font-size: 12px; color: #64748b;"><strong>Received:</strong> ${new Date().toUTCString()}</p>
@@ -162,7 +175,7 @@ router.post('/', async (req, res) => {
     // 5. Prepare Headers
     // Required headers:
     //   Authorization: Bearer ${EMAIL_API_TOKEN}
-    //   X-Email-To: recipient@example.com
+    //   X-Email-To: recipient@example.com (Dynamic or configured)
     //   X-Email-Subject: New contact form message
     //   X-Email-Text: Plain text message content
     // Optional headers:
@@ -190,7 +203,6 @@ router.post('/', async (req, res) => {
       });
     } catch (networkErr) {
       console.error('[ContactAPI] Network connection error to email service:', networkErr.message);
-      // Requirement: Handle HTTP 502 error for network / upstream failure
       return res.status(502).json({
         error: `Bad Gateway: Unable to connect to email API (${networkErr.message}). Please try again later.`
       });
@@ -199,9 +211,10 @@ router.post('/', async (req, res) => {
     // 7. Handle response status codes
     // Requirement: Show success only for HTTP 200
     if (externalResponse.status === 200) {
-      console.log(`✉️ [ContactAPI] Message successfully dispatched for ${cleanEmail}`);
+      console.log(`✉️ [ContactAPI] Message successfully dispatched for ${cleanEmail} -> ${recipientEmail}`);
       return res.status(200).json({
         success: true,
+        to: recipientEmail,
         message: 'Your message has been sent successfully. We will get back to you shortly!'
       });
     }

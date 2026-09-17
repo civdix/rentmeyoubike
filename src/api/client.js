@@ -407,9 +407,9 @@ export async function apiCleanupBookingImages(bookingId) {
 }
 
 // Contact Form API: Submits inquiry server-side
-export async function apiSendContactMessage({ name, email, subject, message }) {
+export async function apiSendContactMessage({ name, email, to, subject, message }) {
   return request('/contact', {
     method: 'POST',
-    body: JSON.stringify({ name, email, subject, message })
+    body: JSON.stringify({ name, email, to, subject, message })
   });
 }

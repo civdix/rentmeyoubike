@@ -12,6 +12,7 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    to: '',
     subject: '',
     message: ''
   });
@@ -28,6 +29,7 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
       setFormData({
         name: initialData.name || currentUser?.name || '',
         email: initialData.email || currentUser?.email || '',
+        to: initialData.to || '',
         subject: initialData.subject || '',
         message: initialData.message || ''
       });
@@ -56,6 +58,10 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
       errors.email = 'Please enter your email address.';
     } else if (!EMAIL_REGEX.test(formData.email.trim())) {
       errors.email = 'Please enter a valid email format (e.g. name@domain.com).';
+    }
+
+    if (formData.to.trim() && !EMAIL_REGEX.test(formData.to.trim())) {
+      errors.to = 'Please enter a valid recipient email format.';
     }
 
     if (!formData.subject.trim()) {
@@ -109,6 +115,7 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
       const response = await apiSendContactMessage({
         name: formData.name.trim(),
         email: formData.email.trim(),
+        to: formData.to.trim() || undefined,
         subject: formData.subject.trim(),
         message: formData.message.trim()
       });
@@ -202,7 +209,10 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
 
               <div className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800 text-xs text-slate-400 text-left max-w-sm mx-auto space-y-1">
                 <p>
-                  <strong className="text-slate-300">From:</strong> {formData.name} ({formData.email})
+                  <strong className="text-slate-300">To (Recipient):</strong> {formData.to || 'dixitshivam249@gmail.com'}
+                </p>
+                <p>
+                  <strong className="text-slate-300">From (Reply-To):</strong> {formData.name} ({formData.email})
                 </p>
                 <p>
                   <strong className="text-slate-300">Subject:</strong> {formData.subject}
@@ -220,6 +230,7 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
                     setFormData({
                       name: currentUser?.name || '',
                       email: currentUser?.email || '',
+                      to: '',
                       subject: '',
                       message: ''
                     });
@@ -286,6 +297,36 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
                 {fieldErrors.email && (
                   <p className="text-[11px] text-rose-400 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" /> {fieldErrors.email}
+                  </p>
+                )}
+              </div>
+
+              {/* Recipient Email Field (X-Email-To) */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="block font-bold text-slate-300">
+                    Recipient Email <span className="text-slate-500 font-normal">(X-Email-To)</span>
+                  </label>
+                  <span className="text-[10px] text-slate-400 font-mono">
+                    Default: dixitshivam249@gmail.com
+                  </span>
+                </div>
+                <div className="relative">
+                  <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                  <input
+                    type="email"
+                    disabled={isSubmitting}
+                    value={formData.to}
+                    onChange={(e) => handleChange('to', e.target.value)}
+                    placeholder="e.g. dixitshivam249@gmail.com (or custom recipient)"
+                    className={`w-full bg-slate-950 text-white pl-10 pr-3 py-2.5 rounded-xl border ${
+                      fieldErrors.to ? 'border-rose-500' : 'border-slate-800'
+                    } focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50`}
+                  />
+                </div>
+                {fieldErrors.to && (
+                  <p className="text-[11px] text-rose-400 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" /> {fieldErrors.to}
                   </p>
                 )}
               </div>
