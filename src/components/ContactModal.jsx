@@ -279,7 +279,7 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
               {/* Email Field */}
               <div className="space-y-1.5">
                 <label className="block font-bold text-slate-300">
-                  Email Address <span className="text-rose-500">*</span>
+                  Your Email Address <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
@@ -301,35 +301,6 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
                 )}
               </div>
 
-              {/* Recipient Email Field (X-Email-To) */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="block font-bold text-slate-300">
-                    Recipient Email <span className="text-slate-500 font-normal">(X-Email-To)</span>
-                  </label>
-                  <span className="text-[10px] text-slate-400 font-mono">
-                    Default: dixitshivam249@gmail.com
-                  </span>
-                </div>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
-                  <input
-                    type="email"
-                    disabled={isSubmitting}
-                    value={formData.to}
-                    onChange={(e) => handleChange('to', e.target.value)}
-                    placeholder="e.g. dixitshivam249@gmail.com (or custom recipient)"
-                    className={`w-full bg-slate-950 text-white pl-10 pr-3 py-2.5 rounded-xl border ${
-                      fieldErrors.to ? 'border-rose-500' : 'border-slate-800'
-                    } focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50`}
-                  />
-                </div>
-                {fieldErrors.to && (
-                  <p className="text-[11px] text-rose-400 flex items-center gap-1">
-                    <AlertCircle className="w-3 h-3" /> {fieldErrors.to}
-                  </p>
-                )}
-              </div>
 
               {/* Subject Field */}
               <div className="space-y-1.5">
