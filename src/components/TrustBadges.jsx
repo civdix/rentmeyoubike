@@ -3,9 +3,9 @@ import { ShieldCheck, CheckCircle2, FileCheck, ClipboardCheck, Clock, AlertTrian
 import { VrindavanFeatherIcon, VrindavanTemplePassIcon, VerifiedShieldIcon, DigitalInspectionIcon } from './CustomIcons';
 
 export const DivineVerifiedBadge = ({ size = 'sm' }) => (
-  <span className={`inline-flex items-center gap-1.5 font-extrabold rounded-full bg-gradient-to-r from-amber-500/20 via-orange-400/25 to-amber-500/20 text-amber-950 border-2 border-amber-400/90 shadow-sm backdrop-blur-xs ring-1 ring-amber-400/30 ${size === 'xs' ? 'px-2.5 py-0.5 text-[10px]' : 'px-3.5 py-1 text-xs'}`}>
-    <VrindavanFeatherIcon className="w-4 h-4 text-amber-600 shrink-0" />
-    <span className="tracking-wide">Radhe Verified</span>
+  <span className={`inline-flex items-center gap-1.5 font-black rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 text-slate-950 border-2 border-amber-100 shadow-lg ring-2 ring-amber-500/40 drop-shadow-md ${size === 'xs' ? 'px-2.5 py-1 text-[10px] sm:text-[11px]' : 'px-3.5 py-1.5 text-xs'}`}>
+    <VrindavanFeatherIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 shrink-0" />
+    <span className="tracking-wider uppercase font-black">Radhe Verified</span>
   </span>
 );
 
@@ -17,8 +17,8 @@ export const TemplePassBadge = ({ size = 'sm' }) => (
 );
 
 export const VerifiedOwnerBadge = ({ size = 'sm' }) => (
-  <span className={`inline-flex items-center gap-1.5 font-extrabold rounded-full bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-950 border-2 border-emerald-400/90 shadow-sm ring-1 ring-emerald-400/20 ${size === 'xs' ? 'px-2.5 py-0.5 text-[10px]' : 'px-3 py-1 text-xs'}`}>
-    <VerifiedShieldIcon className="w-4 h-4 text-emerald-700 shrink-0" />
+  <span className={`inline-flex items-center gap-1.5 font-extrabold rounded-full bg-slate-900/95 text-emerald-400 border-2 border-emerald-400/80 shadow-md ring-1 ring-emerald-400/30 ${size === 'xs' ? 'px-2.5 py-1 text-[10px]' : 'px-3 py-1.5 text-xs'}`}>
+    <VerifiedShieldIcon className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
     <span>Verified Host</span>
   </span>
 );

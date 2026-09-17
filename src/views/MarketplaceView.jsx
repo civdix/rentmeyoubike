@@ -142,7 +142,7 @@ export const MarketplaceView = () => {
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <span className="font-mono text-[11px] bg-slate-800 text-emerald-400 font-bold px-2.5 py-0.5 rounded border border-slate-700">
-                vrindavanrides.com/bikes
+                rentoncent.com
               </span>
               <span className="text-amber-400 text-xs font-bold flex items-center gap-1">
                 <VrindavanFeatherIcon className="w-3.5 h-3.5 text-amber-400" />
@@ -413,35 +413,39 @@ export const MarketplaceView = () => {
                         </div>
                       )}
 
-                      {/* Host privacy notice: Owner Phone hidden publicly */}
-                      <div className="text-[10px] text-slate-400 flex items-center justify-between">
-                        <span>Host: <strong className="text-slate-700 font-semibold">{vehicle.ownerName}</strong></span>
-                        <span className="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">Verified Host</span>
-                      </div>
-
-                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                      {/* Amount & Host Section */}
+                      <div className="pt-3 border-t border-slate-100 flex items-end justify-between">
                         <div>
-                          <span className="text-slate-400 text-[10px] block">Daily Price</span>
-                          <div className="font-heading font-extrabold text-lg text-slate-900">
-                            ₹{vehicle.dailyRate} <span className="text-xs font-normal text-slate-500">/day</span>
+                          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Daily Rental</span>
+                          <div className="flex items-baseline gap-1">
+                            <span className="font-heading font-black text-2xl text-emerald-600">₹{vehicle.dailyRate}</span>
+                            <span className="text-xs text-slate-500 font-semibold">/ day</span>
                           </div>
                         </div>
-
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          <button
-                            onClick={() => setSelectedVehicle(vehicle)}
-                            className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[11px] sm:text-xs px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-xl transition-colors whitespace-nowrap"
-                          >
-                            Details
-                          </button>
-                          <button
-                            onClick={() => setBookingDrawerVehicle(vehicle)}
-                            className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-[11px] sm:text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl flex items-center gap-1 sm:gap-1.5 shadow-sm transition-transform active:scale-95 whitespace-nowrap"
-                          >
-                            <WhatsAppBrandIcon className="w-3.5 h-3.5 fill-white shrink-0" />
-                            <span>Book<span className="hidden xs:inline sm:inline">&nbsp;on WhatsApp</span></span>
-                          </button>
+                        <div className="text-right">
+                          <span className="text-[10px] text-slate-400 block">Host: <strong className="text-slate-700 font-bold">{vehicle.ownerName}</strong></span>
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                            Verified Host
+                          </span>
                         </div>
+                      </div>
+
+                      {/* Action Buttons (Clean Grid) */}
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        <button
+                          onClick={() => setSelectedVehicle(vehicle)}
+                          className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs py-2.5 px-3 rounded-xl transition-all active:scale-[0.98] text-center border border-slate-200/80"
+                        >
+                          View Details
+                        </button>
+                        <button
+                          onClick={() => setBookingDrawerVehicle(vehicle)}
+                          className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all active:scale-[0.98]"
+                        >
+                          <WhatsAppBrandIcon className="w-4 h-4 fill-white shrink-0" />
+                          <span>Book WhatsApp</span>
+                        </button>
                       </div>
                     </div>
                   </div>
