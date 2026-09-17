@@ -11,10 +11,13 @@ export const Footer = () => {
         {/* Column 1 & 2: Brand Info */}
         <div className="col-span-2 space-y-3">
           <div className="flex items-center gap-3 text-white font-heading font-extrabold text-lg">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-600 to-amber-500 flex items-center justify-center text-white border border-amber-400/50 shadow-md">
-              <Bike className="w-5 h-5 text-white" strokeWidth={2.5} />
+            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center p-1.5 border border-emerald-400/50 shadow-md">
+              <img src="/logo_square_share_area.png" alt="Rentoncent Logo" className="w-full h-full object-contain" />
             </div>
-            <span>Vrindavan Rides</span>
+            <div>
+              <span className="block leading-tight">Vrindavan Rides</span>
+              <span className="text-[11px] font-semibold text-emerald-400 font-sans tracking-wide">by rentoncent</span>
+            </div>
           </div>
           <p className="text-slate-400 leading-relaxed text-xs max-w-sm">
             "Verified bikes. Simple rentals. Explore Vrindavan." The premier peer-to-peer bike and scooter rental platform connecting local hosts with visiting pilgrims and tourists in Vrindavan & Mathura.

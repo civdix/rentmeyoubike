@@ -230,11 +230,11 @@ export const LoginModal = ({ initialRole = 'customer', initialMode = 'login', on
             <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center shadow-lg text-white shrink-0 ${
               isOwner ? 'bg-gradient-to-br from-amber-500 to-amber-600' :
               isAdmin ? 'bg-gradient-to-br from-purple-600 to-indigo-600' :
-              'bg-gradient-to-br from-emerald-500 to-teal-600'
+              'bg-white border border-emerald-400/40 p-1'
             }`}>
               {isOwner ? <Bike className="w-5 h-5 text-slate-950" /> :
                isAdmin ? <ShieldCheck className="w-5 h-5 text-white" /> :
-               <VrindavanScooterIcon className="w-5 h-5 text-white" />}
+               <img src="/logo_square_share_area.png" alt="Rentoncent Logo" className="w-full h-full object-contain" />}
             </div>
             <div>
               <div className="flex items-center gap-1.5">

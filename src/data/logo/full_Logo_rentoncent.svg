@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 120" width="100%" height="100%">
+  <!-- Icon Base -->
+  <g transform="translate(10, 10)">
+    <!-- Outer Rim / Coin Edge -->
+    <circle cx="50" cy="50" r="44" stroke="#00E599" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="190 30" transform="rotate(-30 50 50)" />
+    
+    <!-- Bike Spoke / Currency Cent Core -->
+    <circle cx="50" cy="50" r="22" stroke="#111827" stroke-width="6" fill="none" />
+    
+    <!-- Vertical Slash for the '¢' -->
+    <line x1="50" y1="14" x2="50" y2="86" stroke="#00E599" stroke-width="6" stroke-linecap="round" />
+    
+    <!-- Dynamic Motion Hub -->
+    <circle cx="50" cy="50" r="7" fill="#111827" />
+  </g>
+
+  <!-- Wordmark -->
+  <text x="135" y="70" font-family="system-ui, -apple-system, sans-serif" font-size="44" letter-spacing="-1">
+    <tspan fill="#111827" font-weight="600">renton</tspan><tspan fill="#00E599" font-weight="900">cent</tspan>
+  </text>
+  
+  <!-- Subtle Tagline -->
+  <text x="138" y="94" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700" fill="#6B7280" letter-spacing="3.5">
+    PEER-TO-PEER BIKE SHARING
+  </text>
+</svg>

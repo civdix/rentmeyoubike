@@ -112,8 +112,8 @@ export const Header = () => {
           className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0 min-w-0"
           onClick={() => navigateTo('home')}
         >
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md border border-emerald-400/40 shrink-0 group-hover:scale-105 transition-transform">
-            <VrindavanScooterIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" strokeWidth={2.2} />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white flex items-center justify-center p-1 sm:p-1.5 shadow-md border border-emerald-400/40 shrink-0 group-hover:scale-105 transition-transform">
+            <img src="/logo_square_share_area.png" alt="Rentoncent Logo" className="w-full h-full object-contain" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 sm:gap-2">
@@ -121,7 +121,7 @@ export const Header = () => {
                 Vrindavan Rides
               </span>
               <span className="hidden md:inline-block bg-emerald-950/90 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-800">
-                P2P Rental
+                by rentoncent
               </span>
             </div>
             <p className="text-[10px] sm:text-[11px] text-slate-400 hidden sm:flex items-center gap-1">
