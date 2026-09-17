@@ -8,8 +8,35 @@ const __dirname = path.dirname(__filename);
 
 export const dbPath = path.join(__dirname, 'vrindavan.db');
 
+// Resolve database URL (automatically routes Supabase direct IPv6 hosts to IPv4 pooler to prevent ENETUNREACH on Render/cloud containers)
+export function resolveDatabaseUrl(rawUrl) {
+  if (!rawUrl) return rawUrl;
+  try {
+    const parsed = new URL(rawUrl);
+    // Supabase direct host db.<project-ref>.supabase.co only has IPv6 (AAAA) DNS records.
+    // Cloud environments like Render lack outbound IPv6 routing and throw ENETUNREACH.
+    // We rewrite it to the official Supabase IPv4 Supavisor connection pooler.
+    const directMatch = parsed.hostname.match(/^db\.([a-z0-9]+)\.supabase\.co$/i);
+    if (directMatch) {
+      const projectRef = directMatch[1];
+      const baseUser = parsed.username || 'postgres';
+      const poolerUser = baseUser.includes('.') ? baseUser : `${baseUser}.${projectRef}`;
+      const password = parsed.password;
+      const port = '6543'; // Transaction pooler on IPv4
+      const poolerHost = 'aws-0-ap-south-1.pooler.supabase.com';
+      const dbName = parsed.pathname || '/postgres';
+      console.log(`ℹ️ [Database] Auto-resolving Supabase direct IPv6 host '${parsed.hostname}' to IPv4 pooler '${poolerHost}:${port}'`);
+      return `postgresql://${encodeURIComponent(poolerUser)}:${encodeURIComponent(password)}@${poolerHost}:${port}${dbName}`;
+    }
+  } catch (err) {
+    // If URL parsing fails, return rawUrl
+  }
+  return rawUrl;
+}
+
 // Check if PostgreSQL connection string is provided
-export const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://postgres:yMrQPO15lJOd1TfY@db.xgehhlmkhzekhakmcrcg.supabase.co:5432/postgres';
+const rawDbUrl = process.env.DATABASE_URL || 'postgresql://postgres.xgehhlmkhzekhakmcrcg:yMrQPO15lJOd1TfY@aws-0-ap-south-1.pooler.supabase.com:6543/postgres';
+export const DATABASE_URL = resolveDatabaseUrl(rawDbUrl);
 export const isPostgres = Boolean(DATABASE_URL && DATABASE_URL.startsWith('postgres'));
 
 let pgPool = null;

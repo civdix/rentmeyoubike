@@ -145,7 +145,7 @@ router.get('/download-db', async (req, res) => {
       return res.json({
         service: 'Supabase PostgreSQL',
         status: 'online',
-        host: 'db.xgehhlmkhzekhakmcrcg.supabase.co',
+        host: 'aws-0-ap-south-1.pooler.supabase.com (Supabase IPv4 Pooler)',
         note: 'Your database is persistently hosted on Supabase Cloud. You can view, export, or manage all tables directly in your Supabase Dashboard at https://supabase.com/dashboard/project/xgehhlmkhzekhakmcrcg'
       });
     }
