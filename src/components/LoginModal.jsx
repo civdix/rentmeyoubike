@@ -381,8 +381,8 @@ export const LoginModal = ({ initialRole = 'customer', initialMode = 'login', on
                         type="password"
                         value={adminPin}
                         onChange={(e) => setAdminPin(e.target.value)}
-                        placeholder="••••••"
-                        maxLength={6}
+                        placeholder="Enter 10-digit Admin PIN"
+                        maxLength={32}
                         className="w-full bg-slate-950 text-white pl-10 pr-4 py-2.5 rounded-xl border border-slate-700 text-sm font-mono tracking-widest focus:outline-none focus:border-purple-500"
                         required
                         autoFocus

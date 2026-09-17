@@ -344,9 +344,10 @@ export const AdminView = () => {
                 <Key className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
                 <input
                   type="password"
-                  placeholder="Enter 4-digit PIN"
+                  placeholder="Enter 10-digit Admin Security PIN"
                   value={pinInput}
                   onChange={(e) => setPinInput(e.target.value)}
+                  maxLength={32}
                   className="w-full bg-slate-950 text-white pl-10 pr-4 py-3 rounded-xl border border-slate-700 text-sm focus:outline-none focus:border-emerald-500 font-mono tracking-widest"
                 />
               </div>
