@@ -132,22 +132,22 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
     <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto font-sans">
       <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200 text-slate-900 custom-scrollbar my-auto">
         {/* Sticky Top Control Header */}
-        <div className="bg-slate-900 text-white p-4 px-6 sticky top-0 z-20 flex items-center justify-between shadow-md border-b border-slate-800">
+        <div className="bg-slate-900 text-white px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-20 flex items-center justify-between shadow-md border-b border-slate-800">
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs text-emerald-400 font-bold bg-slate-800 px-2.5 py-0.5 rounded border border-slate-700">
               ID: {vehicleId}
             </span>
-            <span className="text-xs text-amber-400 font-bold">🪶 Radhe Verified Listing</span>
+            <span className="text-xs text-amber-400 font-bold hidden xs:inline sm:inline">🪶 Radhe Verified Listing</span>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1.5 rounded-full hover:bg-slate-800 transition-colors"
+            className="text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-800 transition-colors"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         </div>
 
-        <div className="p-6 sm:p-8 space-y-8">
+        <div className="p-4 sm:p-8 space-y-6 sm:space-y-8">
           {/* TOP SECTION: IMAGE GALLERY & SPECS */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Gallery Component */}

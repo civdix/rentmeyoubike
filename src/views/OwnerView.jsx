@@ -441,19 +441,20 @@ export const OwnerView = () => {
   return (
     <div className="min-h-screen bg-slate-50 pb-16 font-sans">
       {/* Sub Header Navigation */}
-      <div className="bg-white border-b border-slate-200 sticky top-16 z-30 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
-          <div className="flex gap-6 text-xs font-bold">
+      <div className="bg-white border-b border-slate-200 sticky top-14 sm:top-16 z-30 shadow-xs">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 flex items-center justify-between overflow-x-auto">
+          <div className="flex gap-3 sm:gap-6 text-xs font-bold shrink-0">
             <button
               onClick={() => setActiveTab('my_listings')}
-              className={`py-3 border-b-2 transition-all flex items-center gap-2 ${
+              className={`py-3 border-b-2 transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
                 activeTab === 'my_listings'
                   ? 'border-emerald-600 text-emerald-700 font-extrabold'
                   : 'border-transparent text-slate-500 hover:text-slate-900'
               }`}
             >
-              <Bike className="w-4 h-4" strokeWidth={2.5} />
-              Owner Dashboard ({myVehicles.length} Listed Vehicles)
+              <Bike className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={2.5} />
+              <span className="hidden sm:inline">Owner Dashboard ({myVehicles.length} Listed Vehicles)</span>
+              <span className="sm:hidden">Dashboard ({myVehicles.length})</span>
             </button>
 
             <button
@@ -461,18 +462,19 @@ export const OwnerView = () => {
                 setActiveTab('add_new');
                 setSubmittedNotice(false);
               }}
-              className={`py-3 border-b-2 transition-all flex items-center gap-2 ${
+              className={`py-3 border-b-2 transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
                 activeTab === 'add_new'
                   ? 'border-emerald-600 text-emerald-700 font-extrabold'
                   : 'border-transparent text-slate-500 hover:text-slate-900'
               }`}
             >
-              <PlusCircle className="w-4 h-4 text-emerald-600" strokeWidth={2.5} />
-              List Your Bike (7-Step Onboarding)
+              <PlusCircle className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={2.5} />
+              <span className="hidden sm:inline">List Your Bike (7-Step Onboarding)</span>
+              <span className="sm:hidden">List Bike (7 Steps)</span>
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+          <div className="hidden lg:flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 shrink-0">
             <ShieldCheck className="w-4 h-4 text-emerald-600" strokeWidth={2.5} />
             <span>Owner Earnings Payout: 85% Direct Bank Settlement</span>
           </div>
@@ -698,39 +700,47 @@ export const OwnerView = () => {
           </div>
         ) : (
           /* 7-STEP OWNER ONBOARDING WIZARD */
-          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-2xl max-w-3xl mx-auto space-y-6">
+          <div className="bg-white rounded-3xl p-4 sm:p-10 border border-slate-200 shadow-2xl max-w-3xl mx-auto space-y-6">
             <div>
               <span className="bg-emerald-100 text-emerald-950 font-extrabold text-[10px] uppercase px-3 py-1 rounded-full mb-2 inline-block border border-emerald-300">
                 Owner Onboarding • Step {step} of 7
               </span>
-              <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900">List Your Bike in Vrindavan</h2>
+              <h2 className="font-heading font-extrabold text-xl sm:text-3xl text-slate-900">List Your Bike in Vrindavan</h2>
               <p className="text-xs text-slate-500 mt-1">
                 Complete the 7 onboarding steps below for Admin Verification & public listing.
               </p>
             </div>
 
             {/* 7-Step Progress Bar */}
-            <div className="grid grid-cols-7 gap-1 text-[10px] font-extrabold text-center pt-2">
-              {[
-                '1. Personal',
-                '2. Identity',
-                '3. Vehicle',
-                '4. Docs',
-                '5. Photos',
-                '6. Dates',
-                '7. Review'
-              ].map((label, idx) => (
-                <div key={idx} className="space-y-1">
-                  <div
-                    className={`h-2 rounded-full transition-all ${
-                      step >= idx + 1 ? 'bg-emerald-600 shadow-xs' : 'bg-slate-200'
-                    }`}
-                  ></div>
-                  <span className={step === idx + 1 ? 'text-emerald-700 font-extrabold' : 'text-slate-400 font-normal hidden sm:inline'}>
-                    {label}
-                  </span>
-                </div>
-              ))}
+            <div className="pt-2 space-y-1.5">
+              <div className="flex sm:hidden items-center justify-between text-xs font-bold text-slate-700 pb-1">
+                <span className="text-emerald-700 font-extrabold">Step {step} of 7</span>
+                <span className="text-slate-500 text-[11px]">
+                  {['Personal Info', 'Host Identity', 'Vehicle Info', 'Documents', 'Photos', 'Availability', 'Review & Submit'][step - 1]}
+                </span>
+              </div>
+              <div className="grid grid-cols-7 gap-1 text-[10px] font-extrabold text-center">
+                {[
+                  '1. Personal',
+                  '2. Identity',
+                  '3. Vehicle',
+                  '4. Docs',
+                  '5. Photos',
+                  '6. Dates',
+                  '7. Review'
+                ].map((label, idx) => (
+                  <div key={idx} className="space-y-1">
+                    <div
+                      className={`h-2 rounded-full transition-all ${
+                        step >= idx + 1 ? 'bg-emerald-600 shadow-xs' : 'bg-slate-200'
+                      }`}
+                    ></div>
+                    <span className={`text-[10px] hidden sm:inline ${step === idx + 1 ? 'text-emerald-700 font-extrabold' : 'text-slate-400 font-normal'}`}>
+                      {label}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <form onSubmit={handleFinalSubmit} className="space-y-6 text-xs pt-2">

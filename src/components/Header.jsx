@@ -49,28 +49,27 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-40 bg-slate-900 text-white border-b border-slate-800 shadow-sm font-sans">
       {/* Top Announcement & Support Bar */}
-      <div className="bg-slate-950 text-slate-300 text-xs py-1.5 px-4 border-b border-slate-800/80">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="bg-amber-500/20 text-amber-300 font-bold px-2 py-0.5 rounded text-[10px] tracking-wide uppercase border border-amber-500/30 flex items-center gap-1.5">
-              <VrindavanFeatherIcon className="w-3.5 h-3.5 text-amber-400" />
+      <div className="bg-slate-950 text-slate-300 text-xs py-1 px-3 sm:px-4 border-b border-slate-800/80">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 overflow-hidden">
+          <div className="flex items-center gap-1.5 min-w-0 truncate">
+            <span className="bg-amber-500/20 text-amber-300 font-bold px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] tracking-wide uppercase border border-amber-500/30 flex items-center gap-1 shrink-0">
+              <VrindavanFeatherIcon className="w-3 h-3 text-amber-400" />
               <span>Radhe Radhe!</span>
             </span>
-            <span className="text-slate-300 text-[11px] sm:text-xs">
-              Verified Bike & Scooter Rentals in <strong className="text-white">Vrindavan Dham</strong> • Prem Mandir, ISKCON & Bankey Bihari
+            <span className="text-slate-300 text-[10px] sm:text-xs truncate">
+              Verified Bike Rentals in <strong className="text-white">Vrindavan Dham</strong>
             </span>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-4 text-[11px]">
+          <div className="flex items-center gap-2 sm:gap-4 text-[10px] sm:text-[11px] shrink-0">
             <a
               href={`https://wa.me/${(legalConfig?.supportWhatsApp || '+919876543210').replace(/[^0-9]/g, '')}?text=Radhe%20Radhe!%20I%20have%20an%20inquiry%20regarding%20bike%20rentals.`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-bold"
+              className="inline-flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-bold"
             >
-              <WhatsAppBrandIcon className="w-3.5 h-3.5 fill-emerald-400" />
-              <span className="hidden sm:inline">WhatsApp Help: {legalConfig?.supportWhatsApp || '+91 98765 43210'}</span>
-              <span className="sm:hidden">WhatsApp</span>
+              <WhatsAppBrandIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-emerald-400" />
+              <span className="hidden sm:inline">WhatsApp Help</span>
             </a>
 
             <span className="text-slate-700 hidden sm:inline">•</span>
@@ -78,16 +77,15 @@ export const Header = () => {
             <button
               type="button"
               onClick={() => openContactModal()}
-              className="inline-flex items-center gap-1.5 text-teal-400 hover:text-teal-300 font-bold transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 text-teal-400 hover:text-teal-300 font-bold transition-colors cursor-pointer"
             >
-              <Mail className="w-3.5 h-3.5 text-teal-400" />
-              <span>Contact Us</span>
+              <Mail className="w-3 h-3 text-teal-400" />
+              <span>Contact</span>
             </button>
 
-            <span className="text-slate-700 hidden sm:inline">•</span>
-
             {currentUser ? (
-              <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-1.5">
+                <span className="text-slate-700">•</span>
                 <span className="text-slate-400 text-[11px]">
                   Hi, <strong className="text-white">{currentUser.name?.split(' ')[0] || 'User'}</strong>
                 </span>
@@ -95,12 +93,12 @@ export const Header = () => {
                   onClick={() => openLoginModal(role)}
                   className="text-amber-400 hover:text-amber-300 font-bold underline text-[10px]"
                 >
-                  Switch Account
+                  Switch
                 </button>
               </div>
             ) : (
-              <span className="text-slate-400 text-[11px] hidden sm:inline">
-                Verified Pilgrims & Fleet Host Marketplace
+              <span className="text-slate-500 text-[10px] hidden md:inline">
+                • Verified P2P Fleet
               </span>
             )}
           </div>
@@ -108,25 +106,25 @@ export const Header = () => {
       </div>
 
       {/* Main Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
         {/* Brand Logo & Tagline */}
         <div
-          className="flex items-center gap-3 cursor-pointer group"
+          className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0 min-w-0"
           onClick={() => navigateTo('home')}
         >
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md border border-emerald-400/40 shrink-0 group-hover:scale-105 transition-transform">
-            <VrindavanScooterIcon className="w-6 h-6 text-white" strokeWidth={2.2} />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md border border-emerald-400/40 shrink-0 group-hover:scale-105 transition-transform">
+            <VrindavanScooterIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" strokeWidth={2.2} />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-heading font-extrabold text-xl tracking-tight text-white group-hover:text-emerald-400 transition-colors">
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <span className="font-heading font-extrabold text-base sm:text-xl tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap">
                 Vrindavan Rides
               </span>
-              <span className="bg-emerald-950/90 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-800">
+              <span className="hidden md:inline-block bg-emerald-950/90 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-800">
                 P2P Rental
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 hidden sm:flex items-center gap-1">
+            <p className="text-[10px] sm:text-[11px] text-slate-400 hidden sm:flex items-center gap-1">
               <MapPin className="w-3 h-3 text-emerald-400" />
               Direct from Local Verified Hosts
             </p>
@@ -188,16 +186,17 @@ export const Header = () => {
         </nav>
 
         {/* Right Side Actions: Host CTA + Profile / Sign In */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           {/* Subtle Host CTA Button */}
           {role === 'owner' ? (
             <button
               onClick={() => setRole('customer')}
-              className="inline-flex items-center gap-1.5 bg-amber-500 text-slate-950 hover:bg-amber-400 font-extrabold text-xs px-3.5 py-2 rounded-xl transition-all shadow-sm active:scale-95 shrink-0"
+              className="inline-flex items-center gap-1 sm:gap-1.5 bg-amber-500 text-slate-950 hover:bg-amber-400 font-extrabold text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl transition-all shadow-sm active:scale-95 shrink-0"
               title="Return to Customer Rental Marketplace"
             >
-              <VrindavanScooterIcon className="w-4 h-4 text-slate-950" />
-              <span>Back to Renter View</span>
+              <VrindavanScooterIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 shrink-0" />
+              <span className="hidden sm:inline">Back to Renter View</span>
+              <span className="sm:hidden">Renters</span>
             </button>
           ) : (
             <button
@@ -207,11 +206,12 @@ export const Header = () => {
                 }
                 setRole('owner');
               }}
-              className="inline-flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-800 text-amber-300 hover:text-amber-200 font-bold text-xs px-3 py-2 rounded-xl border border-amber-500/30 hover:border-amber-400/60 transition-all shadow-sm active:scale-95 shrink-0 group"
+              className="inline-flex items-center gap-1 sm:gap-1.5 bg-slate-800/80 hover:bg-slate-800 text-amber-300 hover:text-amber-200 font-bold text-[11px] sm:text-xs px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-amber-500/30 hover:border-amber-400/60 transition-all shadow-sm active:scale-95 shrink-0 group"
               title="List your vehicle and earn up to ₹22,000/month"
             >
-              <KeyHandoverIcon className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
-              <span>List Your Bike</span>
+              <KeyHandoverIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 group-hover:scale-110 transition-transform shrink-0" />
+              <span className="hidden sm:inline">List Your Bike</span>
+              <span className="sm:hidden">Host</span>
               <span className="hidden lg:inline-block bg-amber-400/20 text-amber-300 text-[10px] font-mono px-1.5 py-0.2 rounded-md border border-amber-400/30">
                 Earn 85%
               </span>
@@ -219,29 +219,29 @@ export const Header = () => {
           )}
 
           {/* User Profile / Sign In Dropdown */}
-          <div className="relative">
+          <div className="relative shrink-0">
             {currentUser ? (
               <div>
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center gap-2 bg-slate-800 hover:bg-slate-750 border border-slate-700 py-1.5 px-3 rounded-xl text-xs transition-all shadow-sm"
+                  className="flex items-center gap-1.5 sm:gap-2 bg-slate-800 hover:bg-slate-750 border border-slate-700 py-1 sm:py-1.5 px-2 sm:px-3 rounded-xl text-xs transition-all shadow-sm"
                 >
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 text-white font-extrabold flex items-center justify-center text-[11px] shadow-sm">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 text-white font-extrabold flex items-center justify-center text-[11px] shadow-sm shrink-0">
                     {currentUser.name ? currentUser.name[0].toUpperCase() : 'U'}
                   </div>
                   <div className="text-left hidden sm:block">
-                    <div className="font-bold text-white text-[11px] leading-tight truncate max-w-[100px]">
+                    <div className="font-bold text-white text-[11px] leading-tight truncate max-w-[90px] md:max-w-[120px]">
                       {currentUser.name}
                     </div>
                     <div className="text-[9px] text-emerald-400 uppercase font-semibold">
                       {currentUser.role === 'owner' ? 'Host' : currentUser.role === 'admin' ? 'Admin 🛡️' : 'Renter'}
                     </div>
                   </div>
-                  <ChevronDown className="w-3 h-3 text-slate-400" />
+                  <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
                 </button>
 
                 {profileDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-2 z-50 animate-fadeIn">
+                  <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-24px)] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-2 z-50 animate-fadeIn">
                     <div className="px-3 py-2.5 border-b border-slate-800 text-[11px]">
                       <p className="text-slate-400">Signed in as</p>
                       <p className="font-bold text-white truncate text-xs">{currentUser.name}</p>
@@ -351,11 +351,12 @@ export const Header = () => {
             ) : (
               <button
                 onClick={() => openLoginModal('customer', 'login')}
-                className="inline-flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs px-3.5 sm:px-4 py-2 rounded-xl transition-all shadow-md shadow-emerald-950/40 active:scale-95 shrink-0 border border-emerald-400/40"
+                className="inline-flex items-center gap-1 sm:gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold sm:font-extrabold text-[11px] sm:text-xs px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all shadow-md shadow-emerald-950/40 active:scale-95 shrink-0 border border-emerald-400/40 whitespace-nowrap"
                 title="Log In or Sign Up"
               >
-                <LogIn className="w-3.5 h-3.5 text-white" />
-                <span>Log In / Sign Up</span>
+                <LogIn className="w-3.5 h-3.5 text-white shrink-0" />
+                <span>Log In</span>
+                <span className="hidden sm:inline">/ Sign Up</span>
               </button>
             )}
           </div>

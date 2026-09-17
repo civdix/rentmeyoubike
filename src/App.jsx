@@ -39,10 +39,10 @@ const MainContent = () => {
   } = useApp();
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-emerald-500 selection:text-white w-full max-w-full overflow-x-hidden">
       <Header />
 
-      <main className="flex-1">
+      <main className="flex-1 w-full max-w-full overflow-x-hidden">
         {role === 'customer' && <CustomerView />}
         {role === 'owner' && <OwnerView />}
         {role === 'admin' && <AdminView />}

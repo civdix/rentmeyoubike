@@ -427,19 +427,19 @@ export const MarketplaceView = () => {
                           </div>
                         </div>
 
-                        <div className="flex gap-1.5">
+                        <div className="flex items-center gap-1.5 shrink-0">
                           <button
                             onClick={() => setSelectedVehicle(vehicle)}
-                            className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs px-2.5 py-2 rounded-xl transition-colors"
+                            className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[11px] sm:text-xs px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-xl transition-colors whitespace-nowrap"
                           >
-                            View Details
+                            Details
                           </button>
                           <button
                             onClick={() => setBookingDrawerVehicle(vehicle)}
-                            className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs px-3 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition-transform active:scale-95"
+                            className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-[11px] sm:text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl flex items-center gap-1 sm:gap-1.5 shadow-sm transition-transform active:scale-95 whitespace-nowrap"
                           >
-                            <WhatsAppBrandIcon className="w-3.5 h-3.5 fill-white" />
-                            <span>Book on WhatsApp</span>
+                            <WhatsAppBrandIcon className="w-3.5 h-3.5 fill-white shrink-0" />
+                            <span>Book<span className="hidden xs:inline sm:inline">&nbsp;on WhatsApp</span></span>
                           </button>
                         </div>
                       </div>
@@ -529,8 +529,8 @@ export const MarketplaceView = () => {
 
       {/* Booking Form Modal */}
       {bookingDrawerVehicle && (
-        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-4 sm:p-6 shadow-2xl border border-slate-200">
             <div className="flex justify-between mb-4">
               <h3 className="font-heading text-lg font-bold">Confirm WhatsApp Booking</h3>
               <button onClick={() => setBookingDrawerVehicle(null)}>✕</button>

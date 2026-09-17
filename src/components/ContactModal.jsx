@@ -152,13 +152,13 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
       role="dialog"
       aria-modal="true"
       aria-labelledby="contact-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-sm animate-fadeIn"
     >
       <div className="bg-slate-900 border border-slate-800 text-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col relative max-h-[92vh]">
         {/* Header */}
-        <div className="px-6 py-5 border-b border-slate-800 bg-slate-950/60 flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-800 bg-slate-950/60 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
               <Mail className="w-5 h-5" />
             </div>
             <div>
@@ -174,14 +174,14 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
             onClick={onClose}
             disabled={isSubmitting}
             aria-label="Close dialog"
-            className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800/80 transition-colors disabled:opacity-40"
+            className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800/80 transition-colors disabled:opacity-40 shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="p-6 overflow-y-auto space-y-4">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-4">
           {/* Error Banner */}
           {errorMessage && (
             <div className="p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2.5 animate-fadeIn">

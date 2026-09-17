@@ -222,12 +222,12 @@ export const LoginModal = ({ initialRole = 'customer', initialMode = 'login', on
   const isAdmin = activeRole === 'admin';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn font-sans">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn font-sans">
       <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl text-slate-100 flex flex-col max-h-[92vh]">
         {/* Modal Header */}
-        <div className="px-6 pt-5 pb-3 border-b border-slate-800 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg text-white ${
+        <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 border-b border-slate-800 flex items-center justify-between">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center shadow-lg text-white shrink-0 ${
               isOwner ? 'bg-gradient-to-br from-amber-500 to-amber-600' :
               isAdmin ? 'bg-gradient-to-br from-purple-600 to-indigo-600' :
               'bg-gradient-to-br from-emerald-500 to-teal-600'
@@ -252,14 +252,14 @@ export const LoginModal = ({ initialRole = 'customer', initialMode = 'login', on
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+            className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-750 flex items-center justify-center text-slate-400 hover:text-white transition-colors shrink-0"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Top Segmented Mode Switch: [Log In] vs [Sign Up] */}
-        <div className="p-3 bg-slate-950/90 border-b border-slate-800 flex items-center gap-2">
+        <div className="p-2.5 sm:p-3 bg-slate-950/90 border-b border-slate-800 flex items-center gap-2">
           <button
             type="button"
             onClick={() => handleModeSwitch('login')}
@@ -288,7 +288,7 @@ export const LoginModal = ({ initialRole = 'customer', initialMode = 'login', on
         </div>
 
         {/* Role Selector Tabs */}
-        <div className={`px-3 py-2 bg-slate-950 border-b border-slate-800 grid gap-1.5 text-xs font-bold ${
+        <div className={`px-2 sm:px-3 py-2 bg-slate-950 border-b border-slate-800 grid gap-1.5 text-xs font-bold ${
           mode === 'login' ? 'grid-cols-3' : 'grid-cols-2'
         }`}>
           <button
@@ -297,7 +297,7 @@ export const LoginModal = ({ initialRole = 'customer', initialMode = 'login', on
               setActiveRole('customer');
               setErrorMsg('');
             }}
-            className={`py-2 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+            className={`py-2 px-1.5 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1 sm:gap-1.5 ${
               activeRole === 'customer'
                 ? 'bg-emerald-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -313,14 +313,15 @@ export const LoginModal = ({ initialRole = 'customer', initialMode = 'login', on
               setActiveRole('owner');
               setErrorMsg('');
             }}
-            className={`py-2 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+            className={`py-2 px-1.5 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1 sm:gap-1.5 ${
               activeRole === 'owner'
                 ? 'bg-amber-500 text-slate-950 shadow-sm font-extrabold'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
             }`}
           >
             <Bike className="w-3.5 h-3.5" />
-            <span>Host / Owner</span>
+            <span>Host</span>
+            <span className="hidden sm:inline">/ Owner</span>
           </button>
 
           {mode === 'login' && (
@@ -330,7 +331,7 @@ export const LoginModal = ({ initialRole = 'customer', initialMode = 'login', on
                 setActiveRole('admin');
                 setErrorMsg('');
               }}
-              className={`py-2 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+              className={`py-2 px-1.5 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1 sm:gap-1.5 ${
                 activeRole === 'admin'
                   ? 'bg-purple-600 text-white shadow-sm'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -343,7 +344,7 @@ export const LoginModal = ({ initialRole = 'customer', initialMode = 'login', on
         </div>
 
         {/* Form Body - Scrollable */}
-        <div className="p-6 overflow-y-auto space-y-4">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-4">
           {errorMsg && (
             <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-3 text-rose-400 text-xs flex items-center gap-2 animate-fadeIn">
               <AlertCircle className="w-4 h-4 shrink-0" />
@@ -629,7 +630,7 @@ export const LoginModal = ({ initialRole = 'customer', initialMode = 'login', on
         </div>
 
         {/* Footer info */}
-        <div className="px-6 py-3 bg-slate-950/80 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-950/80 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
             Verified Identity Protection
