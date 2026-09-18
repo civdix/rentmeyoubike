@@ -6,7 +6,7 @@
 
   <!-- Home / Main Landing -->
   <url>
-    <loc>https://renttocent.com/</loc>
+    <loc>https://rentoncent.bond/</loc>
     <lastmod>2026-09-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -14,7 +14,7 @@
 
   <!-- Browse Bike Rentals Marketplace -->
   <url>
-    <loc>https://renttocent.com/#browse</loc>
+    <loc>https://rentoncent.bond/#browse</loc>
     <lastmod>2026-09-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -22,7 +22,7 @@
 
   <!-- Host Portal / List Your Bike -->
   <url>
-    <loc>https://renttocent.com/#host</loc>
+    <loc>https://rentoncent.bond/#host</loc>
     <lastmod>2026-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -30,7 +30,7 @@
 
   <!-- User My Bookings -->
   <url>
-    <loc>https://renttocent.com/#my_bookings</loc>
+    <loc>https://rentoncent.bond/#my_bookings</loc>
     <lastmod>2026-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -38,7 +38,7 @@
 
   <!-- Rental Protection & Yatra Security Policy -->
   <url>
-    <loc>https://renttocent.com/#protection</loc>
+    <loc>https://rentoncent.bond/#protection</loc>
     <lastmod>2026-09-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -46,7 +46,7 @@
 
   <!-- Contact & WhatsApp Support -->
   <url>
-    <loc>https://renttocent.com/#contact</loc>
+    <loc>https://rentoncent.bond/#contact</loc>
     <lastmod>2026-09-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>

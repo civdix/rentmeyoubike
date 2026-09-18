@@ -186,7 +186,7 @@ router.post('/login', async (req, res) => {
     const cleanPassword = password.trim();
 
     // 1. Admin Authorization check
-    const isAdminIdentifier = ['admin', 'admin@rentoncent.com', 'admin@vrindavanrides.in', 'administrator', '7777'].includes(cleanIdentifier.toLowerCase());
+    const isAdminIdentifier = ['admin', 'admin@rentoncent.bond', 'admin@rentoncent.com', 'admin@vrindavanrides.in', 'administrator', '7777'].includes(cleanIdentifier.toLowerCase());
     const isAdminPass = cleanPassword === ADMIN_PIN || cleanPassword === '2026' || cleanPassword === '7777';
 
     if ((isAdminIdentifier && isAdminPass) || (role === 'admin' && isAdminPass)) {

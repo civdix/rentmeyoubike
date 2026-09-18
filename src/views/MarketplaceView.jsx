@@ -142,7 +142,7 @@ export const MarketplaceView = () => {
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <span className="font-mono text-[11px] bg-slate-800 text-emerald-400 font-bold px-2.5 py-0.5 rounded border border-slate-700">
-                rentoncent.com
+                rentoncent.bond
               </span>
               <span className="text-amber-400 text-xs font-bold flex items-center gap-1">
                 <VrindavanFeatherIcon className="w-3.5 h-3.5 text-amber-400" />
