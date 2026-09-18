@@ -186,7 +186,7 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 font-sans">
-      <div className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200 animate-in fade-in zoom-in duration-200 flex flex-col max-h-[92vh]">
+      <div className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200 animate-in fade-in zoom-in duration-200 flex flex-col h-[90vh] sm:h-[640px] max-h-[720px] min-h-[480px] relative">
         {/* WhatsApp Styled Header */}
         <div className="bg-emerald-700 text-white p-3.5 px-4 flex items-center justify-between shadow-md shrink-0">
           <div className="flex items-center gap-3">
@@ -223,105 +223,107 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
           <BookingStatusBadge status={booking?.status || 'Inquiry'} />
         </div>
 
-        {/* Real Live WhatsApp Chat Feed */}
-        <div ref={chatContainerRef} className="p-4 bg-[#efeae2] flex-1 overflow-y-auto min-h-[220px] max-h-[360px] flex flex-col gap-3 custom-scrollbar">
-          {messages.map((msg, index) => {
-            const isMe = msg.senderRole === 'customer';
-            return (
-              <div
-                key={msg.id || index}
-                className={`max-w-[85%] rounded-lg p-3 text-xs shadow-sm relative transition-all ${
-                  isMe
-                    ? 'bg-[#d9fdd3] text-slate-900 self-end rounded-tr-none'
-                    : 'bg-white text-slate-900 self-start rounded-tl-none border border-slate-200/50'
-                }`}
-              >
-                {!isMe && (
-                  <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 mb-1">
-                    <span>{msg.senderName || 'Rent to Cent Admin'}</span>
-                    <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                  </div>
-                )}
-
-                {isMe && (
-                  <div className="text-[10px] font-semibold text-slate-500 mb-0.5">
-                    <span>You ({customerName})</span>
-                  </div>
-                )}
-
-                <p className="whitespace-pre-line leading-relaxed font-sans">{msg.text}</p>
-
-                <div className="flex items-center justify-end gap-1 mt-1 text-[10px] text-slate-400">
-                  <span>{formatTime(msg.createdAt)}</span>
-                  {isMe && (
-                    <CheckCheck className={`w-3.5 h-3.5 ${msg.isRead ? 'text-sky-500' : 'text-emerald-600'}`} />
+        {/* Chat Area Container - Fixed input at bottom relative to chatarea */}
+        <div className="flex-1 min-h-0 flex flex-col bg-[#efeae2] relative overflow-hidden">
+          {/* Real Live WhatsApp Chat Feed */}
+          <div ref={chatContainerRef} className="p-4 flex-1 min-h-0 overflow-y-auto flex flex-col gap-3 custom-scrollbar">
+            {messages.map((msg, index) => {
+              const isMe = msg.senderRole === 'customer';
+              return (
+                <div
+                  key={msg.id || index}
+                  className={`max-w-[85%] rounded-lg p-3 text-xs shadow-sm relative transition-all ${
+                    isMe
+                      ? 'bg-[#d9fdd3] text-slate-900 self-end rounded-tr-none'
+                      : 'bg-white text-slate-900 self-start rounded-tl-none border border-slate-200/50'
+                  }`}
+                >
+                  {!isMe && (
+                    <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 mb-1">
+                      <span>{msg.senderName || 'Rent to Cent Admin'}</span>
+                      <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                    </div>
                   )}
+
+                  {isMe && (
+                    <div className="text-[10px] font-semibold text-slate-500 mb-0.5">
+                      <span>You ({customerName})</span>
+                    </div>
+                  )}
+
+                  <p className="whitespace-pre-line leading-relaxed font-sans">{msg.text}</p>
+
+                  <div className="flex items-center justify-end gap-1 mt-1 text-[10px] text-slate-400">
+                    <span>{formatTime(msg.createdAt)}</span>
+                    {isMe && (
+                      <CheckCheck className={`w-3.5 h-3.5 ${msg.isRead ? 'text-sky-500' : 'text-emerald-600'}`} />
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Quick Reply Suggestions Bar */}
-        <div className="bg-slate-100/90 border-t border-slate-200 px-3 py-2 shrink-0">
-          <div className="flex items-center justify-between text-[11px] text-slate-600 mb-1.5 px-0.5 font-medium">
-            <span className="flex items-center gap-1.5 text-emerald-700 font-bold">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Admin Desk Online • Quick Reply:
-            </span>
+              );
+            })}
           </div>
 
-          <div className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1">
-            {customerQuickReplies.map((qr, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => handleSendQuickReply(qr)}
-                className="bg-white hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-800 text-[11px] px-2.5 py-1 rounded-full border border-slate-300 whitespace-nowrap transition-all shrink-0 cursor-pointer active:scale-95 shadow-2xs"
-              >
-                {qr}
-              </button>
-            ))}
-          </div>
-        </div>
+          {/* Quick Reply Suggestions Bar */}
+          <div className="bg-slate-100/95 border-t border-slate-200 px-3 py-1.5 shrink-0 z-10">
+            <div className="flex items-center justify-between text-[10px] text-slate-500 mb-1 px-0.5 font-medium">
+              <span className="flex items-center gap-1.5 text-emerald-700 font-bold">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Admin Desk Online • Quick Reply:
+              </span>
+            </div>
 
-        {/* Input Bar */}
-        <form onSubmit={handleSendMessage} className="bg-white p-2.5 px-3 flex items-center gap-2 border-t border-slate-200 shrink-0">
-          <input
-            type="text"
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder="Type your reply to Admin here..."
-            disabled={isSending}
-            className="flex-1 bg-slate-50 text-slate-900 text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-emerald-600 focus:bg-white transition-colors disabled:bg-slate-100 font-medium"
-          />
-          <button
-            type="submit"
-            disabled={isSending || !inputText.trim()}
-            className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm transition-transform active:scale-95 flex items-center gap-1.5 cursor-pointer shrink-0"
-          >
-            {isSending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <>
-                <span>Reply</span>
-                <Send className="w-3.5 h-3.5" />
-              </>
-            )}
-          </button>
-        </form>
+            <div className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-0.5">
+              {customerQuickReplies.map((qr, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => handleSendQuickReply(qr)}
+                  className="bg-white hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-800 text-[11px] px-2.5 py-1 rounded-full border border-slate-300 whitespace-nowrap transition-all shrink-0 cursor-pointer active:scale-95 shadow-2xs"
+                >
+                  {qr}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Input Bar - FIXED AT BOTTOM RELATIVE TO CHATAREA DIV */}
+          <form onSubmit={handleSendMessage} className="bg-white p-2.5 px-3 flex items-center gap-2 border-t border-slate-200 shrink-0 sticky bottom-0 z-20 shadow-[0_-2px_10px_rgba(0,0,0,0.06)]">
+            <input
+              type="text"
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              placeholder="Type your reply to Admin here..."
+              disabled={isSending}
+              className="flex-1 bg-slate-50 text-slate-900 text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-emerald-600 focus:bg-white transition-colors disabled:bg-slate-100 font-medium"
+            />
+            <button
+              type="submit"
+              disabled={isSending || !inputText.trim()}
+              className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm transition-transform active:scale-95 flex items-center gap-1.5 cursor-pointer shrink-0"
+            >
+              {isSending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <>
+                  <span>Reply</span>
+                  <Send className="w-3.5 h-3.5" />
+                </>
+              )}
+            </button>
+          </form>
+        </div>
 
         {/* Action Buttons Footer */}
-        <div className="p-2.5 sm:p-3 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center gap-2 shrink-0">
+        <div className="p-2 sm:p-2.5 bg-slate-50 border-t border-slate-200 grid grid-cols-3 gap-2 shrink-0">
           <a
             href={waUrl}
             target="_blank"
             rel="noreferrer"
-            className="w-full sm:w-1/3 bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-colors"
+            className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs py-2 px-2 rounded-xl flex items-center justify-center gap-1 shadow-sm transition-colors text-center truncate"
           >
-            <MessageSquare className="w-3.5 h-3.5 fill-white" />
-            <span>WhatsApp</span>
-            <ExternalLink className="w-3 h-3" />
+            <MessageSquare className="w-3.5 h-3.5 fill-white shrink-0" />
+            <span className="truncate">WhatsApp</span>
           </a>
 
           <button
@@ -330,10 +332,10 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
               onClose();
               if (onLaunchKYC && booking?.id) onLaunchKYC(booking.id);
             }}
-            className="w-full sm:w-1/3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-colors cursor-pointer"
+            className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2 px-2 rounded-xl flex items-center justify-center gap-1 shadow-sm transition-colors cursor-pointer text-center truncate"
           >
-            <span>Proceed to KYC</span>
-            <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="truncate">Proceed KYC</span>
+            <ArrowRight className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
           </button>
 
           <button
@@ -341,10 +343,10 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
               onClose();
               if (booking?.id) setActiveInspectionModal({ bookingId: booking.id, type: 'pre' });
             }}
-            className="w-full sm:w-1/3 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-colors cursor-pointer"
+            className="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs py-2 px-2 rounded-xl flex items-center justify-center gap-1 shadow-sm transition-colors cursor-pointer text-center truncate"
           >
-            <Smartphone className="w-3.5 h-3.5" />
-            <span>Inspection Link</span>
+            <Smartphone className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Inspection</span>
           </button>
         </div>
       </div>

@@ -906,11 +906,11 @@ export const AdminView = () => {
             </div>
 
             {/* Main Split-Pane Live Chat UI */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl grid grid-cols-1 lg:grid-cols-12 min-h-[620px] max-h-[750px]">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col lg:grid lg:grid-cols-12 h-[720px] max-h-[85vh] min-h-[520px]">
               {/* LEFT PANE: Conversations list (4 cols) */}
-              <div className="lg:col-span-4 border-r border-slate-800 flex flex-col bg-slate-900/95">
+              <div className="lg:col-span-4 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col bg-slate-900/95 max-h-[220px] sm:max-h-[260px] lg:max-h-none lg:h-full min-h-0 overflow-hidden">
                 {/* Search Header */}
-                <div className="p-3.5 border-b border-slate-800 bg-slate-950/60">
+                <div className="p-3.5 border-b border-slate-800 bg-slate-950/60 shrink-0">
                   <div className="relative">
                     <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
                     <input
@@ -924,7 +924,7 @@ export const AdminView = () => {
                 </div>
 
                 {/* Conversations List */}
-                <div className="flex-1 overflow-y-auto divide-y divide-slate-800/60 custom-scrollbar">
+                <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-slate-800/60 custom-scrollbar">
                   {filteredConversations.length === 0 ? (
                     <div className="p-8 text-center text-slate-500 text-xs">
                       <MessageSquare className="w-8 h-8 text-slate-600 mx-auto mb-2 opacity-50" />
@@ -992,7 +992,7 @@ export const AdminView = () => {
               </div>
 
               {/* RIGHT PANE: Selected Conversation Chat Room (8 cols) */}
-              <div className="lg:col-span-8 flex flex-col bg-slate-950/60">
+              <div className="lg:col-span-8 flex flex-col bg-slate-950/60 flex-1 lg:h-full min-h-0 relative overflow-hidden">
                 {selectedConv ? (
                   <>
                     {/* Header */}
@@ -1055,7 +1055,7 @@ export const AdminView = () => {
                     </div>
 
                     {/* Messages Scroll Area */}
-                    <div ref={adminChatContainerRef} className="flex-1 p-4 overflow-y-auto space-y-3 custom-scrollbar bg-slate-950/80">
+                    <div ref={adminChatContainerRef} className="flex-1 min-h-0 p-4 overflow-y-auto space-y-3 custom-scrollbar bg-slate-950/80">
                       {chatLoading ? (
                         <div className="h-full flex items-center justify-center text-slate-500 text-xs">
                           <RefreshCw className="w-5 h-5 animate-spin mr-2 text-emerald-400" />
@@ -1118,13 +1118,13 @@ export const AdminView = () => {
                       ))}
                     </div>
 
-                    {/* Message Input Box */}
+                    {/* Message Input Box - FIXED ON BOTTOM RELATIVE TO CHATAREA DIV */}
                     <form
                       onSubmit={(e) => {
                         e.preventDefault();
                         handleAdminSendMessage();
                       }}
-                      className="p-3 bg-slate-900 border-t border-slate-800 flex items-center gap-2 shrink-0"
+                      className="p-3 bg-slate-900 border-t border-slate-800 flex items-center gap-2 shrink-0 sticky bottom-0 z-20 shadow-[0_-4px_12px_rgba(0,0,0,0.5)]"
                     >
                       <input
                         type="text"
@@ -1137,7 +1137,7 @@ export const AdminView = () => {
                       <button
                         type="submit"
                         disabled={isSendingChat || !chatInputText.trim()}
-                        className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
+                        className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md cursor-pointer shrink-0"
                       >
                         <Send className="w-3.5 h-3.5" />
                         <span>Send Reply</span>
