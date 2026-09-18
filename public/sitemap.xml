@@ -1,55 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
-  <!-- Home / Main Landing -->
+  <!-- Home / Main Rental Portal -->
   <url>
     <loc>https://rentoncent.bond/</loc>
-    <lastmod>2026-09-18</lastmod>
+    <lastmod>2026-09-18T15:49:00+05:30</lastmod>
     <changefreq>daily</changefreq>
-    <priority>1.0</priority>
+    <priority>1.00</priority>
+    <image:image>
+      <image:loc>https://rentoncent.bond/logo_square_share_area.png</image:loc>
+      <image:title>Rent on Cent - Bike and Scooty Rental in Vrindavan</image:title>
+      <image:caption>Affordable two-wheeler and electric scooter rentals in Vrindavan and Mathura</image:caption>
+    </image:image>
   </url>
 
-  <!-- Browse Bike Rentals Marketplace -->
+  <!-- Browse Two-Wheelers Marketplace -->
   <url>
-    <loc>https://rentoncent.bond/#browse</loc>
-    <lastmod>2026-09-18</lastmod>
+    <loc>https://rentoncent.bond/bikes</loc>
+    <lastmod>2026-09-18T15:49:00+05:30</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <priority>0.90</priority>
+    <image:image>
+      <image:loc>https://rentoncent.bond/logo_square_share_area.png</image:loc>
+      <image:title>Browse All Bikes and Scooters in Vrindavan</image:title>
+      <image:caption>Rent Honda Activa, Royal Enfield, and EV Scooters in Mathura-Vrindavan</image:caption>
+    </image:image>
   </url>
 
   <!-- Host Portal / List Your Bike -->
   <url>
-    <loc>https://rentoncent.bond/#host</loc>
-    <lastmod>2026-09-18</lastmod>
+    <loc>https://rentoncent.bond/host</loc>
+    <lastmod>2026-09-18T15:49:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.80</priority>
   </url>
 
-  <!-- User My Bookings -->
+  <!-- Rental Terms, Policies & Guidelines -->
   <url>
-    <loc>https://rentoncent.bond/#my_bookings</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Rental Protection & Yatra Security Policy -->
-  <url>
-    <loc>https://rentoncent.bond/#protection</loc>
-    <lastmod>2026-09-18</lastmod>
+    <loc>https://rentoncent.bond/terms</loc>
+    <lastmod>2026-09-18T15:49:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.50</priority>
   </url>
 
-  <!-- Contact & WhatsApp Support -->
+  <!-- Privacy Policy & KYC Security -->
   <url>
-    <loc>https://rentoncent.bond/#contact</loc>
-    <lastmod>2026-09-18</lastmod>
+    <loc>https://rentoncent.bond/privacy</loc>
+    <lastmod>2026-09-18T15:49:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.50</priority>
   </url>
 
 </urlset>
