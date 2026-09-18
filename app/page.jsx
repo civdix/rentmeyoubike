@@ -1,20 +1,32 @@
-'use client';
-
 import React from 'react';
 import { CustomerView } from '../src/views/CustomerView';
+
+export const metadata = {
+  title: 'Rent on Cent | Electric Scooter & Bike Rental in Vrindavan & Mathura',
+  description:
+    'Affordable, peer-to-peer bike and scooty rentals in Vrindavan and Mathura. Rent Honda Activa, EV scooters, Royal Enfield starting at ₹40/hour or ₹299/day. Verified hosts, doorstep delivery, instant WhatsApp booking.',
+  alternates: {
+    canonical: '/'
+  },
+  openGraph: {
+    title: 'Rent on Cent | Bike & Scooty Rental in Vrindavan',
+    description: 'Rent Honda Activa, EV Scooters, and Royal Enfield in Vrindavan & Mathura starting ₹299/day.',
+    url: 'https://rentoncent.bond'
+  }
+};
 
 export default function HomePage() {
   return (
     <>
-      {/* Primary Interactive Customer View */}
+      {/* Primary Server-Side Rendered Customer & Home Experience */}
       <CustomerView />
 
-      {/* Semantic Crawlable SEO Section for Search Engine Indexing */}
+      {/* Semantic Crawlable SEO Content for Search Engine Indexing */}
       <section className="bg-slate-900 text-slate-300 py-12 px-4 border-t border-slate-800">
         <div className="max-w-7xl mx-auto space-y-8">
           <div className="border-b border-slate-800 pb-6">
             <h1 className="text-xl font-bold text-amber-400 font-heading">
-              Rent on Cent — #1 Bike & Scooty Rental in Vrindavan & Mathura
+              Rent on Cent — #1 Bike &amp; Scooty Rental in Vrindavan &amp; Mathura
             </h1>
             <p className="text-xs text-slate-400 mt-2 leading-relaxed">
               Rent on Cent is Braj Bhoomi&apos;s leading peer-to-peer two-wheeler rental platform, offering verified Honda Activa, TVS Jupiter, Royal Enfield Classic, and high-efficiency electric scooters (EV) for devotees, tourists, and pilgrims visiting Vrindavan, Mathura, Govardhan, and Barsana. Experience peaceful parikramas and convenient temple darshan with transparent daily pricing starting at just ₹299/day and hourly rentals from ₹40/hour.

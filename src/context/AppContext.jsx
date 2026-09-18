@@ -73,19 +73,7 @@ export const AppProvider = ({ children }) => {
   const [loginRoleTarget, setLoginRoleTarget] = useState('customer');
   const [loginModalMode, setLoginModalMode] = useState('login'); // 'login' | 'signup'
 
-  // Active Customer Tab: 'home' | 'browse' | 'my_bookings'
-  const [customerTab, setCustomerTab] = useState('home');
 
-  useEffect(() => {
-    const handleNav = (e) => {
-      if (e.detail) {
-        setCustomerTab(e.detail);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    };
-    window.addEventListener('vr_navigate', handleNav);
-    return () => window.removeEventListener('vr_navigate', handleNav);
-  }, []);
 
   // Listen for unauthorized 401 events from API
   useEffect(() => {
@@ -893,8 +881,8 @@ export const AppProvider = ({ children }) => {
         openLoginModal,
         closeLoginModal,
         logoutUser,
-        customerTab,
-        setCustomerTab,
+        customerTab: 'home',
+        setCustomerTab: () => {},
         isSwitchToHostModalOpen,
         promptSwitchToHost,
         closeSwitchToHostModal,

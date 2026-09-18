@@ -166,9 +166,7 @@ export const CustomerView = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-16 font-sans">
-      {activeTab === 'home' && (
-        <>
-          {/* HERO SECTION */}
+      {/* HERO SECTION */}
           <section className="relative bg-gradient-to-r from-slate-950 via-teal-950 to-slate-950 text-white py-12 sm:py-20 px-4 overflow-hidden border-b border-teal-900/50">
             <div className="absolute -top-32 -right-32 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl pointer-events-none"></div>
             <div className="absolute top-1/2 -left-32 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
@@ -673,117 +671,6 @@ export const CustomerView = () => {
               </div>
             </div>
           </section>
-        </>
-      )}
-
-      {activeTab === 'browse' && (
-        <MarketplaceView />
-      )}
-
-      {activeTab === 'my_bookings' && (
-        <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
-            <div>
-              <h2 className="font-heading font-extrabold text-2xl text-slate-900">My Bookings & Timeline</h2>
-              <p className="text-xs text-slate-500 mt-1">Track rental milestones, pre-rental inspections, and digital key handover.</p>
-            </div>
-
-            {currentUser ? (
-              <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 py-1.5 px-3 rounded-xl text-xs">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span className="text-slate-700">Renter: <strong className="text-slate-900">{currentUser.name}</strong></span>
-                <span className="text-emerald-700 font-mono text-[11px] font-bold">({currentUser.phone || 'Verified'})</span>
-              </div>
-            ) : (
-              <button
-                onClick={() => openLoginModal('customer')}
-                className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-all shadow-sm shrink-0"
-              >
-                <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Sign In as Renter</span>
-              </button>
-            )}
-          </div>
-          {currentUser ? (
-            userBookings.length > 0 ? (
-              <div className="space-y-4">
-                {userBookings.map((b) => (
-                  <div key={b.id} className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4 hover:shadow-md transition-shadow">
-                    <div className="flex justify-between border-b border-slate-100 pb-3">
-                      <div>
-                        <span className="font-mono font-bold text-base text-slate-900">#{b.id}</span>
-                        <h4 className="font-bold text-sm text-slate-900">{b.vehicleName}</h4>
-                        <p className="text-xs text-slate-500">{b.startDate} to {b.endDate} • {b.pickupLocation}</p>
-                      </div>
-                      <BookingStatusBadge status={b.status} />
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      <button onClick={() => setActiveKYCModal({ bookingId: b.id })} className="text-xs font-bold px-3 py-2 rounded-xl bg-amber-50 text-amber-900 border border-amber-300">
-                        KYC: {b.kycStatus}
-                      </button>
-                      <button onClick={() => setActivePaymentModal({ bookingId: b.id })} className="text-xs font-bold px-3 py-2 rounded-xl bg-emerald-600 text-white">
-                        Payment: {b.paymentStatus}
-                      </button>
-                      <button onClick={() => setActiveInspectionModal({ bookingId: b.id, type: 'pre' })} className="text-xs font-bold px-3 py-2 rounded-xl bg-slate-900 text-white">
-                        Pre-Rental Inspection
-                      </button>
-                      <button onClick={() => setActiveInspectionModal({ bookingId: b.id, type: 'post' })} className="text-xs font-bold px-3 py-2 rounded-xl bg-slate-100 text-slate-800">
-                        Post-Rental Inspection
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="bg-white rounded-3xl p-10 border border-slate-200 text-center space-y-4 shadow-sm">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 mx-auto flex items-center justify-center border border-emerald-200">
-                  <Bike className="w-7 h-7" />
-                </div>
-                <div className="max-w-md mx-auto space-y-1">
-                  <h3 className="font-heading font-extrabold text-xl text-slate-900">No Bookings Yet</h3>
-                  <p className="text-xs text-slate-500">
-                    No active rental bookings found under <strong>{currentUser.name}</strong> ({currentUser.phone}). Browse our fleet and book your scooter in Vrindavan!
-                  </p>
-                </div>
-                <button
-                  onClick={() => router.push('/bikes')}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl inline-flex items-center gap-2 shadow-md transition-transform active:scale-95 cursor-pointer"
-                >
-                  <Search className="w-4 h-4" />
-                  <span>Explore Available Fleet</span>
-                </button>
-              </div>
-            )
-          ) : (
-            <div className="bg-white rounded-3xl p-10 border border-slate-200 text-center space-y-4 shadow-sm">
-              <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 mx-auto flex items-center justify-center border border-amber-200">
-                <Lock className="w-7 h-7" />
-              </div>
-              <div className="max-w-md mx-auto space-y-1">
-                <h3 className="font-heading font-extrabold text-xl text-slate-900">Sign In to View Your Bookings</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Enter your mobile number to view your confirmed rental vouchers, KYC verification status, and 7-angle digital inspection records.
-                </p>
-              </div>
-              <div className="flex flex-wrap justify-center gap-3 pt-2">
-                <button
-                  onClick={() => openLoginModal('customer')}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl inline-flex items-center gap-2 shadow-md transition-transform active:scale-95 cursor-pointer"
-                >
-                  <UserCheck className="w-4 h-4" />
-                  <span>Sign In as Renter</span>
-                </button>
-                <button
-                  onClick={() => router.push('/bikes')}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs px-4 py-2.5 rounded-xl inline-flex items-center gap-2 transition-colors cursor-pointer"
-                >
-                  <span>Browse Available Fleet</span>
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
 
       {/* DETAILED VEHICLE LISTING PAGE MODAL VIEW */}
       {selectedVehicle && (
