@@ -166,6 +166,7 @@ export const MobileBottomNav = () => {
           {/* Customer Tab 1: Home */}
           <Link
             href="/"
+            aria-label="Rent on Cent Mobile Homepage"
             className={`flex-1 py-1.5 px-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold transition-all ${
               isHome
                 ? 'bg-emerald-600 text-white shadow-sm'
@@ -224,6 +225,7 @@ export const MobileBottomNav = () => {
             href={`https://wa.me/${(legalConfig?.supportWhatsApp || '+919837144520').replace(/[^0-9]/g, '')}?text=Radhe%20Radhe!%20I%20have%20an%20inquiry.`}
             target="_blank"
             rel="noreferrer"
+            aria-label="Instant WhatsApp Helpdesk"
             className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-[10px] py-1.5 px-2.5 rounded-xl flex flex-col items-center justify-center gap-0.5 shadow-sm active:scale-95 transition-transform shrink-0"
           >
             <MessageSquare className="w-4 h-4 fill-white" />

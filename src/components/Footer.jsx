@@ -17,7 +17,7 @@ export const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-5 gap-8">
         {/* Column 1 & 2: Brand Info */}
         <div className="col-span-2 space-y-3">
-          <Link href="/" className="inline-flex items-center gap-3 text-white font-heading font-extrabold text-lg group">
+          <Link href="/" aria-label="Rent on Cent - Vrindavan Bike Rentals Home" className="inline-flex items-center gap-3 text-white font-heading font-extrabold text-lg group">
             <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center p-1.5 border border-emerald-400/50 shadow-md group-hover:scale-105 transition-transform">
               <img src="/logo_square_share_area.png" alt="Rent to Cent Logo" className="w-full h-full object-contain" />
             </div>
@@ -38,7 +38,7 @@ export const Footer = () => {
 
         {/* Column 3: Quick Navigation */}
         <div>
-          <h4 className="text-white font-bold mb-3 uppercase text-[11px] tracking-wider">Quick Links</h4>
+          <p className="text-white font-bold mb-3 uppercase text-[11px] tracking-wider">Quick Links</p>
           <ul className="space-y-2">
             <li>
               <Link href="/locations" className="hover:text-white transition-colors">
@@ -83,9 +83,10 @@ export const Footer = () => {
                 href={`https://wa.me/${(legalConfig?.supportWhatsApp || '+919876543210').replace(/[^0-9]/g, '')}?text=Radhe%20Radhe!%20I%20have%20an%20inquiry.`}
                 target="_blank"
                 rel="noreferrer"
+                aria-label="Direct WhatsApp Inquiry for Bike Rentals"
                 className="hover:text-white text-emerald-400 font-bold transition-colors"
               >
-                WhatsApp Support
+                WhatsApp Inquiry Desk
               </a>
             </li>
             <li>
@@ -103,26 +104,26 @@ export const Footer = () => {
 
         {/* Column 4: Legal & Policies */}
         <div>
-          <h4 className="text-white font-bold mb-3 uppercase text-[11px] tracking-wider">Legal &amp; Policies</h4>
+          <p className="text-white font-bold mb-3 uppercase text-[11px] tracking-wider">Legal &amp; Policies</p>
           <ul className="space-y-2">
             <li>
-              <Link href="/terms" className="hover:text-white transition-colors block text-left">
-                Rental Terms
+              <Link href="/terms" aria-label="Read Rent on Cent Rental Terms and Conditions" className="hover:text-white transition-colors block text-left">
+                Rental Terms &amp; Conditions
               </Link>
             </li>
             <li>
-              <Link href="/privacy" className="hover:text-white transition-colors block text-left">
-                Privacy Policy
+              <Link href="/privacy" aria-label="Read Rent on Cent Privacy and Data Security Policy" className="hover:text-white transition-colors block text-left">
+                Privacy &amp; Data Policy
               </Link>
             </li>
             <li>
-              <Link href="/terms" className="hover:text-white transition-colors block text-left">
-                Cancellation Policy
+              <Link href="/terms#cancellation-refunds" aria-label="View Cancellation and Refund Rules" className="hover:text-white transition-colors block text-left">
+                Cancellation &amp; Refund Policy
               </Link>
             </li>
             <li>
-              <Link href="/terms" className="hover:text-white transition-colors block text-left">
-                Protection &amp; Shield
+              <Link href="/terms#security-inspection" aria-label="View Vehicle Protection and Damage Shield" className="hover:text-white transition-colors block text-left">
+                Vehicle Protection Shield
               </Link>
             </li>
           </ul>
@@ -130,7 +131,7 @@ export const Footer = () => {
 
         {/* Column 5: Contact & WhatsApp CTA */}
         <div>
-          <h4 className="text-white font-bold mb-3 uppercase text-[11px] tracking-wider">Contact &amp; Location</h4>
+          <p className="text-white font-bold mb-3 uppercase text-[11px] tracking-wider">Contact &amp; Location</p>
           <p className="mb-3 text-slate-400 leading-relaxed">
             Vrindavan Dham, Mathura Region, Uttar Pradesh
           </p>
@@ -147,10 +148,11 @@ export const Footer = () => {
               href={`https://wa.me/${(legalConfig?.supportWhatsApp || '+919876543210').replace(/[^0-9]/g, '')}?text=Radhe%20Radhe!%20I%20need%20assistance.`}
               target="_blank"
               rel="noreferrer"
+              aria-label="24x7 Customer Support on WhatsApp"
               className="w-full inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white px-4 py-2.5 rounded-xl font-extrabold transition-transform active:scale-95 shadow-md border border-emerald-400/40 text-xs"
             >
               <MessageSquare className="w-4 h-4 fill-white" strokeWidth={2.5} />
-              <span>WhatsApp Support</span>
+              <span>24x7 WhatsApp Helpdesk</span>
             </a>
           </div>
         </div>
@@ -159,11 +161,11 @@ export const Footer = () => {
       {/* Micro-Location & Transit Hubs SEO Band */}
       <div className="max-w-7xl mx-auto px-4 mt-8 pt-6 border-t border-slate-800/80">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-          <h4 className="text-white font-bold uppercase text-[11px] tracking-wider flex items-center gap-1.5">
+          <p className="text-white font-bold uppercase text-[11px] tracking-wider flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-emerald-400" />
             <span>Popular Rental Pickup Hubs &amp; Expressway Cuts</span>
-          </h4>
-          <Link href="/locations" className="text-emerald-400 hover:underline text-[11px] font-semibold">
+          </p>
+          <Link href="/locations" aria-label="Explore all 8+ rental pickup locations in Mathura and Vrindavan" className="text-emerald-400 hover:underline text-[11px] font-semibold">
             View All 8+ Pickup Locations →
           </Link>
         </div>

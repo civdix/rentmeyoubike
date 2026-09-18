@@ -2,15 +2,15 @@ import React from 'react';
 import { CustomerView } from '../src/views/CustomerView';
 
 export const metadata = {
-  title: 'Rent on Cent | Electric Scooter & Bike Rental in Vrindavan & Mathura',
+  title: 'Bike & Scooty Rental in Vrindavan | Rent on Cent',
   description:
-    'Affordable, peer-to-peer bike and scooty rentals in Vrindavan and Mathura. Rent Honda Activa, EV scooters, Royal Enfield starting at ₹40/hour or ₹299/day. Verified hosts, doorstep delivery, instant WhatsApp booking.',
+    'Rent bikes & scooty in Vrindavan from ₹299/day or ₹40/hr. Verified Honda Activa, EV scooters & hotel delivery. Instant WhatsApp booking: +91 98371 44520.',
   alternates: {
     canonical: 'https://rentoncent.bond'
   },
   openGraph: {
-    title: 'Rent on Cent | Bike & Scooty Rental in Vrindavan',
-    description: 'Rent Honda Activa, EV Scooters, and Royal Enfield in Vrindavan & Mathura starting ₹299/day.',
+    title: 'Bike & Scooty Rental in Vrindavan | Rent on Cent',
+    description: 'Rent Honda Activa, EV scooters & bikes in Vrindavan from ₹299/day. Doorstep hotel delivery and verified hosts.',
     url: 'https://rentoncent.bond',
     siteName: 'Rent on Cent',
     locale: 'en_IN',
@@ -28,8 +28,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'Rent on Cent | Bike & Scooty Rental in Vrindavan',
-    description: 'Rent Honda Activa, EV Scooters, and Royal Enfield in Vrindavan & Mathura starting ₹299/day.',
+    title: 'Bike & Scooty Rental in Vrindavan | Rent on Cent',
+    description: 'Rent Honda Activa, EV scooters & bikes in Vrindavan from ₹299/day. Doorstep hotel delivery and verified hosts.',
     images: ['https://rentoncent.bond/logo_square_share_area.png']
   }
 };
@@ -44,9 +44,9 @@ export default function HomePage() {
       <section className="bg-slate-900 text-slate-300 py-12 px-4 border-t border-slate-800">
         <div className="max-w-7xl mx-auto space-y-8">
           <div className="border-b border-slate-800 pb-6">
-            <h1 className="text-xl font-bold text-amber-400 font-heading">
+            <h2 className="text-xl font-bold text-amber-400 font-heading">
               Rent on Cent — #1 Bike &amp; Scooty Rental in Vrindavan &amp; Mathura
-            </h1>
+            </h2>
             <p className="text-xs text-slate-400 mt-2 leading-relaxed">
               Rent on Cent is Braj Bhoomi&apos;s leading peer-to-peer two-wheeler rental platform, offering verified Honda Activa, TVS Jupiter, Royal Enfield Classic, and high-efficiency electric scooters (EV) for devotees, tourists, and pilgrims visiting Vrindavan, Mathura, Govardhan, and Barsana. Experience peaceful parikramas and convenient temple darshan with transparent daily pricing starting at just ₹299/day and hourly rentals from ₹40/hour.
             </p>
@@ -54,7 +54,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
             <div className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60">
-              <h2 className="font-bold text-white text-sm mb-2">Popular Temple Routes by Two-Wheeler</h2>
+              <h3 className="font-bold text-white text-sm mb-2">Popular Temple Routes by Two-Wheeler</h3>
               <ul className="space-y-1.5 text-slate-400 list-disc list-inside">
                 <li>Prem Mandir &amp; ISKCON Temple Circuit (Raman Reti)</li>
                 <li>Shri Bankey Bihari Ji Darshan &amp; Nidhivan Silence Zone</li>
@@ -65,7 +65,7 @@ export default function HomePage() {
             </div>
 
             <div className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60">
-              <h2 className="font-bold text-white text-sm mb-2">Why Devotees Prefer Rent on Cent</h2>
+              <h3 className="font-bold text-white text-sm mb-2">Why Devotees Prefer Rent on Cent</h3>
               <ul className="space-y-1.5 text-slate-400 list-disc list-inside">
                 <li><strong className="text-slate-200">100% Verified Fleet:</strong> Complete RC, PUC, and Insurance audits before every handover.</li>
                 <li><strong className="text-slate-200">Zero Security Deposit Options:</strong> Transparent, upfront rates with no hidden fees.</li>
@@ -75,7 +75,7 @@ export default function HomePage() {
             </div>
 
             <div className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60">
-              <h2 className="font-bold text-white text-sm mb-2">List Your Bike &amp; Earn in Vrindavan</h2>
+              <h3 className="font-bold text-white text-sm mb-2">List Your Bike &amp; Earn in Vrindavan</h3>
               <p className="text-slate-400 leading-relaxed">
                 Are you a local vehicle owner in Vrindavan or Mathura? Earn up to ₹15,000 every month by listing your idle two-wheeler on Rent on Cent. We manage digital KYC, verified customer agreements, and 6-angle handover inspections.
               </p>
@@ -85,10 +85,10 @@ export default function HomePage() {
           {/* Micro-Location Quick Navigation Grid for Search Engines & Visitors */}
           <div className="pt-6 border-t border-slate-800 space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
                 Popular Pickup Points &amp; Expressway Cut Handover Locations
-              </h2>
-              <a href="/locations" className="text-xs text-amber-400 hover:underline font-semibold">
+              </h3>
+              <a href="/locations" aria-label="Explore all pickup locations in Vrindavan and Mathura" className="text-xs text-amber-400 hover:underline font-semibold">
                 View All Locations &rarr;
               </a>
             </div>
