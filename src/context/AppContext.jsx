@@ -535,27 +535,32 @@ export const AppProvider = ({ children }) => {
   };
 
   const createBooking = (bookingInput) => {
-    if (!currentUser) {
-      openLoginModal('customer');
-      throw new Error('Please sign in before making a booking.');
-    }
-
     const refNum = `VRB-${Math.floor(1000 + Math.random() * 9000)}`;
+    const veh = bookingInput.vehicle || {};
+    const custName = bookingInput.customerName || currentUser?.name || 'Vrindavan Yatri';
+    const custPhone = bookingInput.customerPhone || currentUser?.phone || '';
+    const custEmail = bookingInput.customerEmail || currentUser?.email || `${custName.toLowerCase().replace(/\s+/g, '')}@example.com`;
+
+    const dailyPrice = Number(veh.dailyRate || bookingInput.dailyPrice || 400);
+    const totalDays = Number(bookingInput.totalDays || 1);
+    const saathiFee = Number(bookingInput.saathiFee || (bookingInput.bikeSaathiIncluded ? 500 * totalDays : 0));
+    const totalAmount = Number(bookingInput.totalAmount) || ((dailyPrice * totalDays) + saathiFee);
+
     const newBooking = {
       id: refNum,
-      vehicleId: bookingInput.vehicle.id,
-      vehicleName: bookingInput.vehicle.name,
-      customerName: bookingInput.customerName || currentUser.name || 'Customer',
-      customerPhone: bookingInput.customerPhone || currentUser.phone || '',
-      customerEmail: bookingInput.customerEmail || currentUser.email || `${(bookingInput.customerName || currentUser.name || 'customer').toLowerCase().replace(/\s+/g, '')}@example.com`,
-      ownerName: bookingInput.vehicle.ownerName,
-      ownerPhone: bookingInput.vehicle.ownerPhone || '+91 98371 44520',
-      startDate: bookingInput.startDate,
-      endDate: bookingInput.endDate,
-      totalDays: bookingInput.totalDays,
-      dailyPrice: bookingInput.vehicle.dailyRate,
-      totalAmount: (bookingInput.vehicle.dailyRate * bookingInput.totalDays) + (bookingInput.saathiFee || 0),
-      pickupLocation: bookingInput.vehicle.pickupAddress,
+      vehicleId: veh.id || bookingInput.vehicleId || 'veh-1',
+      vehicleName: veh.name || bookingInput.vehicleName || 'Honda Activa 6G',
+      customerName: custName,
+      customerPhone: custPhone,
+      customerEmail: custEmail,
+      ownerName: veh.ownerName || bookingInput.ownerName || 'Radhe Shyam Sharma',
+      ownerPhone: veh.ownerPhone || bookingInput.ownerPhone || '+91 98371 44520',
+      startDate: bookingInput.startDate || new Date().toISOString().split('T')[0],
+      endDate: bookingInput.endDate || new Date(Date.now() + 86400000).toISOString().split('T')[0],
+      totalDays,
+      dailyPrice,
+      totalAmount,
+      pickupLocation: veh.pickupAddress || bookingInput.pickupLocation || 'Prem Mandir Area, Vrindavan',
       status: 'Inquiry',
       paymentStatus: 'Pending',
       paymentId: null,
@@ -563,13 +568,14 @@ export const AppProvider = ({ children }) => {
       preInspectionDone: false,
       postInspectionDone: false,
       bikeSaathiIncluded: Boolean(bookingInput.bikeSaathiIncluded),
-      saathiFee: Number(bookingInput.saathiFee) || 0,
+      saathiFee,
+      source: bookingInput.source || 'WhatsApp / 1-Click Booking',
       createdAt: new Date().toISOString().replace('T', ' ').substring(0, 16)
     };
 
     setBookings((prev) => [newBooking, ...prev]);
 
-    // Sync with backend API
+    // Sync with backend API (and auto-send email to Admin)
     apiCreateBooking(newBooking).catch((err) => console.warn('API createBooking error:', err));
 
     return newBooking;

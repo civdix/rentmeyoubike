@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ExternalLink, X, CheckCheck, Send, ShieldCheck, Bike, ArrowRight, Smartphone } from 'lucide-react';
+import { ExternalLink, X, CheckCheck, Send, ShieldCheck, Bike, ArrowRight, Smartphone, MessageSquare } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { BookingStatusBadge } from './TrustBadges';
 import { WhatsAppBrandIcon } from './CustomIcons';
@@ -10,14 +10,14 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
   const [chatMessages, setChatMessages] = useState([
     {
       sender: 'bot',
-      text: `Radhe Radhe! 🙏 Welcome to Rent to Cent.\n\nYour Booking Inquiry for *${vehicle?.name || booking?.vehicleName}* has been received!\n\n📋 *Booking Reference*: #${booking?.id}\n📍 *Pickup Area*: ${booking?.pickupLocation}\n📅 *Dates*: ${booking?.startDate} to ${booking?.endDate} (${booking?.totalDays} day(s))\n💰 *Total Amount*: ₹${booking?.totalAmount}\n\nTo complete your booking, please complete Customer Identity (KYC) verification.`,
+      text: `Radhe Radhe! 🙏 Welcome to Rent to Cent.\n\nYour Booking Inquiry for *${vehicle?.name || booking?.vehicleName || 'Rental Vehicle'}* has been received!\n\n📋 *Booking Reference*: #${booking?.id || 'NEW'}\n📍 *Pickup Area*: ${booking?.pickupLocation || 'Prem Mandir Area, Vrindavan'}\n📅 *Dates*: ${booking?.startDate || 'Today'} to ${booking?.endDate || 'Tomorrow'} (${booking?.totalDays || 1} day(s))\n💰 *Total Amount*: ₹${booking?.totalAmount || 400}\n\nTo complete your booking, please complete Customer Identity (KYC) verification.`,
       time: 'Just now'
     }
   ]);
   const [inputText, setInputText] = useState('');
 
-  const phone = legalConfig.supportWhatsApp.replace(/[^0-9]/g, '');
-  const exactPrefilledMsg = `Hi, I want to rent ${vehicle?.name || booking?.vehicleName} (${vehicle?.id || booking?.vehicleId || 'veh-1'}) in Vrindavan.\n\nRental dates:\n${booking?.startDate} to ${booking?.endDate}\n\nPlease confirm availability and booking requirements.`;
+  const phone = (legalConfig?.supportWhatsApp || '+919837144520').replace(/[^0-9]/g, '');
+  const exactPrefilledMsg = `Hi, I want to rent ${vehicle?.name || booking?.vehicleName || 'a bike'} (${vehicle?.id || booking?.vehicleId || 'veh-1'}) in Vrindavan.\n\nRental dates:\n${booking?.startDate || ''} to ${booking?.endDate || ''}\n\nPlease confirm availability and booking requirements.`;
   const encodedText = encodeURIComponent(exactPrefilledMsg);
   const waUrl = `https://wa.me/${phone}?text=${encodedText}`;
 
@@ -133,9 +133,9 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
 
           <button
             onClick={() => {
-              updateBookingStatus(booking.id, 'KYC Pending');
+              if (booking?.id) updateBookingStatus(booking.id, 'KYC Pending');
               onClose();
-              if (onLaunchKYC) onLaunchKYC(booking.id);
+              if (onLaunchKYC && booking?.id) onLaunchKYC(booking.id);
             }}
             className="w-full sm:w-1/3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-md transition-colors"
           >
@@ -146,7 +146,7 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
           <button
             onClick={() => {
               onClose();
-              setActiveInspectionModal({ bookingId: booking.id, type: 'pre' });
+              if (booking?.id) setActiveInspectionModal({ bookingId: booking.id, type: 'pre' });
             }}
             className="w-full sm:w-1/3 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-md transition-colors"
           >

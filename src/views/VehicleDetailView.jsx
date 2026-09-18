@@ -8,7 +8,7 @@ import {
   Bike, MapPin, Calendar, MessageSquare, ShieldCheck, Star, ArrowRight,
   Info, CheckCircle2, AlertCircle, Clock, Sparkles, Flag, ChevronRight,
   Gauge, Fuel, Check, RefreshCw, X, Shield, Share2, Copy, UserCheck, Heart, UserPlus,
-  FileText
+  FileText, Zap
 } from 'lucide-react';
 import {
   VrindavanScooterIcon, VrindavanFeatherIcon, WhatsAppBrandIcon, HelmetsIcon,
@@ -74,42 +74,98 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
   const saathiTotalAmount = addBikeSaathi ? saathiDailyRate * totalDays : 0;
   const totalAmount = baseRentalAmount + saathiTotalAmount;
 
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState(null);
+  const [bookingError, setBookingError] = useState('');
+
+  const getEffectiveCustomer = () => {
+    const name = (renterName || currentUser?.name || 'Vrindavan Pilgrim').trim();
+    const phone = (renterPhone || currentUser?.phone || '').trim();
+    return { name, phone };
+  };
+
   // Handle Book on WhatsApp Click
   const handleWhatsAppBooking = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+    setBookingError('');
 
-    if (!currentUser) {
-      openLoginModal('customer');
+    const { name, phone } = getEffectiveCustomer();
+    if (!phone || phone.replace(/[^0-9]/g, '').length < 10) {
+      setBookingError('Please enter a valid 10-digit mobile phone number for your booking.');
       return;
     }
 
-    const newBooking = createBooking({
-      vehicle,
-      customerName: renterName || currentUser.name,
-      customerPhone: renterPhone || currentUser.phone,
-      startDate,
-      endDate,
-      totalDays,
-      bikeSaathiIncluded: addBikeSaathi,
-      saathiFee: saathiTotalAmount
-    });
+    try {
+      const newBooking = createBooking({
+        vehicle,
+        customerName: name,
+        customerPhone: phone,
+        customerEmail: currentUser?.email || '',
+        startDate,
+        endDate,
+        totalDays,
+        bikeSaathiIncluded: addBikeSaathi,
+        saathiFee: saathiTotalAmount,
+        source: 'WhatsApp Booking'
+      });
 
-    const prefilledText =
-      `Hi, I want to rent ${vehicleName} (${vehicleId}) in Vrindavan.\n\n` +
-      `Rental dates:\n` +
-      `${startDate} to ${endDate}\n\n` +
-      `Please confirm availability and booking requirements.`;
+      const prefilledText =
+        `Hi, I want to rent ${vehicleName} (${vehicleId}) in Vrindavan.\n\n` +
+        `👤 Name: ${name}\n` +
+        `📞 Phone: ${phone}\n` +
+        `📅 Dates: ${startDate} to ${endDate} (${totalDays} day(s))\n` +
+        `💰 Total Price: ₹${totalAmount}\n\n` +
+        `Please confirm availability and booking requirements.`;
 
-    const phone = (legalConfig?.supportWhatsApp || '+919876543210').replace(/[^0-9]/g, '');
-    const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(prefilledText)}`;
+      const supportPhone = (legalConfig?.supportWhatsApp || '+919837144520').replace(/[^0-9]/g, '');
+      const waUrl = `https://wa.me/${supportPhone}?text=${encodeURIComponent(prefilledText)}`;
 
-    window.open(waUrl, '_blank');
+      if (typeof window !== 'undefined') {
+        window.open(waUrl, '_blank');
+      }
 
-    onClose();
-    setActiveWhatsAppModal({
-      booking: newBooking,
-      vehicle
-    });
+      setBookingSuccess(newBooking);
+      setActiveWhatsAppModal({
+        booking: newBooking,
+        vehicle
+      });
+    } catch (err) {
+      setBookingError(err?.message || 'Failed to initiate WhatsApp booking.');
+    }
+  };
+
+  // Handle 1-Click Instant Booking Click (Emails admin immediately and reserves voucher)
+  const handleOneClickBooking = (e) => {
+    if (e) e.preventDefault();
+    setBookingError('');
+
+    const { name, phone } = getEffectiveCustomer();
+    if (!phone || phone.replace(/[^0-9]/g, '').length < 10) {
+      setBookingError('Please enter a valid 10-digit mobile phone number to confirm your booking.');
+      return;
+    }
+
+    setBookingLoading(true);
+    try {
+      const newBooking = createBooking({
+        vehicle,
+        customerName: name,
+        customerPhone: phone,
+        customerEmail: currentUser?.email || '',
+        startDate,
+        endDate,
+        totalDays,
+        bikeSaathiIncluded: addBikeSaathi,
+        saathiFee: saathiTotalAmount,
+        source: '1-Click Instant Booking'
+      });
+
+      setBookingSuccess(newBooking);
+    } catch (err) {
+      setBookingError(err?.message || 'Failed to complete 1-Click booking.');
+    } finally {
+      setBookingLoading(false);
+    }
   };
 
 
@@ -269,30 +325,120 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
                   </label>
                 </div>
 
-                {!currentUser && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-amber-900 text-xs flex items-center justify-between gap-2">
-                    <span>🔒 Sign in with your mobile number to book this bike.</span>
-                    <button
-                      type="button"
-                      onClick={() => openLoginModal('customer')}
-                      className="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs shrink-0 hover:bg-emerald-500 cursor-pointer"
-                    >
-                      Sign In
-                    </button>
+                {bookingError && (
+                  <div className="bg-rose-50 border border-rose-200 rounded-xl p-3 text-rose-700 text-xs flex items-center gap-2 animate-fadeIn">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                    <span>{bookingError}</span>
                   </div>
                 )}
 
-                <button
-                  onClick={handleWhatsAppBooking}
-                  className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all active:scale-[0.98] cursor-pointer"
-                >
-                  <WhatsAppBrandIcon className="w-4 h-4 fill-white shrink-0" />
-                  <span className="truncate">
-                    {currentUser
-                      ? `Book on WhatsApp (${addBikeSaathi ? 'With Guide' : 'Self Ride'})`
-                      : 'Sign In to Book on WhatsApp'}
-                  </span>
-                </button>
+                {/* Guest Contact Details Inputs (if not logged in) */}
+                {!currentUser ? (
+                  <div className="space-y-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/90 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-800 text-[11px] uppercase tracking-wider">Quick Rider Details</span>
+                      <button
+                        type="button"
+                        onClick={() => openLoginModal('customer')}
+                        className="text-emerald-700 font-bold hover:underline text-[11px] cursor-pointer"
+                      >
+                        Already have an account? Sign in
+                      </button>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">Your Full Name</label>
+                      <input
+                        type="text"
+                        value={renterName}
+                        onChange={(e) => setRenterName(e.target.value)}
+                        placeholder="e.g. Ramesh Sharma"
+                        className="w-full p-2.5 rounded-xl border border-slate-300 bg-white font-semibold text-xs focus:outline-none focus:border-emerald-600"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">WhatsApp Mobile (10 Digits)</label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-2.5 text-slate-400 font-mono text-xs">+91</span>
+                        <input
+                          type="tel"
+                          value={renterPhone}
+                          onChange={(e) => setRenterPhone(e.target.value.replace(/[^0-9]/g, '').slice(0, 10))}
+                          placeholder="9876543210"
+                          maxLength={10}
+                          className="w-full pl-11 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white font-mono font-semibold text-xs tracking-wider focus:outline-none focus:border-emerald-600"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-xl p-2.5 text-[11px] text-emerald-950 flex items-center justify-between">
+                    <span>Booking as: <strong>{currentUser.name}</strong> ({currentUser.phone})</span>
+                    <span className="bg-emerald-200 text-emerald-900 font-bold px-1.5 py-0.5 rounded text-[10px]">Verified Account</span>
+                  </div>
+                )}
+
+                {/* Booking Success Confirmation Banner */}
+                {bookingSuccess ? (
+                  <div className="bg-emerald-50 border border-emerald-400 rounded-2xl p-4 text-emerald-950 space-y-3 animate-fadeIn">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                      <strong className="text-sm">Booking Reserved! Ref: #{bookingSuccess.id}</strong>
+                    </div>
+                    <p className="text-xs text-emerald-800 leading-relaxed">
+                      Radhe Radhe! Your booking for <strong>{vehicleName}</strong> has been registered and an email notification has been dispatched to the platform admin.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                      <a
+                        href={`https://wa.me/${(legalConfig?.supportWhatsApp || '+919837144520').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I just booked ${vehicleName} (Ref: #${bookingSuccess.id}). Please confirm availability.`)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex-1 bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-sm text-center"
+                      >
+                        <WhatsAppBrandIcon className="w-3.5 h-3.5 fill-white" />
+                        <span>Open WhatsApp</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => setActiveWhatsAppModal({ booking: bookingSuccess, vehicle })}
+                        className="flex-1 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2.5 px-3 rounded-xl shadow-sm text-center cursor-pointer"
+                      >
+                        View Assistant
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {/* Button 1: Book on WhatsApp */}
+                    <button
+                      type="button"
+                      onClick={handleWhatsAppBooking}
+                      className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs py-3 px-3 rounded-xl flex items-center justify-center gap-2 shadow-sm hover:shadow transition-all active:scale-[0.98] cursor-pointer"
+                    >
+                      <WhatsAppBrandIcon className="w-4 h-4 fill-white shrink-0" />
+                      <span className="font-bold">Book via WhatsApp ({addBikeSaathi ? 'With Guide' : 'Self Ride'})</span>
+                    </button>
+
+                    {/* Button 2: 1-Click Instant Booking */}
+                    <button
+                      type="button"
+                      onClick={handleOneClickBooking}
+                      disabled={bookingLoading}
+                      className="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-bold text-xs py-3 px-3 rounded-xl flex items-center justify-center gap-2 shadow-sm hover:shadow transition-all active:scale-[0.98] cursor-pointer border border-slate-700"
+                    >
+                      <Zap className="w-4 h-4 text-amber-400 shrink-0 fill-amber-400" />
+                      <span>{bookingLoading ? 'Reserving...' : '1-Click Instant Booking (Mails Admin)'}</span>
+                    </button>
+
+                    <p className="text-[10px] text-slate-500 text-center flex items-center justify-center gap-1 pt-0.5">
+                      <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                      <span>Zero cancellation fee • Instant email alert sent to admin</span>
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

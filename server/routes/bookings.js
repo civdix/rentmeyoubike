@@ -2,6 +2,7 @@ import express from 'express';
 import { db } from '../db.js';
 import { requireAuth } from '../middleware/rbac.js';
 import { deleteSettlementImagesForBooking } from '../imagekit.js';
+import { sendBookingNotificationToAdmin } from '../email.js';
 
 const router = express.Router();
 
@@ -62,8 +63,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/bookings - Create new rental booking
-router.post('/', requireAuth, async (req, res) => {
+// POST /api/bookings - Create new rental booking (Supports authenticated users, WhatsApp bookings & 1-click inquiries)
+router.post('/', async (req, res) => {
   try {
     const b = req.body;
     const refNum = b.id || `VRB-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -86,8 +87,8 @@ router.post('/', requireAuth, async (req, res) => {
     const dailyPrice = Number(b.dailyPrice || vehicle.dailyRate || 400);
 
     // Calculate dates
-    const start = new Date(b.startDate);
-    const end = new Date(b.endDate);
+    const start = new Date(b.startDate || Date.now());
+    const end = new Date(b.endDate || (Date.now() + 86400000));
     const diffTime = Math.abs(end - start);
     const totalDays = Number(b.totalDays) || Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
 
@@ -95,6 +96,39 @@ router.post('/', requireAuth, async (req, res) => {
     const saathiDailyRate = 500;
     const saathiFee = bikeSaathiIncluded ? saathiDailyRate * totalDays : 0;
     const totalAmount = Number(b.totalAmount) || (dailyPrice * totalDays + saathiFee);
+
+    const isUserAuth = req.user && req.user.isAuthenticated;
+    const custName = isUserAuth ? (req.user.name || b.customerName || 'Customer') : (b.customerName || 'Vrindavan Yatri');
+    const custPhone = isUserAuth ? (req.user.phone || b.customerPhone || '') : (b.customerPhone || '');
+    const custEmail = isUserAuth ? (req.user.email || b.customerEmail || '') : (b.customerEmail || '');
+
+    const bookingData = {
+      id: refNum,
+      vehicleId,
+      vehicleName,
+      customerName: custName,
+      customerPhone: custPhone,
+      customerEmail: custEmail,
+      ownerName: b.ownerName || vehicle.ownerName || 'Radhe Shyam Sharma',
+      ownerPhone: b.ownerPhone || vehicle.ownerPhone || '+91 98371 44520',
+      startDate: b.startDate || new Date().toISOString().split('T')[0],
+      endDate: b.endDate || new Date(Date.now() + 86400000).toISOString().split('T')[0],
+      totalDays,
+      dailyPrice,
+      totalAmount,
+      pickupLocation: b.pickupLocation || vehicle.pickupAddress || 'Prem Mandir Road, Vrindavan',
+      status: b.status || 'Inquiry',
+      paymentStatus: b.paymentStatus || 'Pending',
+      refundStatus: b.refundStatus || 'None',
+      paymentId: b.paymentId || null,
+      kycStatus: b.kycStatus || 'Pending',
+      preInspectionDone: b.preInspectionDone ? 1 : 0,
+      postInspectionDone: b.postInspectionDone ? 1 : 0,
+      bikeSaathiIncluded,
+      saathiFee,
+      source: b.source || 'WhatsApp / 1-Click Booking',
+      createdAt: new Date().toISOString().replace('T', ' ').substring(0, 16)
+    };
 
     const stmt = db.prepare(`
       INSERT INTO bookings (
@@ -110,48 +144,36 @@ router.post('/', requireAuth, async (req, res) => {
       )
     `);
 
-    const bookingData = {
-      id: refNum,
-      vehicleId,
-      vehicleName,
-      customerName: req.user.role === 'customer' ? (req.user.name || b.customerName || 'Customer') : (b.customerName || 'Customer'),
-      customerPhone: req.user.role === 'customer' ? (req.user.phone || b.customerPhone || '') : (b.customerPhone || ''),
-      customerEmail: req.user.role === 'customer' ? (req.user.email || b.customerEmail || '') : (b.customerEmail || ''),
-      ownerName: b.ownerName || vehicle.ownerName || 'Radhe Shyam Sharma',
-      ownerPhone: b.ownerPhone || vehicle.ownerPhone || '+91 98371 44520',
-      startDate: b.startDate,
-      endDate: b.endDate,
-      totalDays,
-      dailyPrice,
-      totalAmount,
-      pickupLocation: b.pickupLocation || vehicle.pickupAddress || 'Prem Mandir Road, Vrindavan',
-      status: b.status || 'Inquiry',
-      paymentStatus: b.paymentStatus || 'Pending',
-      refundStatus: b.refundStatus || 'None',
-      paymentId: b.paymentId || null,
-      kycStatus: b.kycStatus || 'Pending',
-      preInspectionDone: b.preInspectionDone ? 1 : 0,
-      postInspectionDone: b.postInspectionDone ? 1 : 0,
-      bikeSaathiIncluded,
-      saathiFee,
-      createdAt: new Date().toISOString().replace('T', ' ').substring(0, 16)
-    };
-
     await stmt.run(bookingData);
 
-    // Increment customer booking count if customer exists, or register
-    const existingCust = await db.prepare('SELECT * FROM customers WHERE phone = ?').get(bookingData.customerPhone);
-    if (existingCust) {
-      await db.prepare('UPDATE customers SET bookingsCount = bookingsCount + 1 WHERE id = ?').run(existingCust.id);
-    } else {
-      await db.prepare(`
-        INSERT INTO customers (id, name, phone, email, kycStatus, bookingsCount, status)
-        VALUES (?, ?, ?, ?, 'Pending', 1, 'active')
-      `).run(`cust-${Date.now()}`, bookingData.customerName, bookingData.customerPhone, bookingData.customerEmail);
+    // Increment customer booking count if customer exists, or register guest customer
+    if (bookingData.customerPhone) {
+      try {
+        const existingCust = await db.prepare('SELECT * FROM customers WHERE phone = ?').get(bookingData.customerPhone);
+        if (existingCust) {
+          await db.prepare('UPDATE customers SET bookingsCount = bookingsCount + 1 WHERE id = ?').run(existingCust.id);
+        } else {
+          await db.prepare(`
+            INSERT INTO customers (id, name, phone, email, kycStatus, bookingsCount, status)
+            VALUES (?, ?, ?, ?, 'Pending', 1, 'active')
+          `).run(`cust-${Date.now()}`, bookingData.customerName, bookingData.customerPhone, bookingData.customerEmail);
+        }
+      } catch (custErr) {
+        console.warn('Customer upsert error during booking:', custErr.message);
+      }
+    }
+
+    // Automatically notify Platform Admin via email about new booking received!
+    try {
+      sendBookingNotificationToAdmin(bookingData).catch((err) => {
+        console.warn('⚠️ Could not dispatch booking email to admin:', err.message);
+      });
+    } catch (e) {
+      console.warn('⚠️ Failed to initiate admin booking email alert:', e.message);
     }
 
     const created = await db.prepare('SELECT * FROM bookings WHERE id = ?').get(refNum);
-    res.status(201).json(formatBooking(created));
+    res.status(201).json(formatBooking(created || bookingData));
   } catch (error) {
     console.error('Error creating booking:', error);
     res.status(500).json({ error: 'Failed to create booking' });

@@ -49,42 +49,36 @@ async function getTransporter() {
   return cachedTransporter;
 }
 
-export async function sendEmailOtp(toEmail, otp, role = 'customer') {
-  const normalized = normalizeEmail(toEmail);
-  const senderEmail = process.env.SMTP_USER || 'no-reply@vrindavanrides.in';
+/**
+ * Universal email dispatcher supporting:
+ * 1. HTTPS Email API (EMAIL_API_TOKEN / EMAIL_API_ENDPOINT)
+ * 2. Resend REST API (RESEND_API_KEY)
+ * 3. Nodemailer SMTP (IPv4 direct)
+ */
+export async function sendEmail({ to, subject, text, html }) {
+  const normalized = normalizeEmail(to);
+  const senderEmail = process.env.SMTP_USER || 'no-reply@rentoncent.bond';
 
-  const mailOptions = {
-    from: `"Rent to Cent" <${senderEmail}>`,
-    to: normalized,
-    subject: `🌸 Your Rent to Cent Verification Code: ${otp}`,
-    text: `Radhe Radhe!\n\nYour 6-digit verification code is: ${otp}\n\nValid for 10 minutes. Please do not share this OTP with anyone.\n\nRent to Cent`,
-    html: `
-      <div style="font-family: Arial, sans-serif; padding: 24px; max-width: 480px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; background: #ffffff;">
-        <h2 style="color: #059669; margin-top: 0; font-size: 20px;">🌸 Rent to Cent</h2>
-        <p style="color: #334155; font-size: 14px;">Radhe Radhe! Your email verification code is:</p>
-        <div style="background: #ecfdf5; border: 2px dashed #059669; padding: 16px; text-align: center; border-radius: 12px; margin: 20px 0;">
-          <span style="font-family: monospace; font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #065f46;">${otp}</span>
-        </div>
-        <p style="font-size: 12px; color: #64748b; margin-bottom: 0;">This OTP code is valid for 10 minutes. If you did not request this, please disregard this email.</p>
-      </div>
-    `
-  };
+  if (!normalized) {
+    return { success: false, error: 'Recipient email address is invalid or empty' };
+  }
 
-  // 1. Primary: If EMAIL_API_TOKEN is configured, use the HTTPS email API (Port 443, never blocked by Render Free)
+  const cleanSubject = String(subject || 'Rent on Cent Notification').trim();
+  const plainText = String(text || '').trim();
+  const htmlContent = String(html || plainText).trim();
+
+  // 1. Primary: If EMAIL_API_TOKEN is configured, use HTTPS email API (Port 443, reliable on Render)
   if (process.env.EMAIL_API_TOKEN) {
     try {
       const endpoint = process.env.EMAIL_API_ENDPOINT || 'https://shivamdixit.vercel.app/api/send-email';
-      const cleanSubject = `Your Rent to Cent Verification Code: ${otp}`;
       const headerSubject = /[^\x20-\x7E]/.test(cleanSubject)
         ? `=?UTF-8?B?${Buffer.from(cleanSubject, 'utf-8').toString('base64')}?=`
         : cleanSubject;
 
-      const singleLineHtml = mailOptions.html.replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+      const singleLineHtml = htmlContent.replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
       const headerHtml = Array.from(singleLineHtml)
         .map((char) => (char.codePointAt(0) > 127 ? `&#${char.codePointAt(0)};` : char))
         .join('');
-
-      const plainText = `Radhe Radhe! Your 6-digit verification code is: ${otp}. Valid for 10 minutes.`;
 
       const apiRes = await fetch(endpoint, {
         method: 'POST',
@@ -99,18 +93,18 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
       });
 
       if (apiRes.status === 200) {
-        console.log(`✉️ [EmailAPI] OTP email delivered to ${normalized} via ${endpoint}`);
+        console.log(`✉️ [EmailAPI] Email delivered to ${normalized} via ${endpoint}`);
         return { success: true };
       } else {
         const errText = await apiRes.text().catch(() => '');
-        console.warn(`⚠️ [EmailAPI] OTP send returned HTTP ${apiRes.status}:`, errText);
+        console.warn(`⚠️ [EmailAPI] Send returned HTTP ${apiRes.status}:`, errText);
       }
     } catch (apiErr) {
       console.warn('⚠️ [EmailAPI] Request failed:', apiErr.message);
     }
   }
 
-  // 2. Secondary: If RESEND_API_KEY is configured, use Resend HTTPS REST API (Port 443)
+  // 2. Secondary: If RESEND_API_KEY is configured, use Resend REST API
   if (process.env.RESEND_API_KEY) {
     try {
       const res = await fetch('https://api.resend.com/emails', {
@@ -120,15 +114,16 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: process.env.RESEND_FROM || 'Rent to Cent <onboarding@resend.dev>',
+          from: process.env.RESEND_FROM || 'Rent on Cent <onboarding@resend.dev>',
           to: [normalized],
-          subject: `🌸 Your Rent to Cent Verification Code: ${otp}`,
-          html: mailOptions.html
+          subject: cleanSubject,
+          text: plainText,
+          html: htmlContent
         })
       });
       const data = await res.json();
       if (res.ok) {
-        console.log(`✉️ [Resend] OTP sent to ${normalized} (Message ID: ${data.id})`);
+        console.log(`✉️ [Resend] Email sent to ${normalized} (Message ID: ${data.id})`);
         return { success: true, messageId: data.id };
       } else {
         console.warn('⚠️ [Resend] API error:', data);
@@ -138,23 +133,137 @@ export async function sendEmailOtp(toEmail, otp, role = 'customer') {
     }
   }
 
-  // 3. Fallback: Nodemailer SMTP (uses IPv4 direct connect with fast 2.5s timeout)
+  // 3. Fallback: Nodemailer SMTP
   try {
     const transporter = await getTransporter();
     if (transporter) {
-      const info = await transporter.sendMail(mailOptions);
-      console.log(`✉️ OTP sent to ${normalized} (Message ID: ${info.messageId})`);
+      const info = await transporter.sendMail({
+        from: `"Rent on Cent" <${senderEmail}>`,
+        to: normalized,
+        subject: cleanSubject,
+        text: plainText,
+        html: htmlContent
+      });
+      console.log(`✉️ [SMTP] Email sent to ${normalized} (Message ID: ${info.messageId})`);
       return { success: true, messageId: info.messageId };
     }
   } catch (err) {
-    console.error(`⚠️ SMTP error for ${normalized}: ${err.message}. (Render Free tier blocks outbound SMTP ports 25/465/587)`);
-    cachedTransporter = null; // Invalidate cache so next attempt refreshes
+    console.error(`⚠️ SMTP error for ${normalized}: ${err.message}.`);
+    cachedTransporter = null;
   }
 
   return {
     success: true,
-    message: `Verification code generated for ${normalized}`
+    message: `Email queued for ${normalized}`
   };
 }
 
-export default { isValidEmail, normalizeEmail, sendEmailOtp };
+export async function sendEmailOtp(toEmail, otp, role = 'customer') {
+  const normalized = normalizeEmail(toEmail);
+  const subject = `🌸 Your Rent to Cent Verification Code: ${otp}`;
+  const text = `Radhe Radhe!\n\nYour 6-digit verification code is: ${otp}\n\nValid for 10 minutes. Please do not share this OTP with anyone.\n\nRent to Cent`;
+  const html = `
+    <div style="font-family: Arial, sans-serif; padding: 24px; max-width: 480px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; background: #ffffff;">
+      <h2 style="color: #059669; margin-top: 0; font-size: 20px;">🌸 Rent to Cent</h2>
+      <p style="color: #334155; font-size: 14px;">Radhe Radhe! Your email verification code is:</p>
+      <div style="background: #ecfdf5; border: 2px dashed #059669; padding: 16px; text-align: center; border-radius: 12px; margin: 20px 0;">
+        <span style="font-family: monospace; font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #065f46;">${otp}</span>
+      </div>
+      <p style="font-size: 12px; color: #64748b; margin-bottom: 0;">This OTP code is valid for 10 minutes. If you did not request this, please disregard this email.</p>
+    </div>
+  `;
+
+  return sendEmail({ to: normalized, subject, text, html });
+}
+
+/**
+ * Dispatches an immediate booking notification email to the platform administrator
+ */
+export async function sendBookingNotificationToAdmin(booking) {
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.SMTP_USER || 'admin@rentoncent.bond';
+  const ref = booking.id || 'NEW';
+  const vehicleName = booking.vehicleName || 'Rental Bike / Scooter';
+  const subject = `🛵 New Booking Received #${ref} - ${vehicleName}`;
+
+  const text =
+    `Radhe Radhe Admin!\n\n` +
+    `A new rental booking has been received on Rent to Cent:\n\n` +
+    `📋 Booking Reference: #${ref}\n` +
+    `🛵 Vehicle: ${vehicleName} (${booking.vehicleId || 'N/A'})\n` +
+    `👤 Customer Name: ${booking.customerName || 'Pilgrim'}\n` +
+    `📞 Customer Phone: ${booking.customerPhone || 'Not provided'}\n` +
+    `✉️ Customer Email: ${booking.customerEmail || 'Not provided'}\n` +
+    `📅 Rental Dates: ${booking.startDate} to ${booking.endDate} (${booking.totalDays || 1} day(s))\n` +
+    `💰 Total Amount: ₹${booking.totalAmount || 0}\n` +
+    `📍 Pickup Location: ${booking.pickupLocation || 'Vrindavan'}\n` +
+    `💬 Channel / Type: ${booking.source || 'WhatsApp / 1-Click Booking'}\n` +
+    `🕒 Received At: ${booking.createdAt || new Date().toLocaleString()}\n\n` +
+    `Open Admin Console to view and manage: https://rentoncent.bond/admin`;
+
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 24px; max-width: 560px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; background: #ffffff;">
+      <div style="background: #059669; color: #ffffff; padding: 20px; border-radius: 12px; margin-bottom: 24px;">
+        <h2 style="margin: 0; font-size: 20px; font-weight: bold;">🌸 New Booking Received!</h2>
+        <p style="margin: 6px 0 0; font-size: 13px; opacity: 0.95;">Reference: <strong>#${ref}</strong> • Channel: ${booking.source || 'WhatsApp / 1-Click'}</p>
+      </div>
+
+      <h3 style="font-size: 15px; color: #0f172a; margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+        Booking &amp; Customer Details
+      </h3>
+
+      <table style="width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.6; margin-bottom: 24px;">
+        <tbody>
+          <tr>
+            <td style="padding: 6px 0; color: #64748b; width: 38%;">Vehicle:</td>
+            <td style="padding: 6px 0; font-weight: bold; color: #0f172a;">${vehicleName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 6px 0; color: #64748b;">Customer Name:</td>
+            <td style="padding: 6px 0; font-weight: bold; color: #0f172a;">${booking.customerName || 'Guest Pilgrim'}</td>
+          </tr>
+          <tr>
+            <td style="padding: 6px 0; color: #64748b;">Customer Phone:</td>
+            <td style="padding: 6px 0; font-weight: bold; color: #059669;">
+              <a href="tel:${booking.customerPhone}" style="color: #059669; text-decoration: none;">${booking.customerPhone || 'N/A'}</a>
+              ${booking.customerPhone ? `<a href="https://wa.me/${String(booking.customerPhone).replace(/[^0-9]/g, '')}" style="margin-left: 8px; font-size: 11px; color: #25D366; text-decoration: underline;">(WhatsApp)</a>` : ''}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 6px 0; color: #64748b;">Customer Email:</td>
+            <td style="padding: 6px 0; color: #0f172a;">${booking.customerEmail || 'None provided'}</td>
+          </tr>
+          <tr>
+            <td style="padding: 6px 0; color: #64748b;">Rental Period:</td>
+            <td style="padding: 6px 0; font-weight: 600; color: #0f172a;">${booking.startDate} to ${booking.endDate} (${booking.totalDays || 1} day(s))</td>
+          </tr>
+          <tr>
+            <td style="padding: 6px 0; color: #64748b;">Total Amount:</td>
+            <td style="padding: 6px 0; font-weight: 800; color: #0f172a; font-size: 16px;">₹${booking.totalAmount || 0}</td>
+          </tr>
+          <tr>
+            <td style="padding: 6px 0; color: #64748b;">Pickup Location:</td>
+            <td style="padding: 6px 0; color: #0f172a;">${booking.pickupLocation || 'Prem Mandir Area, Vrindavan'}</td>
+          </tr>
+          <tr>
+            <td style="padding: 6px 0; color: #64748b;">Status:</td>
+            <td style="padding: 6px 0; color: #d97706; font-weight: bold;">${booking.status || 'Inquiry'}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="text-align: center; margin-top: 20px; padding-top: 16px; border-top: 1px solid #f1f5f9;">
+        <a href="https://rentoncent.bond/admin" style="background: #0f172a; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-weight: bold; font-size: 13px; display: inline-block;">
+          Open Admin Control Center
+        </a>
+      </div>
+      <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 16px; margin-bottom: 0;">
+        Automated alert from Rent on Cent booking dispatch system.
+      </p>
+    </div>
+  `;
+
+  console.log(`📢 Dispatching new booking notification to admin (${adminEmail}) for Ref: #${ref}...`);
+  return sendEmail({ to: adminEmail, subject, text, html });
+}
+
+export default { isValidEmail, normalizeEmail, sendEmail, sendEmailOtp, sendBookingNotificationToAdmin };
