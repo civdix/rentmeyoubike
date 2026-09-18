@@ -129,7 +129,7 @@ The platform enforces end-to-end RBAC on both the Express backend middleware ([`
 
 ### Authentication & Token Verification
 - **Renter / Customer Login**: `POST /api/auth/customer-login` with `{ "phone": "+91 98199 44321", "name": "Amit Sharma", "email": "amit@example.com" }`. Issues a `vr_cust_...` bearer session token and returns the customer profile.
-- **Host / Fleet Owner Login**: `POST /api/auth/owner-login` with `{ "phone": "+91 98371 44520", "name": "Radhe Shyam Sharma", "email": "radhe@example.com" }`. Issues a `vr_owner_...` bearer session token and returns the host profile.
+- **Host / Fleet Owner Login**: `POST /api/auth/owner-login` with `{ "phone": "+91 97209 65985", "name": "Radhe Shyam Sharma", "email": "radhe@example.com" }`. Issues a `vr_owner_...` bearer session token and returns the host profile.
 - **Admin Authentication**: `POST /api/auth/admin-login` with `{ "pin": "7777" }`. Returns a cryptographically unique `vr_admin_...` bearer session token.
 - **Session Profile Verification**: `GET /api/auth/me` with `Authorization: Bearer <token>`.
 - **Session Revocation**: `POST /api/auth/logout` revokes the token from the active session store.

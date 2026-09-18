@@ -117,7 +117,7 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
         `💰 Total Price: ₹${totalAmount}\n\n` +
         `Please confirm availability and booking requirements.`;
 
-      const supportPhone = (legalConfig?.supportWhatsApp || '+919837144520').replace(/[^0-9]/g, '');
+      const supportPhone = (legalConfig?.supportWhatsApp || '+919720965985').replace(/[^0-9]/g, '');
       const waUrl = `https://wa.me/${supportPhone}?text=${encodeURIComponent(prefilledText)}`;
 
       if (typeof window !== 'undefined') {
@@ -393,7 +393,7 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-2 pt-1">
                       <a
-                        href={`https://wa.me/${(legalConfig?.supportWhatsApp || '+919837144520').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I just booked ${vehicleName} (Ref: #${bookingSuccess.id}). Please confirm availability.`)}`}
+                        href={`https://wa.me/${(legalConfig?.supportWhatsApp || '+919720965985').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I just booked ${vehicleName} (Ref: #${bookingSuccess.id}). Please confirm availability.`)}`}
                         target="_blank"
                         rel="noreferrer"
                         className="flex-1 bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-sm text-center"

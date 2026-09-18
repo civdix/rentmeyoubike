@@ -46,7 +46,7 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
   const chatContainerRef = useRef(null);
   const hasSeededRef = useRef(false);
 
-  const phone = (legalConfig?.supportWhatsApp || '+919837144520').replace(/[^0-9]/g, '');
+  const phone = (legalConfig?.supportWhatsApp || '+919720965985').replace(/[^0-9]/g, '');
   const exactPrefilledMsg = `Hi, I want to rent ${vehicleName} (${vehicle?.id || booking?.vehicleId || 'veh-1'}) in Vrindavan.\n\nRental dates:\n${booking?.startDate || ''} to ${booking?.endDate || ''}\n\nPlease confirm availability and booking requirements.`;
   const encodedText = encodeURIComponent(exactPrefilledMsg);
   const waUrl = `https://wa.me/${phone}?text=${encodedText}`;

@@ -14,6 +14,7 @@ import {
   Smartphone, UserCheck, RefreshCw, Lock,
   Home, LogIn, User, UserPlus, Zap
 } from 'lucide-react';
+import { SocialShareBar } from '../components/SocialShareBar';
 import {
   VrindavanScooterIcon, VrindavanFeatherIcon, WhatsAppBrandIcon, HelmetsIcon,
   OdometerGaugeIcon, DigitalInspectionIcon, RupeeStackIcon, KeyHandoverIcon, BikeSaathiIcon
@@ -127,7 +128,7 @@ export const CustomerView = () => {
     setSelectedVehicle(null);
 
     if (!isOneClick) {
-      const supportPhone = (legalConfig?.supportWhatsApp || '+919837144520').replace(/[^0-9]/g, '');
+      const supportPhone = (legalConfig?.supportWhatsApp || '+919720965985').replace(/[^0-9]/g, '');
       const prefilled = `Hi, I want to rent ${bookedVehicle.name} (${bookedVehicle.id}) in Vrindavan.\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n📅 Dates: ${startDate} to ${endDate}\n\nPlease confirm availability.`;
       if (typeof window !== 'undefined') {
         window.open(`https://wa.me/${supportPhone}?text=${encodeURIComponent(prefilled)}`, '_blank');
@@ -193,7 +194,7 @@ export const CustomerView = () => {
                 </span>
 
                 <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-4 leading-tight">
-                  Rent a Bike in Vrindavan
+                  Bike &amp; Scooty Rental in Vrindavan
                 </h1>
 
                 <p className="text-slate-300 text-sm sm:text-lg leading-relaxed mb-6 sm:mb-8 font-normal max-w-2xl">
@@ -213,10 +214,11 @@ export const CustomerView = () => {
                     href={`https://wa.me/${legalConfig.supportWhatsApp.replace(/[^0-9]/g, '')}`}
                     target="_blank"
                     rel="noreferrer"
+                    aria-label="Book Vrindavan Bike on WhatsApp Helpline"
                     className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-xs sm:text-sm py-3 sm:py-3.5 px-5 sm:px-6 rounded-xl flex items-center gap-2 shadow-md transition-transform active:scale-95 shrink-0"
                   >
                     <WhatsAppBrandIcon className="w-4 h-4 sm:w-5 sm:h-5 fill-white" />
-                    <span>WhatsApp Support</span>
+                    <span>WhatsApp Booking Help</span>
                   </a>
 
                   {currentUser && (
@@ -356,7 +358,7 @@ export const CustomerView = () => {
                 <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-emerald-100">
                   <Bike className="w-8 h-8" />
                 </div>
-                <h3 className="font-heading font-extrabold text-lg text-slate-800 mb-1">No bikes listed yet</h3>
+                <p className="font-heading font-extrabold text-lg text-slate-800 mb-1">No bikes listed yet</p>
                 <p className="text-xs text-slate-500 mb-6 leading-relaxed">
                   Be the first to list your two-wheeler in Mathura & Vrindavan and start earning daily!
                 </p>
@@ -394,12 +396,12 @@ export const CustomerView = () => {
                     <div className="p-5 space-y-3">
                       <div>
                         <div className="flex items-center justify-between gap-2">
-                          <h3
+                          <span
                             onClick={() => setSelectedVehicle(vehicle)}
-                            className="font-heading font-bold text-base text-slate-900 hover:text-emerald-700 cursor-pointer line-clamp-1"
+                            className="font-heading font-bold text-base text-slate-900 hover:text-emerald-700 cursor-pointer line-clamp-1 block"
                           >
                             {vehicle.name} ({vehicle.year})
-                          </h3>
+                          </span>
                           <span className="bg-slate-100 text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded capitalize">
                             {vehicle.type}
                           </span>
@@ -511,7 +513,7 @@ export const CustomerView = () => {
                         <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-slate-900 via-teal-950 to-slate-900 text-emerald-400 border-2 border-emerald-400/50 shadow-md flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                           <IconComp className="w-6 h-6 text-emerald-400" strokeWidth={2.5} />
                         </div>
-                        <h4 className="font-heading font-bold text-slate-900 text-xs mb-1">{item.title}</h4>
+                        <p className="font-heading font-bold text-slate-900 text-xs mb-1">{item.title}</p>
                         <p className="text-[11px] text-slate-500 leading-tight">{item.desc}</p>
                       </div>
                     );
@@ -535,7 +537,7 @@ export const CustomerView = () => {
                         <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-600 text-slate-950 border-2 border-amber-300 shadow-md flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                           <IconComp className="w-6 h-6 text-slate-950" strokeWidth={2.5} />
                         </div>
-                        <h4 className="font-heading font-bold text-slate-900 text-xs mb-1">{item.title}</h4>
+                        <p className="font-heading font-bold text-slate-900 text-xs mb-1">{item.title}</p>
                         <p className="text-[11px] text-slate-600 leading-tight">{item.desc}</p>
                       </div>
                     );
@@ -573,7 +575,7 @@ export const CustomerView = () => {
                         {item.badge}
                       </span>
                     </div>
-                    <h3 className="font-heading font-bold text-slate-900 text-base mb-2">{item.title}</h3>
+                    <p className="font-heading font-bold text-slate-900 text-base mb-2">{item.title}</p>
                     <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
                   </div>
                 );
@@ -606,7 +608,7 @@ export const CustomerView = () => {
                       <div className="w-12 h-12 rounded-2xl bg-slate-950 text-emerald-400 border-2 border-emerald-400/40 flex items-center justify-center mb-3 shadow-inner">
                         <IconComp className="w-6 h-6 text-emerald-400" strokeWidth={2.5} />
                       </div>
-                      <h4 className="font-heading font-bold text-white text-sm mb-1">{item.title}</h4>
+                      <p className="font-heading font-bold text-white text-sm mb-1">{item.title}</p>
                       <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
                     </div>
                   );
@@ -651,6 +653,9 @@ export const CustomerView = () => {
               </div>
             </div>
           </section>
+
+          {/* SOCIAL SHARING OPTIONS BAR */}
+          <SocialShareBar />
 
           {/* 6. FAQ SECTION */}
           <section className="bg-white py-16 border-t border-slate-200">
@@ -700,7 +705,7 @@ export const CustomerView = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
             <div className="flex justify-between mb-4 items-center">
               <div>
-                <h3 className="font-heading text-lg font-bold text-slate-900">Reserve Vehicle</h3>
+                <div className="font-heading text-lg font-bold text-slate-900">Reserve Vehicle</div>
                 <p className="text-xs text-slate-500">{bookingDrawerVehicle.name} • ₹{bookingDrawerVehicle.dailyRate}/day</p>
               </div>
               <button onClick={() => setBookingDrawerVehicle(null)} className="text-slate-400 hover:text-slate-600">✕</button>

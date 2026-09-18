@@ -99,7 +99,7 @@ export default function LocationsHubPage() {
                 </Link>
 
                 <a
-                  href={`https://wa.me/919837144520?text=Radhe%20Radhe!%20I%20want%20to%20rent%20a%20bike%20at%20${encodeURIComponent(loc.name)}.`}
+                  href={`https://wa.me/919720965985?text=Radhe%20Radhe!%20I%20want%20to%20rent%20a%20bike%20at%20${encodeURIComponent(loc.name)}.`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-[11px] font-bold text-emerald-600 hover:underline"

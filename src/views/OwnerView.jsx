@@ -53,7 +53,7 @@ export const OwnerView = () => {
     return (
       currentUser?.upiId ||
       localStorage.getItem('vr_host_upi') ||
-      (currentUser?.phone ? `${currentUser.phone.replace(/[^0-9]/g, '').slice(-10)}@upi` : '9837144520@upi')
+      (currentUser?.phone ? `${currentUser.phone.replace(/[^0-9]/g, '').slice(-10)}@upi` : '9720965985@upi')
     );
   });
   const [upiSavedNotice, setUpiSavedNotice] = useState(false);
@@ -93,7 +93,7 @@ export const OwnerView = () => {
 
     const cleanUpi = (hostUpiId || '').trim();
     if (!cleanUpi || !cleanUpi.includes('@')) {
-      setUpiError('Please enter a valid UPI Virtual Payment Address (e.g. 9837144520@upi or yourname@bank)');
+      setUpiError('Please enter a valid UPI Virtual Payment Address (e.g. 9720965985@upi or yourname@bank)');
       return;
     }
 
@@ -2298,7 +2298,7 @@ export const OwnerView = () => {
                           setHostUpiId(e.target.value);
                           if (upiError) setUpiError('');
                         }}
-                        placeholder="e.g. 9837144520@upi or yourname@okhdfcbank"
+                        placeholder="e.g. 9720965985@upi or yourname@okhdfcbank"
                         className="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white"
                         required
                         disabled={upiLoading}

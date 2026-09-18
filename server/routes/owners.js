@@ -56,7 +56,7 @@ router.put('/payout/upi', async (req, res) => {
 
     const { upiId } = req.body;
     if (!upiId || typeof upiId !== 'string' || !upiId.trim()) {
-      return res.status(400).json({ error: 'A valid UPI ID is required (e.g. 9837144520@upi or yourname@bank)' });
+      return res.status(400).json({ error: 'A valid UPI ID is required (e.g. 9720965985@upi or yourname@bank)' });
     }
 
     const cleanUpi = upiId.trim();

@@ -49,7 +49,7 @@ export default function PrivacyPage() {
         <section className="space-y-2">
           <h2 className="text-lg font-bold text-slate-900">4. Contact &amp; Data Inquiries</h2>
           <p>
-            For any queries regarding your stored data or to request account deletion, please contact our privacy desk at <a href="mailto:support@rentoncent.bond" className="text-emerald-600 font-bold hover:underline">support@rentoncent.bond</a> or reach our customer desk via WhatsApp at +91 98371 44520.
+            For any queries regarding your stored data or to request account deletion, please contact our privacy desk at <a href="mailto:support@rentoncent.bond" className="text-emerald-600 font-bold hover:underline">support@rentoncent.bond</a> or reach our customer desk via WhatsApp at +91 97209 65985.
           </p>
         </section>
       </div>

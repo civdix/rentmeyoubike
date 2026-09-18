@@ -93,7 +93,7 @@ const autoRentalSchema = {
   image: 'https://rentoncent.bond/logo_square_share_area.png',
   description:
     'Peer-to-peer bike and electric scooty rental platform in Vrindavan & Mathura. Best rates for Honda Activa, Royal Enfield, EV Scooters with doorstep delivery and verified safety.',
-  telephone: '+919837144520',
+  telephone: '+919720965985',
   email: 'support@rentoncent.bond',
   priceRange: '₹299 - ₹1200 / day',
   currenciesAccepted: 'INR',
@@ -126,7 +126,7 @@ const autoRentalSchema = {
     { '@type': 'AdministrativeArea', name: 'Barsana' },
     { '@type': 'AdministrativeArea', name: 'Braj' }
   ],
-  sameAs: ['https://wa.me/919837144520']
+  sameAs: ['https://wa.me/919720965985']
 };
 
 const faqSchema = {

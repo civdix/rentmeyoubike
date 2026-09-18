@@ -62,7 +62,7 @@ export default async function LocationPage({ params }) {
     name: `Rent on Cent — ${loc.name}`,
     description: loc.metaDescription,
     url: `https://rentoncent.bond/locations/${loc.slug}`,
-    telephone: '+919837144520',
+    telephone: '+919720965985',
     email: 'support@rentoncent.bond',
     priceRange: '₹299 - ₹1200 / day',
     currenciesAccepted: 'INR',
@@ -125,7 +125,7 @@ export default async function LocationPage({ params }) {
     ]
   };
 
-  const waBookingUrl = `https://wa.me/919837144520?text=${encodeURIComponent(
+  const waBookingUrl = `https://wa.me/919720965985?text=${encodeURIComponent(
     `Radhe Radhe! I would like to book a bike rental at ${loc.name}. Please confirm availability and rates.`
   )}`;
 
@@ -344,11 +344,11 @@ export default async function LocationPage({ params }) {
                 </a>
 
                 <a
-                  href="tel:+919837144520"
+                  href="tel:+919720965985"
                   className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
                 >
                   <Phone className="w-3.5 h-3.5 text-slate-600" />
-                  <span>Call Customer Desk (+91 98371 44520)</span>
+                  <span>Call Customer Desk (+91 97209 65985)</span>
                 </a>
               </div>
             </div>

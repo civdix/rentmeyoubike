@@ -11,7 +11,7 @@ export const INITIAL_DISPUTES = [];
 export const INITIAL_ADMIN_SETTINGS = {
   platformCommission: 15,
   minRentalDuration: '1 Day',
-  whatsAppNumber: '+919837144520',
+  whatsAppNumber: '+919720965985',
   supportContact: 'support@rentoncent.bond',
   protectionInfo: 'Sacred Yatra Shield protection covers 3rd-party liability & accidental damage subject to verified handover audit.',
   rentalRules: '1. Valid Driving Licence required for motorized vehicles.\n2. Helmets mandatory for both rider & pillion.\n3. No honking near Prem Mandir & Nidhivan silence zones.\n4. Max Speed: 40 km/h inside temple galis.',
@@ -23,5 +23,5 @@ export const INITIAL_LEGAL_CONFIG = {
   protectionDisclaimer: 'Peer-to-peer vehicle sharing protection covers third-party liability and accidental damage subject to verified handover inspection. This is not a substitute for standard motor insurance.',
   legalPolicyNote: 'IMPORTANT LEGAL NOTICE: Regulatory guidelines for peer-to-peer motor vehicle sharing operate under owner authorization & verified documents (RC, Commercial/Self-drive permit where applicable). Rent on Cent acts as a platform connecting local owners and pilgrims.',
   citiesAvailable: ['Vrindavan', 'Mathura'],
-  supportWhatsApp: '+919876543210'
+  supportWhatsApp: '+919720965985'
 };

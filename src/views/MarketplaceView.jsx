@@ -129,7 +129,7 @@ export const MarketplaceView = () => {
     setSelectedVehicle(null);
 
     if (!isOneClick) {
-      const supportPhone = (legalConfig?.supportWhatsApp || '+919837144520').replace(/[^0-9]/g, '');
+      const supportPhone = (legalConfig?.supportWhatsApp || '+919720965985').replace(/[^0-9]/g, '');
       const prefilled = `Hi, I want to rent ${bookedVehicle.name} (${bookedVehicle.id}) in Vrindavan.\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n📅 Dates: ${startDate} to ${endDate}\n\nPlease confirm availability.`;
       if (typeof window !== 'undefined') {
         window.open(`https://wa.me/${supportPhone}?text=${encodeURIComponent(prefilled)}`, '_blank');

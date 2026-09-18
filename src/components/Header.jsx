@@ -115,9 +115,10 @@ export const Header = () => {
 
           <div className="flex items-center gap-2 sm:gap-4 text-[10px] sm:text-[11px] shrink-0">
             <a
-              href={`https://wa.me/${(legalConfig?.supportWhatsApp || '+919876543210').replace(/[^0-9]/g, '')}?text=Radhe%20Radhe!%20I%20have%20an%20inquiry%20regarding%20bike%20rentals.`}
+              href={`https://wa.me/${(legalConfig?.supportWhatsApp || '+919720965985').replace(/[^0-9]/g, '')}?text=Radhe%20Radhe!%20I%20have%20an%20inquiry%20regarding%20bike%20rentals.`}
               target="_blank"
               rel="noreferrer"
+              aria-label="WhatsApp Bike Rental Inquiry Assistance"
               className="inline-flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-bold"
             >
               <WhatsAppBrandIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-emerald-400" />
@@ -162,6 +163,7 @@ export const Header = () => {
         {/* Brand Logo & Tagline */}
         <Link
           href="/"
+          aria-label="Rent on Cent - Direct Local Bike Rentals"
           className="flex items-center gap-2 sm:gap-3 group shrink-0 min-w-0"
         >
           <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white flex items-center justify-center p-1 sm:p-1.5 shadow-md border border-emerald-400/40 shrink-0 group-hover:scale-105 transition-transform">
@@ -273,6 +275,7 @@ export const Header = () => {
           <nav className="hidden md:flex items-center gap-1.5 bg-slate-950/70 p-1.5 rounded-2xl border border-slate-800/80 text-xs font-bold">
             <Link
               href="/"
+              aria-label="Rent on Cent Marketplace Home"
               className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
                 isHome
                   ? 'bg-emerald-600 text-white font-extrabold shadow-sm'

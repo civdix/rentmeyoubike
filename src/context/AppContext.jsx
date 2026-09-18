@@ -572,7 +572,7 @@ export const AppProvider = ({ children }) => {
       customerPhone: custPhone,
       customerEmail: custEmail,
       ownerName: veh.ownerName || bookingInput.ownerName || 'Radhe Shyam Sharma',
-      ownerPhone: veh.ownerPhone || bookingInput.ownerPhone || '+91 98371 44520',
+      ownerPhone: veh.ownerPhone || bookingInput.ownerPhone || '+91 97209 65985',
       startDate: bookingInput.startDate || new Date().toISOString().split('T')[0],
       endDate: bookingInput.endDate || new Date(Date.now() + 86400000).toISOString().split('T')[0],
       totalDays,

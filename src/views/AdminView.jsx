@@ -318,7 +318,7 @@ export const AdminView = () => {
   const [settingsForm, setSettingsForm] = useState({
     platformCommission: adminSettings.platformCommission || 15,
     minRentalDuration: adminSettings.minRentalDuration || '1 Day',
-    whatsAppNumber: adminSettings.whatsAppNumber || '+919837144520',
+    whatsAppNumber: adminSettings.whatsAppNumber || '+919720965985',
     supportContact: adminSettings.supportContact || 'support@vrindavanrides.in',
     protectionInfo: adminSettings.protectionInfo || '',
     rentalRules: adminSettings.rentalRules || '',
@@ -419,7 +419,7 @@ export const AdminView = () => {
       `Your booking for *${b.vehicleName}* (${b.vehicleId}) is confirmed for dates ${b.startDate} to ${b.endDate}.\n` +
       `💰 *Total Amount*: ₹${b.totalAmount}\n\n` +
       `Please pay via UPI / Card link: https://vrindavanrides.in/pay/${b.id}\n\n` +
-      `Platform Support: +919837144520`;
+      `Platform Support: +919720965985`;
 
     navigator.clipboard.writeText(paymentMsg);
     const phoneNum = b.customerPhone.replace(/[^0-9]/g, '');
@@ -447,7 +447,7 @@ export const AdminView = () => {
       `📍 *Pickup Location*: ${b.pickupLocation || 'Prem Mandir Marg, Gate No. 2, Vrindavan'}\n` +
       `🛵 *Vehicle*: ${b.vehicleName}\n` +
       `📅 *Handover*: ${b.startDate} at 09:00 AM\n` +
-      `📞 *Platform Support*: +919837144520\n\n` +
+      `📞 *Platform Support*: +919720965985\n\n` +
       `Note: Please perform your mobile 7-angle digital inspection upon handover using link: https://vrindavanrides.in/inspection/${b.id}?type=pre`;
 
     navigator.clipboard.writeText(pickupMsg);
