@@ -521,83 +521,6 @@ export const OwnerView = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-16 font-sans">
-      {/* Sub Header Navigation */}
-      <div className="bg-white border-b border-slate-200 sticky top-14 sm:top-16 z-30 shadow-xs">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 flex items-center justify-between overflow-x-auto">
-          <div className="flex gap-2 sm:gap-6 text-xs font-bold shrink-0">
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab('inventory');
-                setSubmittedNotice(false);
-              }}
-              className={`py-3 border-b-2 transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap cursor-pointer ${
-                activeTab === 'inventory' || activeTab === 'my_listings'
-                  ? 'border-emerald-600 text-emerald-700 font-extrabold'
-                  : 'border-transparent text-slate-500 hover:text-slate-900'
-              }`}
-            >
-              <Bike className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={2.5} />
-              <span>Inventory ({myVehicles.length})</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab('add_new');
-                setSubmittedNotice(false);
-              }}
-              className={`py-3 border-b-2 transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap cursor-pointer ${
-                activeTab === 'add_new'
-                  ? 'border-emerald-600 text-emerald-700 font-extrabold'
-                  : 'border-transparent text-slate-500 hover:text-slate-900'
-              }`}
-            >
-              <PlusCircle className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={2.5} />
-              <span className="hidden sm:inline">List Your Bike (7 Steps)</span>
-              <span className="sm:hidden">List Bike</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab('bookings');
-                setSubmittedNotice(false);
-              }}
-              className={`py-3 border-b-2 transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap cursor-pointer ${
-                activeTab === 'bookings'
-                  ? 'border-emerald-600 text-emerald-700 font-extrabold'
-                  : 'border-transparent text-slate-500 hover:text-slate-900'
-              }`}
-            >
-              <CalendarCheck className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={2.5} />
-              <span>My Bookings ({myBookings.length})</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab('payments');
-                setSubmittedNotice(false);
-              }}
-              className={`py-3 border-b-2 transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap cursor-pointer ${
-                activeTab === 'payments'
-                  ? 'border-emerald-600 text-emerald-700 font-extrabold'
-                  : 'border-transparent text-slate-500 hover:text-slate-900'
-              }`}
-            >
-              <IndianRupee className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={2.5} />
-              <span>Payments &amp; Refunds</span>
-            </button>
-          </div>
-
-          <div className="hidden lg:flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 shrink-0">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" strokeWidth={2.5} />
-            <span>Owner Earnings Payout: 85% Direct Bank Settlement</span>
-          </div>
-        </div>
-      </div>
-
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* SUBMISSION SUCCESS ALERT NOTICE */}
         {submittedNotice && (
@@ -734,11 +657,10 @@ export const OwnerView = () => {
                             <button
                               type="button"
                               onClick={() => toggleVehicleStatus(v.id)}
-                              className={`font-bold text-xs px-3 py-1.5 rounded-xl border transition-colors cursor-pointer ${
-                                v.status === 'active'
+                              className={`font-bold text-xs px-3 py-1.5 rounded-xl border transition-colors cursor-pointer ${v.status === 'active'
                                   ? 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
                                   : 'bg-emerald-50 text-emerald-900 border-emerald-300 hover:bg-emerald-100'
-                              }`}
+                                }`}
                             >
                               {v.status === 'active' ? 'Suspend Vehicle' : 'Activate Vehicle'}
                             </button>
@@ -871,9 +793,8 @@ export const OwnerView = () => {
                 ].map((label, idx) => (
                   <div key={idx} className="space-y-1">
                     <div
-                      className={`h-2 rounded-full transition-all ${
-                        step >= idx + 1 ? 'bg-emerald-600 shadow-xs' : 'bg-slate-200'
-                      }`}
+                      className={`h-2 rounded-full transition-all ${step >= idx + 1 ? 'bg-emerald-600 shadow-xs' : 'bg-slate-200'
+                        }`}
                     ></div>
                     <span className={`text-[10px] hidden sm:inline ${step === idx + 1 ? 'text-emerald-700 font-extrabold' : 'text-slate-400 font-normal'}`}>
                       {label}
@@ -1591,11 +1512,10 @@ export const OwnerView = () => {
                         <button
                           type="button"
                           onClick={() => rcInputRef.current?.click()}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1.5 ${
-                            rcDoc.uploaded
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1.5 ${rcDoc.uploaded
                               ? 'bg-emerald-100 text-emerald-950 border-emerald-400'
                               : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300'
-                          }`}
+                            }`}
                         >
                           <Upload className="w-3.5 h-3.5" />
                           <span>{rcDoc.uploaded ? 'Replace' : 'Upload File'}</span>
@@ -1618,11 +1538,10 @@ export const OwnerView = () => {
                         <button
                           type="button"
                           onClick={() => insuranceInputRef.current?.click()}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1.5 ${
-                            insuranceDoc.uploaded
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1.5 ${insuranceDoc.uploaded
                               ? 'bg-emerald-100 text-emerald-950 border-emerald-400'
                               : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300'
-                          }`}
+                            }`}
                         >
                           <Upload className="w-3.5 h-3.5" />
                           <span>{insuranceDoc.uploaded ? 'Replace' : 'Upload File'}</span>
@@ -1642,11 +1561,10 @@ export const OwnerView = () => {
                         <button
                           type="button"
                           onClick={() => otherDocInputRef.current?.click()}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1.5 ${
-                            otherDoc.uploaded
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1.5 ${otherDoc.uploaded
                               ? 'bg-emerald-100 text-emerald-950 border-emerald-400'
                               : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300'
-                          }`}
+                            }`}
                         >
                           <Upload className="w-3.5 h-3.5" />
                           <span>{otherDoc.uploaded ? 'Replace' : 'Upload File'}</span>
@@ -1752,11 +1670,10 @@ export const OwnerView = () => {
                           key={day}
                           type="button"
                           onClick={() => toggleDay(day)}
-                          className={`px-4 py-2 rounded-xl text-xs font-extrabold border transition-all ${
-                            availableDays.includes(day)
+                          className={`px-4 py-2 rounded-xl text-xs font-extrabold border transition-all ${availableDays.includes(day)
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
                               : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
-                          }`}
+                            }`}
                         >
                           {day}
                         </button>
@@ -1940,44 +1857,40 @@ export const OwnerView = () => {
                 <button
                   type="button"
                   onClick={() => setBookingFilter('all')}
-                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                    bookingFilter === 'all'
+                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${bookingFilter === 'all'
                       ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
                       : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-                  }`}
+                    }`}
                 >
                   All Bookings ({myBookings.length})
                 </button>
                 <button
                   type="button"
                   onClick={() => setBookingFilter('active')}
-                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                    bookingFilter === 'active'
+                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${bookingFilter === 'active'
                       ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
                       : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-                  }`}
+                    }`}
                 >
                   Active / In-Use ({myBookings.filter((b) => b.status === 'Confirmed' || b.status === 'In-use').length})
                 </button>
                 <button
                   type="button"
                   onClick={() => setBookingFilter('completed')}
-                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                    bookingFilter === 'completed'
+                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${bookingFilter === 'completed'
                       ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
                       : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-                  }`}
+                    }`}
                 >
                   Completed Trips ({myBookings.filter((b) => b.status === 'Completed').length})
                 </button>
                 <button
                   type="button"
                   onClick={() => setBookingFilter('inquiry')}
-                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                    bookingFilter === 'inquiry'
+                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${bookingFilter === 'inquiry'
                       ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
                       : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-                  }`}
+                    }`}
                 >
                   Inquiries / Pending ({myBookings.filter((b) => b.status === 'Inquiry' || b.status === 'Payment Pending').length})
                 </button>
