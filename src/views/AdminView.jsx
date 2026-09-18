@@ -41,6 +41,7 @@ import {
 
 export const AdminView = () => {
   const {
+    currentUser,
     role,
     setRole,
     vehicles,
@@ -68,10 +69,42 @@ export const AdminView = () => {
     setCustomerTab
   } = useApp();
 
-  const isAuthorized = role === 'admin' && currentUser?.role === 'admin';
+  const hasAdminToken = typeof window !== 'undefined' && Boolean(localStorage.getItem('vr_admin_token') || localStorage.getItem('vr_role') === 'admin');
+  const isAuthorized = role === 'admin' || currentUser?.role === 'admin' || hasAdminToken;
+
+  // Keep role & currentUser in sync with admin authorization
+  React.useEffect(() => {
+    if (isAuthorized) {
+      if (role !== 'admin') {
+        setRole('admin');
+      }
+      if (currentUser?.role !== 'admin' && setCurrentUser) {
+        try {
+          const savedUser = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('vr_user') || '{}') : {};
+          if (savedUser?.role === 'admin') {
+            setCurrentUser(savedUser);
+          } else {
+            setCurrentUser({ id: 'admin-1', name: 'Platform Administrator', role: 'admin' });
+          }
+        } catch {
+          setCurrentUser({ id: 'admin-1', name: 'Platform Administrator', role: 'admin' });
+        }
+      }
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('vr_role', 'admin');
+        if (!localStorage.getItem('vr_admin_token') && localStorage.getItem('vr_token')) {
+          localStorage.setItem('vr_admin_token', localStorage.getItem('vr_token'));
+        }
+      }
+    }
+  }, [isAuthorized, role, currentUser, setRole, setCurrentUser]);
 
   // Navigation tab state
   const [activeTab, setActiveTab] = useState('overview'); // overview, customers, owners, vehicles, bookings, inspections, disputes, payments, settings, strategy
+  const [pinInput, setPinInput] = useState('');
+  const [pinError, setPinError] = useState(false);
+  const [pinLoading, setPinLoading] = useState(false);
+  const [showPin, setShowPin] = useState(false);
 
   // Search & Filter state for sections
   const [customerSearch, setCustomerSearch] = useState('');
@@ -142,14 +175,24 @@ export const AdminView = () => {
   // PIN Auth Handler
   const handlePinSubmit = async (e) => {
     e.preventDefault();
+    const cleanPin = pinInput.trim();
+    if (!cleanPin) return;
+    setPinLoading(true);
+    setPinError(false);
     try {
-      const res = await apiAdminLogin(pinInput.trim());
-      if (setCurrentUser) setCurrentUser(res?.user || { id: 'admin-1', name: 'Platform Administrator', role: 'admin' });
-      setRole('admin');
-      setPinError(false);
-      refreshData();
+      const res = await apiAdminLogin(cleanPin);
+      if (res?.success) {
+        if (setCurrentUser) setCurrentUser(res?.user || { id: 'admin-1', name: 'Platform Administrator', role: 'admin' });
+        setRole('admin');
+        setPinError(false);
+        if (refreshData) refreshData();
+      } else {
+        setPinError(true);
+      }
     } catch (err) {
       setPinError(true);
+    } finally {
+      setPinLoading(false);
     }
   };
 
@@ -315,25 +358,70 @@ export const AdminView = () => {
   // ----------------------------------------------------
   if (!isAuthorized) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 text-center">
-          <div className="w-16 h-16 bg-rose-500/10 border border-rose-500/30 rounded-2xl mx-auto flex items-center justify-center text-rose-500">
-            <Lock className="w-8 h-8" />
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans">
+        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-center">
+          <div className="w-16 h-16 bg-purple-500/10 border border-purple-500/30 rounded-2xl mx-auto flex items-center justify-center text-purple-400">
+            <ShieldAlert className="w-8 h-8" />
           </div>
 
           <div>
             <h2 className="font-heading font-extrabold text-2xl text-white">Admin Access Restricted</h2>
             <p className="text-xs text-slate-400 mt-2">
-              This area is restricted to authorized platform administrators only.
+              Enter your Administrator Security Passcode / PIN to unlock the control center.
             </p>
           </div>
 
+          {pinError && (
+            <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-3 text-rose-400 text-xs flex items-center gap-2 text-left animate-fadeIn">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span>Invalid Admin Passcode. Please check your credentials and try again.</span>
+            </div>
+          )}
+
+          <form onSubmit={handlePinSubmit} className="space-y-4 text-left">
+            <div>
+              <label className="block text-xs font-bold text-slate-300 mb-1.5 flex items-center justify-between">
+                <span>Security Passcode / PIN</span>
+                <button
+                  type="button"
+                  onClick={() => setShowPin(!showPin)}
+                  className="text-[11px] text-slate-400 hover:text-slate-200 flex items-center gap-1 cursor-pointer font-normal"
+                >
+                  {showPin ? <Eye className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  <span>{showPin ? 'Hide' : 'Show'}</span>
+                </button>
+              </label>
+
+              <div className="relative">
+                <Key className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                <input
+                  type={showPin ? 'text' : 'password'}
+                  value={pinInput}
+                  onChange={(e) => setPinInput(e.target.value)}
+                  placeholder="Enter Admin PIN (Default: 7777)"
+                  className="w-full bg-slate-950 text-white pl-10 pr-4 py-3 rounded-xl border border-slate-700 text-sm font-mono tracking-wider focus:outline-none focus:border-purple-500 transition-colors"
+                  autoFocus
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={pinLoading}
+              className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-bold text-xs py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              {pinLoading ? <span>Verifying...</span> : <span>Unlock Admin Portal</span>}
+            </button>
+          </form>
+
           <button
+            type="button"
             onClick={() => {
               setRole('customer');
               if (setCustomerTab) setCustomerTab('browse');
             }}
-            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3.5 rounded-xl text-xs transition-colors cursor-pointer shadow-lg"
+            className="w-full bg-slate-800 hover:bg-slate-750 text-slate-300 font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer border border-slate-750"
           >
             Return to Renter Marketplace
           </button>

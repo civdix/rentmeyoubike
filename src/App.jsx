@@ -51,7 +51,7 @@ const MainContent = () => {
       <main className="flex-1 w-full max-w-full overflow-x-hidden">
         {role === 'customer' && <CustomerView />}
         {role === 'owner' && <OwnerView />}
-        {role === 'admin' && currentUser?.role === 'admin' && <AdminView />}
+        {(role === 'admin' || currentUser?.role === 'admin') && <AdminView />}
       </main>
 
       {/* Single Unified Footer */}

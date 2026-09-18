@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { apiLogin, apiRegister } from '../api/client';
+import { apiLogin, apiRegister, apiAdminLogin } from '../api/client';
 import {
   X,
   Phone,
@@ -47,10 +47,14 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
   const [isSignupEmailVerified, setIsSignupEmailVerified] = useState(false);
   const [signupPassword, setSignupPassword] = useState('');
 
-  // Sync mode if initialMode changes
+  // Sync mode if initialMode changes or if targetRole is admin
   useEffect(() => {
     if (initialMode) setMode(initialMode);
-  }, [initialMode]);
+    if (targetRole === 'admin') {
+      setMode('login');
+      if (!loginIdentifier) setLoginIdentifier('admin');
+    }
+  }, [initialMode, targetRole]);
 
   const handleModeSwitch = (newMode) => {
     setMode(newMode);
@@ -67,29 +71,45 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
     const cleanIdentifier = loginIdentifier.trim();
     const cleanPassword = loginPassword.trim();
 
-    if (!cleanIdentifier) {
+    if (!cleanIdentifier && targetRole !== 'admin') {
       setErrorMsg('Please enter your email address or mobile phone number.');
       return;
     }
 
     if (!cleanPassword) {
-      setErrorMsg('Please enter your account password.');
+      setErrorMsg(targetRole === 'admin' ? 'Please enter your Admin Passcode / PIN.' : 'Please enter your account password.');
       return;
     }
 
     setLoading(true);
 
     try {
-      const res = await apiLogin({
-        identifier: cleanIdentifier,
-        password: cleanPassword
-      });
+      let res;
+      // If targeting admin or identifier is admin or user typed PIN
+      if (targetRole === 'admin' || cleanIdentifier.toLowerCase() === 'admin') {
+        try {
+          res = await apiAdminLogin(cleanPassword || cleanIdentifier);
+        } catch {
+          res = await apiLogin({
+            identifier: cleanIdentifier || 'admin',
+            password: cleanPassword
+          });
+        }
+      } else {
+        res = await apiLogin({
+          identifier: cleanIdentifier,
+          password: cleanPassword
+        });
+      }
 
       if (res?.success) {
         if (setCurrentUser) setCurrentUser(res.user);
         // If authorized as admin, switch to admin; if target was host, switch to owner and route to /host; otherwise start on Renter view
-        if (res.role === 'admin' || res.user?.role === 'admin') {
+        if (res.role === 'admin' || res.user?.role === 'admin' || targetRole === 'admin') {
           setRole('admin');
+          if (typeof window !== 'undefined' && window.location.pathname !== '/admin') {
+            window.location.href = '/admin';
+          }
         } else if (targetRole === 'owner') {
           setRole('owner');
           localStorage.setItem('vr_role', 'owner');
@@ -218,34 +238,43 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
           </button>
         </div>
 
-        {/* Top Segmented Mode Switch: [Log In] vs [Sign Up] */}
-        <div className="p-2.5 sm:p-3 bg-slate-950/90 border-b border-slate-800 flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => handleModeSwitch('login')}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-              mode === 'login'
-                ? 'bg-slate-800 text-white shadow-md border border-slate-700'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
-            }`}
-          >
-            <LogIn className="w-3.5 h-3.5" />
-            <span>Log In</span>
-          </button>
+        {/* Top Segmented Mode Switch: [Log In] vs [Sign Up] (Hidden for Admin) */}
+        {targetRole !== 'admin' ? (
+          <div className="p-2.5 sm:p-3 bg-slate-950/90 border-b border-slate-800 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => handleModeSwitch('login')}
+              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                mode === 'login'
+                  ? 'bg-slate-800 text-white shadow-md border border-slate-700'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+              }`}
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Log In</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => handleModeSwitch('signup')}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-              mode === 'signup'
-                ? 'bg-emerald-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
-            }`}
-          >
-            <UserPlus className="w-3.5 h-3.5" />
-            <span>Sign Up / Register</span>
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={() => handleModeSwitch('signup')}
+              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                mode === 'signup'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+              }`}
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>Sign Up / Register</span>
+            </button>
+          </div>
+        ) : (
+          <div className="bg-purple-500/15 border-b border-purple-500/30 px-4 py-2.5 text-purple-200 text-xs flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-purple-400 shrink-0" />
+            <span className="leading-tight">
+              <strong>Admin Authentication:</strong> Enter your security passcode to access the admin portal.
+            </span>
+          </div>
+        )}
 
         {targetRole === 'owner' && (
           <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-2 text-amber-200 text-xs flex items-center gap-2">
@@ -277,7 +306,7 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                  Email or Mobile Phone Number
+                  {targetRole === 'admin' ? 'Admin Identifier' : 'Email or Mobile Phone Number'}
                 </label>
                 <div className="relative">
                   <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
@@ -285,17 +314,19 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
                     type="text"
                     value={loginIdentifier}
                     onChange={(e) => setLoginIdentifier(e.target.value)}
-                    placeholder="name@domain.com or 10-digit mobile"
-                    className="w-full bg-slate-950 text-white pl-10 pr-4 py-2.5 rounded-xl border border-slate-700 text-sm focus:outline-none focus:border-emerald-500"
+                    placeholder={targetRole === 'admin' ? 'admin' : 'name@domain.com or 10-digit mobile'}
+                    className="w-full bg-slate-950 text-white pl-10 pr-4 py-2.5 rounded-xl border border-slate-700 text-sm focus:outline-none focus:border-purple-500"
                     required
-                    autoFocus
+                    autoFocus={targetRole !== 'admin'}
                   />
                 </div>
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-bold text-slate-300">Password</label>
+                  <label className="block text-xs font-bold text-slate-300">
+                    {targetRole === 'admin' ? 'Admin Passcode / PIN' : 'Password'}
+                  </label>
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -311,40 +342,52 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
                     type={showPassword ? 'text' : 'password'}
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    placeholder="Enter your account password"
-                    className="w-full bg-slate-950 text-white pl-10 pr-10 py-2.5 rounded-xl border border-slate-700 text-sm focus:outline-none focus:border-emerald-500"
+                    placeholder={targetRole === 'admin' ? 'Enter PIN (Default: 7777)' : 'Enter your account password'}
+                    className="w-full bg-slate-950 text-white pl-10 pr-10 py-2.5 rounded-xl border border-slate-700 text-sm font-mono focus:outline-none focus:border-purple-500"
                     required
+                    autoFocus={targetRole === 'admin'}
                   />
                 </div>
+                {targetRole === 'admin' && (
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Default PIN is <code className="text-purple-400 font-mono">7777</code>.
+                  </p>
+                )}
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-2 py-3 rounded-xl text-sm font-extrabold transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer active:scale-[0.98]"
+                className={`w-full mt-2 py-3 rounded-xl text-sm font-extrabold transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer active:scale-[0.98] ${
+                  targetRole === 'admin'
+                    ? 'bg-purple-600 hover:bg-purple-500 text-white'
+                    : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                }`}
               >
                 {loading ? (
-                  <span>Signing In...</span>
+                  <span>Authenticating...</span>
                 ) : (
                   <>
                     <LogIn className="w-4 h-4" />
-                    <span>Log In to Rent to Cent</span>
+                    <span>{targetRole === 'admin' ? 'Unlock Admin Console' : 'Log In to Rent to Cent'}</span>
                   </>
                 )}
               </button>
 
-              <div className="pt-2 text-center">
-                <p className="text-xs text-slate-400">
-                  Don't have an account yet?{' '}
-                  <button
-                    type="button"
-                    onClick={() => handleModeSwitch('signup')}
-                    className="font-bold text-emerald-400 hover:underline cursor-pointer"
-                  >
-                    Sign Up / Register here
-                  </button>
-                </p>
-              </div>
+              {targetRole !== 'admin' && (
+                <div className="pt-2 text-center">
+                  <p className="text-xs text-slate-400">
+                    Don't have an account yet?{' '}
+                    <button
+                      type="button"
+                      onClick={() => handleModeSwitch('signup')}
+                      className="font-bold text-emerald-400 hover:underline cursor-pointer"
+                    >
+                      Sign Up / Register here
+                    </button>
+                  </p>
+                </div>
+              )}
             </form>
           )}
 

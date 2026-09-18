@@ -45,15 +45,13 @@ export const AppProvider = ({ children }) => {
   // Active App Role: 'customer' | 'owner' | 'admin'
   const [role, setRole] = useState(() => {
     if (typeof window === 'undefined') return 'customer';
-    const saved = localStorage.getItem('vr_role') || 'customer';
-    if (saved === 'admin') {
-      try {
-        const u = JSON.parse(localStorage.getItem('vr_user') || '{}');
-        if (u.role !== 'admin') return 'customer';
-      } catch {
-        return 'customer';
+    try {
+      const savedUser = JSON.parse(localStorage.getItem('vr_user') || '{}');
+      if (savedUser?.role === 'admin' || localStorage.getItem('vr_admin_token')) {
+        return 'admin';
       }
-    }
+    } catch {}
+    const saved = localStorage.getItem('vr_role') || 'customer';
     return saved;
   });
 
@@ -62,7 +60,11 @@ export const AppProvider = ({ children }) => {
     if (typeof window === 'undefined') return null;
     try {
       const saved = localStorage.getItem('vr_user');
-      return saved ? JSON.parse(saved) : null;
+      if (saved) return JSON.parse(saved);
+      if (localStorage.getItem('vr_admin_token')) {
+        return { id: 'admin-1', name: 'Platform Administrator', role: 'admin' };
+      }
+      return null;
     } catch {
       return null;
     }
