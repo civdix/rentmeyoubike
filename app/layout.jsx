@@ -79,6 +79,10 @@ export const metadata = {
       'max-image-preview': 'large',
       'max-snippet': -1
     }
+  },
+  other: {
+    image_src: 'https://rentoncent.bond/logo_square_share_area.png',
+    'itemprop:image': 'https://rentoncent.bond/logo_square_share_area.png'
   }
 };
 
@@ -183,17 +187,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        {/* Direct WhatsApp, Facebook & Telegram Open Graph Image Fallbacks */}
-        <meta property="og:image" content="https://rentoncent.bond/logo_square_share_area.png" />
-        <meta property="og:image:secure_url" content="https://rentoncent.bond/logo_square_share_area.png" />
-        <meta property="og:image:type" content="image/png" />
-        <meta property="og:image:width" content="540" />
-        <meta property="og:image:height" content="540" />
-        <meta property="og:image:alt" content="Rent on Cent - Vrindavan Bike & Scooty Rental" />
-        <meta name="twitter:image" content="https://rentoncent.bond/logo_square_share_area.png" />
-        <meta itemprop="image" content="https://rentoncent.bond/logo_square_share_area.png" />
-        <link rel="image_src" href="https://rentoncent.bond/logo_square_share_area.png" />
-
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

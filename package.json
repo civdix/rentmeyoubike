@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start",
     "server": "node --dns-result-order=ipv4first server/index.js",
+    "start:server": "node --dns-result-order=ipv4first server/index.js",
+    "build:server": "echo 'Backend service: build step ready'",
     "lint": "next lint"
   },
   "dependencies": {
