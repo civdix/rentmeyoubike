@@ -22,7 +22,15 @@ export const metadata = {
     'prem mandir scooty rental',
     'iskcon vrindavan bike rental',
     'p2p bike sharing india',
-    'govardhan parikrama scooty rent'
+    'govardhan parikrama scooty rent',
+    'bike on rent on mathura cut',
+    'raya cut yamuna expressway bike rental',
+    'bike rental service near chattikara',
+    'bike on rent near bankey bihari ji',
+    'mathura junction railway station bike rental',
+    'vrindavan hotel bike delivery',
+    'tourist bike rental service mathura',
+    'auto alternative vrindavan bike hire'
   ],
   authors: [{ name: 'Rent on Cent', url: 'https://rentoncent.bond' }],
   creator: 'Rent on Cent',

@@ -45,6 +45,11 @@ export const Footer = () => {
           <h4 className="text-white font-bold mb-3 uppercase text-[11px] tracking-wider">Quick Links</h4>
           <ul className="space-y-2">
             <li>
+              <Link href="/locations" className="hover:text-white transition-colors">
+                Pickup Locations
+              </Link>
+            </li>
+            <li>
               <Link href="/bikes" className="hover:text-white transition-colors">
                 Explore Bikes
               </Link>
@@ -155,7 +160,53 @@ export const Footer = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 mt-10 pt-6 border-t border-slate-800 text-[11px] text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+      {/* Micro-Location & Transit Hubs SEO Band */}
+      <div className="max-w-7xl mx-auto px-4 mt-8 pt-6 border-t border-slate-800/80">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+          <h4 className="text-white font-bold uppercase text-[11px] tracking-wider flex items-center gap-1.5">
+            <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Popular Rental Pickup Hubs &amp; Expressway Cuts</span>
+          </h4>
+          <Link href="/locations" className="text-emerald-400 hover:underline text-[11px] font-semibold">
+            View All 8+ Pickup Locations →
+          </Link>
+        </div>
+        <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-slate-400">
+          <Link href="/locations/mathura-cut-yamuna-expressway" className="hover:text-emerald-400 transition-colors">
+            Mathura Cut (Yamuna Exp.)
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/locations/raya-cut-yamuna-expressway" className="hover:text-emerald-400 transition-colors">
+            Raya Cut (Yamuna Exp.)
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/locations/chattikara-road" className="hover:text-emerald-400 transition-colors">
+            Chattikara Road / NH19
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/locations/bankey-bihari-temple" className="hover:text-emerald-400 transition-colors">
+            Bankey Bihari Temple Marg
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/locations/prem-mandir-raman-reti" className="hover:text-emerald-400 transition-colors">
+            Prem Mandir &amp; Raman Reti
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/locations/mathura-junction-railway-station" className="hover:text-emerald-400 transition-colors">
+            Mathura Jn Railway Station
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/locations/govardhan-parikrama" className="hover:text-emerald-400 transition-colors">
+            Govardhan Parikrama Marg
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/locations/hotels-tourist-service" className="hover:text-emerald-400 transition-colors">
+            Hotel &amp; Ashram Doorstep Handover
+          </Link>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 mt-8 pt-6 border-t border-slate-800 text-[11px] text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
         <p>© 2026 Rent on Cent. All rights reserved.</p>
         <p className="flex items-center gap-1">
           Built for Vrindavan Pilgrims &amp; Local Vehicle Owners

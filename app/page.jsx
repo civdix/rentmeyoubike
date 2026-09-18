@@ -63,10 +63,80 @@ export default function HomePage() {
             </div>
           </div>
 
+          {/* Micro-Location Quick Navigation Grid for Search Engines & Visitors */}
+          <div className="pt-6 border-t border-slate-800 space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+                Popular Pickup Points &amp; Expressway Cut Handover Locations
+              </h2>
+              <a href="/locations" className="text-xs text-amber-400 hover:underline font-semibold">
+                View All Locations &rarr;
+              </a>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+              <a
+                href="/locations/mathura-cut-yamuna-expressway"
+                className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+              >
+                <div className="font-bold text-amber-300 truncate">Mathura Cut (Yamuna Exp.)</div>
+                <div className="text-[11px] text-slate-400">Expressway Exit Handover</div>
+              </a>
+              <a
+                href="/locations/raya-cut-yamuna-expressway"
+                className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+              >
+                <div className="font-bold text-amber-300 truncate">Raya Cut (Yamuna Exp.)</div>
+                <div className="text-[11px] text-slate-400">Gokul &amp; Vrindavan Gateway</div>
+              </a>
+              <a
+                href="/locations/chattikara-road"
+                className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+              >
+                <div className="font-bold text-emerald-300 truncate">Chattikara Road</div>
+                <div className="text-[11px] text-slate-400">Vaishno Devi &amp; Rukmini Vihar</div>
+              </a>
+              <a
+                href="/locations/bankey-bihari-temple"
+                className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+              >
+                <div className="font-bold text-emerald-300 truncate">Bankey Bihari Ji</div>
+                <div className="text-[11px] text-slate-400">Vidyapeeth Chauraha Parking</div>
+              </a>
+              <a
+                href="/locations/prem-mandir-raman-reti"
+                className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+              >
+                <div className="font-bold text-teal-300 truncate">Prem Mandir &amp; ISKCON</div>
+                <div className="text-[11px] text-slate-400">Raman Reti Hub</div>
+              </a>
+              <a
+                href="/locations/mathura-junction-railway-station"
+                className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+              >
+                <div className="font-bold text-teal-300 truncate">Mathura Junction (MTJ)</div>
+                <div className="text-[11px] text-slate-400">Platform 1 Exit Delivery</div>
+              </a>
+              <a
+                href="/locations/govardhan-parikrama"
+                className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+              >
+                <div className="font-bold text-amber-300 truncate">Govardhan Parikrama</div>
+                <div className="text-[11px] text-slate-400">21 KM Sacred Route &amp; EV</div>
+              </a>
+              <a
+                href="/locations/hotels-tourist-service"
+                className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+              >
+                <div className="font-bold text-emerald-300 truncate">Hotels &amp; Ashrams</div>
+                <div className="text-[11px] text-slate-400">Doorstep Delivery (Auto Alt.)</div>
+              </a>
+            </div>
+          </div>
+
           <div className="pt-4 border-t border-slate-800 text-[11px] text-slate-400 flex flex-wrap gap-x-6 gap-y-2 justify-between">
             <span>Official Domain: <a href="https://rentoncent.bond" className="text-amber-400 hover:underline">rentoncent.bond</a></span>
             <span>Customer Support WhatsApp: <a href="https://wa.me/919837144520" className="text-emerald-400 hover:underline">+91 98371 44520</a></span>
-            <span>Serving: Vrindavan • Mathura • Govardhan • Barsana • Braj Dham</span>
+            <span>Serving: Vrindavan • Mathura • Govardhan • Barsana • Yamuna Expressway • Braj Dham</span>
           </div>
         </div>
       </section>
