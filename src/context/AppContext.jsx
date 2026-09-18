@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
   INITIAL_VEHICLES,
@@ -42,6 +44,7 @@ const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   // Active App Role: 'customer' | 'owner' | 'admin'
   const [role, setRole] = useState(() => {
+    if (typeof window === 'undefined') return 'customer';
     const saved = localStorage.getItem('vr_role') || 'customer';
     if (saved === 'admin') {
       try {
@@ -56,6 +59,7 @@ export const AppProvider = ({ children }) => {
 
   // Authenticated user session
   const [currentUser, setCurrentUser] = useState(() => {
+    if (typeof window === 'undefined') return null;
     try {
       const saved = localStorage.getItem('vr_user');
       return saved ? JSON.parse(saved) : null;
@@ -126,6 +130,7 @@ export const AppProvider = ({ children }) => {
 
   // State with LocalStorage persistence + API sync
   const [vehicles, setVehicles] = useState(() => {
+    if (typeof window === 'undefined') return INITIAL_VEHICLES;
     try {
       const saved = localStorage.getItem('vr_vehicles');
       if (saved && saved.includes('Radhe Divine Edition')) return [];
@@ -136,6 +141,7 @@ export const AppProvider = ({ children }) => {
   });
 
   const [bookings, setBookings] = useState(() => {
+    if (typeof window === 'undefined') return INITIAL_BOOKINGS;
     try {
       const saved = localStorage.getItem('vr_bookings');
       if (saved && saved.includes('VRB-9021')) return [];
@@ -146,6 +152,7 @@ export const AppProvider = ({ children }) => {
   });
 
   const [inspections, setInspections] = useState(() => {
+    if (typeof window === 'undefined') return INITIAL_INSPECTIONS;
     try {
       const saved = localStorage.getItem('vr_inspections');
       return saved ? JSON.parse(saved) : INITIAL_INSPECTIONS;
@@ -155,6 +162,7 @@ export const AppProvider = ({ children }) => {
   });
 
   const [customers, setCustomers] = useState(() => {
+    if (typeof window === 'undefined') return INITIAL_CUSTOMERS;
     try {
       const saved = localStorage.getItem('vr_customers');
       if (saved && saved.includes('Ananya Roy')) return [];
@@ -165,6 +173,7 @@ export const AppProvider = ({ children }) => {
   });
 
   const [owners, setOwners] = useState(() => {
+    if (typeof window === 'undefined') return INITIAL_OWNERS;
     try {
       const saved = localStorage.getItem('vr_owners');
       if (saved && saved.includes('Radhe Shyam Sharma')) return [];
@@ -175,6 +184,7 @@ export const AppProvider = ({ children }) => {
   });
 
   const [disputes, setDisputes] = useState(() => {
+    if (typeof window === 'undefined') return INITIAL_DISPUTES;
     try {
       const saved = localStorage.getItem('vr_disputes');
       if (saved && saved.includes('DISP-101')) return [];
@@ -185,6 +195,7 @@ export const AppProvider = ({ children }) => {
   });
 
   const [adminSettings, setAdminSettingsState] = useState(() => {
+    if (typeof window === 'undefined') return INITIAL_ADMIN_SETTINGS;
     try {
       const saved = localStorage.getItem('vr_admin_settings');
       return saved ? JSON.parse(saved) : INITIAL_ADMIN_SETTINGS;
@@ -194,6 +205,7 @@ export const AppProvider = ({ children }) => {
   });
 
   const [legalConfig, setLegalConfigState] = useState(() => {
+    if (typeof window === 'undefined') return INITIAL_LEGAL_CONFIG;
     try {
       const saved = localStorage.getItem('vr_legal');
       return saved ? JSON.parse(saved) : INITIAL_LEGAL_CONFIG;

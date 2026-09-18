@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { BookingStatusBadge, VerifiedOwnerBadge, VerifiedVehicleBadge } from '../components/TrustBadges';
@@ -1554,7 +1556,7 @@ export const AdminView = () => {
                   type="button"
                   onClick={() => {
                     const token = localStorage.getItem('vr_token') || localStorage.getItem('vr_admin_token') || '';
-                    const baseApi = import.meta.env.VITE_API_URL || '/api';
+                    const baseApi = (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_API_URL) || (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) || '/api';
                     const downloadUrl = `${baseApi}/settings/download-db?token=${encodeURIComponent(token)}`;
                     window.open(downloadUrl, '_blank');
                   }}

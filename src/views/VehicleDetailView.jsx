@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { VerifiedOwnerBadge, VerifiedVehicleBadge, DocumentsVerifiedBadge, DivineVerifiedBadge } from '../components/TrustBadges';

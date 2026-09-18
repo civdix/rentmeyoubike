@@ -1,11 +1,20 @@
 // Production API Base URL (Configurable via VITE_API_URL for remote hosting)
 // Automatically normalizes URLs with or without trailing slashes and ensures /api prefix
 const resolveApiBase = () => {
-  const envUrl = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL)
-    ? String(import.meta.env.VITE_API_URL).trim()
-    : '/api';
+  let envUrl = '/api';
+  if (typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_API_URL) {
+    envUrl = process.env.NEXT_PUBLIC_API_URL;
+  } else {
+    try {
+      if (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL) {
+        envUrl = import.meta.env.VITE_API_URL;
+      }
+    } catch {
+      // fallback to /api
+    }
+  }
 
-  const cleanUrl = envUrl.replace(/\/+$/, '');
+  const cleanUrl = String(envUrl).trim().replace(/\/+$/, '');
   if (!cleanUrl || cleanUrl === '/api') return '/api';
   return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`;
 };

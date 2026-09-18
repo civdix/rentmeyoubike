@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { MapPin, User, LogIn, LogOut, ChevronDown, ShieldCheck, Bike, Search, CalendarCheck, UserPlus, Mail } from 'lucide-react';

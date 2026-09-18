@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Bike, ShieldCheck, MapPin, MessageSquare, Heart, Mail } from 'lucide-react';
 import { useApp } from '../context/AppContext';
