@@ -51,6 +51,16 @@ app.use((req, res, next) => {
   next();
 });
 
+// Canonical Domain Enforcement: 301 Permanent Redirect any www. subdomains to apex domain
+app.use((req, res, next) => {
+  const host = req.headers['x-forwarded-host'] || req.headers.host || '';
+  if (host.toLowerCase().startsWith('www.')) {
+    const newHost = host.replace(/^www\./i, '');
+    return res.redirect(301, `https://${newHost}${req.originalUrl}`);
+  }
+  next();
+});
+
 // Security: Hardened CORS configuration
 app.use(cors({
   origin: true,
