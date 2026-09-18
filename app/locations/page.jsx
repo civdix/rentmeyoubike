@@ -5,11 +5,11 @@ import { MapPin, Bike, ArrowRight, ShieldCheck, Clock, Sparkles } from 'lucide-r
 import { VrindavanScooterIcon, VrindavanFeatherIcon } from '../../src/components/CustomIcons';
 
 export const metadata = {
-  title: 'Bike & Scooty Rental Locations in Vrindavan & Mathura | Rent on Cent',
+  title: 'Bike & Scooty Rental Locations in Vrindavan & Mathura',
   description:
     'Find bike and scooty rental pickup points across Mathura & Vrindavan: Yamuna Expressway Mathura Cut, Raya Cut, Chattikara Road, Bankey Bihari Temple, Prem Mandir & Mathura Junction.',
   alternates: {
-    canonical: '/locations'
+    canonical: 'https://rentoncent.bond/locations'
   },
   openGraph: {
     title: 'Vrindavan & Mathura Bike Rental Pickup Locations | Rent on Cent',

@@ -1,11 +1,11 @@
 import { MyBookingsView } from '../../src/views/MyBookingsView';
 
 export const metadata = {
-  title: 'My Bookings & Trip Timeline | Rent on Cent',
+  title: 'My Bookings & Trip Timeline',
   description:
     'Track your active scooter and bike rentals, view digital inspection records, verify KYC, and manage your Vrindavan travel schedule.',
   alternates: {
-    canonical: '/my-bookings'
+    canonical: 'https://rentoncent.bond/my-bookings'
   },
   robots: {
     index: false,

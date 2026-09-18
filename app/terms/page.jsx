@@ -1,10 +1,18 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Rental Terms & Conditions | Rent on Cent',
+  title: 'Rental Terms & Conditions',
   description: 'Read the terms, eligibility requirements, security deposit policy, and cancellation rules for bike rentals in Vrindavan & Mathura.',
   alternates: {
-    canonical: '/terms'
+    canonical: 'https://rentoncent.bond/terms'
+  },
+  openGraph: {
+    title: 'Rental Terms & Conditions | Rent on Cent',
+    description: 'Read the terms, eligibility requirements, security deposit policy, and cancellation rules for bike rentals in Vrindavan & Mathura.',
+    url: 'https://rentoncent.bond/terms',
+    siteName: 'Rent on Cent',
+    locale: 'en_IN',
+    type: 'website'
   }
 };
 

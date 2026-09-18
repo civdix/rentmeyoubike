@@ -1,10 +1,18 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Privacy Policy | Rent on Cent',
+  title: 'Privacy & Data Security Policy',
   description: 'How Rent on Cent securely handles customer KYC data, Aadhaar details, driving licence uploads, and rental transactions.',
   alternates: {
-    canonical: '/privacy'
+    canonical: 'https://rentoncent.bond/privacy'
+  },
+  openGraph: {
+    title: 'Privacy & Data Security Policy | Rent on Cent',
+    description: 'How Rent on Cent securely handles customer KYC data, Aadhaar details, driving licence uploads, and rental transactions.',
+    url: 'https://rentoncent.bond/privacy',
+    siteName: 'Rent on Cent',
+    locale: 'en_IN',
+    type: 'website'
   }
 };
 

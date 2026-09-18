@@ -35,9 +35,6 @@ export const metadata = {
   authors: [{ name: 'Rent on Cent', url: 'https://rentoncent.bond' }],
   creator: 'Rent on Cent',
   publisher: 'Rent on Cent',
-  alternates: {
-    canonical: '/'
-  },
   openGraph: {
     title: 'Rent on Cent | Electric Scooter & Bike Rentals in Vrindavan & Mathura',
     description:

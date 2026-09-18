@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/
+Disallow: /my-bookings
 
 Sitemap: https://rentoncent.bond/sitemap.xml

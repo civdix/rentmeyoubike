@@ -6,7 +6,7 @@ export const metadata = {
   description:
     'Affordable, peer-to-peer bike and scooty rentals in Vrindavan and Mathura. Rent Honda Activa, EV scooters, Royal Enfield starting at ₹40/hour or ₹299/day. Verified hosts, doorstep delivery, instant WhatsApp booking.',
   alternates: {
-    canonical: '/'
+    canonical: 'https://rentoncent.bond'
   },
   openGraph: {
     title: 'Rent on Cent | Bike & Scooty Rental in Vrindavan',

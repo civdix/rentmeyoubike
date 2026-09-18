@@ -4,7 +4,7 @@ export default function robots() {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/admin/']
+        disallow: ['/api/', '/admin', '/my-bookings']
       }
     ],
     sitemap: 'https://rentoncent.bond/sitemap.xml',

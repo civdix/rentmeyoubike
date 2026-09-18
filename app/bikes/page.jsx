@@ -1,11 +1,11 @@
 import BikesClient from './BikesClient';
 
 export const metadata = {
-  title: 'Browse Scooters & Bikes for Rent in Vrindavan | Rent on Cent',
+  title: 'Browse Scooters & Bikes for Rent in Vrindavan',
   description:
     'Search available Honda Activa, TVS Jupiter, Royal Enfield Classic 350, and EV scooters for rent in Vrindavan & Mathura. Best hourly & daily rates with verified hosts and doorstep delivery.',
   alternates: {
-    canonical: '/bikes'
+    canonical: 'https://rentoncent.bond/bikes'
   },
   openGraph: {
     title: 'Browse Two-Wheelers for Rent in Vrindavan | Rent on Cent',

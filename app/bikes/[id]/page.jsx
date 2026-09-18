@@ -5,10 +5,10 @@ export async function generateMetadata({ params }) {
   const id = resolvedParams?.id || '';
 
   return {
-    title: `Vehicle Rental in Vrindavan (${id}) | Rent on Cent`,
+    title: `Vehicle Rental in Vrindavan (${id})`,
     description: `Rent verified scooter or bike (${id}) in Vrindavan & Mathura. Best daily & hourly rates, doorstep delivery, and sacred protection.`,
     alternates: {
-      canonical: `/bikes/${id}`
+      canonical: `https://rentoncent.bond/bikes/${encodeURIComponent(id)}`
     },
     openGraph: {
       title: `Bike & Scooty Rental in Vrindavan | Rent on Cent`,

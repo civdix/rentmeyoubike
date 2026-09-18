@@ -16,12 +16,14 @@ export async function generateMetadata({ params }) {
   const loc = LOCATION_SEO_DATA[resolvedParams?.slug];
   if (!loc) return {};
 
+  const cleanTitle = (loc.metaTitle || '').replace(/\s*\|\s*Rent on Cent$/i, '');
+
   return {
-    title: loc.metaTitle,
+    title: cleanTitle || loc.name,
     description: loc.metaDescription,
     keywords: loc.keywords,
     alternates: {
-      canonical: `/locations/${loc.slug}`
+      canonical: `https://rentoncent.bond/locations/${loc.slug}`
     },
     openGraph: {
       title: loc.metaTitle,
