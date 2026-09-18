@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { apiAdminLogin } from '../api/client';
 import {
   Lock, Key, TrendingUp, Building2, Hotel, Megaphone, Compass, Sparkles,
   CheckCircle2, ArrowRight, ShieldCheck, IndianRupee, PieChart, Users, QrCode,
@@ -28,12 +29,13 @@ export const AdminStrategyView = () => {
   const totalScootyCost = scootyCostPerDay * rentalDays;
   const savings = totalAutoMessCost - totalScootyCost;
 
-  const handleUnlock = (e) => {
+  const handleUnlock = async (e) => {
     e.preventDefault();
-    if (inputPin === '2026' || inputPin === 'admin') {
+    try {
+      await apiAdminLogin(inputPin.trim());
       setIsUnlocked(true);
       setPinError(false);
-    } else {
+    } catch {
       setPinError(true);
     }
   };

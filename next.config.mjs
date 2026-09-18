@@ -9,15 +9,16 @@ const nextConfig = {
     ]
   },
   async rewrites() {
-    const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    const rawUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'https://rentmeyoubikebackend.onrender.com';
+    const cleanHost = String(rawUrl).trim().replace(/\/+$/, '').replace(/\/api$/, '');
     return [
       {
         source: '/api/:path*',
-        destination: `${backendUrl}/api/:path*`
+        destination: `${cleanHost}/api/:path*`
       },
       {
         source: '/uploads/:path*',
-        destination: `${backendUrl}/uploads/:path*`
+        destination: `${cleanHost}/uploads/:path*`
       }
     ];
   }

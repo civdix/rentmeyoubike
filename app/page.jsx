@@ -11,7 +11,26 @@ export const metadata = {
   openGraph: {
     title: 'Rent on Cent | Bike & Scooty Rental in Vrindavan',
     description: 'Rent Honda Activa, EV Scooters, and Royal Enfield in Vrindavan & Mathura starting ₹299/day.',
-    url: 'https://rentoncent.bond'
+    url: 'https://rentoncent.bond',
+    siteName: 'Rent on Cent',
+    locale: 'en_IN',
+    type: 'website',
+    images: [
+      {
+        url: 'https://rentoncent.bond/logo_square_share_area.png',
+        secureUrl: 'https://rentoncent.bond/logo_square_share_area.png',
+        width: 540,
+        height: 540,
+        type: 'image/png',
+        alt: 'Rent on Cent - Vrindavan Bike & Scooty Rental'
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Rent on Cent | Bike & Scooty Rental in Vrindavan',
+    description: 'Rent Honda Activa, EV Scooters, and Royal Enfield in Vrindavan & Mathura starting ₹299/day.',
+    images: ['https://rentoncent.bond/logo_square_share_area.png']
   }
 };
 

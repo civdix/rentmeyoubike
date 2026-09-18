@@ -2,6 +2,8 @@ import express from 'express';
 import fs from 'fs';
 import { db, dbPath, seedInitialData, isPostgres } from '../db.js';
 import { requireRole, ADMIN_PIN, validAdminTokens } from '../middleware/rbac.js';
+import { timingSafeCompare } from '../security.js';
+import { dbDownloadLimiter } from '../middleware/rateLimit.js';
 
 const router = express.Router();
 
@@ -118,13 +120,13 @@ router.post('/reset', requireRole('admin'), async (req, res) => {
 });
 
 // GET /api/settings/download-db - Securely download database snapshot or status
-router.get('/download-db', async (req, res) => {
+router.get('/download-db', dbDownloadLimiter, async (req, res) => {
   try {
     const pin = req.query.pin || req.headers['x-admin-pin'];
     const authHeader = req.headers.authorization;
     const token = (authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null) || req.query.token;
 
-    const isPinValid = Boolean(pin && (pin.trim() === ADMIN_PIN || pin.trim() === '2026' || pin.trim() === '7777'));
+    const isPinValid = Boolean(pin && timingSafeCompare(String(pin).trim(), ADMIN_PIN));
     let isTokenValid = Boolean((token && validAdminTokens.has(token)) || (req.user && req.user.role === 'admin'));
 
     if (!isTokenValid && token) {

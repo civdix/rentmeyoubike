@@ -1,7 +1,25 @@
 import express from 'express';
+import crypto from 'crypto';
 import { db } from '../db.js';
 import { ADMIN_PIN, validAdminTokens, activeSessions } from '../middleware/rbac.js';
 import { isValidEmail, normalizeEmail, sendEmailOtp } from '../email.js';
+import {
+  hashPassword,
+  verifyPassword,
+  timingSafeCompare,
+  generateSecureToken,
+  sanitizeUser,
+  validatePasswordStrength
+} from '../security.js';
+import {
+  loginAccountLimiter,
+  loginIpLimiter,
+  registerLimiter,
+  adminAuthLimiter,
+  otpSendLimiter,
+  otpVerifyLimiter,
+  checkEmailLimiter
+} from '../middleware/rateLimit.js';
 
 const router = express.Router();
 
@@ -12,16 +30,16 @@ function maskPhone(phone) {
   return `+91 ${digits.slice(0, 2)}****${digits.slice(-4)}`;
 }
 
-// POST /api/auth/check-email - Enforce format validation and distinguish emails
-router.post('/check-email', async (req, res) => {
+// POST /api/auth/check-email - Enforce format validation, rate limiting, and distinguish emails
+router.post('/check-email', checkEmailLimiter, async (req, res) => {
   try {
     const { email, role = 'customer' } = req.body;
 
-    if (!email) {
+    if (!email || typeof email !== 'string') {
       return res.status(400).json({ error: 'Email address is required' });
     }
 
-    if (!isValidEmail(email)) {
+    if (email.length > 254 || !isValidEmail(email)) {
       return res.status(400).json({
         valid: false,
         error: 'Invalid email format. Please enter a valid email address (e.g. name@domain.com).'
@@ -43,7 +61,7 @@ router.post('/check-email', async (req, res) => {
 
     if (existingUser) {
       status = 'registered';
-      message = `An account is already registered with this email (${existingUser.name}).`;
+      message = 'An account is already registered with this email.';
       existingAccount = {
         name: existingUser.name,
         phoneMasked: maskPhone(existingUser.phone),
@@ -66,22 +84,22 @@ router.post('/check-email', async (req, res) => {
   }
 });
 
-// POST /api/auth/send-email-otp - Send 6-digit verification code to email
-router.post('/send-email-otp', async (req, res) => {
+// POST /api/auth/send-email-otp - Send cryptographically secure 6-digit verification code
+router.post('/send-email-otp', otpSendLimiter, async (req, res) => {
   try {
     const { email, role = 'customer' } = req.body;
 
-    if (!email) {
+    if (!email || typeof email !== 'string') {
       return res.status(400).json({ error: 'Email address is required' });
     }
 
-    if (!isValidEmail(email)) {
+    if (email.length > 254 || !isValidEmail(email)) {
       return res.status(400).json({ error: 'Please provide a valid email address' });
     }
 
     const normalized = normalizeEmail(email);
 
-    // Rate limiting: 60s cooldown between OTP requests
+    // Rate limiting cooldown: 60s between OTP requests for the same email
     const recent = await db.prepare('SELECT expiresAt FROM email_verifications WHERE email = ?').get(normalized);
     if (recent) {
       const timeSinceCreation = 10 * 60 * 1000 - (recent.expiresAt - Date.now());
@@ -93,8 +111,8 @@ router.post('/send-email-otp', async (req, res) => {
       }
     }
 
-    // Generate secure 6-digit numeric OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate cryptographically secure 6-digit numeric OTP
+    const otp = crypto.randomInt(100000, 1000000).toString();
     const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
 
     await db.prepare(`
@@ -103,7 +121,7 @@ router.post('/send-email-otp', async (req, res) => {
     `).run(normalized, otp, role, expiresAt);
 
     // Dispatch email
-    const emailResult = await sendEmailOtp(normalized, otp, role);
+    await sendEmailOtp(normalized, otp, role);
 
     return res.json({
       success: true,
@@ -118,7 +136,7 @@ router.post('/send-email-otp', async (req, res) => {
 });
 
 // POST /api/auth/verify-email-otp - Verify user email address with OTP
-router.post('/verify-email-otp', async (req, res) => {
+router.post('/verify-email-otp', otpVerifyLimiter, async (req, res) => {
   try {
     const { email, otp } = req.body;
 
@@ -126,7 +144,7 @@ router.post('/verify-email-otp', async (req, res) => {
       return res.status(400).json({ error: 'Email address and OTP code are required' });
     }
 
-    const normalized = normalizeEmail(email);
+    const normalized = normalizeEmail(String(email).trim());
     const cleanOtp = String(otp).trim();
 
     const record = await db.prepare('SELECT * FROM email_verifications WHERE email = ?').get(normalized);
@@ -142,9 +160,12 @@ router.post('/verify-email-otp', async (req, res) => {
       return res.status(429).json({ error: 'Too many incorrect attempts. Please request a new code.' });
     }
 
-    if (record.otp !== cleanOtp) {
+    // Timing-safe OTP comparison
+    const isOtpValid = timingSafeCompare(record.otp, cleanOtp);
+
+    if (!isOtpValid) {
       await db.prepare('UPDATE email_verifications SET attempts = attempts + 1 WHERE email = ?').run(normalized);
-      const remaining = 5 - (record.attempts + 1);
+      const remaining = Math.max(0, 5 - (record.attempts + 1));
       return res.status(400).json({
         error: `Incorrect OTP code. ${remaining} attempt(s) remaining.`
       });
@@ -153,7 +174,7 @@ router.post('/verify-email-otp', async (req, res) => {
     // Mark verified
     await db.prepare('UPDATE email_verifications SET verified = 1 WHERE email = ?').run(normalized);
 
-    // Automatically synchronize verified status with existing customer or owner records
+    // Synchronize verified status with existing customer or owner records
     await db.prepare('UPDATE customers SET emailVerified = 1 WHERE LOWER(email) = ?').run(normalized);
     await db.prepare('UPDATE owners SET emailVerified = 1 WHERE LOWER(email) = ?').run(normalized);
 
@@ -169,28 +190,32 @@ router.post('/verify-email-otp', async (req, res) => {
   }
 });
 
-// POST /api/auth/login - Unified Login (Admin, Renter, Host)
-router.post('/login', async (req, res) => {
+// POST /api/auth/login - Unified Login with Rate Limiting and Hashed Password Verification
+router.post('/login', loginIpLimiter, loginAccountLimiter, async (req, res) => {
   try {
     const { identifier, password, role } = req.body;
 
-    if (!identifier || !identifier.trim()) {
+    if (!identifier || typeof identifier !== 'string' || !identifier.trim()) {
       return res.status(400).json({ error: 'Email or Mobile Phone Number is required.' });
     }
 
-    if (!password || !password.trim()) {
+    if (!password || typeof password !== 'string' || !password.trim()) {
       return res.status(400).json({ error: 'Password is required.' });
     }
 
     const cleanIdentifier = identifier.trim();
     const cleanPassword = password.trim();
 
-    // 1. Admin Authorization check
-    const isAdminIdentifier = ['admin', 'admin@rentoncent.bond', 'admin@rentoncent.com', 'admin@vrindavanrides.in', 'administrator', '7777'].includes(cleanIdentifier.toLowerCase());
-    const isAdminPass = cleanPassword === ADMIN_PIN || cleanPassword === '2026' || cleanPassword === '7777';
+    if (cleanPassword.length > 128) {
+      return res.status(400).json({ error: 'Password exceeds maximum length.' });
+    }
+
+    // 1. Admin Authorization check (Timing-safe comparison against ADMIN_PIN)
+    const isAdminIdentifier = ['admin', 'admin@rentoncent.bond', 'admin@rentoncent.com', 'admin@vrindavanrides.in', 'administrator'].includes(cleanIdentifier.toLowerCase());
+    const isAdminPass = timingSafeCompare(cleanPassword, ADMIN_PIN);
 
     if ((isAdminIdentifier && isAdminPass) || (role === 'admin' && isAdminPass)) {
-      const token = `vr_admin_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+      const token = generateSecureToken('vr_admin');
       validAdminTokens.add(token);
       const adminUser = { id: 'admin-1', name: 'Platform Administrator', role: 'admin' };
       activeSessions.set(token, { role: 'admin', user: adminUser });
@@ -238,58 +263,59 @@ router.post('/login', async (req, res) => {
     }
 
     if (!user) {
-      // If user entered admin PIN alone as password
-      if (isAdminPass && (cleanIdentifier.toLowerCase().includes('admin') || cleanIdentifier === '7777')) {
-        const token = `vr_admin_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
-        validAdminTokens.add(token);
-        const adminUser = { id: 'admin-1', name: 'Platform Administrator', role: 'admin' };
-        activeSessions.set(token, { role: 'admin', user: adminUser });
-        return res.json({
-          success: true,
-          message: 'Admin authorization successful',
-          token,
-          role: 'admin',
-          user: adminUser
-        });
-      }
-
       return res.status(401).json({
-        error: 'No account found with this email or phone. Please switch to Sign Up.'
+        error: 'Invalid credentials. Please check your email/phone and password, or switch to Sign Up.'
       });
     }
 
-    if (user.password && user.password !== cleanPassword) {
-      return res.status(401).json({ error: 'Incorrect password. Please check and try again.' });
-    }
+    // 3. Password Verification & Seamless Hash Migration
+    let passwordHashToStore = user.password;
 
-    // Ensure password is set for legacy accounts
     if (!user.password) {
+      // Legacy account without password set: hash current entered password and save
+      const newHashedPassword = await hashPassword(cleanPassword);
+      passwordHashToStore = newHashedPassword;
       try {
-        await db.prepare('UPDATE customers SET password = ? WHERE id = ?').run(cleanPassword, user.id);
-        await db.prepare('UPDATE owners SET password = ? WHERE id = ?').run(cleanPassword, user.id);
+        await db.prepare('UPDATE customers SET password = ? WHERE id = ?').run(newHashedPassword, user.id);
+        await db.prepare('UPDATE owners SET password = ? WHERE id = ?').run(newHashedPassword, user.id);
       } catch (e) {}
+    } else {
+      const { match, needsRehash } = await verifyPassword(cleanPassword, user.password);
+      if (!match) {
+        return res.status(401).json({ error: 'Incorrect password. Please check and try again.' });
+      }
+      if (needsRehash) {
+        // Upgrade legacy plaintext password to modern bcrypt hash
+        try {
+          const upgradedHash = await hashPassword(cleanPassword);
+          passwordHashToStore = upgradedHash;
+          await db.prepare('UPDATE customers SET password = ? WHERE id = ?').run(upgradedHash, user.id);
+          await db.prepare('UPDATE owners SET password = ? WHERE id = ?').run(upgradedHash, user.id);
+        } catch (e) {}
+      }
     }
 
-    // Ensure synchronized host & renter profile exists
+    // 4. Ensure synchronized host & renter profile exists (Store only hashed password!)
     try {
       const ownerExists = await db.prepare('SELECT id FROM owners WHERE id = ? OR LOWER(email) = ?').get(user.id, user.email ? normalizeEmail(user.email) : '');
       if (!ownerExists) {
         await db.prepare(`
           INSERT INTO owners (id, name, phone, email, password, emailVerified, verificationStatus, vehiclesCount, earnings, status)
           VALUES (?, ?, ?, ?, ?, ?, 'Approved', 0, 0, 'active')
-        `).run(user.id, user.name, user.phone, user.email, user.password || cleanPassword, user.emailVerified ? 1 : 0);
+        `).run(user.id, user.name, user.phone, user.email, passwordHashToStore, user.emailVerified ? 1 : 0);
       }
       const custExists = await db.prepare('SELECT id FROM customers WHERE id = ? OR LOWER(email) = ?').get(user.id, user.email ? normalizeEmail(user.email) : '');
       if (!custExists) {
         await db.prepare(`
           INSERT INTO customers (id, name, phone, email, password, emailVerified, kycStatus, bookingsCount, status)
           VALUES (?, ?, ?, ?, ?, ?, 'Verified', 0, 'active')
-        `).run(user.id, user.name, user.phone, user.email, user.password || cleanPassword, user.emailVerified ? 1 : 0);
+        `).run(user.id, user.name, user.phone, user.email, passwordHashToStore, user.emailVerified ? 1 : 0);
       }
     } catch (e) {}
 
-    const token = `vr_usr_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
-    const userData = {
+    // 5. Generate secure session token and sanitize user data (never send or save password!)
+    const token = generateSecureToken('vr_usr');
+    const userData = sanitizeUser({
       id: user.id,
       name: user.name,
       phone: user.phone,
@@ -298,7 +324,7 @@ router.post('/login', async (req, res) => {
       kycStatus: user.kycStatus || 'Verified',
       role: 'user',
       isHost: true
-    };
+    });
 
     activeSessions.set(token, { role: 'user', user: userData });
     try {
@@ -307,7 +333,6 @@ router.post('/login', async (req, res) => {
       );
     } catch (e) {}
 
-    // First view on sign-in is always the Renter view
     return res.json({
       success: true,
       message: 'Logged in successfully',
@@ -321,36 +346,42 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// POST /api/auth/register - Unified Onboarding (One User Account for Renter & Host)
-router.post('/register', async (req, res) => {
+// POST /api/auth/register - Unified Onboarding with Rate Limiting, Password Hashing & Sanitization
+router.post('/register', registerLimiter, async (req, res) => {
   try {
     const { name, phone, email, password } = req.body;
 
-    if (!name || !name.trim()) {
+    if (!name || typeof name !== 'string' || !name.trim()) {
       return res.status(400).json({ error: 'Full name is required.' });
     }
 
-    if (!phone || !phone.trim()) {
+    if (!phone || typeof phone !== 'string' || !phone.trim()) {
       return res.status(400).json({ error: 'Mobile phone number is required.' });
     }
 
-    if (!email || !email.trim()) {
+    if (!email || typeof email !== 'string' || !email.trim()) {
       return res.status(400).json({ error: 'Email address is required.' });
     }
 
-    if (!isValidEmail(email)) {
+    if (email.length > 254 || !isValidEmail(email)) {
       return res.status(400).json({ error: 'Please enter a valid email address (e.g. name@domain.com).' });
     }
 
-    if (!password || password.trim().length < 4) {
-      return res.status(400).json({ error: 'Password must be at least 4 characters long.' });
+    // Password strength check
+    const passValidation = validatePasswordStrength(password);
+    if (!passValidation.valid) {
+      return res.status(400).json({ error: passValidation.error });
     }
 
-    const cleanName = name.trim();
-    const cleanPhone = phone.trim();
+    const cleanName = name.trim().slice(0, 100);
+    const cleanPhone = phone.trim().slice(0, 20);
     const normalizedEmail = normalizeEmail(email);
     const cleanPassword = password.trim();
     const digits = cleanPhone.replace(/[^0-9]/g, '');
+
+    if (digits.length < 10) {
+      return res.status(400).json({ error: 'Please enter a valid 10-digit mobile phone number.' });
+    }
 
     // Check if email OTP was verified
     const verRecord = await db.prepare('SELECT verified FROM email_verifications WHERE email = ?').get(normalizedEmail);
@@ -377,21 +408,23 @@ router.post('/register', async (req, res) => {
       });
     }
 
+    // Hash password with bcrypt before storing
+    const hashedPassword = await hashPassword(cleanPassword);
     const newId = `usr-${Date.now()}`;
 
-    // Create unified records in both customers and owners tables
+    // Create unified records in both customers and owners tables with hashed password
     await db.prepare(`
       INSERT INTO customers (id, name, phone, email, password, emailVerified, kycStatus, bookingsCount, status, registeredDate)
       VALUES (?, ?, ?, ?, ?, ?, 'Pending', 0, 'active', CURRENT_TIMESTAMP)
-    `).run(newId, cleanName, cleanPhone, normalizedEmail, cleanPassword, emailVerified);
+    `).run(newId, cleanName, cleanPhone, normalizedEmail, hashedPassword, emailVerified);
 
     await db.prepare(`
       INSERT INTO owners (id, name, phone, email, password, emailVerified, verificationStatus, vehiclesCount, earnings, status, joinedDate)
       VALUES (?, ?, ?, ?, ?, ?, 'Approved', 0, 0, 'active', CURRENT_TIMESTAMP)
-    `).run(newId, cleanName, cleanPhone, normalizedEmail, cleanPassword, emailVerified);
+    `).run(newId, cleanName, cleanPhone, normalizedEmail, hashedPassword, emailVerified);
 
-    const token = `vr_usr_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
-    const userData = {
+    const token = generateSecureToken('vr_usr');
+    const userData = sanitizeUser({
       id: newId,
       name: cleanName,
       phone: cleanPhone,
@@ -400,7 +433,7 @@ router.post('/register', async (req, res) => {
       kycStatus: 'Pending',
       role: 'user',
       isHost: true
-    };
+    });
 
     activeSessions.set(token, { role: 'user', user: userData });
     try {
@@ -409,7 +442,6 @@ router.post('/register', async (req, res) => {
       );
     } catch (e) {}
 
-    // First view on registration is the Renter view
     return res.status(201).json({
       success: true,
       message: 'Welcome! Your account has been created successfully.',
@@ -424,11 +456,11 @@ router.post('/register', async (req, res) => {
 });
 
 // POST /api/auth/customer-login - Login or register Renter / Customer by Phone
-router.post('/customer-login', async (req, res) => {
+router.post('/customer-login', loginIpLimiter, async (req, res) => {
   try {
     const { phone, name, email } = req.body;
 
-    if (!phone) {
+    if (!phone || typeof phone !== 'string' || !phone.trim()) {
       return res.status(400).json({ error: 'Mobile phone number is required' });
     }
 
@@ -436,11 +468,10 @@ router.post('/customer-login', async (req, res) => {
     let customer = await db.prepare('SELECT * FROM customers WHERE phone = ?').get(cleanPhone);
 
     const normalizedEmail = email ? normalizeEmail(email) : null;
-    if (email && !isValidEmail(email)) {
+    if (email && (email.length > 254 || !isValidEmail(email))) {
       return res.status(400).json({ error: 'Invalid email address format' });
     }
 
-    // Check if email was pre-verified
     let isEmailVerified = 0;
     if (normalizedEmail) {
       const verRecord = await db.prepare('SELECT verified FROM email_verifications WHERE email = ?').get(normalizedEmail);
@@ -449,7 +480,7 @@ router.post('/customer-login', async (req, res) => {
 
     if (!customer) {
       const newId = `cust-${Date.now()}`;
-      const customerName = name || 'Vrindavan Yatri';
+      const customerName = name ? String(name).trim().slice(0, 100) : 'Vrindavan Yatri';
       const customerEmail = normalizedEmail || `${customerName.toLowerCase().replace(/\s+/g, '')}@example.com`;
 
       await db.prepare(`
@@ -463,8 +494,8 @@ router.post('/customer-login', async (req, res) => {
       customer = await db.prepare('SELECT * FROM customers WHERE id = ?').get(customer.id);
     }
 
-    const token = `vr_cust_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
-    const userData = {
+    const token = generateSecureToken('vr_cust');
+    const userData = sanitizeUser({
       id: customer.id,
       name: customer.name,
       phone: customer.phone,
@@ -473,16 +504,14 @@ router.post('/customer-login', async (req, res) => {
       kycStatus: customer.kycStatus,
       bookingsCount: customer.bookingsCount,
       role: 'customer'
-    };
+    });
 
     activeSessions.set(token, { role: 'customer', user: userData });
     try {
       await db.prepare('INSERT OR REPLACE INTO sessions (token, role, userId, userData) VALUES (?, ?, ?, ?)').run(
         token, 'customer', userData.id, JSON.stringify(userData)
       );
-    } catch (e) {
-      console.warn('Could not persist session in db:', e.message);
-    }
+    } catch (e) {}
 
     return res.json({
       success: true,
@@ -498,11 +527,11 @@ router.post('/customer-login', async (req, res) => {
 });
 
 // POST /api/auth/owner-login - Login or register Host / Fleet Owner by Phone
-router.post('/owner-login', async (req, res) => {
+router.post('/owner-login', loginIpLimiter, async (req, res) => {
   try {
     const { phone, name, email } = req.body;
 
-    if (!phone) {
+    if (!phone || typeof phone !== 'string' || !phone.trim()) {
       return res.status(400).json({ error: 'Host mobile phone number is required' });
     }
 
@@ -510,11 +539,10 @@ router.post('/owner-login', async (req, res) => {
     let owner = await db.prepare('SELECT * FROM owners WHERE phone = ?').get(cleanPhone);
 
     const normalizedEmail = email ? normalizeEmail(email) : null;
-    if (email && !isValidEmail(email)) {
+    if (email && (email.length > 254 || !isValidEmail(email))) {
       return res.status(400).json({ error: 'Invalid email address format' });
     }
 
-    // Check if email was pre-verified
     let isEmailVerified = 0;
     if (normalizedEmail) {
       const verRecord = await db.prepare('SELECT verified FROM email_verifications WHERE email = ?').get(normalizedEmail);
@@ -523,7 +551,7 @@ router.post('/owner-login', async (req, res) => {
 
     if (!owner) {
       const newId = `own-${Date.now()}`;
-      const ownerName = name || 'Local Fleet Host';
+      const ownerName = name ? String(name).trim().slice(0, 100) : 'Local Fleet Host';
       const ownerEmail = normalizedEmail || `${ownerName.toLowerCase().replace(/\s+/g, '')}@example.com`;
 
       await db.prepare(`
@@ -537,8 +565,8 @@ router.post('/owner-login', async (req, res) => {
       owner = await db.prepare('SELECT * FROM owners WHERE id = ?').get(owner.id);
     }
 
-    const token = `vr_owner_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
-    const userData = {
+    const token = generateSecureToken('vr_owner');
+    const userData = sanitizeUser({
       id: owner.id,
       name: owner.name,
       phone: owner.phone,
@@ -548,16 +576,14 @@ router.post('/owner-login', async (req, res) => {
       vehiclesCount: owner.vehiclesCount,
       earnings: owner.earnings,
       role: 'owner'
-    };
+    });
 
     activeSessions.set(token, { role: 'owner', user: userData });
     try {
       await db.prepare('INSERT OR REPLACE INTO sessions (token, role, userId, userData) VALUES (?, ?, ?, ?)').run(
         token, 'owner', userData.id, JSON.stringify(userData)
       );
-    } catch (e) {
-      console.warn('Could not persist session in db:', e.message);
-    }
+    } catch (e) {}
 
     return res.json({
       success: true,
@@ -572,17 +598,19 @@ router.post('/owner-login', async (req, res) => {
   }
 });
 
-// POST /api/auth/admin-login - Verify PIN and issue admin token
-router.post('/admin-login', async (req, res) => {
+// POST /api/auth/admin-login - Verify PIN with Timing-Safe comparison and Rate Limiting
+router.post('/admin-login', adminAuthLimiter, async (req, res) => {
   try {
     const { pin } = req.body;
 
-    if (!pin) {
+    if (!pin || typeof pin !== 'string') {
       return res.status(400).json({ error: 'Admin PIN is required' });
     }
 
-    if (pin.trim() === ADMIN_PIN || pin.trim() === '2026' || pin.trim() === '7777') {
-      const token = `vr_admin_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+    const cleanPin = pin.trim();
+
+    if (timingSafeCompare(cleanPin, ADMIN_PIN)) {
+      const token = generateSecureToken('vr_admin');
       validAdminTokens.add(token);
 
       const adminUser = {
@@ -596,9 +624,7 @@ router.post('/admin-login', async (req, res) => {
         await db.prepare('INSERT OR REPLACE INTO sessions (token, role, userId, userData) VALUES (?, ?, ?, ?)').run(
           token, 'admin', adminUser.id, JSON.stringify(adminUser)
         );
-      } catch (e) {
-        console.warn('Could not persist session in db:', e.message);
-      }
+      } catch (e) {}
 
       return res.json({
         success: true,
@@ -632,10 +658,10 @@ router.post('/logout', async (req, res) => {
   res.json({ success: true, message: 'Logged out successfully' });
 });
 
-// GET /api/auth/me - Verify current session
+// GET /api/auth/me - Verify current session with sanitized user data
 router.get('/me', (req, res) => {
   res.json({
-    user: req.user || { role: 'guest', isAuthenticated: false },
+    user: sanitizeUser(req.user) || { role: 'guest', isAuthenticated: false },
     isAuthenticated: req.user?.isAuthenticated || false
   });
 });

@@ -85,28 +85,18 @@ export const AppProvider = ({ children }) => {
     return () => window.removeEventListener('vr_unauthorized', handleUnauthorized);
   }, [role]);
 
-  // Purge any legacy demo mock data cached in browser localStorage
+  // Security: Purge sensitive collections and legacy mock data from browser localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // Never persist sensitive directory lists in client localStorage
+      localStorage.removeItem('vr_customers');
+      localStorage.removeItem('vr_owners');
+      localStorage.removeItem('vr_disputes');
+
       const legacyBookings = localStorage.getItem('vr_bookings');
       if (legacyBookings && legacyBookings.includes('VRB-9021')) {
         localStorage.removeItem('vr_bookings');
         setBookings([]);
-      }
-      const legacyCustomers = localStorage.getItem('vr_customers');
-      if (legacyCustomers && legacyCustomers.includes('Ananya Roy')) {
-        localStorage.removeItem('vr_customers');
-        setCustomers([]);
-      }
-      const legacyOwners = localStorage.getItem('vr_owners');
-      if (legacyOwners && legacyOwners.includes('Radhe Shyam Sharma')) {
-        localStorage.removeItem('vr_owners');
-        setOwners([]);
-      }
-      const legacyDisputes = localStorage.getItem('vr_disputes');
-      if (legacyDisputes && legacyDisputes.includes('DISP-101')) {
-        localStorage.removeItem('vr_disputes');
-        setDisputes([]);
       }
       const legacyVehicles = localStorage.getItem('vr_vehicles');
       if (legacyVehicles && legacyVehicles.includes('Radhe Divine Edition')) {
@@ -149,38 +139,10 @@ export const AppProvider = ({ children }) => {
     }
   });
 
-  const [customers, setCustomers] = useState(() => {
-    if (typeof window === 'undefined') return INITIAL_CUSTOMERS;
-    try {
-      const saved = localStorage.getItem('vr_customers');
-      if (saved && saved.includes('Ananya Roy')) return [];
-      return saved ? JSON.parse(saved) : INITIAL_CUSTOMERS;
-    } catch {
-      return [];
-    }
-  });
-
-  const [owners, setOwners] = useState(() => {
-    if (typeof window === 'undefined') return INITIAL_OWNERS;
-    try {
-      const saved = localStorage.getItem('vr_owners');
-      if (saved && saved.includes('Radhe Shyam Sharma')) return [];
-      return saved ? JSON.parse(saved) : INITIAL_OWNERS;
-    } catch {
-      return [];
-    }
-  });
-
-  const [disputes, setDisputes] = useState(() => {
-    if (typeof window === 'undefined') return INITIAL_DISPUTES;
-    try {
-      const saved = localStorage.getItem('vr_disputes');
-      if (saved && saved.includes('DISP-101')) return [];
-      return saved ? JSON.parse(saved) : INITIAL_DISPUTES;
-    } catch {
-      return [];
-    }
-  });
+  // Sensitive directory collections kept in reactive memory only (never written to localStorage)
+  const [customers, setCustomers] = useState([]);
+  const [owners, setOwners] = useState([]);
+  const [disputes, setDisputes] = useState([]);
 
   const [adminSettings, setAdminSettingsState] = useState(() => {
     if (typeof window === 'undefined') return INITIAL_ADMIN_SETTINGS;
@@ -307,18 +269,6 @@ export const AppProvider = ({ children }) => {
   }, [inspections]);
 
   useEffect(() => {
-    localStorage.setItem('vr_customers', JSON.stringify(customers));
-  }, [customers]);
-
-  useEffect(() => {
-    localStorage.setItem('vr_owners', JSON.stringify(owners));
-  }, [owners]);
-
-  useEffect(() => {
-    localStorage.setItem('vr_disputes', JSON.stringify(disputes));
-  }, [disputes]);
-
-  useEffect(() => {
     localStorage.setItem('vr_admin_settings', JSON.stringify(adminSettings));
   }, [adminSettings]);
 
@@ -328,7 +278,8 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     if (currentUser) {
-      localStorage.setItem('vr_user', JSON.stringify(currentUser));
+      const { password, pin, otp, token, ...safeUser } = currentUser;
+      localStorage.setItem('vr_user', JSON.stringify(safeUser));
     } else {
       localStorage.removeItem('vr_user');
     }
@@ -393,6 +344,9 @@ export const AppProvider = ({ children }) => {
     localStorage.removeItem('vr_user');
     localStorage.removeItem('vr_token');
     localStorage.removeItem('vr_admin_token');
+    localStorage.removeItem('vr_customers');
+    localStorage.removeItem('vr_owners');
+    localStorage.removeItem('vr_disputes');
     localStorage.setItem('vr_role', 'customer');
     refreshData();
   };

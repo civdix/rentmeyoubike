@@ -9,3 +9,5 @@ dist
 .next
 /.next
 .turbo
+*.db-shm
+*.db-wal

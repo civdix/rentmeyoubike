@@ -149,15 +149,7 @@ export const AdminView = () => {
       setPinError(false);
       refreshData();
     } catch (err) {
-      if (pinInput.trim() === '7777') {
-        const fallbackAdmin = { id: 'admin-1', name: 'Platform Administrator', role: 'admin' };
-        if (setCurrentUser) setCurrentUser(fallbackAdmin);
-        setRole('admin');
-        setPinError(false);
-        refreshData();
-      } else {
-        setPinError(true);
-      }
+      setPinError(true);
     }
   };
 

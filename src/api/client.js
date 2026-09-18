@@ -1,21 +1,28 @@
-// Production API Base URL (Configurable via VITE_API_URL for remote hosting)
+// Production API Base URL (Configurable via NEXT_PUBLIC_API_URL / VITE_API_URL for remote hosting)
 // Automatically normalizes URLs with or without trailing slashes and ensures /api prefix
 const resolveApiBase = () => {
-  let envUrl = '/api';
+  let envUrl = '';
   if (typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_API_URL) {
     envUrl = process.env.NEXT_PUBLIC_API_URL;
-  } else {
+  }
+
+  if (!envUrl) {
     try {
       if (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL) {
         envUrl = import.meta.env.VITE_API_URL;
       }
     } catch {
-      // fallback to /api
+      // ignore
     }
   }
 
+  // Default to Render backend
+  if (!envUrl) {
+    envUrl = 'https://rentmeyoubikebackend.onrender.com/api';
+  }
+
   const cleanUrl = String(envUrl).trim().replace(/\/+$/, '');
-  if (!cleanUrl || cleanUrl === '/api') return '/api';
+  if (!cleanUrl) return 'https://rentmeyoubikebackend.onrender.com/api';
   return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`;
 };
 
@@ -253,6 +260,12 @@ export async function apiFetchOverviewStats() {
   return request('/stats/overview');
 }
 
+function sanitizeClientUser(user) {
+  if (!user || typeof user !== 'object') return null;
+  const { password, pin, otp, token, ...safeUser } = user;
+  return safeUser;
+}
+
 // ==================== AUTH / RBAC ====================
 export async function apiLogin({ identifier, password, role }) {
   const res = await request('/auth/login', {
@@ -263,7 +276,10 @@ export async function apiLogin({ identifier, password, role }) {
     localStorage.setItem('vr_token', res.token);
     localStorage.setItem('vr_role', res.role || 'customer');
     if (res.role === 'admin') localStorage.setItem('vr_admin_token', res.token);
-    if (res.user) localStorage.setItem('vr_user', JSON.stringify(res.user));
+    if (res.user) {
+      const safe = sanitizeClientUser(res.user);
+      localStorage.setItem('vr_user', JSON.stringify(safe));
+    }
   }
   return res;
 }
@@ -276,7 +292,10 @@ export async function apiRegister({ name, phone, email, password }) {
   if (res?.token && typeof window !== 'undefined') {
     localStorage.setItem('vr_token', res.token);
     localStorage.setItem('vr_role', res.role || 'customer');
-    if (res.user) localStorage.setItem('vr_user', JSON.stringify(res.user));
+    if (res.user) {
+      const safe = sanitizeClientUser(res.user);
+      localStorage.setItem('vr_user', JSON.stringify(safe));
+    }
   }
   return res;
 }
@@ -289,7 +308,10 @@ export async function apiCustomerLogin(credentials) {
   if (res?.token && typeof window !== 'undefined') {
     localStorage.setItem('vr_token', res.token);
     localStorage.setItem('vr_role', 'customer');
-    if (res.user) localStorage.setItem('vr_user', JSON.stringify(res.user));
+    if (res.user) {
+      const safe = sanitizeClientUser(res.user);
+      localStorage.setItem('vr_user', JSON.stringify(safe));
+    }
   }
   return res;
 }
@@ -302,7 +324,10 @@ export async function apiOwnerLogin(credentials) {
   if (res?.token && typeof window !== 'undefined') {
     localStorage.setItem('vr_token', res.token);
     localStorage.setItem('vr_role', 'owner');
-    if (res.user) localStorage.setItem('vr_user', JSON.stringify(res.user));
+    if (res.user) {
+      const safe = sanitizeClientUser(res.user);
+      localStorage.setItem('vr_user', JSON.stringify(safe));
+    }
   }
   return res;
 }
@@ -316,7 +341,10 @@ export async function apiAdminLogin(pin) {
     localStorage.setItem('vr_token', res.token);
     localStorage.setItem('vr_admin_token', res.token);
     localStorage.setItem('vr_role', 'admin');
-    if (res.user) localStorage.setItem('vr_user', JSON.stringify(res.user));
+    if (res.user) {
+      const safe = sanitizeClientUser(res.user);
+      localStorage.setItem('vr_user', JSON.stringify(safe));
+    }
   }
   return res;
 }

@@ -14,7 +14,26 @@ export const metadata = {
   openGraph: {
     title: 'Vrindavan & Mathura Bike Rental Pickup Locations | Rent on Cent',
     description: 'Explore all two-wheeler pickup points and doorstep hotel delivery areas in Mathura and Vrindavan.',
-    url: 'https://rentoncent.bond/locations'
+    url: 'https://rentoncent.bond/locations',
+    siteName: 'Rent on Cent',
+    locale: 'en_IN',
+    type: 'website',
+    images: [
+      {
+        url: 'https://rentoncent.bond/logo_square_share_area.png',
+        secureUrl: 'https://rentoncent.bond/logo_square_share_area.png',
+        width: 540,
+        height: 540,
+        type: 'image/png',
+        alt: 'Rent on Cent - Vrindavan Bike & Scooty Rental'
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Vrindavan & Mathura Bike Rental Pickup Locations | Rent on Cent',
+    description: 'Explore all two-wheeler pickup points and doorstep hotel delivery areas in Mathura and Vrindavan.',
+    images: ['https://rentoncent.bond/logo_square_share_area.png']
   }
 };
 

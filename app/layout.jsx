@@ -48,18 +48,20 @@ export const metadata = {
     type: 'website',
     images: [
       {
-        url: '/logo_square_share_area.png',
-        width: 1200,
-        height: 630,
+        url: 'https://rentoncent.bond/logo_square_share_area.png',
+        secureUrl: 'https://rentoncent.bond/logo_square_share_area.png',
+        width: 540,
+        height: 540,
+        type: 'image/png',
         alt: 'Rent on Cent - Vrindavan Bike & Scooty Rental'
       }
     ]
   },
   twitter: {
-    card: 'summary_large_image',
+    card: 'summary',
     title: 'Rent on Cent | Bike & Scooter Rentals in Vrindavan',
     description: 'Rent Activa, Royal Enfield, and EV Scooters in Vrindavan starting ₹299/day.',
-    images: ['/logo_square_share_area.png']
+    images: ['https://rentoncent.bond/logo_square_share_area.png']
   },
   icons: {
     icon: '/favicon.ico',
@@ -181,6 +183,17 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth">
       <head>
+        {/* Direct WhatsApp, Facebook & Telegram Open Graph Image Fallbacks */}
+        <meta property="og:image" content="https://rentoncent.bond/logo_square_share_area.png" />
+        <meta property="og:image:secure_url" content="https://rentoncent.bond/logo_square_share_area.png" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="540" />
+        <meta property="og:image:height" content="540" />
+        <meta property="og:image:alt" content="Rent on Cent - Vrindavan Bike & Scooty Rental" />
+        <meta name="twitter:image" content="https://rentoncent.bond/logo_square_share_area.png" />
+        <meta itemprop="image" content="https://rentoncent.bond/logo_square_share_area.png" />
+        <link rel="image_src" href="https://rentoncent.bond/logo_square_share_area.png" />
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

@@ -1,4 +1,5 @@
 import { db } from '../db.js';
+import { timingSafeCompare, sanitizeUser } from '../security.js';
 
 // Role-Based Access Control (RBAC) Middleware
 
@@ -26,7 +27,7 @@ export async function authenticateUser(req, res, next) {
   if (token && activeSessions.has(token)) {
     const session = activeSessions.get(token);
     role = session.role;
-    sessionUser = session.user;
+    sessionUser = sanitizeUser(session.user);
     isAuthenticated = true;
   } else if (token && validAdminTokens.has(token)) {
     role = 'admin';
@@ -38,10 +39,11 @@ export async function authenticateUser(req, res, next) {
       const row = await db.prepare('SELECT * FROM sessions WHERE token = ?').get(token);
       if (row) {
         const parsedUser = row.userData ? JSON.parse(row.userData) : { id: row.userId, role: row.role };
+        const safeUser = sanitizeUser(parsedUser);
         role = row.role;
-        sessionUser = parsedUser;
+        sessionUser = safeUser;
         isAuthenticated = true;
-        activeSessions.set(token, { role, user: parsedUser });
+        activeSessions.set(token, { role, user: safeUser });
         if (role === 'admin') {
           validAdminTokens.add(token);
         }
@@ -49,7 +51,7 @@ export async function authenticateUser(req, res, next) {
     } catch (err) {
       // Ignore if session lookup fails
     }
-  } else if (pinHeader === ADMIN_PIN || pinHeader === '2026') {
+  } else if (pinHeader && timingSafeCompare(String(pinHeader).trim(), ADMIN_PIN)) {
     role = 'admin';
     sessionUser = { id: 'admin-1', name: 'Platform Administrator', role: 'admin' };
     isAuthenticated = true;

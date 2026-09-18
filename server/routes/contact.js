@@ -1,4 +1,5 @@
 import express from 'express';
+import { contactFormLimiter } from '../middleware/rateLimit.js';
 
 const router = express.Router();
 
@@ -63,7 +64,7 @@ function formatHeaderText(text) {
  * POST /api/contact
  * Handles contact form submissions and securely forwards them to the external email API.
  */
-router.post('/', async (req, res) => {
+router.post('/', contactFormLimiter, async (req, res) => {
   try {
     const { name, email, to, subject, message } = req.body || {};
 

@@ -30,12 +30,20 @@ export async function generateMetadata({ params }) {
       siteName: 'Rent on Cent',
       images: [
         {
-          url: '/logo_square_share_area.png',
-          width: 1200,
-          height: 630,
+          url: 'https://rentoncent.bond/logo_square_share_area.png',
+          secureUrl: 'https://rentoncent.bond/logo_square_share_area.png',
+          width: 540,
+          height: 540,
+          type: 'image/png',
           alt: `Rent on Cent - ${loc.name} Bike Rental`
         }
       ]
+    },
+    twitter: {
+      card: 'summary',
+      title: loc.metaTitle,
+      description: loc.metaDescription,
+      images: ['https://rentoncent.bond/logo_square_share_area.png']
     }
   };
 }

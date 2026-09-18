@@ -77,17 +77,6 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
       return;
     }
 
-    // Direct platform administrator PIN bypass fallback
-    if ((cleanIdentifier.toLowerCase() === 'admin' || cleanIdentifier === '7777') &&
-        (cleanPassword === '7777' || cleanPassword === '2026')) {
-      const adminUser = { id: 'admin-1', name: 'Platform Administrator', role: 'admin' };
-      if (setCurrentUser) setCurrentUser(adminUser);
-      setRole('admin');
-      if (onSuccess) onSuccess(adminUser);
-      onClose();
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -155,8 +144,8 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
       return;
     }
 
-    if (!cleanPass || cleanPass.length < 4) {
-      setErrorMsg('Please choose a password of at least 4 characters.');
+    if (!cleanPass || cleanPass.length < 6) {
+      setErrorMsg('Please choose a secure password of at least 6 characters.');
       return;
     }
 

@@ -13,7 +13,26 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: `Bike & Scooty Rental in Vrindavan | Rent on Cent`,
       description: `Affordable two-wheeler hire for temple darshan and parikrama in Vrindavan.`,
-      url: `https://rentoncent.bond/bikes/${id}`
+      url: `https://rentoncent.bond/bikes/${id}`,
+      siteName: 'Rent on Cent',
+      locale: 'en_IN',
+      type: 'website',
+      images: [
+        {
+          url: 'https://rentoncent.bond/logo_square_share_area.png',
+          secureUrl: 'https://rentoncent.bond/logo_square_share_area.png',
+          width: 540,
+          height: 540,
+          type: 'image/png',
+          alt: 'Rent on Cent - Vrindavan Bike & Scooty Rental'
+        }
+      ]
+    },
+    twitter: {
+      card: 'summary',
+      title: `Bike & Scooty Rental in Vrindavan | Rent on Cent`,
+      description: `Affordable two-wheeler hire for temple darshan and parikrama in Vrindavan.`,
+      images: ['https://rentoncent.bond/logo_square_share_area.png']
     }
   };
 }

@@ -10,7 +10,26 @@ export const metadata = {
   openGraph: {
     title: 'Browse Two-Wheelers for Rent in Vrindavan | Rent on Cent',
     description: 'Rent Activa, EV Scooters, and Cruisers starting at ₹299/day in Vrindavan & Mathura.',
-    url: 'https://rentoncent.bond/bikes'
+    url: 'https://rentoncent.bond/bikes',
+    siteName: 'Rent on Cent',
+    locale: 'en_IN',
+    type: 'website',
+    images: [
+      {
+        url: 'https://rentoncent.bond/logo_square_share_area.png',
+        secureUrl: 'https://rentoncent.bond/logo_square_share_area.png',
+        width: 540,
+        height: 540,
+        type: 'image/png',
+        alt: 'Rent on Cent - Vrindavan Bike & Scooty Rental'
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Browse Two-Wheelers for Rent in Vrindavan | Rent on Cent',
+    description: 'Rent Activa, EV Scooters, and Cruisers starting at ₹299/day in Vrindavan & Mathura.',
+    images: ['https://rentoncent.bond/logo_square_share_area.png']
   }
 };
 
