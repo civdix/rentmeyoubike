@@ -4,7 +4,14 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { BookingStatusBadge, VerifiedOwnerBadge, VerifiedVehicleBadge } from '../components/TrustBadges';
 import { AdminStrategyView } from './AdminStrategyView';
-import { apiAdminLogin, apiAdminLogout } from '../api/client';
+import {
+  apiAdminLogin,
+  apiAdminLogout,
+  apiFetchConversations,
+  apiFetchMessages,
+  apiSendMessage,
+  apiMarkMessagesRead
+} from '../api/client';
 import {
   Settings,
   ShieldCheck,
@@ -36,7 +43,13 @@ import {
   MessageSquare,
   ArrowRight,
   Database,
-  Download
+  Download,
+  Send,
+  CheckCheck,
+  Phone,
+  ExternalLink,
+  Clock,
+  Sparkles
 } from 'lucide-react';
 
 export const AdminView = () => {
@@ -144,6 +157,161 @@ export const AdminView = () => {
   // 7-Step WhatsApp Pipeline Modal State
   const [selectedWhatsAppPipelineBooking, setSelectedWhatsAppPipelineBooking] = useState(null);
 
+  // Live Chat Management State
+  const [conversations, setConversations] = useState([]);
+  const [selectedConvId, setSelectedConvId] = useState(null);
+  const [activeConvMessages, setActiveConvMessages] = useState([]);
+  const [chatInputText, setChatInputText] = useState('');
+  const [isSendingChat, setIsSendingChat] = useState(false);
+  const [chatSearch, setChatSearch] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const chatMessagesEndRef = React.useRef(null);
+
+  const adminQuickReplies = [
+    'Radhe Radhe! 🙏 Welcome to Rent to Cent Vrindavan. How may we assist you?',
+    'Your booking request is confirmed! Please upload Aadhaar & Driving Licence for instant verification.',
+    'Your vehicle is prepped and ready for pickup at our Vrindavan Hub (near Prem Mandir).',
+    'Please bring your original Driving Licence and refundable deposit at the time of pickup.',
+    'A sanitized helmet is included complimentary with your rental bike.',
+    'Feel free to ask any question regarding locations, fuel, or return timings!'
+  ];
+
+  const formatChatTime = (ts) => {
+    if (!ts) return 'Just now';
+    try {
+      const d = new Date(ts);
+      if (isNaN(d.getTime())) return 'Just now';
+      const now = new Date();
+      if (d.toDateString() === now.toDateString()) {
+        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+      return `${d.toLocaleDateString([], { month: 'short', day: 'numeric' })} ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    } catch {
+      return 'Just now';
+    }
+  };
+
+  const loadConversations = React.useCallback(async () => {
+    try {
+      const data = await apiFetchConversations();
+      if (Array.isArray(data)) {
+        setConversations(data);
+      }
+    } catch (err) {
+      console.warn('Error fetching chat conversations:', err.message);
+    }
+  }, []);
+
+  const loadActiveMessages = React.useCallback(async (convId) => {
+    if (!convId) return;
+    try {
+      const data = await apiFetchMessages({ conversationId: convId });
+      if (Array.isArray(data)) {
+        setActiveConvMessages(data);
+      }
+    } catch (err) {
+      console.warn('Error fetching active chat messages:', err.message);
+    }
+  }, []);
+
+  // Poll conversations every 3s
+  React.useEffect(() => {
+    if (!isAuthorized) return;
+    loadConversations();
+    const interval = setInterval(loadConversations, 3000);
+    return () => clearInterval(interval);
+  }, [isAuthorized, loadConversations]);
+
+  // Poll active chat messages every 2.5s
+  React.useEffect(() => {
+    if (!isAuthorized || !selectedConvId) return;
+    loadActiveMessages(selectedConvId);
+    const interval = setInterval(() => loadActiveMessages(selectedConvId), 2500);
+    return () => clearInterval(interval);
+  }, [isAuthorized, selectedConvId, loadActiveMessages]);
+
+  // Auto-scroll chat to bottom
+  React.useEffect(() => {
+    if (activeTab === 'chat' && chatMessagesEndRef.current) {
+      chatMessagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [activeConvMessages, activeTab]);
+
+  const handleSelectConversation = async (conv) => {
+    setSelectedConvId(conv.conversationId);
+    setChatLoading(true);
+    try {
+      const data = await apiFetchMessages({ conversationId: conv.conversationId });
+      setActiveConvMessages(Array.isArray(data) ? data : []);
+      await apiMarkMessagesRead(conv.conversationId);
+      setConversations((prev) =>
+        prev.map((c) => (c.conversationId === conv.conversationId ? { ...c, unreadCount: 0 } : c))
+      );
+    } catch (err) {
+      console.warn('Error selecting conversation:', err);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  const handleAdminSendMessage = async (customText) => {
+    const text = (customText || chatInputText).trim();
+    if (!text || !selectedConvId || isSendingChat) return;
+
+    const currentConv = conversations.find((c) => c.conversationId === selectedConvId);
+    setIsSendingChat(true);
+
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMsg = {
+      id: tempId,
+      conversationId: selectedConvId,
+      bookingId: currentConv?.bookingId || null,
+      senderRole: 'admin',
+      senderName: 'Support Admin',
+      customerName: currentConv?.customerName || 'Customer',
+      customerPhone: currentConv?.customerPhone || '',
+      text,
+      isRead: false,
+      createdAt: new Date().toISOString()
+    };
+
+    setActiveConvMessages((prev) => [...prev, optimisticMsg]);
+    if (!customText) setChatInputText('');
+
+    try {
+      const saved = await apiSendMessage({
+        conversationId: selectedConvId,
+        bookingId: currentConv?.bookingId || null,
+        customerName: currentConv?.customerName || 'Customer',
+        customerPhone: currentConv?.customerPhone || '',
+        text
+      });
+
+      setActiveConvMessages((prev) => prev.map((m) => (m.id === tempId ? saved : m)));
+      loadConversations();
+    } catch (err) {
+      console.error('Failed to send admin message:', err);
+    } finally {
+      setIsSendingChat(false);
+    }
+  };
+
+  const totalUnreadChatCount = conversations.reduce((acc, c) => acc + (Number(c.unreadCount) || 0), 0);
+
+  const filteredConversations = conversations.filter((c) => {
+    if (!chatSearch.trim()) return true;
+    const q = chatSearch.toLowerCase();
+    return (
+      (c.customerName && c.customerName.toLowerCase().includes(q)) ||
+      (c.customerPhone && c.customerPhone.toLowerCase().includes(q)) ||
+      (c.bookingId && c.bookingId.toLowerCase().includes(q)) ||
+      (c.lastMessageText && c.lastMessageText.toLowerCase().includes(q))
+    );
+  });
+
+  const selectedConv =
+    conversations.find((c) => c.conversationId === selectedConvId) ||
+    (selectedConvId ? { conversationId: selectedConvId, customerName: 'Customer' } : null);
 
   // Settings form state
   const [settingsForm, setSettingsForm] = useState({
@@ -468,6 +636,7 @@ export const AdminView = () => {
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-2 flex gap-2 text-xs font-bold overflow-x-auto custom-scrollbar sticky top-28 z-20 shadow-md">
           {[
             { id: 'overview', label: '📊 Overview' },
+            { id: 'chat', label: `💬 Live Chat${totalUnreadChatCount > 0 ? ` (${totalUnreadChatCount})` : ''}` },
             { id: 'customers', label: `👥 Customers (${customers.length})` },
             { id: 'owners', label: `👤 Owners (${owners.length})` },
             { id: 'vehicles', label: `🛵 Vehicles (${vehicles.length})` },
@@ -697,6 +866,294 @@ export const AdminView = () => {
                     </button>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ----------------------------------------------------
+            SECTION: LIVE CHAT & CONVERSATIONS
+            ---------------------------------------------------- */}
+        {activeTab === 'chat' && (
+          <div className="space-y-4 animate-in fade-in duration-200">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="font-heading font-extrabold text-lg text-white flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5 text-emerald-400" />
+                  <span>Customer Live Chat Operations</span>
+                  {totalUnreadChatCount > 0 && (
+                    <span className="bg-emerald-500 text-slate-950 text-xs px-2.5 py-0.5 rounded-full font-extrabold shadow-sm animate-pulse">
+                      {totalUnreadChatCount} New Inquiries
+                    </span>
+                  )}
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Real-time two-way messaging with customers and pilgrims inquiring via instant bookings.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={loadConversations}
+                  className="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Refresh Inquiries</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Main Split-Pane Live Chat UI */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl grid grid-cols-1 lg:grid-cols-12 min-h-[620px] max-h-[750px]">
+              {/* LEFT PANE: Conversations list (4 cols) */}
+              <div className="lg:col-span-4 border-r border-slate-800 flex flex-col bg-slate-900/95">
+                {/* Search Header */}
+                <div className="p-3.5 border-b border-slate-800 bg-slate-950/60">
+                  <div className="relative">
+                    <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+                    <input
+                      type="text"
+                      value={chatSearch}
+                      onChange={(e) => setChatSearch(e.target.value)}
+                      placeholder="Search customer, phone, or ref..."
+                      className="w-full bg-slate-900 text-white text-xs pl-9 pr-3 py-2 rounded-xl border border-slate-700 focus:outline-none focus:border-emerald-500 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                {/* Conversations List */}
+                <div className="flex-1 overflow-y-auto divide-y divide-slate-800/60 custom-scrollbar">
+                  {filteredConversations.length === 0 ? (
+                    <div className="p-8 text-center text-slate-500 text-xs">
+                      <MessageSquare className="w-8 h-8 text-slate-600 mx-auto mb-2 opacity-50" />
+                      <p className="font-semibold text-slate-400">No active conversations found</p>
+                      <p className="text-[11px] text-slate-500 mt-1">
+                        When customers send inquiries through instant booking or WhatsApp chat, they appear here live.
+                      </p>
+                    </div>
+                  ) : (
+                    filteredConversations.map((conv) => {
+                      const isSelected = selectedConvId === conv.conversationId;
+                      const unread = Number(conv.unreadCount) || 0;
+
+                      return (
+                        <button
+                          key={conv.conversationId}
+                          onClick={() => handleSelectConversation(conv)}
+                          className={`w-full text-left p-3.5 transition-all flex items-start gap-3 cursor-pointer ${
+                            isSelected
+                              ? 'bg-emerald-950/40 border-l-4 border-emerald-500'
+                              : 'hover:bg-slate-800/50'
+                          }`}
+                        >
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-600 to-teal-700 text-white font-bold flex items-center justify-center shrink-0 shadow-sm text-sm">
+                            {(conv.customerName || 'C').charAt(0).toUpperCase()}
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-1 mb-1">
+                              <h4 className="text-xs font-bold text-white truncate">
+                                {conv.customerName || 'Customer'}
+                              </h4>
+                              <span className="text-[10px] text-slate-400 shrink-0">
+                                {formatChatTime(conv.lastMessageTime)}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 text-[11px] text-slate-400 mb-1">
+                              {conv.customerPhone && <span>{conv.customerPhone}</span>}
+                              {conv.bookingId && (
+                                <span className="bg-emerald-500/10 text-emerald-400 font-mono text-[10px] px-1.5 py-0.2 rounded border border-emerald-500/20">
+                                  #{conv.bookingId}
+                                </span>
+                              )}
+                            </div>
+
+                            <p className="text-xs text-slate-400 truncate leading-tight">
+                              {conv.lastMessageSender === 'admin' ? (
+                                <span className="text-emerald-400 font-semibold">You: </span>
+                              ) : null}
+                              {conv.lastMessageText || 'No message text'}
+                            </p>
+                          </div>
+
+                          {unread > 0 && (
+                            <div className="shrink-0 bg-emerald-500 text-slate-950 text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center shadow-md animate-pulse">
+                              {unread}
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              {/* RIGHT PANE: Selected Conversation Chat Room (8 cols) */}
+              <div className="lg:col-span-8 flex flex-col bg-slate-950/60">
+                {selectedConv ? (
+                  <>
+                    {/* Header */}
+                    <div className="p-3.5 px-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between gap-3 shrink-0">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-full bg-emerald-700 text-white font-bold flex items-center justify-center shrink-0">
+                          {(selectedConv.customerName || 'C').charAt(0).toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-sm font-bold text-white truncate">
+                              {selectedConv.customerName || 'Customer'}
+                            </h4>
+                            {selectedConv.bookingId && (
+                              <span className="bg-purple-500/10 text-purple-300 font-mono text-[10px] px-2 py-0.5 rounded-full border border-purple-500/30">
+                                Ref: #{selectedConv.bookingId}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 text-[11px] text-slate-400">
+                            <span className="flex items-center gap-1 text-emerald-400">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                              Direct Live Channel
+                            </span>
+                            {selectedConv.customerPhone && (
+                              <>
+                                <span>•</span>
+                                <span className="font-mono text-slate-300">{selectedConv.customerPhone}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        {selectedConv.customerPhone && (
+                          <a
+                            href={`https://wa.me/${selectedConv.customerPhone.replace(/[^0-9]/g, '')}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 shadow-sm transition-all"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">WhatsApp Web</span>
+                          </a>
+                        )}
+                        {selectedConv.bookingId && (
+                          <button
+                            onClick={() => {
+                              setActiveTab('bookings');
+                              setBookingFilterStatus('all');
+                            }}
+                            className="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1.5 transition-all cursor-pointer"
+                          >
+                            <FileText className="w-3.5 h-3.5 text-purple-400" />
+                            <span className="hidden sm:inline">View Booking</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Messages Scroll Area */}
+                    <div className="flex-1 p-4 overflow-y-auto space-y-3 custom-scrollbar bg-slate-950/80">
+                      {chatLoading ? (
+                        <div className="h-full flex items-center justify-center text-slate-500 text-xs">
+                          <RefreshCw className="w-5 h-5 animate-spin mr-2 text-emerald-400" />
+                          <span>Loading conversation...</span>
+                        </div>
+                      ) : activeConvMessages.length === 0 ? (
+                        <div className="h-full flex flex-col items-center justify-center text-slate-500 text-xs text-center p-6">
+                          <MessageSquare className="w-10 h-10 text-slate-700 mb-2" />
+                          <p className="font-semibold text-slate-400">No messages in this chat yet</p>
+                          <p className="text-[11px] text-slate-600 mt-1 max-w-sm">
+                            Reply to the customer or select one of the quick templates below to send an instant response.
+                          </p>
+                        </div>
+                      ) : (
+                        activeConvMessages.map((msg, index) => {
+                          const isAdmin = msg.senderRole === 'admin';
+                          return (
+                            <div
+                              key={msg.id || index}
+                              className={`flex flex-col max-w-[80%] ${isAdmin ? 'ml-auto items-end' : 'mr-auto items-start'}`}
+                            >
+                              <div
+                                className={`p-3 rounded-2xl text-xs leading-relaxed shadow-md ${
+                                  isAdmin
+                                    ? 'bg-emerald-600 text-white rounded-tr-none'
+                                    : 'bg-slate-800 text-slate-100 border border-slate-700 rounded-tl-none'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between gap-3 text-[10px] opacity-75 mb-1 font-semibold">
+                                  <span>{isAdmin ? 'You (Support Admin)' : (msg.senderName || selectedConv.customerName || 'Customer')}</span>
+                                </div>
+                                <p className="whitespace-pre-line font-sans">{msg.text}</p>
+                                <div className="flex items-center justify-end gap-1 mt-1 text-[9px] opacity-70">
+                                  <span>{formatChatTime(msg.createdAt)}</span>
+                                  {isAdmin && (
+                                    <CheckCheck className={`w-3 h-3 ${msg.isRead ? 'text-sky-200' : 'text-emerald-200'}`} />
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                      <div ref={chatMessagesEndRef} />
+                    </div>
+
+                    {/* Quick Replies Strip */}
+                    <div className="px-4 py-2 bg-slate-900 border-t border-slate-800/80 overflow-x-auto custom-scrollbar flex items-center gap-1.5 shrink-0">
+                      <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 text-amber-400" />
+                        Quick:
+                      </span>
+                      {adminQuickReplies.map((reply, i) => (
+                        <button
+                          key={i}
+                          onClick={() => handleAdminSendMessage(reply)}
+                          className="bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap transition-all border border-slate-700/60 shrink-0 cursor-pointer"
+                        >
+                          {reply.length > 35 ? `${reply.slice(0, 35)}...` : reply}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Message Input Box */}
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        handleAdminSendMessage();
+                      }}
+                      className="p-3 bg-slate-900 border-t border-slate-800 flex items-center gap-2 shrink-0"
+                    >
+                      <input
+                        type="text"
+                        value={chatInputText}
+                        onChange={(e) => setChatInputText(e.target.value)}
+                        placeholder={`Reply to ${selectedConv.customerName || 'customer'} as Admin...`}
+                        disabled={isSendingChat}
+                        className="flex-1 bg-slate-950 text-white text-xs px-4 py-2.5 rounded-xl border border-slate-700 focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                      />
+                      <button
+                        type="submit"
+                        disabled={isSendingChat || !chatInputText.trim()}
+                        className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        <span>Send Reply</span>
+                      </button>
+                    </form>
+                  </>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-slate-500 text-center p-8">
+                    <div className="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-emerald-400 mb-3 shadow-inner">
+                      <MessageSquare className="w-8 h-8" />
+                    </div>
+                    <h4 className="text-base font-bold text-white mb-1">Live Chat Operations Desk</h4>
+                    <p className="text-xs text-slate-400 max-w-sm">
+                      Select any customer conversation from the list on the left to read their messages, answer rental inquiries, and manage bookings live.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

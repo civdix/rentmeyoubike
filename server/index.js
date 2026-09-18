@@ -24,6 +24,7 @@ import statsRouter from './routes/stats.js';
 import authRouter from './routes/auth.js';
 import uploadRouter from './routes/upload.js';
 import contactRouter from './routes/contact.js';
+import messagesRouter from './routes/messages.js';
 import { authenticateUser } from './middleware/rbac.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -63,12 +64,14 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(authenticateUser);
 
 // Enforce authentication on ALL database-mutating requests (POST, PUT, PATCH, DELETE)
-// except public authentication endpoints, health check, and photo upload
+// except public authentication endpoints, health check, contact, messages, and bookings
 app.use((req, res, next) => {
   if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
     const isPublic = req.path.startsWith('/api/auth/') ||
                      req.path.startsWith('/api/upload') ||
                      req.path.startsWith('/api/contact') ||
+                     req.path.startsWith('/api/messages') ||
+                     req.path.startsWith('/api/bookings') ||
                      req.path.startsWith('/api/health');
 
     if (!isPublic && (!req.user || !req.user.isAuthenticated)) {
@@ -95,7 +98,8 @@ app.get('/', (req, res) => {
       inspections: '/api/inspections',
       auth: '/api/auth',
       upload: '/api/upload',
-      contact: '/api/contact'
+      contact: '/api/contact',
+      messages: '/api/messages'
     },
     timestamp: new Date().toISOString()
   });
@@ -122,6 +126,7 @@ app.use('/api/disputes', disputesRouter);
 app.use('/api/settings', settingsRouter);
 app.use('/api/stats', statsRouter);
 app.use('/api/contact', contactRouter);
+app.use('/api/messages', messagesRouter);
 
 // 404 Handler for API
 app.use((req, res) => {

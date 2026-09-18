@@ -168,6 +168,16 @@ const COLUMN_MAP = {
   // email_verifications
   expiresat: 'expiresAt',
 
+  // messages
+  conversationid: 'conversationId',
+  senderrole: 'senderRole',
+  sendername: 'senderName',
+  senderphone: 'senderPhone',
+  receiverrole: 'receiverRole',
+  customerphone: 'customerPhone',
+  customername: 'customerName',
+  isread: 'isRead',
+
   // uploaded_images
   fileid: 'fileId',
   thumbnailurl: 'thumbnailUrl'
@@ -523,6 +533,24 @@ export async function initDatabase() {
         ON CONFLICT (id) DO NOTHING;
 
         ALTER TABLE owners ADD COLUMN IF NOT EXISTS upiId TEXT DEFAULT '';
+
+        CREATE TABLE IF NOT EXISTS messages (
+          id TEXT PRIMARY KEY,
+          bookingId TEXT,
+          conversationId TEXT NOT NULL,
+          senderRole TEXT NOT NULL,
+          senderName TEXT NOT NULL,
+          senderPhone TEXT,
+          receiverRole TEXT NOT NULL,
+          customerPhone TEXT,
+          customerName TEXT,
+          text TEXT NOT NULL,
+          isRead INTEGER DEFAULT 0,
+          createdAt TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages(conversationId);
+        CREATE INDEX IF NOT EXISTS idx_messages_booking ON messages(bookingId);
       `);
       console.log('✅ Supabase PostgreSQL tables verified ready. No mock data seeded.');
     } catch (pgInitErr) {
@@ -533,6 +561,24 @@ export async function initDatabase() {
     console.log('ℹ️ Running in local SQLite mode (vrindavan.db)');
     try {
       sqliteDb.prepare("ALTER TABLE owners ADD COLUMN upiId TEXT DEFAULT ''").run();
+      sqliteDb.exec(`
+        CREATE TABLE IF NOT EXISTS messages (
+          id TEXT PRIMARY KEY,
+          bookingId TEXT,
+          conversationId TEXT NOT NULL,
+          senderRole TEXT NOT NULL,
+          senderName TEXT NOT NULL,
+          senderPhone TEXT,
+          receiverRole TEXT NOT NULL,
+          customerPhone TEXT,
+          customerName TEXT,
+          text TEXT NOT NULL,
+          isRead INTEGER DEFAULT 0,
+          createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages(conversationId);
+        CREATE INDEX IF NOT EXISTS idx_messages_booking ON messages(bookingId);
+      `);
     } catch (e) {}
   }
 }

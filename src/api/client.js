@@ -468,3 +468,31 @@ export async function apiSendContactMessage({ name, email, to, subject, message 
     body: JSON.stringify({ name, email, to, subject, message })
   });
 }
+
+// ==================== LIVE CHAT / MESSAGING ====================
+export async function apiFetchConversations() {
+  return request('/messages/conversations');
+}
+
+export async function apiFetchMessages(params = {}) {
+  const query = new URLSearchParams();
+  if (params.conversationId) query.append('conversationId', params.conversationId);
+  if (params.bookingId) query.append('bookingId', params.bookingId);
+  if (params.customerPhone) query.append('customerPhone', params.customerPhone);
+  const qs = query.toString();
+  return request(`/messages${qs ? `?${qs}` : ''}`);
+}
+
+export async function apiSendMessage(data) {
+  return request('/messages', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+}
+
+export async function apiMarkMessagesRead(conversationId) {
+  return request(`/messages/${conversationId}/read`, {
+    method: 'PATCH'
+  });
+}
+
