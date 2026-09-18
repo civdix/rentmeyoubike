@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useApp } from '../context/AppContext';
-import { MapPin, User, LogIn, LogOut, ChevronDown, ShieldCheck, Bike, Search, CalendarCheck, UserPlus, Mail } from 'lucide-react';
+import { MapPin, User, LogIn, LogOut, ChevronDown, ShieldCheck, Bike, Search, CalendarCheck, UserPlus, Mail, PlusCircle, IndianRupee } from 'lucide-react';
 import { VrindavanScooterIcon, VrindavanFeatherIcon, WhatsAppBrandIcon, KeyHandoverIcon } from './CustomIcons';
 
 export const Header = () => {
@@ -21,7 +21,9 @@ export const Header = () => {
     logoutUser,
     vehicles,
     bookings,
-    promptSwitchToHost
+    promptSwitchToHost,
+    hostTab,
+    setHostTab
   } = useApp();
 
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -43,6 +45,32 @@ export const Header = () => {
       if (currentUser.name && b.customerName && b.customerName.toLowerCase().trim() === currentUser.name.toLowerCase().trim()) {
         return true;
       }
+      return false;
+    }).length;
+  }, [bookings, currentUser]);
+
+  // Host fleet vehicles count
+  const myVehiclesCount = useMemo(() => {
+    if (!currentUser) return 0;
+    const currentHostPhone = (currentUser.phone || '').replace(/[^0-9]/g, '');
+    const currentHostName = (currentUser.name || '').toLowerCase().trim();
+    return (vehicles || []).filter((v) => {
+      const vPhone = (v.ownerPhone || '').replace(/[^0-9]/g, '');
+      if (currentHostPhone && vPhone && currentHostPhone.slice(-10) === vPhone.slice(-10)) return true;
+      if (v.ownerName && currentHostName && v.ownerName.toLowerCase().trim() === currentHostName) return true;
+      return false;
+    }).length;
+  }, [vehicles, currentUser]);
+
+  // Host incoming rented bookings count
+  const myHostBookingsCount = useMemo(() => {
+    if (!currentUser) return 0;
+    const currentHostPhone = (currentUser.phone || '').replace(/[^0-9]/g, '');
+    const currentHostName = (currentUser.name || '').toLowerCase().trim();
+    return (bookings || []).filter((b) => {
+      const bPhone = (b.ownerPhone || '').replace(/[^0-9]/g, '');
+      if (currentHostPhone && bPhone && currentHostPhone.slice(-10) === bPhone.slice(-10)) return true;
+      if (b.ownerName && currentHostName && b.ownerName.toLowerCase().trim() === currentHostName) return true;
       return false;
     }).length;
   }, [bookings, currentUser]);
@@ -155,59 +183,146 @@ export const Header = () => {
           </div>
         </Link>
 
-        {/* Customer Center Nav Links (Next.js real routes) */}
-        <nav className="hidden md:flex items-center gap-1.5 bg-slate-950/70 p-1.5 rounded-2xl border border-slate-800/80 text-xs font-bold">
-          <Link
-            href="/"
-            className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
-              isHome
-                ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-            }`}
-          >
-            <span>Home</span>
-          </Link>
-          <Link
-            href="/bikes"
-            className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
-              isBikes
-                ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-            }`}
-          >
-            <Search className="w-3.5 h-3.5" />
-            <span>Browse Marketplace</span>
-            {activeVehiclesCount > 0 && (
-              <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
+        {/* Role-Specific Nav Links */}
+        {role === 'owner' ? (
+          <nav className="hidden md:flex items-center gap-1.5 bg-slate-950/80 p-1.5 rounded-2xl border border-amber-500/30 text-xs font-bold">
+            <button
+              type="button"
+              onClick={() => {
+                setHostTab('inventory');
+                if (pathname !== '/host') router.push('/host?tab=inventory');
+              }}
+              className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+                pathname === '/host' && (hostTab === 'inventory' || hostTab === 'my_listings')
+                  ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <Bike className="w-3.5 h-3.5" />
+              <span>Inventory</span>
+              {myVehiclesCount > 0 && (
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
+                  pathname === '/host' && (hostTab === 'inventory' || hostTab === 'my_listings')
+                    ? 'bg-slate-950 text-amber-300'
+                    : 'bg-slate-800 text-slate-300 border border-slate-700'
+                }`}>
+                  {myVehiclesCount}
+                </span>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setHostTab('add_new');
+                if (pathname !== '/host') router.push('/host?tab=add_new');
+              }}
+              className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+                pathname === '/host' && hostTab === 'add_new'
+                  ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <PlusCircle className="w-3.5 h-3.5" />
+              <span>List Your Bike</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setHostTab('bookings');
+                if (pathname !== '/host') router.push('/host?tab=bookings');
+              }}
+              className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+                pathname === '/host' && hostTab === 'bookings'
+                  ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <CalendarCheck className="w-3.5 h-3.5" />
+              <span>My Bookings</span>
+              {myHostBookingsCount > 0 && (
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
+                  pathname === '/host' && hostTab === 'bookings'
+                    ? 'bg-slate-950 text-amber-300'
+                    : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                }`}>
+                  {myHostBookingsCount}
+                </span>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setHostTab('payments');
+                if (pathname !== '/host') router.push('/host?tab=payments');
+              }}
+              className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+                pathname === '/host' && hostTab === 'payments'
+                  ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <IndianRupee className="w-3.5 h-3.5" />
+              <span>Payments &amp; Refunds</span>
+            </button>
+          </nav>
+        ) : (
+          /* Customer Center Nav Links (Next.js real routes) */
+          <nav className="hidden md:flex items-center gap-1.5 bg-slate-950/70 p-1.5 rounded-2xl border border-slate-800/80 text-xs font-bold">
+            <Link
+              href="/"
+              className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                isHome
+                  ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <span>Home</span>
+            </Link>
+            <Link
+              href="/bikes"
+              className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
                 isBikes
-                  ? 'bg-emerald-700 text-white'
-                  : 'bg-slate-800 text-slate-300 border border-slate-700'
-              }`}>
-                {activeVehiclesCount}
-              </span>
-            )}
-          </Link>
-          <Link
-            href="/my-bookings"
-            className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 relative ${
-              isBookings
-                ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-            }`}
-          >
-            <CalendarCheck className="w-3.5 h-3.5" />
-            <span>My Bookings</span>
-            {userBookingsCount > 0 && (
-              <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
+                  ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span>Browse Marketplace</span>
+              {activeVehiclesCount > 0 && (
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
+                  isBikes
+                    ? 'bg-emerald-700 text-white'
+                    : 'bg-slate-800 text-slate-300 border border-slate-700'
+                }`}>
+                  {activeVehiclesCount}
+                </span>
+              )}
+            </Link>
+            <Link
+              href="/my-bookings"
+              className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 relative ${
                 isBookings
-                  ? 'bg-emerald-700 text-white'
-                  : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-              }`}>
-                {userBookingsCount}
-              </span>
-            )}
-          </Link>
-        </nav>
+                  ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <CalendarCheck className="w-3.5 h-3.5" />
+              <span>My Bookings</span>
+              {userBookingsCount > 0 && (
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
+                  isBookings
+                    ? 'bg-emerald-700 text-white'
+                    : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                }`}>
+                  {userBookingsCount}
+                </span>
+              )}
+            </Link>
+          </nav>
+        )}
 
         {/* Right Side Actions: Host CTA + Profile / Sign In */}
         <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
@@ -294,14 +409,29 @@ export const Header = () => {
                         </button>
                       )}
 
-                      <Link
-                        href="/my-bookings"
-                        onClick={() => setProfileDropdownOpen(false)}
-                        className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2"
-                      >
-                        <CalendarCheck className="w-3.5 h-3.5 text-teal-400" />
-                        <span>My Bookings</span>
-                      </Link>
+                      {role === 'owner' ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setProfileDropdownOpen(false);
+                            setHostTab('bookings');
+                            if (pathname !== '/host') router.push('/host?tab=bookings');
+                          }}
+                          className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
+                        >
+                          <CalendarCheck className="w-3.5 h-3.5 text-teal-400" />
+                          <span>Fleet Bookings ({myHostBookingsCount})</span>
+                        </button>
+                      ) : (
+                        <Link
+                          href="/my-bookings"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2"
+                        >
+                          <CalendarCheck className="w-3.5 h-3.5 text-teal-400" />
+                          <span>My Bookings</span>
+                        </Link>
+                      )}
 
                       {/* Admin Access ONLY for verified platform administrators */}
                       {currentUser?.role === 'admin' && (

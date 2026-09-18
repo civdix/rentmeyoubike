@@ -346,6 +346,19 @@ export const AppProvider = ({ children }) => {
   const [isSwitchToHostModalOpen, setIsSwitchToHostModalOpen] = useState(false);
   const promptSwitchToHost = () => setIsSwitchToHostModalOpen(true);
   const closeSwitchToHostModal = () => setIsSwitchToHostModalOpen(false);
+
+  // Host Portal Navigation Tab: 'inventory' | 'add_new' | 'bookings' | 'payments'
+  const [hostTab, setHostTab] = useState(() => {
+    if (typeof window === 'undefined') return 'inventory';
+    return localStorage.getItem('vr_host_tab') || 'inventory';
+  });
+
+  const handleSetHostTab = (newTab) => {
+    setHostTab(newTab);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('vr_host_tab', newTab);
+    }
+  };
   const confirmSwitchToHost = () => {
     setIsSwitchToHostModalOpen(false);
     handleSetRole('owner');
@@ -889,6 +902,8 @@ export const AppProvider = ({ children }) => {
         logoutUser,
         customerTab: 'home',
         setCustomerTab: () => {},
+        hostTab,
+        setHostTab: handleSetHostTab,
         isSwitchToHostModalOpen,
         promptSwitchToHost,
         closeSwitchToHostModal,

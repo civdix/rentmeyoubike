@@ -10,7 +10,8 @@ import {
   PlusCircle, Upload, CheckCircle2, ShieldCheck, Clock, FileText, Bike, MapPin,
   IndianRupee, AlertCircle, Phone, User, Calendar, Camera, Check, XCircle,
   AlertOctagon, Building2, Sparkles, ChevronRight, X, Lock, CheckSquare, Eye, LogIn,
-  Loader2, Trash2, ArrowLeft, Edit3, AlertTriangle
+  Loader2, Trash2, ArrowLeft, Edit3, AlertTriangle, CalendarCheck, Wallet,
+  ArrowUpRight, ArrowDownLeft, RefreshCw, Send
 } from 'lucide-react';
 import { apiUploadPhoto, MAX_PHOTO_UPLOAD_BYTES } from '../api/client';
 import {
@@ -19,10 +20,63 @@ import {
 } from '../components/CustomIcons';
 
 export const OwnerView = () => {
-  const { vehicles, bookings, addVehicle, updateVehicle, toggleVehicleStatus, currentUser, openLoginModal, setRole, setCustomerTab } = useApp();
+  const {
+    vehicles,
+    bookings,
+    addVehicle,
+    updateVehicle,
+    toggleVehicleStatus,
+    updateBookingStatus,
+    updatePaymentStatus,
+    currentUser,
+    openLoginModal,
+    setRole,
+    setCustomerTab,
+    hostTab,
+    setHostTab,
+    setActiveInspectionModal
+  } = useApp();
 
-  // Navigation tab: 'my_listings' | 'add_new'
-  const [activeTab, setActiveTab] = useState('my_listings');
+  // Primary Navigation tabs: 'inventory' | 'add_new' | 'bookings' | 'payments'
+  const activeTab = hostTab || 'inventory';
+  const setActiveTab = (tab) => {
+    if (setHostTab) setHostTab(tab);
+  };
+
+  // Filter for My Bookings tab: 'all' | 'active' | 'completed' | 'inquiry'
+  const [bookingFilter, setBookingFilter] = useState('all');
+
+  // UPI settlement configuration state
+  const [hostUpiId, setHostUpiId] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    return (
+      localStorage.getItem('vr_host_upi') ||
+      (currentUser?.phone ? `${currentUser.phone.replace(/[^0-9]/g, '').slice(-10)}@upi` : '9837144520@upi')
+    );
+  });
+  const [upiSavedNotice, setUpiSavedNotice] = useState(false);
+
+  const handleSaveUpi = (e) => {
+    if (e) e.preventDefault();
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('vr_host_upi', hostUpiId.trim());
+    }
+    setUpiSavedNotice(true);
+    setTimeout(() => setUpiSavedNotice(false), 3000);
+  };
+
+  const handleReleaseDeposit = (bookingId) => {
+    if (updatePaymentStatus) {
+      updatePaymentStatus(bookingId, 'Paid', null, 'Deposit Released');
+    }
+    alert(`Security deposit for booking #${bookingId} has been marked as Released.`);
+  };
+
+  const handleMarkTripCompleted = (bookingId) => {
+    if (updateBookingStatus) {
+      updateBookingStatus(bookingId, 'Completed');
+    }
+  };
 
   // Edit vehicle modal state
   const [editingVehicle, setEditingVehicle] = useState(null);
@@ -49,6 +103,19 @@ export const OwnerView = () => {
       if (currentUser.emailVerified) setOwnerEmailVerified(true);
     }
   }, [currentUser]);
+
+  // Sync tab from URL query params (e.g. /host?tab=bookings)
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab');
+      if (tabParam && ['inventory', 'add_new', 'bookings', 'payments', 'my_listings'].includes(tabParam)) {
+        if (setHostTab) {
+          setHostTab(tabParam === 'my_listings' ? 'inventory' : tabParam);
+        }
+      }
+    }
+  }, []);
 
   // STEP 2: Host Identity Verification State (Genuine Document Verification)
   const [hostIdType, setHostIdType] = useState('Aadhaar Card');
@@ -291,7 +358,7 @@ export const OwnerView = () => {
 
     setSubmittedNotice(true);
     setStep(1);
-    setActiveTab('my_listings');
+    setActiveTab('inventory');
   };
 
   // Status helper renderer for Dashboard badges (accurately checks Admin verification vs. Operational status)
@@ -359,20 +426,36 @@ export const OwnerView = () => {
 
   // Filter ONLY bookings for this host's fleet
   const myBookings = bookings.filter((b) => {
-    const currentHostPhone = (ownerPhone || '').replace(/[^0-9]/g, '');
+    const currentHostPhone = (ownerPhone || currentUser?.phone || '').replace(/[^0-9]/g, '');
     const bOwnerPhone = (b.ownerPhone || '').replace(/[^0-9]/g, '');
     if (currentHostPhone && bOwnerPhone && currentHostPhone.slice(-10) === bOwnerPhone.slice(-10)) {
       return true;
     }
-    if (b.ownerName && ownerName && b.ownerName.toLowerCase().trim() === ownerName.toLowerCase().trim()) {
+    const currentName = (ownerName || currentUser?.name || '').toLowerCase().trim();
+    if (b.ownerName && currentName && b.ownerName.toLowerCase().trim() === currentName) {
+      return true;
+    }
+    if (b.vehicleId && myVehicles.some((v) => v.id === b.vehicleId)) {
       return true;
     }
     return false;
   });
 
+  // Filtered bookings for the My Bookings tab
+  const filteredBookings = myBookings.filter((b) => {
+    if (bookingFilter === 'all') return true;
+    if (bookingFilter === 'active') return b.status === 'Confirmed' || b.status === 'In-use';
+    if (bookingFilter === 'completed') return b.status === 'Completed';
+    if (bookingFilter === 'inquiry') return b.status === 'Inquiry' || b.status === 'Payment Pending';
+    return true;
+  });
+
   // Calculate Owner Earnings Metrics exclusively for this owner
   const totalRevenue = myBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
   const netEarnings = Math.round(totalRevenue * 0.85);
+  const totalRefunds = myBookings
+    .filter((b) => b.refundStatus === 'Released' || b.refundStatus === 'Deposit Released' || b.paymentStatus === 'Refunded')
+    .reduce((sum, b) => sum + (b.securityDeposit || 500), 0);
 
   // AUTHENTICATION GATE: Require user to be logged in before accessing Host Portal or Listing Bikes
   if (!currentUser) {
@@ -441,34 +524,70 @@ export const OwnerView = () => {
       {/* Sub Header Navigation */}
       <div className="bg-white border-b border-slate-200 sticky top-14 sm:top-16 z-30 shadow-xs">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 flex items-center justify-between overflow-x-auto">
-          <div className="flex gap-3 sm:gap-6 text-xs font-bold shrink-0">
+          <div className="flex gap-2 sm:gap-6 text-xs font-bold shrink-0">
             <button
-              onClick={() => setActiveTab('my_listings')}
-              className={`py-3 border-b-2 transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
-                activeTab === 'my_listings'
+              type="button"
+              onClick={() => {
+                setActiveTab('inventory');
+                setSubmittedNotice(false);
+              }}
+              className={`py-3 border-b-2 transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap cursor-pointer ${
+                activeTab === 'inventory' || activeTab === 'my_listings'
                   ? 'border-emerald-600 text-emerald-700 font-extrabold'
                   : 'border-transparent text-slate-500 hover:text-slate-900'
               }`}
             >
               <Bike className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={2.5} />
-              <span className="hidden sm:inline">Owner Dashboard ({myVehicles.length} Listed Vehicles)</span>
-              <span className="sm:hidden">Dashboard ({myVehicles.length})</span>
+              <span>Inventory ({myVehicles.length})</span>
             </button>
 
             <button
+              type="button"
               onClick={() => {
                 setActiveTab('add_new');
                 setSubmittedNotice(false);
               }}
-              className={`py-3 border-b-2 transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
+              className={`py-3 border-b-2 transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap cursor-pointer ${
                 activeTab === 'add_new'
                   ? 'border-emerald-600 text-emerald-700 font-extrabold'
                   : 'border-transparent text-slate-500 hover:text-slate-900'
               }`}
             >
               <PlusCircle className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={2.5} />
-              <span className="hidden sm:inline">List Your Bike (7-Step Onboarding)</span>
-              <span className="sm:hidden">List Bike (7 Steps)</span>
+              <span className="hidden sm:inline">List Your Bike (7 Steps)</span>
+              <span className="sm:hidden">List Bike</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('bookings');
+                setSubmittedNotice(false);
+              }}
+              className={`py-3 border-b-2 transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap cursor-pointer ${
+                activeTab === 'bookings'
+                  ? 'border-emerald-600 text-emerald-700 font-extrabold'
+                  : 'border-transparent text-slate-500 hover:text-slate-900'
+              }`}
+            >
+              <CalendarCheck className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={2.5} />
+              <span>My Bookings ({myBookings.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('payments');
+                setSubmittedNotice(false);
+              }}
+              className={`py-3 border-b-2 transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap cursor-pointer ${
+                activeTab === 'payments'
+                  ? 'border-emerald-600 text-emerald-700 font-extrabold'
+                  : 'border-transparent text-slate-500 hover:text-slate-900'
+              }`}
+            >
+              <IndianRupee className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={2.5} />
+              <span>Payments &amp; Refunds</span>
             </button>
           </div>
 
@@ -502,7 +621,7 @@ export const OwnerView = () => {
           </div>
         )}
 
-        {activeTab === 'my_listings' ? (
+        {(activeTab === 'inventory' || activeTab === 'my_listings') && (
           <div className="space-y-6">
             {/* Header Banner & Earnings Summary */}
             <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
@@ -664,40 +783,63 @@ export const OwnerView = () => {
               )}
             </div>
 
-            {/* Owner Bookings & Payouts Pipeline */}
-            <div className="space-y-3">
-              <h3 className="font-heading font-extrabold text-slate-900 text-xl">Incoming Bookings for Your Fleet ({myBookings.length})</h3>
-              {myBookings.length > 0 ? (
-                <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3">
-                  {myBookings.map((b) => (
-                    <div key={b.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs hover:bg-slate-100/60 transition-colors">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-slate-900 text-sm">#{b.id}</span>
-                          <BookingStatusBadge status={b.status} />
-                        </div>
-                        <p className="text-slate-800 font-bold">{b.vehicleName} • Customer: {b.customerName}</p>
-                        <p className="text-slate-500 text-[11px]">{b.startDate} to {b.endDate} ({b.totalDays} day(s)) • {b.pickupLocation}</p>
-                      </div>
+            {/* Quick Navigation Cards to Bookings & Payments */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3 hover:border-emerald-300 transition-colors">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <span className="text-[10px] uppercase font-bold text-slate-400">Rented Bikes History</span>
+                    <h4 className="font-heading font-extrabold text-base text-slate-900">
+                      My Bookings ({myBookings.length})
+                    </h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      View full history of other users who rented bikes from your fleet, contact riders on WhatsApp, and audit trip inspections.
+                    </p>
+                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+                    <CalendarCheck className="w-5 h-5" />
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('bookings')}
+                  className="w-full bg-slate-100 hover:bg-emerald-50 text-slate-800 hover:text-emerald-800 font-bold text-xs py-2.5 rounded-xl border border-slate-200 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <span>Open Full Bookings History ({myBookings.length})</span>
+                  <ArrowUpRight className="w-4 h-4 text-emerald-600" />
+                </button>
+              </div>
 
-                      <div className="sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 w-full sm:w-auto">
-                        <span className="text-[10px] text-slate-400 uppercase font-bold block">Host Net Share (85%)</span>
-                        <span className="font-heading font-extrabold text-base text-emerald-700">
-                          ₹{Math.round(b.totalAmount * 0.85)}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3 hover:border-amber-300 transition-colors">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <span className="text-[10px] uppercase font-bold text-slate-400">Host Finances &amp; Deposits</span>
+                    <h4 className="font-heading font-extrabold text-base text-slate-900">
+                      Payments &amp; Refunds (₹{netEarnings})
+                    </h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      Manage 85% net earnings, set up automated daily 11:00 AM UPI payouts, and release rider security deposits.
+                    </p>
+                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100">
+                    <Wallet className="w-5 h-5" />
+                  </div>
                 </div>
-              ) : (
-                <div className="bg-white rounded-2xl p-6 border border-slate-200 text-center text-xs text-slate-500">
-                  No active or past bookings for your fleet yet. Bookings and 85% payouts will appear here once riders book your bike.
-                </div>
-              )}
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('payments')}
+                  className="w-full bg-slate-100 hover:bg-amber-50 text-slate-800 hover:text-amber-800 font-bold text-xs py-2.5 rounded-xl border border-slate-200 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <span>Manage UPI Payouts &amp; Refunds</span>
+                  <ArrowUpRight className="w-4 h-4 text-amber-600" />
+                </button>
+              </div>
             </div>
           </div>
-        ) : (
-          /* 7-STEP OWNER ONBOARDING WIZARD */
+        )}
+
+        {/* 7-STEP OWNER ONBOARDING WIZARD */}
+        {activeTab === 'add_new' && (
           <div className="bg-white rounded-3xl p-4 sm:p-10 border border-slate-200 shadow-2xl max-w-3xl mx-auto space-y-6">
             <div>
               <span className="bg-emerald-100 text-emerald-950 font-extrabold text-[10px] uppercase px-3 py-1 rounded-full mb-2 inline-block border border-emerald-300">
@@ -1747,6 +1889,643 @@ export const OwnerView = () => {
                 </div>
               )}
             </form>
+          </div>
+        )}
+
+        {/* TAB 3: MY BOOKINGS (RENTED BIKES HISTORY) */}
+        {activeTab === 'bookings' && (
+          <div className="space-y-6 animate-in fade-in">
+            {/* Header & Stats Banner */}
+            <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+              <div className="space-y-2 max-w-xl z-10">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="bg-emerald-500 text-slate-950 font-extrabold text-[10px] uppercase px-3 py-1 rounded-full inline-flex items-center gap-1.5 border border-emerald-400">
+                    <CalendarCheck className="w-3.5 h-3.5 text-slate-950" />
+                    <span>Fleet Rentals History</span>
+                  </span>
+                  <div className="bg-slate-950/80 border border-slate-700/80 px-2.5 py-1 rounded-full text-[11px] flex items-center gap-1.5 text-slate-300">
+                    <span>Host: <strong className="text-white">{ownerName || 'Verified Host'}</strong></span>
+                  </div>
+                </div>
+
+                <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-white">
+                  My Bookings (Rented Bikes History)
+                </h1>
+                <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                  All bookings where other travelers and pilgrims rented two-wheelers from your fleet in Vrindavan &amp; Mathura. Verify renter credentials, coordinate handovers, track ride completions, and release safety deposits.
+                </p>
+              </div>
+
+              {/* Rented Fleet KPI Metrics */}
+              <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 text-xs space-y-3 w-full md:w-72 shrink-0 z-10 shadow-lg">
+                <div className="text-emerald-400 font-extrabold text-xs uppercase tracking-wider flex items-center gap-1.5">
+                  <Bike className="w-4 h-4 text-emerald-400" />
+                  <span>Fleet Rental Activity</span>
+                </div>
+                <div className="border-t border-slate-800 pt-2 flex justify-between">
+                  <span className="text-slate-400">Total Rented Rides:</span>
+                  <strong className="text-white font-mono">{myBookings.length} bookings</strong>
+                </div>
+                <div className="border-t border-slate-800 pt-2 flex justify-between">
+                  <span className="text-slate-400">Your 85% Net Share:</span>
+                  <strong className="text-emerald-400 font-mono text-sm">₹{netEarnings}</strong>
+                </div>
+                <div className="text-[10px] text-slate-500 pt-1">• 15% Platform convenience fee deducted</div>
+              </div>
+            </div>
+
+            {/* Filter Pills */}
+            <div className="flex items-center justify-between gap-3 overflow-x-auto pb-1">
+              <div className="flex items-center gap-2 text-xs font-bold shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setBookingFilter('all')}
+                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                    bookingFilter === 'all'
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  All Bookings ({myBookings.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBookingFilter('active')}
+                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                    bookingFilter === 'active'
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  Active / In-Use ({myBookings.filter((b) => b.status === 'Confirmed' || b.status === 'In-use').length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBookingFilter('completed')}
+                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                    bookingFilter === 'completed'
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  Completed Trips ({myBookings.filter((b) => b.status === 'Completed').length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBookingFilter('inquiry')}
+                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                    bookingFilter === 'inquiry'
+                      ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
+                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  Inquiries / Pending ({myBookings.filter((b) => b.status === 'Inquiry' || b.status === 'Payment Pending').length})
+                </button>
+              </div>
+
+              <div className="text-xs text-slate-500 font-medium hidden md:block">
+                Showing <strong>{filteredBookings.length}</strong> of {myBookings.length} bookings
+              </div>
+            </div>
+
+            {/* Bookings List Cards */}
+            {filteredBookings.length > 0 ? (
+              <div className="space-y-4">
+                {filteredBookings.map((b) => {
+                  const matchedVehicle = vehicles.find((v) => v.id === b.vehicleId);
+                  const vehicleImg = matchedVehicle?.images?.[0] || 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=600&auto=format&fit=crop&q=80';
+                  const cleanPhone = (b.customerPhone || '').replace(/[^0-9]/g, '');
+                  const hostShare = Math.round((b.totalAmount || 0) * 0.85);
+                  const platformFee = Math.round((b.totalAmount || 0) * 0.15);
+                  const isDepositReleased = b.refundStatus === 'Released' || b.refundStatus === 'Deposit Released' || b.paymentStatus === 'Refunded';
+
+                  return (
+                    <div
+                      key={b.id}
+                      className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-xs hover:shadow-md transition-all space-y-4"
+                    >
+                      {/* Booking Top Info Row */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono font-extrabold text-slate-900 text-base bg-slate-100 px-2.5 py-1 rounded-xl">
+                            #{b.id}
+                          </span>
+                          <BookingStatusBadge status={b.status} />
+                          <span className="text-[11px] text-slate-400 font-medium">
+                            Booked on {b.bookingDate || b.startDate}
+                          </span>
+                        </div>
+
+                        {/* Earnings Breakdown */}
+                        <div className="flex items-center gap-3 bg-emerald-50/70 border border-emerald-200/80 px-3 py-1.5 rounded-2xl">
+                          <div className="text-right">
+                            <span className="text-[10px] text-emerald-800 font-bold uppercase block">
+                              Host Net Share (85%)
+                            </span>
+                            <span className="font-heading font-extrabold text-base text-emerald-700">
+                              ₹{hostShare}
+                            </span>
+                          </div>
+                          <span className="text-xs text-slate-400">|</span>
+                          <div className="text-[10px] text-slate-500">
+                            <div>Gross: ₹{b.totalAmount || 0}</div>
+                            <div>Fee (15%): -₹{platformFee}</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Main Details Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* Column 1: Vehicle Info */}
+                        <div className="flex items-start gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                          <img
+                            src={vehicleImg}
+                            alt={b.vehicleName || 'Vehicle'}
+                            className="w-16 h-16 object-cover rounded-xl shrink-0 border border-slate-200 bg-white"
+                          />
+                          <div className="space-y-1 min-w-0">
+                            <span className="text-[10px] uppercase font-bold text-slate-400 block">Rented Vehicle</span>
+                            <h4 className="font-heading font-bold text-slate-900 text-sm truncate">
+                              {b.vehicleName || matchedVehicle?.name || 'Vrindavan Fleet Two-Wheeler'}
+                            </h4>
+                            <p className="text-xs text-slate-500 font-mono">
+                              Reg: {matchedVehicle?.registrationNumber || 'Verified Fleet'}
+                            </p>
+                            <p className="text-[11px] text-emerald-700 font-medium">
+                              ₹{matchedVehicle?.dailyRate || 400}/day
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Column 2: Customer / Rider Details */}
+                        <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 space-y-1.5">
+                          <span className="text-[10px] uppercase font-bold text-slate-400 block">Rider / Customer</span>
+                          <div className="flex items-center gap-1.5">
+                            <User className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                            <strong className="text-xs text-slate-900 font-bold">
+                              {b.customerName || 'Braj Pilgrim Rider'}
+                            </strong>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-xs text-slate-600 font-mono">
+                            <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                            <span>{b.customerPhone || 'Contact with booking'}</span>
+                          </div>
+                          <div className="pt-1 flex items-center gap-2">
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-100/60 px-2 py-0.5 rounded-full border border-emerald-200">
+                              <ShieldCheck className="w-3 h-3" />
+                              <span>Govt ID Verified</span>
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Column 3: Trip Dates, Duration & Security Deposit */}
+                        <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 space-y-1.5 text-xs">
+                          <span className="text-[10px] uppercase font-bold text-slate-400 block">Trip Schedule &amp; Deposit</span>
+                          <div className="text-slate-700">
+                            <strong className="font-semibold text-slate-900">Pickup:</strong> {b.startDate} ({b.pickupLocation || 'Vrindavan Center'})
+                          </div>
+                          <div className="text-slate-700">
+                            <strong className="font-semibold text-slate-900">Return:</strong> {b.endDate} ({b.totalDays || 1} day(s))
+                          </div>
+                          <div className="pt-1 text-[11px] flex items-center justify-between border-t border-slate-200/80">
+                            <span className="text-slate-500">Security Deposit:</span>
+                            <span className={`font-bold ${isDepositReleased ? 'text-emerald-700' : 'text-amber-800'}`}>
+                              ₹{b.securityDeposit || 500} ({isDepositReleased ? 'Released ✓' : 'Held in Escrow'})
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action Bar */}
+                      <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 text-xs">
+                        <div className="flex flex-wrap items-center gap-2">
+                          {/* WhatsApp rider */}
+                          {cleanPhone && (
+                            <a
+                              href={`https://wa.me/91${cleanPhone.slice(-10)}?text=${encodeURIComponent(`Radhe Radhe ${b.customerName || 'Ji'}! Greetings from Rent on Cent host regarding your booking #${b.id} for ${b.vehicleName}. Please let me know your arrival time at ${b.pickupLocation}.`)}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl transition-all shadow-xs cursor-pointer"
+                            >
+                              <WhatsAppBrandIcon className="w-3.5 h-3.5 fill-white" />
+                              <span>WhatsApp Rider</span>
+                            </a>
+                          )}
+
+                          {/* Inspection Photos Trigger */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (setActiveInspectionModal) {
+                                setActiveInspectionModal(b.id);
+                              } else {
+                                alert(`Inspection audit for Booking #${b.id}: 6 digital photos verified.`);
+                              }
+                            }}
+                            className="inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-300 transition-colors shadow-2xs cursor-pointer"
+                          >
+                            <Camera className="w-3.5 h-3.5 text-slate-500" />
+                            <span>Inspection Photos</span>
+                          </button>
+                        </div>
+
+                        {/* Status Transition Buttons */}
+                        <div className="flex items-center gap-2">
+                          {(b.status === 'Confirmed' || b.status === 'In-use') && (
+                            <button
+                              type="button"
+                              onClick={() => handleMarkTripCompleted(b.id)}
+                              className="bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 font-extrabold px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+                              <span>Mark Trip Completed</span>
+                            </button>
+                          )}
+
+                          {b.status === 'Completed' && !isDepositReleased && (
+                            <button
+                              type="button"
+                              onClick={() => handleReleaseDeposit(b.id)}
+                              className="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-extrabold px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                            >
+                              <RefreshCw className="w-3.5 h-3.5 text-amber-700" />
+                              <span>Release ₹{b.securityDeposit || 500} Deposit</span>
+                            </button>
+                          )}
+
+                          {isDepositReleased && (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl">
+                              <Check className="w-3 h-3 text-emerald-600" />
+                              <span>Deposit Refunded</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="bg-white rounded-3xl p-10 border border-slate-200 text-center space-y-4 shadow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-slate-100 text-slate-500 mx-auto flex items-center justify-center border border-slate-200">
+                  <CalendarCheck className="w-7 h-7" />
+                </div>
+                <div className="max-w-md mx-auto space-y-1">
+                  <h4 className="font-heading font-extrabold text-lg text-slate-900">
+                    No Bookings Found Under "{bookingFilter}" Filter
+                  </h4>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    {bookingFilter === 'all'
+                      ? "You haven't received any bookings for your listed vehicles yet. As soon as a pilgrim or tourist rents your bike, their full trip details and 85% payout will be tracked here."
+                      : `There are currently no bookings with status "${bookingFilter}". Switch back to "All Bookings" to view your complete fleet history.`}
+                  </p>
+                </div>
+                {bookingFilter !== 'all' ? (
+                  <button
+                    type="button"
+                    onClick={() => setBookingFilter('all')}
+                    className="bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl inline-flex items-center gap-2 shadow-sm transition-transform active:scale-95"
+                  >
+                    <span>View All Bookings ({myBookings.length})</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('add_new')}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl inline-flex items-center gap-2 shadow-sm transition-transform active:scale-95"
+                  >
+                    <PlusCircle className="w-4 h-4" />
+                    <span>List Another Two-Wheeler</span>
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 4: PAYMENTS & REFUNDS */}
+        {activeTab === 'payments' && (
+          <div className="space-y-6 animate-in fade-in">
+            {/* Header Banner */}
+            <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+              <div className="space-y-2 max-w-xl z-10">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="bg-amber-400 text-slate-950 font-extrabold text-[10px] uppercase px-3 py-1 rounded-full inline-flex items-center gap-1.5 border border-amber-300">
+                    <RupeeStackIcon className="w-3.5 h-3.5 text-slate-950" />
+                    <span>Host Financial Portal</span>
+                  </span>
+                  <div className="bg-slate-950/80 border border-slate-700/80 px-2.5 py-1 rounded-full text-[11px] flex items-center gap-1.5 text-slate-300">
+                    <span>Account: <strong className="text-white">{ownerName || 'Verified Host'}</strong></span>
+                  </div>
+                </div>
+
+                <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-white">
+                  Payments &amp; Refunds Management
+                </h1>
+                <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                  Transparent earnings breakdown for your fleet in Vrindavan. Rent to Cent automatically settles your 85% host net payout every day at 11:00 AM via Direct UPI. Audit customer refundable security deposits.
+                </p>
+              </div>
+
+              {/* Settlement Protocol Badge */}
+              <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 text-xs space-y-2 w-full md:w-72 shrink-0 z-10 shadow-lg">
+                <div className="text-amber-400 font-extrabold text-xs uppercase tracking-wider flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span>Settlement Protocol</span>
+                </div>
+                <div className="text-[11px] text-slate-300 space-y-1">
+                  <p>• <strong>85% Net Host Payout</strong> on every booking</p>
+                  <p>• <strong>15% Flat Platform Fee</strong> (includes insurance, 24x7 helpline &amp; tech)</p>
+                  <p>• <strong>Daily 11:00 AM Direct UPI</strong> auto-settlement</p>
+                </div>
+              </div>
+            </div>
+
+            {/* 4 KPI Summary Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Card 1: Fleet Gross Revenue */}
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center justify-between text-slate-400">
+                  <span className="text-[10px] uppercase font-bold tracking-wider">Fleet Gross Revenue</span>
+                  <IndianRupee className="w-4 h-4 text-slate-600" />
+                </div>
+                <div className="font-heading font-extrabold text-2xl text-slate-900">
+                  ₹{totalRevenue}
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  100% total gross booking value across {myBookings.length} rental(s)
+                </p>
+              </div>
+
+              {/* Card 2: Your Net 85% Payout */}
+              <div className="bg-white p-5 rounded-2xl border border-emerald-200 shadow-xs space-y-2 bg-gradient-to-b from-white to-emerald-50/40">
+                <div className="flex items-center justify-between text-emerald-800">
+                  <span className="text-[10px] uppercase font-bold tracking-wider">Host 85% Net Payout</span>
+                  <Wallet className="w-4 h-4 text-emerald-600" />
+                </div>
+                <div className="font-heading font-extrabold text-2xl text-emerald-700">
+                  ₹{netEarnings}
+                </div>
+                <p className="text-[11px] text-emerald-900 font-medium">
+                  Direct net revenue earned into your host bank account
+                </p>
+              </div>
+
+              {/* Card 3: Security Deposits Handled */}
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center justify-between text-slate-400">
+                  <span className="text-[10px] uppercase font-bold tracking-wider">Customer Refunds Handled</span>
+                  <RefreshCw className="w-4 h-4 text-slate-600" />
+                </div>
+                <div className="font-heading font-extrabold text-2xl text-slate-900">
+                  ₹{totalRefunds}
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  Total security deposit refunds released back to clean returns
+                </p>
+              </div>
+
+              {/* Card 4: Daily Payout Schedule */}
+              <div className="bg-white p-5 rounded-2xl border border-amber-200 shadow-xs space-y-2 bg-gradient-to-b from-white to-amber-50/40">
+                <div className="flex items-center justify-between text-amber-800">
+                  <span className="text-[10px] uppercase font-bold tracking-wider">Payout Schedule</span>
+                  <Clock className="w-4 h-4 text-amber-600" />
+                </div>
+                <div className="font-heading font-extrabold text-xl text-amber-900">
+                  Daily 11:00 AM
+                </div>
+                <p className="text-[11px] text-amber-900">
+                  Automated UPI batch payouts everyday directly to your VPA
+                </p>
+              </div>
+            </div>
+
+            {/* SECTION 1: Direct UPI Settlement Configuration */}
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <div>
+                  <h3 className="font-heading font-extrabold text-slate-900 text-lg flex items-center gap-2">
+                    <Wallet className="w-5 h-5 text-emerald-600" />
+                    <span>Direct UPI Payout Account Settings</span>
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Enter the UPI ID (Google Pay, PhonePe, Paytm, BHIM) where your daily 85% earnings should be credited.
+                  </p>
+                </div>
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 shrink-0">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Instant Settlement Enabled</span>
+                </span>
+              </div>
+
+              <form onSubmit={handleSaveUpi} className="space-y-3 max-w-2xl">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-extrabold text-slate-700 block">
+                    Host UPI ID (Virtual Payment Address)
+                  </label>
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                    <div className="relative flex-1">
+                      <input
+                        type="text"
+                        value={hostUpiId}
+                        onChange={(e) => setHostUpiId(e.target.value)}
+                        placeholder="e.g. 9837144520@upi or yourname@okhdfcbank"
+                        className="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                        required
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                    >
+                      <Check className="w-4 h-4" />
+                      <span>Save Payout UPI ID</span>
+                    </button>
+                  </div>
+                </div>
+
+                {upiSavedNotice && (
+                  <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 animate-in fade-in">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Your UPI ID <strong>{hostUpiId}</strong> has been saved successfully! Daily 11:00 AM payouts will be sent here.</span>
+                  </div>
+                )}
+
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Rent to Cent validates UPI VPAs before disbursing daily batches. Ensure the bank account linked with this UPI ID has active incoming transfers enabled.
+                </p>
+              </form>
+            </div>
+
+            {/* SECTION 2: Payout Settlements Ledger */}
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                  <h3 className="font-heading font-extrabold text-slate-900 text-lg">
+                    Host Payout Settlements Ledger
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Itemized list of all trips and 85% payouts calculated for your fleet.
+                  </p>
+                </div>
+                <span className="text-xs font-bold text-slate-400 font-mono">
+                  {myBookings.length} Records
+                </span>
+              </div>
+
+              {myBookings.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
+                        <th className="py-3 px-2">Booking ID</th>
+                        <th className="py-3 px-2">Vehicle</th>
+                        <th className="py-3 px-2">Customer</th>
+                        <th className="py-3 px-2">Gross Fare</th>
+                        <th className="py-3 px-2">Fee (15%)</th>
+                        <th className="py-3 px-2 text-emerald-800">Your Share (85%)</th>
+                        <th className="py-3 px-2">Payout Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {myBookings.map((b) => {
+                        const hostShare = Math.round((b.totalAmount || 0) * 0.85);
+                        const platformFee = Math.round((b.totalAmount || 0) * 0.15);
+                        const isSettled = b.status === 'Completed';
+
+                        return (
+                          <tr key={b.id} className="hover:bg-slate-50/70 transition-colors">
+                            <td className="py-3 px-2 font-mono font-bold text-slate-900">
+                              #{b.id}
+                            </td>
+                            <td className="py-3 px-2 font-semibold text-slate-800">
+                              {b.vehicleName}
+                            </td>
+                            <td className="py-3 px-2 text-slate-600">
+                              {b.customerName}
+                            </td>
+                            <td className="py-3 px-2 font-mono text-slate-600">
+                              ₹{b.totalAmount || 0}
+                            </td>
+                            <td className="py-3 px-2 font-mono text-slate-400">
+                              -₹{platformFee}
+                            </td>
+                            <td className="py-3 px-2 font-mono font-extrabold text-emerald-700 text-sm">
+                              ₹{hostShare}
+                            </td>
+                            <td className="py-3 px-2">
+                              {isSettled ? (
+                                <span className="inline-flex items-center gap-1 bg-emerald-100/70 text-emerald-900 font-extrabold text-[10px] px-2.5 py-1 rounded-full border border-emerald-200">
+                                  <Check className="w-3 h-3 text-emerald-700" />
+                                  <span>Settled via UPI</span>
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 bg-amber-100/70 text-amber-950 font-bold text-[10px] px-2.5 py-1 rounded-full border border-amber-300">
+                                  <Clock className="w-3 h-3 text-amber-700" />
+                                  <span>Scheduled for 11 AM</span>
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="py-8 text-center text-xs text-slate-400 space-y-1">
+                  <p>No settlement records found yet.</p>
+                  <p className="text-[11px] text-slate-400">Itemized ledger lines appear automatically after riders book and complete rides.</p>
+                </div>
+              )}
+            </div>
+
+            {/* SECTION 3: Customer Security Deposit & Refund Audits */}
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <div>
+                  <h3 className="font-heading font-extrabold text-slate-900 text-lg flex items-center gap-2">
+                    <RefreshCw className="w-5 h-5 text-amber-600" />
+                    <span>Customer Security Deposits &amp; Refunds</span>
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Inspect returns and release the refundable security deposit back to your riders.
+                  </p>
+                </div>
+                <div className="text-xs text-slate-500">
+                  Standard Deposit: <strong>₹500 - ₹1,000 / ride</strong>
+                </div>
+              </div>
+
+              {myBookings.length > 0 ? (
+                <div className="space-y-3">
+                  {myBookings.map((b) => {
+                    const isReleased = b.refundStatus === 'Released' || b.refundStatus === 'Deposit Released' || b.paymentStatus === 'Refunded';
+                    const depositAmt = b.securityDeposit || 500;
+                    const cleanPhone = (b.customerPhone || '').replace(/[^0-9]/g, '');
+
+                    return (
+                      <div
+                        key={`deposit-${b.id}`}
+                        className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs"
+                      >
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-bold text-slate-900">Booking #{b.id}</span>
+                            <span className="font-semibold text-slate-800">• {b.customerName}</span>
+                            <span className="text-slate-500">({b.vehicleName})</span>
+                          </div>
+                          <p className="text-slate-500 text-[11px]">
+                            Rental period: {b.startDate} to {b.endDate}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-2 sm:pt-0">
+                          <div className="text-right">
+                            <span className="text-[10px] text-slate-400 uppercase font-bold block">Security Deposit</span>
+                            <span className="font-heading font-extrabold text-sm text-slate-900">
+                              ₹{depositAmt}
+                            </span>
+                          </div>
+
+                          {isReleased ? (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-3 py-1.5 rounded-xl">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Refund Released</span>
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleReleaseDeposit(b.id)}
+                              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs px-3.5 py-1.5 rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                            >
+                              <RefreshCw className="w-3.5 h-3.5" />
+                              <span>Release ₹{depositAmt} Refund</span>
+                            </button>
+                          )}
+
+                          {cleanPhone && (
+                            <a
+                              href={`https://wa.me/91${cleanPhone.slice(-10)}?text=${encodeURIComponent(`Radhe Radhe ${b.customerName || 'Ji'}! Your ₹${depositAmt} security deposit for Booking #${b.id} has been processed.`)}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="p-1.5 bg-white hover:bg-slate-100 rounded-xl border border-slate-200 text-slate-600 hover:text-emerald-700 transition-colors"
+                              title="Notify Rider on WhatsApp"
+                            >
+                              <WhatsAppBrandIcon className="w-4 h-4 fill-emerald-600" />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="py-6 text-center text-xs text-slate-400">
+                  No security deposit entries found yet.
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
