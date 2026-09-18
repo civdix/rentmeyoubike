@@ -23,6 +23,78 @@ function formatVehicle(row) {
   };
 }
 
+// Helper to verify if an authenticated user is the host/owner of a vehicle or platform admin
+export async function isAuthorizedVehicleHost(vehicle, user) {
+  if (!vehicle || !user) return false;
+  // 1. Admin always has full edit rights
+  if (user.role === 'admin') return true;
+
+  // 2. Direct ID matches (handling ID prefixes: own-, usr-, cust-)
+  if (user.id && vehicle.ownerId) {
+    if (user.id === vehicle.ownerId) return true;
+    const cleanUserId = String(user.id).replace(/^(own|usr|cust)-/, '');
+    const cleanOwnerId = String(vehicle.ownerId).replace(/^(own|usr|cust)-/, '');
+    if (cleanUserId && cleanOwnerId && cleanUserId === cleanOwnerId) return true;
+  }
+
+  // 3. Phone matching (compare last 10 digits to normalize +91, spaces, dashes)
+  const userDigits = String(user.phone || '').replace(/[^0-9]/g, '');
+  const ownerDigits = String(vehicle.ownerPhone || '').replace(/[^0-9]/g, '');
+  if (userDigits.length >= 10 && ownerDigits.length >= 10) {
+    if (userDigits.slice(-10) === ownerDigits.slice(-10)) return true;
+  }
+
+  // 4. Email matching (case-insensitive normalized)
+  const userEmail = String(user.email || '').trim().toLowerCase();
+  const ownerEmail = String(vehicle.ownerEmail || '').trim().toLowerCase();
+  if (userEmail && ownerEmail && userEmail === ownerEmail) return true;
+
+  // 5. Name matching (case-insensitive, trimmed)
+  const userName = String(user.name || '').trim().toLowerCase();
+  const ownerName = String(vehicle.ownerName || '').trim().toLowerCase();
+  if (userName && ownerName && userName === ownerName && userName.length > 2) return true;
+
+  // 6. Check database cross-reference: does the user match an owner record linked to this vehicle?
+  try {
+    if (vehicle.ownerId) {
+      const dbOwner = await db.prepare('SELECT * FROM owners WHERE id = ?').get(vehicle.ownerId);
+      if (dbOwner) {
+        const dbOwnerDigits = String(dbOwner.phone || '').replace(/[^0-9]/g, '');
+        if (userDigits.length >= 10 && dbOwnerDigits.length >= 10 && userDigits.slice(-10) === dbOwnerDigits.slice(-10)) {
+          return true;
+        }
+        if (userEmail && dbOwner.email && userEmail === dbOwner.email.trim().toLowerCase()) {
+          return true;
+        }
+      }
+    }
+  } catch (e) {}
+
+  // 7. Check database cross-reference: does user record in customers/owners match vehicle's ownerPhone/ownerEmail?
+  try {
+    if (user.id) {
+      const dbUser = (await db.prepare('SELECT phone, email FROM customers WHERE id = ?').get(user.id)) ||
+                     (await db.prepare('SELECT phone, email FROM owners WHERE id = ?').get(user.id));
+      if (dbUser) {
+        const dbUserDigits = String(dbUser.phone || '').replace(/[^0-9]/g, '');
+        if (dbUserDigits.length >= 10 && ownerDigits.length >= 10 && dbUserDigits.slice(-10) === ownerDigits.slice(-10)) {
+          return true;
+        }
+        if (ownerEmail && dbUser.email && ownerEmail === dbUser.email.trim().toLowerCase()) {
+          return true;
+        }
+      }
+    }
+  } catch (e) {}
+
+  // 8. Self-hosted unassigned vehicle or default self listing
+  if (!vehicle.ownerId || vehicle.ownerId === 'self' || vehicle.ownerId === 'self-hosted') {
+    return true;
+  }
+
+  return false;
+}
+
 // GET /api/vehicles - List all vehicles with optional filters
 router.get('/', async (req, res) => {
   try {
@@ -181,7 +253,7 @@ router.post('/', requireRole('owner', 'admin'), async (req, res) => {
   }
 });
 
-// PUT /api/vehicles/:id - Edit bike details (Owner & Admin only)
+// PUT /api/vehicles/:id - Edit vehicle details (Self-hosted Owner & Admin)
 router.put('/:id', requireRole('owner', 'admin'), async (req, res) => {
   try {
     const current = await db.prepare('SELECT * FROM vehicles WHERE id = ?').get(req.params.id);
@@ -189,14 +261,10 @@ router.put('/:id', requireRole('owner', 'admin'), async (req, res) => {
       return res.status(404).json({ error: 'Vehicle not found' });
     }
 
-    // If role is owner, enforce that they own this vehicle
-    if (req.user.role === 'owner') {
-      const isOwnerMatch = current.ownerId === req.user.id ||
-                           (current.ownerEmail && current.ownerEmail.toLowerCase() === (req.user.email || '').toLowerCase()) ||
-                           (current.ownerPhone && current.ownerPhone === req.user.phone);
-      if (!isOwnerMatch) {
-        return res.status(403).json({ error: 'Unauthorized: You can only edit your own vehicles.' });
-      }
+    // Verify user is platform admin OR authorized host of this self-hosted vehicle
+    const isAuthorized = await isAuthorizedVehicleHost(current, req.user);
+    if (!isAuthorized) {
+      return res.status(403).json({ error: 'Forbidden: You can only edit vehicles that you own or host.' });
     }
 
     const b = req.body;
@@ -297,7 +365,7 @@ router.put('/:id', requireRole('owner', 'admin'), async (req, res) => {
   }
 });
 
-// PATCH /api/vehicles/:id/status - Toggle active/suspended (Owner & Admin only)
+// PATCH /api/vehicles/:id/status - Toggle active/suspended (Self-hosted Owner & Admin only)
 router.patch('/:id/status', requireRole('owner', 'admin'), async (req, res) => {
   try {
     const current = await db.prepare('SELECT * FROM vehicles WHERE id = ?').get(req.params.id);
@@ -305,7 +373,12 @@ router.patch('/:id/status', requireRole('owner', 'admin'), async (req, res) => {
       return res.status(404).json({ error: 'Vehicle not found' });
     }
 
-    const isOwner = req.user.role === 'owner';
+    const isAdmin = req.user.role === 'admin';
+    const isAuthorized = await isAuthorizedVehicleHost(current, req.user);
+    if (!isAuthorized) {
+      return res.status(403).json({ error: 'Forbidden: You can only update the status of vehicles that you own or host.' });
+    }
+
     const isApproved = current.vehicleVerified === 1 || current.verificationStatus === 'Verified';
 
     let newStatus = req.body.status;
@@ -313,15 +386,15 @@ router.patch('/:id/status', requireRole('owner', 'admin'), async (req, res) => {
       if (current.status === 'active') {
         newStatus = 'suspended';
       } else {
-        // Owner cannot activate unapproved vehicle
-        if (isOwner && !isApproved) {
+        // Non-admin host cannot activate unapproved vehicle
+        if (!isAdmin && !isApproved) {
           return res.status(403).json({
             error: 'Cannot activate vehicle: This vehicle is awaiting Admin verification. Once approved, you can activate it.'
           });
         }
         newStatus = 'active';
       }
-    } else if (newStatus === 'active' && isOwner && !isApproved) {
+    } else if (newStatus === 'active' && !isAdmin && !isApproved) {
       return res.status(403).json({
         error: 'Cannot activate vehicle: This vehicle is awaiting Admin verification. Once approved, you can activate it.'
       });

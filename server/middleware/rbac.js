@@ -57,6 +57,17 @@ export async function authenticateUser(req, res, next) {
     isAuthenticated = true;
   }
 
+  // Enrich user session with phone & email from database if missing
+  if (sessionUser && (!sessionUser.phone || !sessionUser.email) && sessionUser.id && sessionUser.id !== 'admin-1' && sessionUser.id !== 'guest') {
+    try {
+      const uRow = (await db.prepare('SELECT name, phone, email FROM customers WHERE id = ?').get(sessionUser.id)) ||
+                   (await db.prepare('SELECT name, phone, email FROM owners WHERE id = ?').get(sessionUser.id));
+      if (uRow) {
+        sessionUser = { ...sessionUser, ...uRow };
+      }
+    } catch (e) {}
+  }
+
   req.user = {
     ...(sessionUser || { id: 'guest', name: 'Guest Rider', role: 'guest' }),
     role: isAuthenticated ? role : 'guest',
@@ -80,6 +91,19 @@ export function requireRole(...allowedRoles) {
   return (req, res, next) => {
     if (!req.user || !req.user.isAuthenticated) {
       return res.status(401).json({ error: 'Unauthorized: Authentication required. Please sign in first.' });
+    }
+
+    // Admin always has universal access
+    if (req.user.role === 'admin') {
+      return next();
+    }
+
+    // If owner/host role is allowed, permit any authenticated platform host, owner, or unified user
+    const isOwnerAllowed = allowedRoles.includes('owner') || allowedRoles.includes('host');
+    const isUserOwnerCapable = req.user.role === 'owner' || req.user.role === 'host' || req.user.role === 'user' || req.user.role === 'customer' || Boolean(req.user.isHost);
+
+    if (isOwnerAllowed && isUserOwnerCapable) {
+      return next();
     }
 
     if (!allowedRoles.includes(req.user.role)) {
