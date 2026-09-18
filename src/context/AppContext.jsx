@@ -28,6 +28,8 @@ import {
   apiToggleCustomerStatus,
   apiFetchOwners,
   apiToggleOwnerStatus,
+  apiFetchOwnerUpi,
+  apiSaveOwnerUpi,
   apiFetchDisputes,
   apiCreateDispute,
   apiAddDisputeNote,
@@ -534,6 +536,21 @@ export const AppProvider = ({ children }) => {
     apiToggleOwnerStatus(ownerId).catch((err) => console.warn('API toggleOwnerStatus error:', err));
   };
 
+  const saveOwnerUpi = async (upiId) => {
+    const cleanUpi = String(upiId).trim();
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('vr_host_upi', cleanUpi);
+    }
+    setCurrentUser((prev) => (prev ? { ...prev, upiId: cleanUpi } : prev));
+    try {
+      const res = await apiSaveOwnerUpi(cleanUpi);
+      return res;
+    } catch (err) {
+      console.warn('API saveOwnerUpi error:', err);
+      throw err;
+    }
+  };
+
   const createBooking = (bookingInput) => {
     const refNum = `VRB-${Math.floor(1000 + Math.random() * 9000)}`;
     const veh = bookingInput.vehicle || {};
@@ -842,6 +859,7 @@ export const AppProvider = ({ children }) => {
         toggleVehicleStatus,
         toggleCustomerStatus,
         toggleOwnerStatus,
+        saveOwnerUpi,
         createBooking,
         updateBookingStatus,
         updatePaymentStatus,

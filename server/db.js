@@ -142,6 +142,7 @@ const COLUMN_MAP = {
   registereddate: 'registeredDate',
 
   // owners
+  upiid: 'upiId',
   vehiclescount: 'vehiclesCount',
   joineddate: 'joinedDate',
 
@@ -425,6 +426,7 @@ export async function initDatabase() {
           name TEXT NOT NULL,
           phone TEXT NOT NULL,
           email TEXT,
+          upiId TEXT DEFAULT '',
           password TEXT,
           emailVerified INTEGER DEFAULT 0,
           verificationStatus TEXT DEFAULT 'Pending',
@@ -519,6 +521,8 @@ export async function initDatabase() {
           '+919720965985'
         )
         ON CONFLICT (id) DO NOTHING;
+
+        ALTER TABLE owners ADD COLUMN IF NOT EXISTS upiId TEXT DEFAULT '';
       `);
       console.log('✅ Supabase PostgreSQL tables verified ready. No mock data seeded.');
     } catch (pgInitErr) {
@@ -527,6 +531,9 @@ export async function initDatabase() {
   } else {
     // SQLite Fallback
     console.log('ℹ️ Running in local SQLite mode (vrindavan.db)');
+    try {
+      sqliteDb.prepare("ALTER TABLE owners ADD COLUMN upiId TEXT DEFAULT ''").run();
+    } catch (e) {}
   }
 }
 

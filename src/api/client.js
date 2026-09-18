@@ -205,6 +205,17 @@ export async function apiToggleOwnerStatus(id) {
   });
 }
 
+export async function apiFetchOwnerUpi() {
+  return request('/owners/payout/upi');
+}
+
+export async function apiSaveOwnerUpi(upiId) {
+  return request('/owners/payout/upi', {
+    method: 'PUT',
+    body: JSON.stringify({ upiId })
+  });
+}
+
 // ==================== DISPUTES ====================
 export async function apiFetchDisputes() {
   return request('/disputes');

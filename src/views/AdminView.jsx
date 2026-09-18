@@ -837,6 +837,13 @@ export const AdminView = () => {
                       <td className="p-4">
                         <div className="font-mono text-slate-200">{o.phone}</div>
                         <div className="text-[11px] text-slate-400">{o.email}</div>
+                        {o.upiId ? (
+                          <div className="text-[10px] text-emerald-400 font-mono mt-0.5 flex items-center gap-1">
+                            <span className="text-slate-500">UPI:</span> {o.upiId}
+                          </div>
+                        ) : (
+                          <div className="text-[10px] text-slate-500 font-mono mt-0.5">UPI: Not configured</div>
+                        )}
                       </td>
                       <td className="p-4">
                         <span

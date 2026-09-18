@@ -13,7 +13,7 @@ import {
   Loader2, Trash2, ArrowLeft, Edit3, AlertTriangle, CalendarCheck, Wallet,
   ArrowUpRight, ArrowDownLeft, RefreshCw, Send
 } from 'lucide-react';
-import { apiUploadPhoto, MAX_PHOTO_UPLOAD_BYTES } from '../api/client';
+import { apiUploadPhoto, MAX_PHOTO_UPLOAD_BYTES, apiFetchOwnerUpi, apiSaveOwnerUpi } from '../api/client';
 import {
   VrindavanScooterIcon, VrindavanFeatherIcon, WhatsAppBrandIcon, HelmetsIcon,
   OdometerGaugeIcon, DigitalInspectionIcon, RupeeStackIcon, KeyHandoverIcon
@@ -30,6 +30,7 @@ export const OwnerView = () => {
     updatePaymentStatus,
     currentUser,
     openLoginModal,
+    saveOwnerUpi,
     setRole,
     setCustomerTab,
     hostTab,
@@ -50,19 +51,71 @@ export const OwnerView = () => {
   const [hostUpiId, setHostUpiId] = useState(() => {
     if (typeof window === 'undefined') return '';
     return (
+      currentUser?.upiId ||
       localStorage.getItem('vr_host_upi') ||
       (currentUser?.phone ? `${currentUser.phone.replace(/[^0-9]/g, '').slice(-10)}@upi` : '9837144520@upi')
     );
   });
   const [upiSavedNotice, setUpiSavedNotice] = useState(false);
+  const [upiLoading, setUpiLoading] = useState(false);
+  const [upiError, setUpiError] = useState('');
 
-  const handleSaveUpi = (e) => {
-    if (e) e.preventDefault();
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('vr_host_upi', hostUpiId.trim());
+  // Auto-fetch host UPI ID from database on login/mount
+  React.useEffect(() => {
+    let isMounted = true;
+    if (currentUser) {
+      if (currentUser.upiId) {
+        setHostUpiId(currentUser.upiId);
+      } else {
+        apiFetchOwnerUpi()
+          .then((res) => {
+            if (isMounted && res?.upiId) {
+              setHostUpiId(res.upiId);
+              if (typeof window !== 'undefined') {
+                localStorage.setItem('vr_host_upi', res.upiId);
+              }
+            }
+          })
+          .catch(() => {});
+      }
     }
-    setUpiSavedNotice(true);
-    setTimeout(() => setUpiSavedNotice(false), 3000);
+    return () => {
+      isMounted = false;
+    };
+  }, [currentUser]);
+
+  const handleSaveUpi = async (e) => {
+    if (e) e.preventDefault();
+    if (!currentUser) {
+      openLoginModal('owner');
+      return;
+    }
+
+    const cleanUpi = (hostUpiId || '').trim();
+    if (!cleanUpi || !cleanUpi.includes('@')) {
+      setUpiError('Please enter a valid UPI Virtual Payment Address (e.g. 9837144520@upi or yourname@bank)');
+      return;
+    }
+
+    setUpiLoading(true);
+    setUpiError('');
+    try {
+      if (saveOwnerUpi) {
+        await saveOwnerUpi(cleanUpi);
+      } else {
+        await apiSaveOwnerUpi(cleanUpi);
+      }
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('vr_host_upi', cleanUpi);
+      }
+      setUpiSavedNotice(true);
+      setTimeout(() => setUpiSavedNotice(false), 4000);
+    } catch (err) {
+      console.error('Failed to save UPI ID to database:', err);
+      setUpiError(err.message || 'Failed to save UPI ID. Please check your connection and try again.');
+    } finally {
+      setUpiLoading(false);
+    }
   };
 
   const handleReleaseDeposit = (bookingId) => {
@@ -2241,26 +2294,47 @@ export const OwnerView = () => {
                       <input
                         type="text"
                         value={hostUpiId}
-                        onChange={(e) => setHostUpiId(e.target.value)}
+                        onChange={(e) => {
+                          setHostUpiId(e.target.value);
+                          if (upiError) setUpiError('');
+                        }}
                         placeholder="e.g. 9837144520@upi or yourname@okhdfcbank"
                         className="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white"
                         required
+                        disabled={upiLoading}
                       />
                     </div>
                     <button
                       type="submit"
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                      disabled={upiLoading}
+                      className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
                     >
-                      <Check className="w-4 h-4" />
-                      <span>Save Payout UPI ID</span>
+                      {upiLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Saving to Cloud...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Check className="w-4 h-4" />
+                          <span>Save Payout UPI ID</span>
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
 
+                {upiError && (
+                  <div className="bg-rose-50 border border-rose-300 text-rose-900 text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 animate-in fade-in">
+                    <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                    <span>{upiError}</span>
+                  </div>
+                )}
+
                 {upiSavedNotice && (
                   <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 animate-in fade-in">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Your UPI ID <strong>{hostUpiId}</strong> has been saved successfully! Daily 11:00 AM payouts will be sent here.</span>
+                    <span>Your UPI ID <strong>{hostUpiId}</strong> has been saved directly to your account! Daily 11:00 AM payouts will be sent here.</span>
                   </div>
                 )}
 
