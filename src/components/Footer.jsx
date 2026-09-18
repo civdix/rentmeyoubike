@@ -3,7 +3,7 @@ import { Bike, ShieldCheck, MapPin, MessageSquare, Heart, Mail } from 'lucide-re
 import { useApp } from '../context/AppContext';
 
 export const Footer = () => {
-  const { setRole, legalConfig, setActiveLegalModal, openLoginModal, openContactModal } = useApp();
+  const { setRole, legalConfig, setActiveLegalModal, openLoginModal, openContactModal, currentUser, logoutUser, promptSwitchToHost } = useApp();
 
   return (
     <footer className="bg-slate-950 text-slate-400 border-t border-slate-800 py-12 text-xs relative z-20">
@@ -46,31 +46,28 @@ export const Footer = () => {
             </li>
             <li>
               <button
-                onClick={() => openLoginModal('customer')}
-                className="hover:text-white text-emerald-400 font-bold transition-colors"
+                onClick={promptSwitchToHost}
+                className="hover:text-white text-amber-400 font-bold transition-colors cursor-pointer"
               >
-                Renter Login / Sign In
+                Host on Rent to Cent
               </button>
             </li>
             <li>
-              <button onClick={() => openLoginModal('owner')} className="hover:text-white text-amber-400 font-bold transition-colors">
-                Host Login / List Bike
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => {
-                  const hasAdminToken = typeof window !== 'undefined' && localStorage.getItem('vr_admin_token');
-                  if (hasAdminToken) {
-                    setRole('admin');
-                  } else {
-                    openLoginModal('admin');
-                  }
-                }}
-                className="hover:text-white text-slate-400 hover:text-slate-300 transition-colors"
-              >
-                Admin Console Login
-              </button>
+              {currentUser ? (
+                <button
+                  onClick={logoutUser}
+                  className="hover:text-white text-slate-400 transition-colors cursor-pointer"
+                >
+                  Sign Out ({currentUser.name?.split(' ')[0] || 'User'})
+                </button>
+              ) : (
+                <button
+                  onClick={() => openLoginModal()}
+                  className="hover:text-white text-emerald-400 font-bold transition-colors cursor-pointer"
+                >
+                  Log In / Sign Up
+                </button>
+              )}
             </li>
             <li>
               <a

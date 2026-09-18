@@ -32,15 +32,15 @@ export const OwnerView = () => {
   const [submittedNotice, setSubmittedNotice] = useState(false);
 
   // STEP 1: Personal Information State
-  const [ownerName, setOwnerName] = useState(() => (currentUser?.role === 'owner' && currentUser.name) || '');
-  const [ownerPhone, setOwnerPhone] = useState(() => (currentUser?.role === 'owner' && currentUser.phone) || '');
-  const [ownerEmail, setOwnerEmail] = useState(() => (currentUser?.role === 'owner' && currentUser.email) || '');
-  const [ownerEmailVerified, setOwnerEmailVerified] = useState(() => Boolean(currentUser?.role === 'owner' && currentUser.emailVerified));
+  const [ownerName, setOwnerName] = useState(() => currentUser?.name || '');
+  const [ownerPhone, setOwnerPhone] = useState(() => currentUser?.phone || '');
+  const [ownerEmail, setOwnerEmail] = useState(() => currentUser?.email || '');
+  const [ownerEmailVerified, setOwnerEmailVerified] = useState(() => Boolean(currentUser?.emailVerified));
   const [ownerCity, setOwnerCity] = useState('Vrindavan');
   const [ownerAddress, setOwnerAddress] = useState('');
 
   React.useEffect(() => {
-    if (currentUser?.role === 'owner') {
+    if (currentUser) {
       if (currentUser.name && !ownerName) setOwnerName(currentUser.name);
       if (currentUser.phone && !ownerPhone) setOwnerPhone(currentUser.phone);
       if (currentUser.email && !ownerEmail) setOwnerEmail(currentUser.email);
@@ -376,8 +376,8 @@ export const OwnerView = () => {
   const totalRevenue = myBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
   const netEarnings = Math.round(totalRevenue * 0.85);
 
-  // AUTHENTICATION GATE: Require Host or Admin login before accessing Host Portal or Listing Bikes
-  if (!currentUser || (currentUser.role !== 'owner' && currentUser.role !== 'admin')) {
+  // AUTHENTICATION GATE: Require user to be logged in before accessing Host Portal or Listing Bikes
+  if (!currentUser) {
     return (
       <div className="min-h-screen bg-slate-50 pb-16 font-sans">
         <div className="max-w-xl mx-auto px-4 py-16 text-center space-y-6 animate-in fade-in">
@@ -390,12 +390,10 @@ export const OwnerView = () => {
               Host Sign In Required
             </span>
             <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900">
-              Sign In to List Your Bike in Vrindavan
+              Sign In to List Your Bike on Rent to Cent
             </h2>
             <p className="text-xs text-slate-600 leading-relaxed max-w-md mx-auto">
-              {currentUser?.role === 'customer'
-                ? `You are signed in as a Renter (${currentUser.name}). To list vehicles, track earnings, and manage fleet bookings, please switch to a Fleet Host account.`
-                : 'To list your scooter or motorcycle, manage fleet availability, and receive 85% payouts, please sign in with your Host mobile number.'}
+              To list your scooter or motorcycle, manage fleet availability, and receive 85% payouts, please sign in or register with your mobile number.
             </p>
           </div>
 
@@ -410,17 +408,17 @@ export const OwnerView = () => {
             </div>
             <div className="flex items-center gap-3 text-slate-700">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span><strong>Verified Renters Only:</strong> Every pilgrim is verified with Government ID & Driving Licence.</span>
+              <span><strong>Verified Renters Only:</strong> Every rider is verified with Government ID & Driving Licence.</span>
             </div>
           </div>
 
           <div className="space-y-2">
             <button
-              onClick={() => openLoginModal('owner')}
+              onClick={() => openLoginModal()}
               className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-3.5 rounded-xl shadow-md transition-transform active:scale-95 text-xs flex items-center justify-center gap-2 cursor-pointer"
             >
               <LogIn className="w-4 h-4 text-slate-950" />
-              <span>{currentUser?.role === 'customer' ? 'Switch to Host Account' : 'Sign In as Fleet Host'}</span>
+              <span>Sign In / Register</span>
             </button>
 
             <button

@@ -15,7 +15,8 @@ export const Header = () => {
     customerTab,
     setCustomerTab,
     vehicles,
-    bookings
+    bookings,
+    promptSwitchToHost
   } = useApp();
 
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -90,10 +91,10 @@ export const Header = () => {
                   Hi, <strong className="text-white">{currentUser.name?.split(' ')[0] || 'User'}</strong>
                 </span>
                 <button
-                  onClick={() => openLoginModal(role)}
-                  className="text-amber-400 hover:text-amber-300 font-bold underline text-[10px]"
+                  onClick={() => role === 'customer' ? promptSwitchToHost() : setRole('customer')}
+                  className="text-amber-400 hover:text-amber-300 font-bold underline text-[10px] cursor-pointer"
                 >
-                  Switch
+                  {role === 'customer' ? 'Host Mode' : 'Renter Mode'}
                 </button>
               </div>
             ) : (
@@ -187,11 +188,11 @@ export const Header = () => {
 
         {/* Right Side Actions: Host CTA + Profile / Sign In */}
         <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-          {/* Subtle Host CTA Button */}
+          {/* Host CTA Button */}
           {role === 'owner' ? (
             <button
               onClick={() => setRole('customer')}
-              className="inline-flex items-center gap-1 sm:gap-1.5 bg-amber-500 text-slate-950 hover:bg-amber-400 font-extrabold text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl transition-all shadow-sm active:scale-95 shrink-0"
+              className="inline-flex items-center gap-1 sm:gap-1.5 bg-amber-500 text-slate-950 hover:bg-amber-400 font-extrabold text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl transition-all shadow-sm active:scale-95 shrink-0 cursor-pointer"
               title="Return to Customer Rental Marketplace"
             >
               <VrindavanScooterIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 shrink-0" />
@@ -200,14 +201,9 @@ export const Header = () => {
             </button>
           ) : (
             <button
-              onClick={() => {
-                if (!currentUser || (currentUser.role !== 'owner' && currentUser.role !== 'admin')) {
-                  openLoginModal('owner');
-                }
-                setRole('owner');
-              }}
-              className="inline-flex items-center gap-1 sm:gap-1.5 bg-slate-800/80 hover:bg-slate-800 text-amber-300 hover:text-amber-200 font-bold text-[11px] sm:text-xs px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-amber-500/30 hover:border-amber-400/60 transition-all shadow-sm active:scale-95 shrink-0 group"
-              title="List your vehicle and earn up to ₹22,000/month"
+              onClick={promptSwitchToHost}
+              className="inline-flex items-center gap-1 sm:gap-1.5 bg-slate-800/80 hover:bg-slate-800 text-amber-300 hover:text-amber-200 font-bold text-[11px] sm:text-xs px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-amber-500/30 hover:border-amber-400/60 transition-all shadow-sm active:scale-95 shrink-0 group cursor-pointer"
+              title="List your vehicle and earn up to 85% on Rent to Cent"
             >
               <KeyHandoverIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 group-hover:scale-110 transition-transform shrink-0" />
               <span className="hidden sm:inline">List Your Bike</span>
@@ -224,7 +220,7 @@ export const Header = () => {
               <div>
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center gap-1.5 sm:gap-2 bg-slate-800 hover:bg-slate-750 border border-slate-700 py-1 sm:py-1.5 px-2 sm:px-3 rounded-xl text-xs transition-all shadow-sm"
+                  className="flex items-center gap-1.5 sm:gap-2 bg-slate-800 hover:bg-slate-750 border border-slate-700 py-1 sm:py-1.5 px-2 sm:px-3 rounded-xl text-xs transition-all shadow-sm cursor-pointer"
                 >
                   <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 text-white font-extrabold flex items-center justify-center text-[11px] shadow-sm shrink-0">
                     {currentUser.name ? currentUser.name[0].toUpperCase() : 'U'}
@@ -234,33 +230,44 @@ export const Header = () => {
                       {currentUser.name}
                     </div>
                     <div className="text-[9px] text-emerald-400 uppercase font-semibold">
-                      {currentUser.role === 'owner' ? 'Host' : currentUser.role === 'admin' ? 'Admin 🛡️' : 'Renter'}
+                      {currentUser.role === 'admin' ? 'Admin 🛡️' : role === 'owner' ? 'Host Mode' : 'Renter Mode'}
                     </div>
                   </div>
                   <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
                 </button>
 
                 {profileDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-24px)] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-2 z-50 animate-fadeIn">
+                  <div className="absolute right-0 mt-2 w-60 max-w-[calc(100vw-24px)] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-2 z-50 animate-fadeIn">
                     <div className="px-3 py-2.5 border-b border-slate-800 text-[11px]">
                       <p className="text-slate-400">Signed in as</p>
                       <p className="font-bold text-white truncate text-xs">{currentUser.name}</p>
                       <p className="text-[10px] text-emerald-400 font-mono mt-0.5 truncate">
-                        {currentUser.phone || currentUser.email || 'Authenticated Session'}
+                        {currentUser.phone || currentUser.email || 'Unified Account'}
                       </p>
                     </div>
 
                     <div className="py-1 space-y-0.5 text-xs font-medium">
-                      {role !== 'customer' && (
+                      {role !== 'customer' ? (
                         <button
                           onClick={() => {
                             setProfileDropdownOpen(false);
                             setRole('customer');
                           }}
-                          className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2"
+                          className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
                         >
                           <VrindavanScooterIcon className="w-3.5 h-3.5 text-emerald-400" />
-                          <span>Renter Marketplace</span>
+                          <span>Switch to Renter View</span>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setProfileDropdownOpen(false);
+                            promptSwitchToHost();
+                          }}
+                          className="w-full text-left px-3 py-2 text-amber-300 hover:text-amber-200 hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2 cursor-pointer font-bold"
+                        >
+                          <KeyHandoverIcon className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Switch to Host / Fleet Host</span>
                         </button>
                       )}
 
@@ -269,68 +276,25 @@ export const Header = () => {
                           setProfileDropdownOpen(false);
                           navigateTo('my_bookings');
                         }}
-                        className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2"
+                        className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
                       >
                         <CalendarCheck className="w-3.5 h-3.5 text-teal-400" />
                         <span>My Bookings</span>
                       </button>
 
-                      <button
-                        onClick={() => {
-                          setProfileDropdownOpen(false);
-                          setRole('owner');
-                        }}
-                        className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2"
-                      >
-                        <KeyHandoverIcon className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Host Control Center</span>
-                      </button>
-
-                      {(currentUser.role === 'admin' || (typeof window !== 'undefined' && localStorage.getItem('vr_admin_token'))) && (
+                      {/* Admin Access ONLY for verified platform administrators */}
+                      {currentUser?.role === 'admin' && (
                         <button
                           onClick={() => {
                             setProfileDropdownOpen(false);
                             setRole('admin');
                           }}
-                          className="w-full text-left px-3 py-2 text-purple-300 hover:text-white hover:bg-purple-950/40 rounded-xl transition-colors flex items-center gap-2"
+                          className="w-full text-left px-3 py-2 text-purple-300 hover:text-white hover:bg-purple-950/40 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
                         >
                           <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
                           <span>Admin Control Center</span>
                         </button>
                       )}
-
-                      <button
-                        onClick={() => {
-                          setProfileDropdownOpen(false);
-                          openLoginModal('customer');
-                        }}
-                        className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2"
-                      >
-                        <LogIn className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Login as Renter</span>
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setProfileDropdownOpen(false);
-                          openLoginModal('owner');
-                        }}
-                        className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2"
-                      >
-                        <KeyHandoverIcon className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Login as Fleet Host</span>
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setProfileDropdownOpen(false);
-                          openLoginModal('admin');
-                        }}
-                        className="w-full text-left px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2"
-                      >
-                        <ShieldCheck className="w-3.5 h-3.5 text-slate-500" />
-                        <span>Admin Login</span>
-                      </button>
                     </div>
 
                     <div className="pt-1 border-t border-slate-800">
@@ -339,7 +303,7 @@ export const Header = () => {
                           setProfileDropdownOpen(false);
                           logoutUser();
                         }}
-                        className="w-full text-left px-3 py-2 text-xs text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors flex items-center gap-2"
+                        className="w-full text-left px-3 py-2 text-xs text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
                       >
                         <LogOut className="w-3.5 h-3.5 text-rose-400" />
                         <span>Sign Out</span>
@@ -351,7 +315,7 @@ export const Header = () => {
             ) : (
               <button
                 onClick={() => openLoginModal('customer', 'login')}
-                className="inline-flex items-center gap-1 sm:gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold sm:font-extrabold text-[11px] sm:text-xs px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all shadow-md shadow-emerald-950/40 active:scale-95 shrink-0 border border-emerald-400/40 whitespace-nowrap"
+                className="inline-flex items-center gap-1 sm:gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold sm:font-extrabold text-[11px] sm:text-xs px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all shadow-md shadow-emerald-950/40 active:scale-95 shrink-0 border border-emerald-400/40 whitespace-nowrap cursor-pointer"
                 title="Log In or Sign Up"
               >
                 <LogIn className="w-3.5 h-3.5 text-white shrink-0" />

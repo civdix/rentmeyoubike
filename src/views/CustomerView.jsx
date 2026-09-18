@@ -33,7 +33,8 @@ export const CustomerView = () => {
     currentUser,
     openLoginModal,
     customerTab: activeTab,
-    setCustomerTab: setActiveTab
+    setCustomerTab: setActiveTab,
+    promptSwitchToHost
   } = useApp();
 
   // Filter ONLY user-belonged bookings
@@ -344,8 +345,8 @@ export const CustomerView = () => {
                   Be the first to list your two-wheeler in Mathura & Vrindavan and start earning daily!
                 </p>
                 <button
-                  onClick={() => setRole('owner')}
-                  className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-6 py-3 rounded-xl shadow-md transition-all active:scale-95"
+                  onClick={promptSwitchToHost}
+                  className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-6 py-3 rounded-xl shadow-md transition-all active:scale-95 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>List Your Bike Now</span>
@@ -612,8 +613,8 @@ export const CustomerView = () => {
                   Turn your idle scooter or motorcycle into passive income. Verified yatra riders, digital inspection locks, and direct 24h bank payouts.
                 </p>
                 <button
-                  onClick={() => setRole('owner')}
-                  className="bg-slate-950 hover:bg-slate-900 text-white font-extrabold text-sm py-3.5 px-7 rounded-xl flex items-center gap-2 shadow-xl transition-transform active:scale-95"
+                  onClick={promptSwitchToHost}
+                  className="bg-slate-950 hover:bg-slate-900 text-white font-extrabold text-sm py-3.5 px-7 rounded-xl flex items-center gap-2 shadow-xl transition-transform active:scale-95 cursor-pointer"
                 >
                   <Key className="w-5 h-5 text-amber-400" />
                   <span>List Your Bike</span>

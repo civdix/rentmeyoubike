@@ -62,14 +62,11 @@ export const AdminView = () => {
     resolveDispute,
     setActiveDiffModal,
     refreshData,
-    setCurrentUser
+    setCurrentUser,
+    setCustomerTab
   } = useApp();
 
-
-  // Role-Based Access Control PIN Lock State
-  const [pinInput, setPinInput] = useState('');
-  const [pinError, setPinError] = useState(false);
-  const isAuthorized = role === 'admin';
+  const isAuthorized = role === 'admin' && currentUser?.role === 'admin';
 
   // Navigation tab state
   const [activeTab, setActiveTab] = useState('overview'); // overview, customers, owners, vehicles, bookings, inspections, disputes, payments, settings, strategy
@@ -326,48 +323,26 @@ export const AdminView = () => {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 text-center">
-          <div className="w-16 h-16 bg-gradient-to-tr from-amber-500 to-emerald-500 rounded-2xl mx-auto flex items-center justify-center shadow-lg">
-            <Lock className="w-8 h-8 text-slate-950" />
+          <div className="w-16 h-16 bg-rose-500/10 border border-rose-500/30 rounded-2xl mx-auto flex items-center justify-center text-rose-500">
+            <Lock className="w-8 h-8" />
           </div>
 
           <div>
-            <h2 className="font-heading font-extrabold text-2xl text-white">Admin Authorization Required</h2>
+            <h2 className="font-heading font-extrabold text-2xl text-white">Admin Access Restricted</h2>
             <p className="text-xs text-slate-400 mt-2">
-              Authorized platform administrators only. Please authenticate with your security PIN to access the Vrindavan Rides Management Console.
+              This area is restricted to authorized platform administrators only.
             </p>
           </div>
 
-          <form onSubmit={handlePinSubmit} className="space-y-4 text-left">
-            <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                Enter Admin Security PIN
-              </label>
-              <div className="relative">
-                <Key className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
-                <input
-                  type="password"
-                  placeholder="Enter 10-digit Admin Security PIN"
-                  value={pinInput}
-                  onChange={(e) => setPinInput(e.target.value)}
-                  maxLength={32}
-                  className="w-full bg-slate-950 text-white pl-10 pr-4 py-3 rounded-xl border border-slate-700 text-sm focus:outline-none focus:border-emerald-500 font-mono tracking-widest"
-                />
-              </div>
-              {pinError && <p className="text-[11px] text-rose-400 mt-1 font-semibold">Invalid PIN code. Please check your credentials.</p>}
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold py-3.5 rounded-xl text-sm transition-all shadow-lg flex items-center justify-center gap-2"
-            >
-              <ShieldCheck className="w-4 h-4" />
-              Authenticate & Open Admin Dashboard
-            </button>
-          </form>
-
-          <div className="pt-4 border-t border-slate-800/80 text-[11px] text-slate-500">
-            Current App Role: <strong className="text-amber-400 uppercase">{role}</strong>. Switch to Admin mode to manage Vrindavan fleet operations.
-          </div>
+          <button
+            onClick={() => {
+              setRole('customer');
+              if (setCustomerTab) setCustomerTab('browse');
+            }}
+            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3.5 rounded-xl text-xs transition-colors cursor-pointer shadow-lg"
+          >
+            Return to Renter Marketplace
+          </button>
         </div>
       </div>
     );

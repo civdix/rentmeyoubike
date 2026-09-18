@@ -13,10 +13,12 @@ import { InspectionDiffViewer } from './components/InspectionDiffViewer';
 import { LegalPoliciesModal } from './components/LegalPoliciesModal';
 import { LoginModal } from './components/LoginModal';
 import { ContactModal } from './components/ContactModal';
+import { SwitchToHostModal } from './components/SwitchToHostModal';
 
 const MainContent = () => {
   const {
     role,
+    currentUser,
     activeWhatsAppModal,
     setActiveWhatsAppModal,
     activeKYCModal,
@@ -31,11 +33,15 @@ const MainContent = () => {
     setActiveLegalModal,
     isLoginModalOpen,
     closeLoginModal,
+    openLoginModal,
     loginRoleTarget,
     loginModalMode,
     isContactModalOpen,
     closeContactModal,
-    contactModalInitialData
+    contactModalInitialData,
+    isSwitchToHostModalOpen,
+    closeSwitchToHostModal,
+    confirmSwitchToHost
   } = useApp();
 
   return (
@@ -45,7 +51,7 @@ const MainContent = () => {
       <main className="flex-1 w-full max-w-full overflow-x-hidden">
         {role === 'customer' && <CustomerView />}
         {role === 'owner' && <OwnerView />}
-        {role === 'admin' && <AdminView />}
+        {role === 'admin' && currentUser?.role === 'admin' && <AdminView />}
       </main>
 
       {/* Single Unified Footer */}
@@ -113,6 +119,16 @@ const MainContent = () => {
           isOpen={isContactModalOpen}
           initialData={contactModalInitialData}
           onClose={closeContactModal}
+        />
+      )}
+
+      {isSwitchToHostModalOpen && (
+        <SwitchToHostModal
+          isOpen={isSwitchToHostModalOpen}
+          currentUser={currentUser}
+          onClose={closeSwitchToHostModal}
+          onConfirm={confirmSwitchToHost}
+          onRequireLogin={() => openLoginModal('owner')}
         />
       )}
     </div>

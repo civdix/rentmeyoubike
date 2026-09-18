@@ -245,28 +245,28 @@ export async function apiFetchOverviewStats() {
 }
 
 // ==================== AUTH / RBAC ====================
-export async function apiLogin({ identifier, password, role = 'customer' }) {
+export async function apiLogin({ identifier, password, role }) {
   const res = await request('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ identifier, password, role })
   });
   if (res?.token && typeof window !== 'undefined') {
     localStorage.setItem('vr_token', res.token);
-    localStorage.setItem('vr_role', res.role || role);
+    localStorage.setItem('vr_role', res.role || 'customer');
     if (res.role === 'admin') localStorage.setItem('vr_admin_token', res.token);
     if (res.user) localStorage.setItem('vr_user', JSON.stringify(res.user));
   }
   return res;
 }
 
-export async function apiRegister({ name, phone, email, password, role = 'customer' }) {
+export async function apiRegister({ name, phone, email, password }) {
   const res = await request('/auth/register', {
     method: 'POST',
-    body: JSON.stringify({ name, phone, email, password, role })
+    body: JSON.stringify({ name, phone, email, password })
   });
   if (res?.token && typeof window !== 'undefined') {
     localStorage.setItem('vr_token', res.token);
-    localStorage.setItem('vr_role', res.role || role);
+    localStorage.setItem('vr_role', res.role || 'customer');
     if (res.user) localStorage.setItem('vr_user', JSON.stringify(res.user));
   }
   return res;

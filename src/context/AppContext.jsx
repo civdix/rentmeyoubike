@@ -42,7 +42,16 @@ const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   // Active App Role: 'customer' | 'owner' | 'admin'
   const [role, setRole] = useState(() => {
-    return localStorage.getItem('vr_role') || 'customer';
+    const saved = localStorage.getItem('vr_role') || 'customer';
+    if (saved === 'admin') {
+      try {
+        const u = JSON.parse(localStorage.getItem('vr_user') || '{}');
+        if (u.role !== 'admin') return 'customer';
+      } catch {
+        return 'customer';
+      }
+    }
+    return saved;
   });
 
   // Authenticated user session
@@ -325,6 +334,24 @@ export const AppProvider = ({ children }) => {
     }
   }, [currentUser]);
 
+  // Ensure non-admin users cannot have role === 'admin'
+  useEffect(() => {
+    if (role === 'admin' && currentUser?.role !== 'admin') {
+      setRole('customer');
+      localStorage.setItem('vr_role', 'customer');
+    }
+  }, [role, currentUser]);
+
+  // Switch to Host Popup State
+  const [isSwitchToHostModalOpen, setIsSwitchToHostModalOpen] = useState(false);
+  const promptSwitchToHost = () => setIsSwitchToHostModalOpen(true);
+  const closeSwitchToHostModal = () => setIsSwitchToHostModalOpen(false);
+  const confirmSwitchToHost = () => {
+    setIsSwitchToHostModalOpen(false);
+    handleSetRole('owner');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   // Auth & RBAC Actions
   const openLoginModal = (targetRole = 'customer', mode = 'login') => {
     setLoginRoleTarget(targetRole);
@@ -353,7 +380,13 @@ export const AppProvider = ({ children }) => {
 
   // Actions
   const handleSetRole = (newRole) => {
+    if (newRole === 'admin' && currentUser?.role !== 'admin') {
+      setRole('customer');
+      localStorage.setItem('vr_role', 'customer');
+      return;
+    }
     setRole(newRole);
+    localStorage.setItem('vr_role', newRole);
   };
 
   const addVehicle = (vehicleData) => {
@@ -849,7 +882,11 @@ export const AppProvider = ({ children }) => {
         closeLoginModal,
         logoutUser,
         customerTab,
-        setCustomerTab
+        setCustomerTab,
+        isSwitchToHostModalOpen,
+        promptSwitchToHost,
+        closeSwitchToHostModal,
+        confirmSwitchToHost
       }}
     >
       {children}

@@ -30,60 +30,25 @@ router.post('/check-email', async (req, res) => {
 
     const normalized = normalizeEmail(email);
 
-    // Distinguish if email belongs to Customer or Owner
     const existingCust = await db.prepare('SELECT id, name, phone, email, emailVerified FROM customers WHERE LOWER(email) = ?').get(normalized);
     const existingOwner = await db.prepare('SELECT id, name, phone, email, emailVerified FROM owners WHERE LOWER(email) = ?').get(normalized);
+    const existingUser = existingCust || existingOwner;
 
     const verificationRecord = await db.prepare('SELECT verified FROM email_verifications WHERE email = ?').get(normalized);
-    const isEmailVerified = Boolean(verificationRecord?.verified || existingCust?.emailVerified || existingOwner?.emailVerified);
+    const isEmailVerified = Boolean(verificationRecord?.verified || existingUser?.emailVerified);
 
     let status = 'available';
     let message = 'Email is valid and ready to be registered.';
     let existingAccount = null;
 
-    if (role === 'customer' && existingCust) {
-      status = 'registered_same_role';
-      message = `Existing Renter account found for ${existingCust.name}.`;
+    if (existingUser) {
+      status = 'registered';
+      message = `An account is already registered with this email (${existingUser.name}).`;
       existingAccount = {
-        role: 'customer',
-        registeredAs: 'Renter',
-        name: existingCust.name,
-        phoneMasked: maskPhone(existingCust.phone),
-        maskedPhone: maskPhone(existingCust.phone),
-        emailVerified: Boolean(existingCust.emailVerified)
-      };
-    } else if (role === 'owner' && existingOwner) {
-      status = 'registered_same_role';
-      message = `Existing Fleet Host account found for ${existingOwner.name}.`;
-      existingAccount = {
-        role: 'owner',
-        registeredAs: 'Fleet Host',
-        name: existingOwner.name,
-        phoneMasked: maskPhone(existingOwner.phone),
-        maskedPhone: maskPhone(existingOwner.phone),
-        emailVerified: Boolean(existingOwner.emailVerified)
-      };
-    } else if (existingCust) {
-      status = 'registered_other_role';
-      message = `This email is already registered as a Renter (${existingCust.name}).`;
-      existingAccount = {
-        role: 'customer',
-        registeredAs: 'Renter',
-        name: existingCust.name,
-        phoneMasked: maskPhone(existingCust.phone),
-        maskedPhone: maskPhone(existingCust.phone),
-        emailVerified: Boolean(existingCust.emailVerified)
-      };
-    } else if (existingOwner) {
-      status = 'registered_other_role';
-      message = `This email is already registered as a Fleet Host (${existingOwner.name}).`;
-      existingAccount = {
-        role: 'owner',
-        registeredAs: 'Fleet Host',
-        name: existingOwner.name,
-        phoneMasked: maskPhone(existingOwner.phone),
-        maskedPhone: maskPhone(existingOwner.phone),
-        emailVerified: Boolean(existingOwner.emailVerified)
+        name: existingUser.name,
+        phoneMasked: maskPhone(existingUser.phone),
+        maskedPhone: maskPhone(existingUser.phone),
+        emailVerified: Boolean(existingUser.emailVerified)
       };
     }
 
@@ -204,10 +169,10 @@ router.post('/verify-email-otp', async (req, res) => {
   }
 });
 
-// POST /api/auth/login - Universal Login via Email or Phone + Password
+// POST /api/auth/login - Unified Login (Admin, Renter, Host)
 router.post('/login', async (req, res) => {
   try {
-    const { identifier, password, role = 'customer' } = req.body;
+    const { identifier, password, role } = req.body;
 
     if (!identifier || !identifier.trim()) {
       return res.status(400).json({ error: 'Email or Mobile Phone Number is required.' });
@@ -220,18 +185,65 @@ router.post('/login', async (req, res) => {
     const cleanIdentifier = identifier.trim();
     const cleanPassword = password.trim();
 
-    // Admin login
-    if (role === 'admin') {
-      if (cleanPassword === ADMIN_PIN || cleanPassword === '2026' || cleanPassword === '7777') {
+    // 1. Admin Authorization check
+    const isAdminIdentifier = ['admin', 'admin@rentoncent.com', 'admin@vrindavanrides.in', 'administrator', '7777'].includes(cleanIdentifier.toLowerCase());
+    const isAdminPass = cleanPassword === ADMIN_PIN || cleanPassword === '2026' || cleanPassword === '7777';
+
+    if ((isAdminIdentifier && isAdminPass) || (role === 'admin' && isAdminPass)) {
+      const token = `vr_admin_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+      validAdminTokens.add(token);
+      const adminUser = { id: 'admin-1', name: 'Platform Administrator', role: 'admin' };
+      activeSessions.set(token, { role: 'admin', user: adminUser });
+      try {
+        await db.prepare('INSERT OR REPLACE INTO sessions (token, role, userId, userData) VALUES (?, ?, ?, ?)').run(
+          token, 'admin', adminUser.id, JSON.stringify(adminUser)
+        );
+      } catch (e) {}
+      return res.json({
+        success: true,
+        message: 'Admin authorization successful',
+        token,
+        role: 'admin',
+        user: adminUser
+      });
+    }
+
+    // 2. Unified User Search across customers and owners
+    const digits = cleanIdentifier.replace(/[^0-9]/g, '');
+    let user = null;
+
+    if (cleanIdentifier.includes('@')) {
+      user = await db.prepare('SELECT * FROM customers WHERE LOWER(email) = ?').get(normalizeEmail(cleanIdentifier));
+      if (!user) {
+        user = await db.prepare('SELECT * FROM owners WHERE LOWER(email) = ?').get(normalizeEmail(cleanIdentifier));
+      }
+    } else if (digits.length >= 10) {
+      user = await db.prepare(`
+        SELECT * FROM customers 
+        WHERE REPLACE(REPLACE(phone, ' ', ''), '-', '') = ? 
+           OR REPLACE(REPLACE(phone, ' ', ''), '-', '') LIKE ?
+      `).get(digits, `%${digits.slice(-10)}`);
+      if (!user) {
+        user = await db.prepare(`
+          SELECT * FROM owners 
+          WHERE REPLACE(REPLACE(phone, ' ', ''), '-', '') = ? 
+             OR REPLACE(REPLACE(phone, ' ', ''), '-', '') LIKE ?
+        `).get(digits, `%${digits.slice(-10)}`);
+      }
+    } else {
+      user = await db.prepare('SELECT * FROM customers WHERE LOWER(email) = ? OR phone = ?').get(cleanIdentifier.toLowerCase(), cleanIdentifier);
+      if (!user) {
+        user = await db.prepare('SELECT * FROM owners WHERE LOWER(email) = ? OR phone = ?').get(cleanIdentifier.toLowerCase(), cleanIdentifier);
+      }
+    }
+
+    if (!user) {
+      // If user entered admin PIN alone as password
+      if (isAdminPass && (cleanIdentifier.toLowerCase().includes('admin') || cleanIdentifier === '7777')) {
         const token = `vr_admin_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
         validAdminTokens.add(token);
         const adminUser = { id: 'admin-1', name: 'Platform Administrator', role: 'admin' };
         activeSessions.set(token, { role: 'admin', user: adminUser });
-        try {
-          await db.prepare('INSERT OR REPLACE INTO sessions (token, role, userId, userData) VALUES (?, ?, ?, ?)').run(
-            token, 'admin', adminUser.id, JSON.stringify(adminUser)
-          );
-        } catch (e) {}
         return res.json({
           success: true,
           message: 'Admin authorization successful',
@@ -240,143 +252,79 @@ router.post('/login', async (req, res) => {
           user: adminUser
         });
       }
-      return res.status(401).json({ error: 'Invalid Admin Security PIN code. Access denied.' });
-    }
 
-    // Role: Customer (Renter)
-    if (role === 'customer') {
-      const digits = cleanIdentifier.replace(/[^0-9]/g, '');
-      let customer = null;
-      if (cleanIdentifier.includes('@')) {
-        customer = await db.prepare('SELECT * FROM customers WHERE LOWER(email) = ?').get(normalizeEmail(cleanIdentifier));
-      } else if (digits.length >= 10) {
-        customer = await db.prepare(`
-          SELECT * FROM customers 
-          WHERE REPLACE(REPLACE(phone, ' ', ''), '-', '') = ? 
-             OR REPLACE(REPLACE(phone, ' ', ''), '-', '') LIKE ?
-        `).get(digits, `%${digits.slice(-10)}`);
-      } else {
-        customer = await db.prepare('SELECT * FROM customers WHERE LOWER(email) = ? OR phone = ?').get(cleanIdentifier.toLowerCase(), cleanIdentifier);
-      }
-
-      if (!customer) {
-        return res.status(401).json({
-          error: 'No Renter account found with this email or phone. Please switch to Sign Up.'
-        });
-      }
-
-      if (customer.password && customer.password !== cleanPassword) {
-        return res.status(401).json({ error: 'Incorrect password. Please check and try again.' });
-      }
-
-      // If user had no password set previously (from legacy test data), set it now
-      if (!customer.password) {
-        try {
-          await db.prepare('UPDATE customers SET password = ? WHERE id = ?').run(cleanPassword, customer.id);
-        } catch (e) {}
-      }
-
-      const token = `vr_cust_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
-      const userData = {
-        id: customer.id,
-        name: customer.name,
-        phone: customer.phone,
-        email: customer.email,
-        emailVerified: Boolean(customer.emailVerified),
-        kycStatus: customer.kycStatus,
-        bookingsCount: customer.bookingsCount,
-        role: 'customer'
-      };
-
-      activeSessions.set(token, { role: 'customer', user: userData });
-      try {
-        await db.prepare('INSERT OR REPLACE INTO sessions (token, role, userId, userData) VALUES (?, ?, ?, ?)').run(
-          token, 'customer', userData.id, JSON.stringify(userData)
-        );
-      } catch (e) {}
-
-      return res.json({
-        success: true,
-        message: 'Logged in successfully as Renter',
-        token,
-        role: 'customer',
-        user: userData
+      return res.status(401).json({
+        error: 'No account found with this email or phone. Please switch to Sign Up.'
       });
     }
 
-    // Role: Host / Fleet Owner
-    if (role === 'owner') {
-      const digits = cleanIdentifier.replace(/[^0-9]/g, '');
-      let owner = null;
-      if (cleanIdentifier.includes('@')) {
-        owner = await db.prepare('SELECT * FROM owners WHERE LOWER(email) = ?').get(normalizeEmail(cleanIdentifier));
-      } else if (digits.length >= 10) {
-        owner = await db.prepare(`
-          SELECT * FROM owners 
-          WHERE REPLACE(REPLACE(phone, ' ', ''), '-', '') = ? 
-             OR REPLACE(REPLACE(phone, ' ', ''), '-', '') LIKE ?
-        `).get(digits, `%${digits.slice(-10)}`);
-      } else {
-        owner = await db.prepare('SELECT * FROM owners WHERE LOWER(email) = ? OR phone = ?').get(cleanIdentifier.toLowerCase(), cleanIdentifier);
-      }
-
-      if (!owner) {
-        return res.status(401).json({
-          error: 'No Fleet Host account found with this email or phone. Please switch to Sign Up.'
-        });
-      }
-
-      if (owner.password && owner.password !== cleanPassword) {
-        return res.status(401).json({ error: 'Incorrect password. Please check and try again.' });
-      }
-
-      // If host had no password set previously, set it now
-      if (!owner.password) {
-        try {
-          await db.prepare('UPDATE owners SET password = ? WHERE id = ?').run(cleanPassword, owner.id);
-        } catch (e) {}
-      }
-
-      const token = `vr_owner_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
-      const userData = {
-        id: owner.id,
-        name: owner.name,
-        phone: owner.phone,
-        email: owner.email,
-        emailVerified: Boolean(owner.emailVerified),
-        verificationStatus: owner.verificationStatus,
-        vehiclesCount: owner.vehiclesCount,
-        earnings: owner.earnings,
-        role: 'owner'
-      };
-
-      activeSessions.set(token, { role: 'owner', user: userData });
-      try {
-        await db.prepare('INSERT OR REPLACE INTO sessions (token, role, userId, userData) VALUES (?, ?, ?, ?)').run(
-          token, 'owner', userData.id, JSON.stringify(userData)
-        );
-      } catch (e) {}
-
-      return res.json({
-        success: true,
-        message: 'Logged in successfully as Fleet Host',
-        token,
-        role: 'owner',
-        user: userData
-      });
+    if (user.password && user.password !== cleanPassword) {
+      return res.status(401).json({ error: 'Incorrect password. Please check and try again.' });
     }
 
-    return res.status(400).json({ error: 'Invalid user role specified.' });
+    // Ensure password is set for legacy accounts
+    if (!user.password) {
+      try {
+        await db.prepare('UPDATE customers SET password = ? WHERE id = ?').run(cleanPassword, user.id);
+        await db.prepare('UPDATE owners SET password = ? WHERE id = ?').run(cleanPassword, user.id);
+      } catch (e) {}
+    }
+
+    // Ensure synchronized host & renter profile exists
+    try {
+      const ownerExists = await db.prepare('SELECT id FROM owners WHERE id = ? OR LOWER(email) = ?').get(user.id, user.email ? normalizeEmail(user.email) : '');
+      if (!ownerExists) {
+        await db.prepare(`
+          INSERT INTO owners (id, name, phone, email, password, emailVerified, verificationStatus, vehiclesCount, earnings, status)
+          VALUES (?, ?, ?, ?, ?, ?, 'Approved', 0, 0, 'active')
+        `).run(user.id, user.name, user.phone, user.email, user.password || cleanPassword, user.emailVerified ? 1 : 0);
+      }
+      const custExists = await db.prepare('SELECT id FROM customers WHERE id = ? OR LOWER(email) = ?').get(user.id, user.email ? normalizeEmail(user.email) : '');
+      if (!custExists) {
+        await db.prepare(`
+          INSERT INTO customers (id, name, phone, email, password, emailVerified, kycStatus, bookingsCount, status)
+          VALUES (?, ?, ?, ?, ?, ?, 'Verified', 0, 'active')
+        `).run(user.id, user.name, user.phone, user.email, user.password || cleanPassword, user.emailVerified ? 1 : 0);
+      }
+    } catch (e) {}
+
+    const token = `vr_usr_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+    const userData = {
+      id: user.id,
+      name: user.name,
+      phone: user.phone,
+      email: user.email,
+      emailVerified: Boolean(user.emailVerified),
+      kycStatus: user.kycStatus || 'Verified',
+      role: 'user',
+      isHost: true
+    };
+
+    activeSessions.set(token, { role: 'user', user: userData });
+    try {
+      await db.prepare('INSERT OR REPLACE INTO sessions (token, role, userId, userData) VALUES (?, ?, ?, ?)').run(
+        token, 'user', userData.id, JSON.stringify(userData)
+      );
+    } catch (e) {}
+
+    // First view on sign-in is always the Renter view
+    return res.json({
+      success: true,
+      message: 'Logged in successfully',
+      token,
+      role: 'customer',
+      user: userData
+    });
   } catch (error) {
     console.error('Error during /api/auth/login:', error);
     res.status(500).json({ error: 'Authentication service failed. Please try again.' });
   }
 });
 
-// POST /api/auth/register - Fresh Onboarding (Name, Phone, Email, Password, Verification)
+// POST /api/auth/register - Unified Onboarding (One User Account for Renter & Host)
 router.post('/register', async (req, res) => {
   try {
-    const { name, phone, email, password, role = 'customer' } = req.body;
+    const { name, phone, email, password } = req.body;
 
     if (!name || !name.trim()) {
       return res.status(400).json({ error: 'Full name is required.' });
@@ -408,110 +356,67 @@ router.post('/register', async (req, res) => {
     const verRecord = await db.prepare('SELECT verified FROM email_verifications WHERE email = ?').get(normalizedEmail);
     const emailVerified = verRecord?.verified ? 1 : 0;
 
-    if (role === 'customer') {
-      // Check existing customer
-      const existing = await db.prepare(`
-        SELECT id, email, phone FROM customers 
-        WHERE LOWER(email) = ? 
-           OR REPLACE(REPLACE(phone, ' ', ''), '-', '') = ? 
-           OR REPLACE(REPLACE(phone, ' ', ''), '-', '') LIKE ?
-      `).get(normalizedEmail, digits, `%${digits.slice(-10)}`);
+    // Check existing customer or owner
+    const existingCust = await db.prepare(`
+      SELECT id FROM customers 
+      WHERE LOWER(email) = ? 
+         OR REPLACE(REPLACE(phone, ' ', ''), '-', '') = ? 
+         OR REPLACE(REPLACE(phone, ' ', ''), '-', '') LIKE ?
+    `).get(normalizedEmail, digits, `%${digits.slice(-10)}`);
 
-      if (existing) {
-        return res.status(409).json({
-          error: 'An account with this email or phone number is already registered. Please switch to Log In.'
-        });
-      }
+    const existingOwner = await db.prepare(`
+      SELECT id FROM owners 
+      WHERE LOWER(email) = ? 
+         OR REPLACE(REPLACE(phone, ' ', ''), '-', '') = ? 
+         OR REPLACE(REPLACE(phone, ' ', ''), '-', '') LIKE ?
+    `).get(normalizedEmail, digits, `%${digits.slice(-10)}`);
 
-      const newId = `cust-${Date.now()}`;
-      await db.prepare(`
-        INSERT INTO customers (id, name, phone, email, password, emailVerified, kycStatus, bookingsCount, status, registeredDate)
-        VALUES (?, ?, ?, ?, ?, ?, 'Pending', 0, 'active', CURRENT_TIMESTAMP)
-      `).run(newId, cleanName, cleanPhone, normalizedEmail, cleanPassword, emailVerified);
-
-      const customer = await db.prepare('SELECT * FROM customers WHERE id = ?').get(newId);
-
-      const token = `vr_cust_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
-      const userData = {
-        id: customer.id,
-        name: customer.name,
-        phone: customer.phone,
-        email: customer.email,
-        emailVerified: Boolean(customer.emailVerified),
-        kycStatus: customer.kycStatus,
-        bookingsCount: 0,
-        role: 'customer'
-      };
-
-      activeSessions.set(token, { role: 'customer', user: userData });
-      try {
-        await db.prepare('INSERT OR REPLACE INTO sessions (token, role, userId, userData) VALUES (?, ?, ?, ?)').run(
-          token, 'customer', userData.id, JSON.stringify(userData)
-        );
-      } catch (e) {}
-
-      return res.status(201).json({
-        success: true,
-        message: 'Welcome! Your account has been created successfully.',
-        token,
-        role: 'customer',
-        user: userData
+    if (existingCust || existingOwner) {
+      return res.status(409).json({
+        error: 'An account with this email or phone number is already registered. Please switch to Log In.'
       });
     }
 
-    if (role === 'owner') {
-      // Check existing host
-      const existing = await db.prepare(`
-        SELECT id, email, phone FROM owners 
-        WHERE LOWER(email) = ? 
-           OR REPLACE(REPLACE(phone, ' ', ''), '-', '') = ? 
-           OR REPLACE(REPLACE(phone, ' ', ''), '-', '') LIKE ?
-      `).get(normalizedEmail, digits, `%${digits.slice(-10)}`);
+    const newId = `usr-${Date.now()}`;
 
-      if (existing) {
-        return res.status(409).json({
-          error: 'A Fleet Host account with this email or phone number is already registered. Please switch to Log In.'
-        });
-      }
+    // Create unified records in both customers and owners tables
+    await db.prepare(`
+      INSERT INTO customers (id, name, phone, email, password, emailVerified, kycStatus, bookingsCount, status, registeredDate)
+      VALUES (?, ?, ?, ?, ?, ?, 'Pending', 0, 'active', CURRENT_TIMESTAMP)
+    `).run(newId, cleanName, cleanPhone, normalizedEmail, cleanPassword, emailVerified);
 
-      const newId = `own-${Date.now()}`;
-      await db.prepare(`
-        INSERT INTO owners (id, name, phone, email, password, emailVerified, verificationStatus, vehiclesCount, earnings, status, joinedDate)
-        VALUES (?, ?, ?, ?, ?, ?, 'Pending', 0, 0, 'active', CURRENT_TIMESTAMP)
-      `).run(newId, cleanName, cleanPhone, normalizedEmail, cleanPassword, emailVerified);
+    await db.prepare(`
+      INSERT INTO owners (id, name, phone, email, password, emailVerified, verificationStatus, vehiclesCount, earnings, status, joinedDate)
+      VALUES (?, ?, ?, ?, ?, ?, 'Approved', 0, 0, 'active', CURRENT_TIMESTAMP)
+    `).run(newId, cleanName, cleanPhone, normalizedEmail, cleanPassword, emailVerified);
 
-      const owner = await db.prepare('SELECT * FROM owners WHERE id = ?').get(newId);
+    const token = `vr_usr_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+    const userData = {
+      id: newId,
+      name: cleanName,
+      phone: cleanPhone,
+      email: normalizedEmail,
+      emailVerified: Boolean(emailVerified),
+      kycStatus: 'Pending',
+      role: 'user',
+      isHost: true
+    };
 
-      const token = `vr_owner_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
-      const userData = {
-        id: owner.id,
-        name: owner.name,
-        phone: owner.phone,
-        email: owner.email,
-        emailVerified: Boolean(owner.emailVerified),
-        verificationStatus: owner.verificationStatus,
-        vehiclesCount: 0,
-        earnings: 0,
-        role: 'owner'
-      };
+    activeSessions.set(token, { role: 'user', user: userData });
+    try {
+      await db.prepare('INSERT OR REPLACE INTO sessions (token, role, userId, userData) VALUES (?, ?, ?, ?)').run(
+        token, 'user', userData.id, JSON.stringify(userData)
+      );
+    } catch (e) {}
 
-      activeSessions.set(token, { role: 'owner', user: userData });
-      try {
-        await db.prepare('INSERT OR REPLACE INTO sessions (token, role, userId, userData) VALUES (?, ?, ?, ?)').run(
-          token, 'owner', userData.id, JSON.stringify(userData)
-        );
-      } catch (e) {}
-
-      return res.status(201).json({
-        success: true,
-        message: 'Welcome! Your Fleet Host account has been created successfully.',
-        token,
-        role: 'owner',
-        user: userData
-      });
-    }
-
-    return res.status(400).json({ error: 'Invalid registration role.' });
+    // First view on registration is the Renter view
+    return res.status(201).json({
+      success: true,
+      message: 'Welcome! Your account has been created successfully.',
+      token,
+      role: 'customer',
+      user: userData
+    });
   } catch (error) {
     console.error('Error during /api/auth/register:', error);
     res.status(500).json({ error: 'Failed to create user account. Please try again.' });
