@@ -2,11 +2,21 @@
 
 import React from 'react';
 import { useApp } from '../../src/context/AppContext';
+import { OwnerView } from '../../src/views/OwnerView';
 import { ShieldCheck, IndianRupee, Key, Smartphone, Award, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { VrindavanScooterIcon } from '../../src/components/CustomIcons';
 
 export default function HostClient() {
   const { role, setRole, currentUser, promptSwitchToHost, openLoginModal } = useApp();
+
+  // If user is actively in Host/Owner mode, render the full Fleet Owner Dashboard
+  if (role === 'owner') {
+    return (
+      <div className="w-full">
+        <OwnerView />
+      </div>
+    );
+  }
 
   const handleStartHosting = () => {
     if (!currentUser) {

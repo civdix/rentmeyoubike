@@ -1,11 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { useApp } from '../context/AppContext';
 import { MapPin, User, LogIn, LogOut, ChevronDown, ShieldCheck, Bike, Search, CalendarCheck, UserPlus, Mail } from 'lucide-react';
 import { VrindavanScooterIcon, VrindavanFeatherIcon, WhatsAppBrandIcon, KeyHandoverIcon } from './CustomIcons';
 
 export const Header = () => {
+  const pathname = usePathname();
+  const router = useRouter();
+
   const {
     role,
     setRole,
@@ -14,8 +19,6 @@ export const Header = () => {
     openLoginModal,
     openContactModal,
     logoutUser,
-    customerTab,
-    setCustomerTab,
     vehicles,
     bookings,
     promptSwitchToHost
@@ -23,11 +26,13 @@ export const Header = () => {
 
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
-  const activeVehiclesCount = React.useMemo(() => {
-    return (vehicles || []).filter((v) => v.status === 'active').length;
+  const activeVehiclesCount = useMemo(() => {
+    return (vehicles || []).filter(
+      (v) => v.status === 'active' && (v.vehicleVerified || v.verificationStatus === 'Verified')
+    ).length;
   }, [vehicles]);
 
-  const userBookingsCount = React.useMemo(() => {
+  const userBookingsCount = useMemo(() => {
     if (!currentUser) return 0;
     const cleanUserPhone = (currentUser.phone || '').replace(/[^0-9]/g, '');
     return (bookings || []).filter((b) => {
@@ -42,11 +47,29 @@ export const Header = () => {
     }).length;
   }, [bookings, currentUser]);
 
-  const navigateTo = (tab) => {
+  const isHome = pathname === '/';
+  const isBikes = pathname.startsWith('/bikes');
+  const isBookings = pathname === '/my-bookings';
+
+  const handleSwitchToRenter = () => {
     setRole('customer');
-    if (setCustomerTab) setCustomerTab(tab);
-    window.dispatchEvent(new CustomEvent('vr_navigate', { detail: tab }));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    router.push('/');
+  };
+
+  const handleHostClick = () => {
+    if (role === 'owner') {
+      router.push('/host');
+    } else if (!currentUser) {
+      openLoginModal('owner');
+    } else {
+      promptSwitchToHost();
+    }
+  };
+
+  const handleSignOut = () => {
+    logoutUser();
+    setProfileDropdownOpen(false);
+    router.push('/');
   };
 
   return (
@@ -93,7 +116,7 @@ export const Header = () => {
                   Hi, <strong className="text-white">{currentUser.name?.split(' ')[0] || 'User'}</strong>
                 </span>
                 <button
-                  onClick={() => role === 'customer' ? promptSwitchToHost() : setRole('customer')}
+                  onClick={() => role === 'customer' ? promptSwitchToHost() : handleSwitchToRenter()}
                   className="text-amber-400 hover:text-amber-300 font-bold underline text-[10px] cursor-pointer"
                 >
                   {role === 'customer' ? 'Host Mode' : 'Renter Mode'}
@@ -111,9 +134,9 @@ export const Header = () => {
       {/* Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
         {/* Brand Logo & Tagline */}
-        <div
-          className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0 min-w-0"
-          onClick={() => navigateTo('home')}
+        <Link
+          href="/"
+          className="flex items-center gap-2 sm:gap-3 group shrink-0 min-w-0"
         >
           <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white flex items-center justify-center p-1 sm:p-1.5 shadow-md border border-emerald-400/40 shrink-0 group-hover:scale-105 transition-transform">
             <img src="/logo_square_share_area.png" alt="Rent to Cent Logo" className="w-full h-full object-contain" />
@@ -132,24 +155,24 @@ export const Header = () => {
               Direct from Local Verified Hosts
             </p>
           </div>
-        </div>
+        </Link>
 
-        {/* Customer Center Nav Links */}
+        {/* Customer Center Nav Links (Next.js real routes) */}
         <nav className="hidden md:flex items-center gap-1.5 bg-slate-950/70 p-1.5 rounded-2xl border border-slate-800/80 text-xs font-bold">
-          <button
-            onClick={() => navigateTo('home')}
+          <Link
+            href="/"
             className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
-              role === 'customer' && customerTab === 'home'
+              isHome
                 ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
             }`}
           >
             <span>Home</span>
-          </button>
-          <button
-            onClick={() => navigateTo('browse')}
+          </Link>
+          <Link
+            href="/bikes"
             className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
-              role === 'customer' && customerTab === 'browse'
+              isBikes
                 ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
             }`}
@@ -158,18 +181,18 @@ export const Header = () => {
             <span>Browse Marketplace</span>
             {activeVehiclesCount > 0 && (
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
-                role === 'customer' && customerTab === 'browse'
+                isBikes
                   ? 'bg-emerald-700 text-white'
                   : 'bg-slate-800 text-slate-300 border border-slate-700'
               }`}>
                 {activeVehiclesCount}
               </span>
             )}
-          </button>
-          <button
-            onClick={() => navigateTo('my_bookings')}
+          </Link>
+          <Link
+            href="/my-bookings"
             className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 relative ${
-              role === 'customer' && customerTab === 'my_bookings'
+              isBookings
                 ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
             }`}
@@ -178,14 +201,14 @@ export const Header = () => {
             <span>My Bookings</span>
             {userBookingsCount > 0 && (
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
-                role === 'customer' && customerTab === 'my_bookings'
+                isBookings
                   ? 'bg-emerald-700 text-white'
-                  : 'bg-emerald-950 text-emerald-400 border border-emerald-800/60'
+                  : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
               }`}>
                 {userBookingsCount}
               </span>
             )}
-          </button>
+          </Link>
         </nav>
 
         {/* Right Side Actions: Host CTA + Profile / Sign In */}
@@ -193,7 +216,7 @@ export const Header = () => {
           {/* Host CTA Button */}
           {role === 'owner' ? (
             <button
-              onClick={() => setRole('customer')}
+              onClick={handleSwitchToRenter}
               className="inline-flex items-center gap-1 sm:gap-1.5 bg-amber-500 text-slate-950 hover:bg-amber-400 font-extrabold text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl transition-all shadow-sm active:scale-95 shrink-0 cursor-pointer"
               title="Return to Customer Rental Marketplace"
             >
@@ -203,7 +226,7 @@ export const Header = () => {
             </button>
           ) : (
             <button
-              onClick={promptSwitchToHost}
+              onClick={handleHostClick}
               className="inline-flex items-center gap-1 sm:gap-1.5 bg-slate-800/80 hover:bg-slate-800 text-amber-300 hover:text-amber-200 font-bold text-[11px] sm:text-xs px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-amber-500/30 hover:border-amber-400/60 transition-all shadow-sm active:scale-95 shrink-0 group cursor-pointer"
               title="List your vehicle and earn up to 85% on Rent to Cent"
             >
@@ -253,7 +276,7 @@ export const Header = () => {
                         <button
                           onClick={() => {
                             setProfileDropdownOpen(false);
-                            setRole('customer');
+                            handleSwitchToRenter();
                           }}
                           className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
                         >
@@ -273,38 +296,31 @@ export const Header = () => {
                         </button>
                       )}
 
-                      <button
-                        onClick={() => {
-                          setProfileDropdownOpen(false);
-                          navigateTo('my_bookings');
-                        }}
-                        className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
+                      <Link
+                        href="/my-bookings"
+                        onClick={() => setProfileDropdownOpen(false)}
+                        className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2"
                       >
                         <CalendarCheck className="w-3.5 h-3.5 text-teal-400" />
                         <span>My Bookings</span>
-                      </button>
+                      </Link>
 
                       {/* Admin Access ONLY for verified platform administrators */}
                       {currentUser?.role === 'admin' && (
-                        <button
-                          onClick={() => {
-                            setProfileDropdownOpen(false);
-                            setRole('admin');
-                          }}
-                          className="w-full text-left px-3 py-2 text-purple-300 hover:text-white hover:bg-purple-950/40 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
+                        <Link
+                          href="/admin"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="w-full text-left px-3 py-2 text-purple-300 hover:text-white hover:bg-purple-950/40 rounded-xl transition-colors flex items-center gap-2"
                         >
                           <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
                           <span>Admin Control Center</span>
-                        </button>
+                        </Link>
                       )}
                     </div>
 
                     <div className="pt-1 border-t border-slate-800">
                       <button
-                        onClick={() => {
-                          setProfileDropdownOpen(false);
-                          logoutUser();
-                        }}
+                        onClick={handleSignOut}
                         className="w-full text-left px-3 py-2 text-xs text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
                       >
                         <LogOut className="w-3.5 h-3.5 text-rose-400" />

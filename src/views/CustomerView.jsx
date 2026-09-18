@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useApp } from '../context/AppContext';
 import { MarketplaceView } from './MarketplaceView';
 import { VehicleDetailView } from './VehicleDetailView';
@@ -19,6 +20,7 @@ import {
 } from '../components/CustomIcons';
 
 export const CustomerView = () => {
+  const router = useRouter();
   const {
     vehicles,
     bookings,
@@ -126,7 +128,7 @@ export const CustomerView = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    setActiveTab('browse');
+    router.push('/bikes');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -188,7 +190,7 @@ export const CustomerView = () => {
 
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <button
-                    onClick={() => setActiveTab('browse')}
+                    onClick={() => router.push('/bikes')}
                     className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm py-3 sm:py-3.5 px-5 sm:px-7 rounded-xl flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition-transform active:scale-95 shrink-0"
                   >
                     <VrindavanScooterIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.2} />
@@ -224,8 +226,8 @@ export const CustomerView = () => {
                     </span>
                   </div>
                   <button
-                    onClick={() => setActiveTab('my_bookings')}
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-sm transition-all shrink-0"
+                    onClick={() => router.push('/my-bookings')}
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-sm transition-all shrink-0 cursor-pointer"
                   >
                     View My Bookings
                   </button>
@@ -329,8 +331,8 @@ export const CustomerView = () => {
                 <p className="text-xs text-slate-500 mt-1">Verified vehicles available for instant booking near temple zones.</p>
               </div>
               <button
-                onClick={() => setActiveTab('browse')}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800"
+                onClick={() => router.push('/bikes')}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 cursor-pointer"
               >
                 <span>View All {vehicles.filter(v => v.status === 'active' && (v.vehicleVerified || v.verificationStatus === 'Verified')).length} Bikes</span>
                 <ArrowRight className="w-4 h-4" />
@@ -744,8 +746,8 @@ export const CustomerView = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => setActiveTab('browse')}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl inline-flex items-center gap-2 shadow-md transition-transform active:scale-95"
+                  onClick={() => router.push('/bikes')}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl inline-flex items-center gap-2 shadow-md transition-transform active:scale-95 cursor-pointer"
                 >
                   <Search className="w-4 h-4" />
                   <span>Explore Available Fleet</span>
@@ -766,14 +768,14 @@ export const CustomerView = () => {
               <div className="flex flex-wrap justify-center gap-3 pt-2">
                 <button
                   onClick={() => openLoginModal('customer')}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl inline-flex items-center gap-2 shadow-md transition-transform active:scale-95"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl inline-flex items-center gap-2 shadow-md transition-transform active:scale-95 cursor-pointer"
                 >
                   <UserCheck className="w-4 h-4" />
                   <span>Sign In as Renter</span>
                 </button>
                 <button
-                  onClick={() => setActiveTab('browse')}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs px-4 py-2.5 rounded-xl inline-flex items-center gap-2 transition-colors"
+                  onClick={() => router.push('/bikes')}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs px-4 py-2.5 rounded-xl inline-flex items-center gap-2 transition-colors cursor-pointer"
                 >
                   <span>Browse Available Fleet</span>
                 </button>
@@ -782,73 +784,6 @@ export const CustomerView = () => {
           )}
         </div>
       )}
-
-      {/* MOBILE STICKY BOTTOM NAVIGATION BAR */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md px-2 py-1.5 border-t border-slate-800 flex items-center justify-around gap-1 shadow-2xl">
-        <button
-          onClick={() => {
-            setActiveTab('home');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          className={`flex-1 py-1.5 px-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold transition-all ${activeTab === 'home'
-              ? 'bg-emerald-600 text-white shadow-sm'
-              : 'text-slate-400 hover:text-white'
-            }`}
-        >
-          <Home className="w-4 h-4" />
-          <span>Home</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setActiveTab('browse');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          className={`flex-1 py-1.5 px-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold transition-all ${activeTab === 'browse'
-              ? 'bg-emerald-600 text-white shadow-sm'
-              : 'text-slate-400 hover:text-white'
-            }`}
-        >
-          <Bike className="w-4 h-4" />
-          <span>Fleet ({vehicles.filter((v) => v.status === 'active' && (v.vehicleVerified || v.verificationStatus === 'Verified')).length})</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setActiveTab('my_bookings');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          className={`flex-1 py-1.5 px-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold relative transition-all ${activeTab === 'my_bookings'
-              ? 'bg-emerald-600 text-white shadow-sm'
-              : 'text-slate-400 hover:text-white'
-            }`}
-        >
-          <Clock className="w-4 h-4" />
-          <span>Bookings</span>
-          {userBookings.length > 0 && (
-            <span className="w-2 h-2 rounded-full bg-emerald-400 absolute top-1 right-3"></span>
-          )}
-        </button>
-
-        <a
-          href={`https://wa.me/${legalConfig.supportWhatsApp.replace(/[^0-9]/g, '')}`}
-          target="_blank"
-          rel="noreferrer"
-          className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-[10px] py-1.5 px-2.5 rounded-xl flex flex-col items-center justify-center gap-0.5 shadow-sm active:scale-95 transition-transform shrink-0"
-        >
-          <MessageSquare className="w-4 h-4 fill-white" />
-          <span>Support</span>
-        </a>
-
-        <button
-          onClick={() => openLoginModal(currentUser ? (currentUser.role || 'customer') : 'customer')}
-          className="flex-1 py-1.5 px-1.5 rounded-xl flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold text-slate-300 hover:text-white transition-all"
-          title="Account"
-        >
-          <User className="w-4 h-4 text-emerald-400" />
-          <span className="truncate max-w-[48px]">{currentUser ? (currentUser.name?.split(' ')[0] || 'Account') : 'Account'}</span>
-        </button>
-      </div>
 
       {/* DETAILED VEHICLE LISTING PAGE MODAL VIEW */}
       {selectedVehicle && (

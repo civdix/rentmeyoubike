@@ -4,8 +4,7 @@ import React from 'react';
 import { AppProvider, useApp } from '../src/context/AppContext';
 import { Header } from '../src/components/Header';
 import { Footer } from '../src/components/Footer';
-import { OwnerView } from '../src/views/OwnerView';
-import { AdminView } from '../src/views/AdminView';
+import { MobileBottomNav } from '../src/components/MobileBottomNav';
 import { WhatsAppModal } from '../src/components/WhatsAppModal';
 import { KYCWizardModal } from '../src/components/KYCWizardModal';
 import { PaymentModal } from '../src/components/PaymentModal';
@@ -18,7 +17,6 @@ import { SwitchToHostModal } from '../src/components/SwitchToHostModal';
 
 function AppShell({ children }) {
   const {
-    role,
     currentUser,
     activeWhatsAppModal,
     setActiveWhatsAppModal,
@@ -47,18 +45,19 @@ function AppShell({ children }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-emerald-500 selection:text-white w-full max-w-full overflow-x-hidden">
-      {/* Universal Header */}
+      {/* Universal Sticky Header */}
       <Header />
 
-      {/* Main Page Area: renders page SSR content when role is customer, or dedicated dashboards for Host & Admin */}
-      <main className="flex-1 w-full max-w-full overflow-x-hidden">
-        {role === 'customer' && children}
-        {role === 'owner' && <OwnerView />}
-        {role === 'admin' && currentUser?.role === 'admin' && <AdminView />}
+      {/* Main Page Area: renders Next.js page routes natively */}
+      <main className="flex-1 w-full max-w-full overflow-x-hidden pb-16 md:pb-0">
+        {children}
       </main>
 
       {/* Unified Brand Footer */}
       <Footer />
+
+      {/* Persistent Mobile Bottom Navigation Bar */}
+      <MobileBottomNav />
 
       {/* Global Interactive Modals */}
       {activeWhatsAppModal && (
