@@ -21,6 +21,7 @@ import {
   apiCreateBooking,
   apiUpdateBookingStatus,
   apiUpdatePaymentStatus,
+  apiSendMessage,
   apiVerifyKYC,
   apiFetchInspections,
   apiSaveInspection,
@@ -594,6 +595,18 @@ export const AppProvider = ({ children }) => {
 
     // Sync with backend API (and auto-send email to Admin)
     apiCreateBooking(newBooking).catch((err) => console.warn('API createBooking error:', err));
+
+    // Automatically persist booking inquiry to live chat room in the database
+    const bookingChatText = `Radhe Radhe! 🙏 Booking Inquiry #${newBooking.id}\n🛵 Vehicle: ${newBooking.vehicleName}\n👤 Renter: ${newBooking.customerName} (${newBooking.customerPhone})\n📅 Dates: ${newBooking.startDate} to ${newBooking.endDate} (${newBooking.totalDays} day(s))\n📍 Pickup: ${newBooking.pickupLocation}\n💰 Total: ₹${newBooking.totalAmount}`;
+
+    apiSendMessage({
+      conversationId: `conv-${newBooking.id}`,
+      bookingId: newBooking.id,
+      customerName: newBooking.customerName,
+      customerPhone: newBooking.customerPhone,
+      senderRole: 'customer',
+      text: bookingChatText
+    }).catch((err) => console.warn('API auto-chat initial message error:', err));
 
     return newBooking;
   };

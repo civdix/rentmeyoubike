@@ -133,13 +133,16 @@ router.post('/', async (req, res) => {
     const cleanText = text.trim();
     const isAdmin = req.user && req.user.role === 'admin';
 
-    // Determine sender & receiver roles
-    const senderRole = isAdmin ? 'admin' : 'customer';
-    const receiverRole = isAdmin ? 'customer' : 'admin';
-    const senderName = isAdmin
-      ? (req.user.name || 'Admin Support')
-      : (req.user?.name || inputName || 'Vrindavan Pilgrim');
-    const senderPhone = isAdmin ? '' : (req.user?.phone || inputPhone || '');
+    // Determine sender & receiver roles (support explicit senderRole from client)
+    const requestedRole = req.body.senderRole;
+    const senderRole = (requestedRole === 'customer' || requestedRole === 'admin')
+      ? requestedRole
+      : (isAdmin ? 'admin' : 'customer');
+    const receiverRole = senderRole === 'admin' ? 'customer' : 'admin';
+    const senderName = senderRole === 'admin'
+      ? (req.user?.name || 'Rent to Cent Admin')
+      : (inputName || req.user?.name || 'Vrindavan Pilgrim');
+    const senderPhone = senderRole === 'admin' ? '' : (inputPhone || req.user?.phone || '');
 
     // Resolve conversationId
     let conversationId = inputConvId;

@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { useApp } from '../context/AppContext';
 import { BookingStatusBadge } from '../components/TrustBadges';
-import { Bike, Clock, Search, UserCheck, Lock, ShieldCheck } from 'lucide-react';
+import { Bike, Clock, Search, UserCheck, Lock, ShieldCheck, MessageSquare } from 'lucide-react';
 
 export const MyBookingsView = () => {
   const {
@@ -13,7 +13,8 @@ export const MyBookingsView = () => {
     openLoginModal,
     setActiveKYCModal,
     setActivePaymentModal,
-    setActiveInspectionModal
+    setActiveInspectionModal,
+    setActiveWhatsAppModal
   } = useApp();
 
   const userBookings = useMemo(() => {
@@ -70,6 +71,16 @@ export const MyBookingsView = () => {
                   <BookingStatusBadge status={b.status} />
                 </div>
                 <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => setActiveWhatsAppModal({
+                      booking: b,
+                      vehicle: { id: b.vehicleId, name: b.vehicleName }
+                    })}
+                    className="text-xs font-bold px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-all flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5 fill-white" />
+                    <span>💬 Chat with Admin / Reply</span>
+                  </button>
                   <button
                     onClick={() => setActiveKYCModal({ bookingId: b.id })}
                     className="text-xs font-bold px-3 py-2 rounded-xl bg-amber-50 text-amber-900 border border-amber-300 hover:bg-amber-100 transition-colors cursor-pointer"

@@ -15,6 +15,7 @@ import { LegalPoliciesModal } from '../src/components/LegalPoliciesModal';
 import { LoginModal } from '../src/components/LoginModal';
 import { ContactModal } from '../src/components/ContactModal';
 import { SwitchToHostModal } from '../src/components/SwitchToHostModal';
+import { FloatingChatButton } from '../src/components/FloatingChatButton';
 
 function AppShell({ children }) {
   const {
@@ -70,6 +71,9 @@ function AppShell({ children }) {
 
       {/* Persistent Mobile Bottom Navigation Bar */}
       <MobileBottomNav />
+
+      {/* Persistent Floating Live Chat & Admin Reply Button */}
+      <FloatingChatButton />
 
       {/* Global Interactive Modals */}
       {activeWhatsAppModal && (

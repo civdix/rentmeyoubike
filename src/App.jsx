@@ -14,6 +14,7 @@ import { LegalPoliciesModal } from './components/LegalPoliciesModal';
 import { LoginModal } from './components/LoginModal';
 import { ContactModal } from './components/ContactModal';
 import { SwitchToHostModal } from './components/SwitchToHostModal';
+import { FloatingChatButton } from './components/FloatingChatButton';
 
 const MainContent = () => {
   const {
@@ -56,6 +57,9 @@ const MainContent = () => {
 
       {/* Single Unified Footer */}
       <Footer />
+
+      {/* Floating Live Chat & Admin Reply Button */}
+      <FloatingChatButton />
 
       {/* Global Modals */}
       {activeWhatsAppModal && (

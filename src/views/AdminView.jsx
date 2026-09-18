@@ -284,6 +284,7 @@ export const AdminView = () => {
         bookingId: currentConv?.bookingId || null,
         customerName: currentConv?.customerName || 'Customer',
         customerPhone: currentConv?.customerPhone || '',
+        senderRole: 'admin',
         text
       });
 
