@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { AppProvider, useApp } from '../src/context/AppContext';
 import { Header } from '../src/components/Header';
 import { Footer } from '../src/components/Footer';
@@ -42,6 +43,17 @@ function AppShell({ children }) {
     closeSwitchToHostModal,
     confirmSwitchToHost
   } = useApp();
+
+  const router = useRouter();
+
+  const handleConfirmSwitchToHost = () => {
+    confirmSwitchToHost();
+    try {
+      router.push('/host');
+    } catch {
+      if (typeof window !== 'undefined') window.location.href = '/host';
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-emerald-500 selection:text-white w-full max-w-full overflow-x-hidden">
@@ -129,7 +141,7 @@ function AppShell({ children }) {
           isOpen={isSwitchToHostModalOpen}
           currentUser={currentUser}
           onClose={closeSwitchToHostModal}
-          onConfirm={confirmSwitchToHost}
+          onConfirm={handleConfirmSwitchToHost}
           onRequireLogin={() => openLoginModal('owner')}
         />
       )}

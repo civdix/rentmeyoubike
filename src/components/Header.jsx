@@ -59,8 +59,6 @@ export const Header = () => {
   const handleHostClick = () => {
     if (role === 'owner') {
       router.push('/host');
-    } else if (!currentUser) {
-      openLoginModal('owner');
     } else {
       promptSwitchToHost();
     }

@@ -49,8 +49,6 @@ export const MobileBottomNav = () => {
   const handleHostAction = () => {
     if (role === 'owner') {
       if (typeof window !== 'undefined') window.location.href = '/host';
-    } else if (!currentUser) {
-      openLoginModal('owner');
     } else {
       promptSwitchToHost();
     }

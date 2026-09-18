@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
+import { X, ArrowRight, CheckCircle2, Sparkles, LogIn } from 'lucide-react';
 import { VrindavanFeatherIcon, KeyHandoverIcon } from './CustomIcons';
 
 export const SwitchToHostModal = ({ isOpen, onClose, onConfirm, currentUser, onRequireLogin }) => {
@@ -11,7 +11,12 @@ export const SwitchToHostModal = ({ isOpen, onClose, onConfirm, currentUser, onR
       onRequireLogin();
       return;
     }
-    onConfirm();
+    if (onConfirm) {
+      onConfirm();
+    }
+    if (typeof window !== 'undefined' && window.location.pathname !== '/host') {
+      window.location.href = '/host';
+    }
   };
 
   return (
@@ -34,6 +39,7 @@ export const SwitchToHostModal = ({ isOpen, onClose, onConfirm, currentUser, onR
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-750 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer"
           >
@@ -57,7 +63,7 @@ export const SwitchToHostModal = ({ isOpen, onClose, onConfirm, currentUser, onR
           <div className="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-4 space-y-3 text-xs">
             <div className="flex items-start gap-2.5 text-slate-300">
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-              <span><strong>List in Minutes:</strong> Add your scooter or motorcycle with quick photo upload & set your daily rate.</span>
+              <span><strong>List in Minutes:</strong> Add your scooter or motorcycle with quick photo upload &amp; set your daily rate.</span>
             </div>
             <div className="flex items-start gap-2.5 text-slate-300">
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
@@ -72,15 +78,23 @@ export const SwitchToHostModal = ({ isOpen, onClose, onConfirm, currentUser, onR
           {/* Action Buttons */}
           <div className="space-y-2 pt-2">
             <button
+              type="button"
               onClick={handleConfirm}
               className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-3.5 px-4 rounded-xl shadow-lg transition-all active:scale-[0.98] text-xs flex items-center justify-center gap-2 cursor-pointer"
             >
               <KeyHandoverIcon className="w-4 h-4 text-slate-950" />
-              <span>Continue to Host Portal</span>
+              <span>{currentUser ? 'Continue to Host Portal' : 'Sign In & Continue to Host Portal'}</span>
               <ArrowRight className="w-4 h-4 text-slate-950" />
             </button>
 
+            {!currentUser && (
+              <p className="text-[11px] text-center text-slate-400">
+                Sign in with your unified account to activate Host Mode and list bikes.
+              </p>
+            )}
+
             <button
+              type="button"
               onClick={onClose}
               className="w-full bg-slate-800 hover:bg-slate-750 text-slate-300 font-bold py-2.5 px-4 rounded-xl text-xs transition-colors cursor-pointer"
             >

@@ -19,12 +19,10 @@ export default function HostClient() {
   }
 
   const handleStartHosting = () => {
-    if (!currentUser) {
-      openLoginModal('owner');
-      return;
-    }
     if (promptSwitchToHost) {
       promptSwitchToHost();
+    } else if (!currentUser) {
+      openLoginModal('owner');
     } else {
       setRole('owner');
     }

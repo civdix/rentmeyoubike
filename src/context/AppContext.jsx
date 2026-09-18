@@ -349,7 +349,13 @@ export const AppProvider = ({ children }) => {
   const confirmSwitchToHost = () => {
     setIsSwitchToHostModalOpen(false);
     handleSetRole('owner');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      if (window.location.pathname !== '/host') {
+        window.location.href = '/host';
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
   };
 
   // Auth & RBAC Actions

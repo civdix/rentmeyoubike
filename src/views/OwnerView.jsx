@@ -208,11 +208,7 @@ export const OwnerView = () => {
       return;
     }
 
-    if (currentUser.role !== 'owner' && currentUser.role !== 'admin') {
-      alert('You must be signed in with a Fleet Host account to list a vehicle.');
-      openLoginModal('owner');
-      return;
-    }
+
 
     if (!hostIdDoc.uploaded || !hostPanDoc.uploaded) {
       alert('Please upload your Government Photo ID and PAN Card in Step 2.');
@@ -426,7 +422,9 @@ export const OwnerView = () => {
             <button
               onClick={() => {
                 setRole('customer');
-                if (setCustomerTab) setCustomerTab('browse');
+                if (typeof window !== 'undefined') {
+                  window.location.href = '/';
+                }
               }}
               className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs transition-colors cursor-pointer"
             >

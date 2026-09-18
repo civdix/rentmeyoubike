@@ -9,11 +9,7 @@ export const Footer = () => {
   const { setRole, legalConfig, openLoginModal, openContactModal, currentUser, logoutUser, promptSwitchToHost } = useApp();
 
   const handleHostClick = () => {
-    if (!currentUser) {
-      openLoginModal('owner');
-    } else {
-      promptSwitchToHost();
-    }
+    promptSwitchToHost();
   };
 
   return (

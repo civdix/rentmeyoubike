@@ -22,8 +22,9 @@ import {
 import { VrindavanFeatherIcon } from './CustomIcons';
 import { EmailVerificationField } from './EmailVerificationField';
 
-export const LoginModal = ({ initialMode = 'login', onClose, onSuccess }) => {
-  const { setRole, setCurrentUser, refreshData } = useApp();
+export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', onClose, onSuccess }) => {
+  const { setRole, setCurrentUser, refreshData, loginRoleTarget } = useApp();
+  const targetRole = loginRoleTarget || initialRole || 'customer';
 
   // Mode: 'login' | 'signup'
   const [mode, setMode] = useState(initialMode || 'login');
@@ -97,9 +98,15 @@ export const LoginModal = ({ initialMode = 'login', onClose, onSuccess }) => {
 
       if (res?.success) {
         if (setCurrentUser) setCurrentUser(res.user);
-        // If authorized as admin, switch to admin; otherwise start on Renter view
+        // If authorized as admin, switch to admin; if target was host, switch to owner and route to /host; otherwise start on Renter view
         if (res.role === 'admin' || res.user?.role === 'admin') {
           setRole('admin');
+        } else if (targetRole === 'owner') {
+          setRole('owner');
+          localStorage.setItem('vr_role', 'owner');
+          if (typeof window !== 'undefined' && window.location.pathname !== '/host') {
+            window.location.href = '/host';
+          }
         } else {
           setRole('customer');
         }
@@ -166,12 +173,19 @@ export const LoginModal = ({ initialMode = 'login', onClose, onSuccess }) => {
       if (res?.success) {
         setSuccessMsg('Account created successfully! Logging you in...');
         if (setCurrentUser) setCurrentUser(res.user);
-        // First view on registration is the Renter view
-        setRole('customer');
+        if (targetRole === 'owner') {
+          setRole('owner');
+          localStorage.setItem('vr_role', 'owner');
+        } else {
+          setRole('customer');
+        }
         if (refreshData) refreshData();
         if (onSuccess) onSuccess(res.user);
         setTimeout(() => {
           onClose();
+          if (targetRole === 'owner' && typeof window !== 'undefined' && window.location.pathname !== '/host') {
+            window.location.href = '/host';
+          }
         }, 600);
       } else {
         setErrorMsg(res?.error || 'Registration failed. Please try again.');
@@ -243,6 +257,15 @@ export const LoginModal = ({ initialMode = 'login', onClose, onSuccess }) => {
             <span>Sign Up / Register</span>
           </button>
         </div>
+
+        {targetRole === 'owner' && (
+          <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-2 text-amber-200 text-xs flex items-center gap-2">
+            <Key className="w-4 h-4 text-amber-400 shrink-0" />
+            <span className="leading-tight">
+              Sign in with your unified account to activate <strong>Host Mode</strong> and list your bike.
+            </span>
+          </div>
+        )}
 
         {/* Form Body - Scrollable */}
         <div className="p-4 sm:p-6 overflow-y-auto space-y-4">
