@@ -266,4 +266,107 @@ export async function sendBookingNotificationToAdmin(booking) {
   return sendEmail({ to: adminEmail, subject, text, html });
 }
 
-export default { isValidEmail, normalizeEmail, sendEmail, sendEmailOtp, sendBookingNotificationToAdmin };
+/**
+ * Dispatches an HTML digest email to Admin when customer messages remain unread for too long
+ */
+export async function sendPendingMessagesAlertToAdmin({ unreadMessages, conversationsCount, totalUnreadCount }) {
+  const adminEmail = process.env.ADMIN_EMAIL || 'shivdixittt@gmail.com';
+  const subject = `🔔 Action Required: ${totalUnreadCount} Pending Customer Messages on Rent on Cent`;
+
+  let text = `Radhe Radhe Admin!\n\n` +
+    `You have ${totalUnreadCount} unread customer message(s) across ${conversationsCount} conversation(s) awaiting response on Rent on Cent.\n\n` +
+    `--- PENDING MESSAGES SUMMARY ---\n`;
+
+  for (const msg of unreadMessages) {
+    text += `\n👤 Customer: ${msg.customerName || 'Customer'} (${msg.customerPhone || 'N/A'})\n` +
+      `📋 Booking Ref: #${msg.bookingId || 'Inquiry'}\n` +
+      `💬 Message: "${msg.text}"\n` +
+      `🕒 Sent At: ${msg.createdAt}\n` +
+      `📱 WhatsApp: https://wa.me/${String(msg.customerPhone || '').replace(/[^0-9]/g, '')}\n`;
+  }
+
+  text += `\n👉 Reply directly in Admin Live Chat: https://rentoncent.bond/admin?tab=chat\n`;
+
+  const conversationCardsHtml = unreadMessages.map((msg) => {
+    const cleanPhone = String(msg.customerPhone || '').replace(/[^0-9]/g, '');
+    const waUrl = cleanPhone
+      ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(`Radhe Radhe ${msg.customerName || ''}! I am replying from Rent on Cent regarding your message.`)}`
+      : null;
+
+    return `
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 14px;">
+        <div style="margin-bottom: 8px;">
+          <strong style="color: #0f172a; font-size: 14px;">${msg.customerName || 'Guest Customer'}</strong>
+          ${msg.bookingId ? `<span style="background: #e0e7ff; color: #3730a3; font-family: monospace; font-size: 11px; padding: 2px 8px; border-radius: 6px; margin-left: 6px; font-weight: bold;">Ref: #${msg.bookingId}</span>` : ''}
+        </div>
+
+        <div style="font-size: 12px; color: #475569; margin-bottom: 10px;">
+          📞 Phone: <a href="tel:${cleanPhone}" style="color: #059669; text-decoration: none; font-weight: bold;">${msg.customerPhone || 'Not provided'}</a>
+        </div>
+
+        <div style="background: #ffffff; border-left: 4px solid #10b981; border-radius: 6px; padding: 12px 14px; margin-bottom: 12px; font-size: 13px; color: #1e293b; line-height: 1.5; white-space: pre-line;">
+          ${msg.text}
+        </div>
+
+        <div>
+          <a href="https://rentoncent.bond/admin?tab=chat" style="background: #059669; color: #ffffff; text-decoration: none; padding: 7px 16px; border-radius: 8px; font-size: 12px; font-weight: bold; display: inline-block;">
+            💬 Reply in Admin Chat
+          </a>
+          ${waUrl ? `
+            <a href="${waUrl}" style="background: #25D366; color: #ffffff; text-decoration: none; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; display: inline-block; margin-left: 6px;">
+              WhatsApp Customer
+            </a>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 24px; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; background: #ffffff;">
+      <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 22px; border-radius: 12px; margin-bottom: 20px;">
+        <div style="display: inline-block; background: #ef4444; color: #ffffff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">
+          Action Required
+        </div>
+        <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #ffffff;">
+          🔔 ${totalUnreadCount} Pending Customer Message${totalUnreadCount > 1 ? 's' : ''}
+        </h2>
+        <p style="margin: 6px 0 0; font-size: 13px; color: #94a3b8;">
+          Rent on Cent Vrindavan • Awaiting Admin Response
+        </p>
+      </div>
+
+      <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: #92400e;">
+        ⚠️ <strong>${conversationsCount} customer(s)</strong> have sent inquiries that have not yet been opened or answered in Live Chat.
+      </div>
+
+      <h3 style="font-size: 14px; color: #0f172a; margin-top: 0; margin-bottom: 12px; font-weight: 700;">
+        Pending Customer Inquiries:
+      </h3>
+
+      ${conversationCardsHtml}
+
+      <div style="text-align: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid #f1f5f9;">
+        <a href="https://rentoncent.bond/admin?tab=chat" style="background: #059669; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 12px; font-weight: 800; font-size: 14px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.2);">
+          👉 Open Admin Live Chat Room
+        </a>
+      </div>
+
+      <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 20px; margin-bottom: 0;">
+        Automated alert from Rent on Cent Dispatch Service. Admin email: ${adminEmail}
+      </p>
+    </div>
+  `;
+
+  console.log(`📢 Dispatching pending messages alert to admin (${adminEmail}) for ${totalUnreadCount} message(s)...`);
+  return sendEmail({ to: adminEmail, subject, text, html });
+}
+
+export default {
+  isValidEmail,
+  normalizeEmail,
+  sendEmail,
+  sendEmailOtp,
+  sendBookingNotificationToAdmin,
+  sendPendingMessagesAlertToAdmin
+};

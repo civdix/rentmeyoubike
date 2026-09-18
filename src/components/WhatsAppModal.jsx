@@ -43,7 +43,7 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
   const [messages, setMessages] = useState([defaultInitialMessage, defaultAdminWelcomeMessage]);
   const [inputText, setInputText] = useState('');
   const [isSending, setIsSending] = useState(false);
-  const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
   const hasSeededRef = useRef(false);
 
   const phone = (legalConfig?.supportWhatsApp || '+919837144520').replace(/[^0-9]/g, '');
@@ -132,9 +132,11 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
     };
   }, [conversationId, booking?.id, customerPhone, currentUser?.phone, customerName, defaultBookingInquiryText, vehicleName]);
 
-  // Scroll to bottom when messages update
+  // Scroll ONLY the inner chat feed, never scrolling the outer window or page
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   }, [messages]);
 
   const handleSendMessage = async (e) => {
@@ -222,7 +224,7 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
         </div>
 
         {/* Real Live WhatsApp Chat Feed */}
-        <div className="p-4 bg-[#efeae2] flex-1 overflow-y-auto min-h-[220px] max-h-[360px] flex flex-col gap-3 custom-scrollbar">
+        <div ref={chatContainerRef} className="p-4 bg-[#efeae2] flex-1 overflow-y-auto min-h-[220px] max-h-[360px] flex flex-col gap-3 custom-scrollbar">
           {messages.map((msg, index) => {
             const isMe = msg.senderRole === 'customer';
             return (
@@ -258,7 +260,6 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
               </div>
             );
           })}
-          <div ref={messagesEndRef} />
         </div>
 
         {/* Quick Reply Suggestions Bar */}

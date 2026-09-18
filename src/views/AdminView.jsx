@@ -165,7 +165,7 @@ export const AdminView = () => {
   const [isSendingChat, setIsSendingChat] = useState(false);
   const [chatSearch, setChatSearch] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
-  const chatMessagesEndRef = React.useRef(null);
+  const adminChatContainerRef = React.useRef(null);
 
   const adminQuickReplies = [
     'Radhe Radhe! 🙏 Welcome to Rent to Cent Vrindavan. How may we assist you?',
@@ -230,10 +230,10 @@ export const AdminView = () => {
     return () => clearInterval(interval);
   }, [isAuthorized, selectedConvId, loadActiveMessages]);
 
-  // Auto-scroll chat to bottom
+  // Auto-scroll ONLY inner chat feed to bottom, never scrolling the outer page
   React.useEffect(() => {
-    if (activeTab === 'chat' && chatMessagesEndRef.current) {
-      chatMessagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (activeTab === 'chat' && adminChatContainerRef.current) {
+      adminChatContainerRef.current.scrollTop = adminChatContainerRef.current.scrollHeight;
     }
   }, [activeConvMessages, activeTab]);
 
@@ -604,9 +604,9 @@ export const AdminView = () => {
   // ----------------------------------------------------
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 pb-20 font-sans">
-      {/* Top Admin Security Status Bar */}
-      <div className="bg-slate-900/90 border-b border-slate-800 sticky top-16 z-30 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-4">
+      {/* Top Admin Security Status Bar - Flush with navbar, no gap */}
+      <div className="bg-slate-900 border-b border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-xs">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
             <span className="font-bold text-emerald-400">Authenticated Administrator</span>
@@ -620,21 +620,22 @@ export const AdminView = () => {
                 apiAdminLogout();
                 if (setCurrentUser) setCurrentUser(null);
                 setRole('customer');
+                if (typeof window !== 'undefined') window.location.href = '/';
               }}
-              className="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-lg border border-slate-700 font-semibold flex items-center gap-1.5 transition-all"
+              className="bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs px-3.5 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-3.5 h-3.5 text-rose-400" />
               Exit Admin Portal
             </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 py-4 space-y-6">
         {/* ----------------------------------------------------
             ADMIN SECTIONS TAB NAVIGATION (ALWAYS AT TOP)
             ---------------------------------------------------- */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-2 flex gap-2 text-xs font-bold overflow-x-auto custom-scrollbar sticky top-28 z-20 shadow-md">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-2 flex gap-2 text-xs font-bold overflow-x-auto custom-scrollbar shadow-md">
           {[
             { id: 'overview', label: '📊 Overview' },
             { id: 'chat', label: `💬 Live Chat${totalUnreadChatCount > 0 ? ` (${totalUnreadChatCount})` : ''}` },
@@ -1054,7 +1055,7 @@ export const AdminView = () => {
                     </div>
 
                     {/* Messages Scroll Area */}
-                    <div className="flex-1 p-4 overflow-y-auto space-y-3 custom-scrollbar bg-slate-950/80">
+                    <div ref={adminChatContainerRef} className="flex-1 p-4 overflow-y-auto space-y-3 custom-scrollbar bg-slate-950/80">
                       {chatLoading ? (
                         <div className="h-full flex items-center justify-center text-slate-500 text-xs">
                           <RefreshCw className="w-5 h-5 animate-spin mr-2 text-emerald-400" />
@@ -1098,7 +1099,6 @@ export const AdminView = () => {
                           );
                         })
                       )}
-                      <div ref={chatMessagesEndRef} />
                     </div>
 
                     {/* Quick Replies Strip */}

@@ -177,6 +177,7 @@ const COLUMN_MAP = {
   customerphone: 'customerPhone',
   customername: 'customerName',
   isread: 'isRead',
+  emailnotified: 'emailNotified',
 
   // uploaded_images
   fileid: 'fileId',
@@ -546,8 +547,11 @@ export async function initDatabase() {
           customerName TEXT,
           text TEXT NOT NULL,
           isRead INTEGER DEFAULT 0,
+          emailNotified INTEGER DEFAULT 0,
           createdAt TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
         );
+
+        ALTER TABLE messages ADD COLUMN IF NOT EXISTS emailNotified INTEGER DEFAULT 0;
 
         CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages(conversationId);
         CREATE INDEX IF NOT EXISTS idx_messages_booking ON messages(bookingId);
@@ -561,6 +565,9 @@ export async function initDatabase() {
     console.log('ℹ️ Running in local SQLite mode (vrindavan.db)');
     try {
       sqliteDb.prepare("ALTER TABLE owners ADD COLUMN upiId TEXT DEFAULT ''").run();
+      try {
+        sqliteDb.prepare("ALTER TABLE messages ADD COLUMN emailNotified INTEGER DEFAULT 0").run();
+      } catch (e) {}
       sqliteDb.exec(`
         CREATE TABLE IF NOT EXISTS messages (
           id TEXT PRIMARY KEY,
@@ -574,6 +581,7 @@ export async function initDatabase() {
           customerName TEXT,
           text TEXT NOT NULL,
           isRead INTEGER DEFAULT 0,
+          emailNotified INTEGER DEFAULT 0,
           createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
         );
         CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages(conversationId);

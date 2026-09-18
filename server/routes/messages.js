@@ -2,6 +2,7 @@ import express from 'express';
 import crypto from 'crypto';
 import { db } from '../db.js';
 import { requireRole } from '../middleware/rbac.js';
+import { sendPendingMessagesAlertToAdmin } from '../email.js';
 
 const router = express.Router();
 
@@ -217,6 +218,57 @@ router.patch('/:conversationId/read', async (req, res) => {
     console.error('Error marking messages as read:', error);
     res.status(500).json({ error: 'Failed to mark messages as read' });
   }
+});
+
+// Check for unattended customer messages and dispatch digest email to admin
+export async function checkAndAlertUnattendedMessages() {
+  try {
+    const rows = await db.prepare(`
+      SELECT * FROM messages 
+      WHERE receiverRole = 'admin' 
+        AND isRead = 0 
+        AND (emailNotified = 0 OR emailNotified IS NULL)
+      ORDER BY createdAt ASC
+    `).all();
+
+    if (!rows || rows.length === 0) return { alertSent: false, count: 0 };
+
+    const now = Date.now();
+    const olderRows = rows.filter(r => {
+      const msgTime = new Date(r.createdAt || r.createdat).getTime();
+      return !isNaN(msgTime) && (now - msgTime) >= 120000; // Unviewed for > 2 minutes
+    });
+
+    if (olderRows.length === 0) return { alertSent: false, count: 0 };
+
+    const distinctConvs = new Set(olderRows.map(r => r.conversationId || r.conversationid)).size;
+    const formatted = olderRows.map(formatMessage);
+
+    console.log(`⏰ Found ${olderRows.length} unattended message(s) awaiting response (> 2 mins). Dispatching digest to shivdixittt@gmail.com...`);
+    await sendPendingMessagesAlertToAdmin({
+      unreadMessages: formatted,
+      conversationsCount: distinctConvs,
+      totalUnreadCount: olderRows.length
+    });
+
+    for (const msg of olderRows) {
+      await db.prepare('UPDATE messages SET emailNotified = 1 WHERE id = ?').run(msg.id);
+    }
+
+    return { alertSent: true, count: olderRows.length, conversationsCount: distinctConvs };
+  } catch (err) {
+    console.warn('⚠️ Error in checkAndAlertUnattendedMessages:', err.message);
+    return { alertSent: false, error: err.message };
+  }
+}
+
+// Background scheduler running every 2 minutes
+setInterval(checkAndAlertUnattendedMessages, 120000);
+
+// POST /api/messages/check-unattended - Manually trigger check
+router.post('/check-unattended', async (req, res) => {
+  const result = await checkAndAlertUnattendedMessages();
+  res.json(result);
 });
 
 export default router;
