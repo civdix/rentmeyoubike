@@ -162,7 +162,7 @@ export const MarketplaceView = () => {
               </span>
               <span className="text-amber-400 text-xs font-bold flex items-center gap-1">
                 <VrindavanFeatherIcon className="w-3.5 h-3.5 text-amber-400" />
-                <span>Sacred Marketplace</span>
+                <span>Rent • Ride • Explore</span>
               </span>
             </div>
             <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-white">Browse Bikes & Scooters in Vrindavan</h1>

@@ -190,7 +190,7 @@ export const CustomerView = () => {
               <div className="max-w-3xl mb-8">
                 <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-amber-500/20 to-teal-500/20 border border-amber-400/40 text-amber-300 text-xs font-extrabold px-3.5 py-1.5 rounded-full mb-4 shadow-sm">
                   <VrindavanFeatherIcon className="w-4 h-4 text-amber-400" />
-                  <span>Verified Vrindavan & Mathura P2P Rentals</span>
+                  <span>Rent • Ride • Explore — Vrindavan &amp; Mathura</span>
                 </span>
 
                 <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-4 leading-tight">

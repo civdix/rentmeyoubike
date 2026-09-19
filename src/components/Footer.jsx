@@ -23,7 +23,7 @@ export const Footer = () => {
             </div>
             <div>
               <span className="block leading-tight group-hover:text-emerald-400 transition-colors">Rent to Cent</span>
-              <span className="text-[11px] font-semibold text-emerald-400 font-sans tracking-wide">P2P Bike Sharing</span>
+              <span className="text-[11px] font-semibold text-emerald-400 font-sans tracking-wide">Rent • Ride • Explore</span>
             </div>
           </Link>
           <p className="text-slate-400 leading-relaxed text-xs max-w-sm">

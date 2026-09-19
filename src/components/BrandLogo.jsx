@@ -47,12 +47,12 @@ export const BrandLogo = ({
               Rent to Cent
             </span>
             <span className="hidden md:inline-block bg-emerald-950/90 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-800">
-              P2P Bikes
+              Rent Ride Explore
             </span>
           </div>
           {showTagline && (
             <p className="text-[10px] sm:text-[11px] text-slate-400 hidden sm:flex items-center gap-1 truncate">
-              Peer-to-Peer Bike Sharing
+              Rent • Ride • Explore
             </p>
           )}
         </div>

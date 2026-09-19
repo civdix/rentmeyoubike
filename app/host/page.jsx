@@ -16,20 +16,20 @@ export const metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://rentoncent.bond/logo_square_share_area.png',
-        secureUrl: 'https://rentoncent.bond/logo_square_share_area.png',
-        width: 540,
-        height: 540,
-        type: 'image/png',
-        alt: 'Rent on Cent - Vrindavan Bike & Scooty Rental'
+        url: 'https://rentoncent.bond/og-host.jpg',
+        secureUrl: 'https://rentoncent.bond/og-host.jpg',
+        width: 1200,
+        height: 1200,
+        type: 'image/jpeg',
+        alt: 'Rent on Cent - Earn as a Vehicle Host in Vrindavan'
       }
     ]
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Earn as a Vehicle Host in Vrindavan | Rent on Cent',
     description: 'Host your Honda Activa, EV Scooty, or Bike in Vrindavan & Mathura. Earn up to ₹15,000/mo.',
-    images: ['https://rentoncent.bond/logo_square_share_area.png']
+    images: ['https://rentoncent.bond/og-host.jpg']
   }
 };
 

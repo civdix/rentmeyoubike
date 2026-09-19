@@ -86,6 +86,29 @@ async function runTests() {
   const port = server.address().port;
   const baseUrl = `http://127.0.0.1:${port}/api`;
 
+  let testEmail = null;
+  let loginToken = null;
+
+  const cleanupTestData = async (email, token) => {
+    try {
+      if (email) {
+        await db.prepare('DELETE FROM customers WHERE email = ?').run(email);
+        await db.prepare('DELETE FROM owners WHERE email = ?').run(email);
+      }
+      if (token) {
+        await db.prepare('DELETE FROM sessions WHERE token = ?').run(token);
+      }
+      await db.prepare("DELETE FROM customers WHERE email LIKE 'sec_test_%' OR name LIKE '%Test Rider%'").run();
+      await db.prepare("DELETE FROM owners WHERE email LIKE 'sec_test_%' OR name LIKE '%Test Rider%'").run();
+      await db.prepare("DELETE FROM sessions WHERE token LIKE 'vr_usr_%' AND userData LIKE '%sec_test_%'").run();
+    } catch (cleanupErr) {
+      console.warn('⚠️ [Test cleanup notice]:', cleanupErr.message);
+    }
+  };
+
+  // Pre-test cleanup to ensure zero orphaned test records exist
+  await cleanupTestData();
+
   try {
     // Test A: Weak password rejection on signup
     const weakRegRes = await fetch(`${baseUrl}/auth/register`, {
@@ -102,7 +125,7 @@ async function runTests() {
     assert(weakRegRes.status === 400 && weakRegData.error?.includes('6 characters'), 'Register rejects passwords shorter than 6 characters');
 
     // Test B: Successful registration stores bcrypt hash in DB
-    const testEmail = `sec_test_${Date.now()}@example.com`;
+    testEmail = `sec_test_${Date.now()}@example.com`;
     const testPhone = `98${Date.now().toString().slice(-8)}`;
     const strongPass = 'SecureRadhePass@2026';
     const goodRegRes = await fetch(`${baseUrl}/auth/register`, {
@@ -137,6 +160,7 @@ async function runTests() {
     assert(loginRes.status === 200 && loginData.success === true, 'Login succeeds with correct password');
     assert(loginData.user?.password === undefined, 'Login response does NOT leak password');
     assert(loginData.token && loginData.token.startsWith('vr_usr_'), 'Login issues cryptographically secure vr_usr token');
+    loginToken = loginData.token;
 
     // Test D: Rate limiting on login (send repeated failed logins)
     console.log('\n--- Testing Rate Limiter Trigger ---');
@@ -179,6 +203,8 @@ async function runTests() {
     assert(unauthCustRes.status === 401, 'GET /api/customers/:id correctly rejects unauthenticated requests');
 
   } finally {
+    await cleanupTestData(testEmail, loginToken);
+    console.log('🧹 [Test Suite Cleanup] All transient test records wiped cleanly from database.');
     server.close();
   }
 

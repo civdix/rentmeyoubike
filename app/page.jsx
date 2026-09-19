@@ -17,20 +17,20 @@ export const metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://rentoncent.bond/logo_square_share_area.png',
-        secureUrl: 'https://rentoncent.bond/logo_square_share_area.png',
-        width: 540,
-        height: 540,
-        type: 'image/png',
-        alt: 'Rent on Cent - Vrindavan Bike & Scooty Rental'
+        url: 'https://rentoncent.bond/og-customer.jpg',
+        secureUrl: 'https://rentoncent.bond/og-customer.jpg',
+        width: 1200,
+        height: 1200,
+        type: 'image/jpeg',
+        alt: 'Rent on Cent - Rent Ride Explore Bike & Scooty Rental'
       }
     ]
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Bike & Scooty Rental in Vrindavan | Rent on Cent',
     description: 'Rent Honda Activa, EV scooters & bikes in Vrindavan from ₹299/day. Doorstep hotel delivery and verified hosts.',
-    images: ['https://rentoncent.bond/logo_square_share_area.png']
+    images: ['https://rentoncent.bond/og-customer.jpg']
   }
 };
 

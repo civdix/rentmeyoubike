@@ -45,20 +45,20 @@ export const metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://rentoncent.bond/logo_square_share_area.png',
-        secureUrl: 'https://rentoncent.bond/logo_square_share_area.png',
-        width: 540,
-        height: 540,
-        type: 'image/png',
-        alt: 'Rent on Cent - Vrindavan Bike & Scooty Rental'
+        url: 'https://rentoncent.bond/og-customer.jpg',
+        secureUrl: 'https://rentoncent.bond/og-customer.jpg',
+        width: 1200,
+        height: 1200,
+        type: 'image/jpeg',
+        alt: 'Rent on Cent - Rent Ride Explore'
       }
     ]
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Rent on Cent | Bike & Scooter Rentals in Vrindavan',
     description: 'Rent Activa, Royal Enfield, and EV Scooters in Vrindavan starting ₹299/day.',
-    images: ['https://rentoncent.bond/logo_square_share_area.png']
+    images: ['https://rentoncent.bond/og-customer.jpg']
   },
   icons: {
     icon: '/favicon.ico',
@@ -78,8 +78,8 @@ export const metadata = {
     }
   },
   other: {
-    image_src: 'https://rentoncent.bond/logo_square_share_area.png',
-    'itemprop:image': 'https://rentoncent.bond/logo_square_share_area.png'
+    image_src: 'https://rentoncent.bond/og-customer.jpg',
+    'itemprop:image': 'https://rentoncent.bond/og-customer.jpg'
   }
 };
 
@@ -88,6 +88,7 @@ const autoRentalSchema = {
   '@type': 'AutoRental',
   name: 'Rent on Cent',
   alternateName: 'Rent to Cent Vrindavan',
+  slogan: 'Rent Ride Explore',
   url: 'https://rentoncent.bond',
   logo: 'https://rentoncent.bond/full_Logo_rentoncent.svg',
   image: 'https://rentoncent.bond/logo_square_share_area.png',
