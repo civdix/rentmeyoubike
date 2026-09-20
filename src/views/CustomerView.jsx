@@ -182,57 +182,124 @@ export const CustomerView = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-16 font-sans">
       {/* HERO SECTION */}
-          <section className="relative bg-gradient-to-r from-slate-950 via-teal-950 to-slate-950 text-white py-12 sm:py-20 px-4 overflow-hidden border-b border-teal-900/50">
-            <div className="absolute -top-32 -right-32 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute top-1/2 -left-32 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
+      <section className="relative bg-gradient-to-r from-slate-950 via-teal-950 to-slate-950 text-white py-10 sm:py-16 px-4 overflow-hidden border-b border-teal-900/50">
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute top-1/2 -left-32 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-            <div className="max-w-7xl mx-auto relative z-10">
-              <div className="max-w-3xl mb-8">
-                <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-amber-500/20 to-teal-500/20 border border-amber-400/40 text-amber-300 text-xs font-extrabold px-3.5 py-1.5 rounded-full mb-4 shadow-sm">
-                  <VrindavanFeatherIcon className="w-4 h-4 text-amber-400" />
-                  <span>Rent • Ride • Explore — Vrindavan &amp; Mathura</span>
-                </span>
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center mb-8 sm:mb-12">
+            {/* Left Column: Heading & Value Proposition */}
+            <div className="lg:col-span-7">
+              <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-amber-500/20 to-teal-500/20 border border-amber-400/40 text-amber-300 text-xs font-extrabold px-3.5 py-1.5 rounded-full mb-4 shadow-sm">
+                <VrindavanFeatherIcon className="w-4 h-4 text-amber-400" />
+                <span>Rent • Ride • Explore — Vrindavan &amp; Mathura</span>
+              </span>
 
-                <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-4 leading-tight">
-                  Bike &amp; Scooty Rental in Vrindavan
-                </h1>
+              <h1 className="font-heading text-3xl sm:text-5xl lg:text-5xl font-extrabold tracking-tight text-white mb-4 leading-[1.15]">
+                Bike &amp; Scooty Rental in Vrindavan
+              </h1>
 
-                <p className="text-slate-300 text-sm sm:text-lg leading-relaxed mb-6 sm:mb-8 font-normal max-w-2xl">
-                  Verified bikes and scooters for exploring Vrindavan and Mathura.
-                </p>
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-6 font-normal max-w-2xl">
+                Rent verified Honda Activa, EV scooters &amp; Royal Enfield for seamless temple darshan and Govardhan Parikrama. Transparent daily rates from ₹299/day or ₹40/hr with free doorstep delivery to your ashram or railway station.
+              </p>
 
-                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                  <button
-                    onClick={() => router.push('/bikes')}
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm py-3 sm:py-3.5 px-5 sm:px-7 rounded-xl flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition-transform active:scale-95 shrink-0"
-                  >
-                    <VrindavanScooterIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.2} />
-                    <span>Browse Bikes</span>
-                  </button>
-
-                  <a
-                    href={`https://wa.me/${legalConfig.supportWhatsApp.replace(/[^0-9]/g, '')}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="Book Vrindavan Bike on WhatsApp Helpline"
-                    className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-xs sm:text-sm py-3 sm:py-3.5 px-5 sm:px-6 rounded-xl flex items-center gap-2 shadow-md transition-transform active:scale-95 shrink-0"
-                  >
-                    <WhatsAppBrandIcon className="w-4 h-4 sm:w-5 sm:h-5 fill-white" />
-                    <span>WhatsApp Booking Help</span>
-                  </a>
-
-                  {currentUser && (
-                    <div className="bg-slate-900/80 border border-emerald-500/40 text-emerald-300 font-bold text-xs py-2.5 sm:py-3 px-3.5 sm:px-4 rounded-xl flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                      <span>Logged in: <strong>{currentUser.name}</strong></span>
-                    </div>
-                  )}
+              {/* Key Value Points */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-6 text-xs text-slate-200 max-w-2xl">
+                <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 shadow-xs">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>₹0 Cash Deposit Available</span>
+                </div>
+                <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 shadow-xs">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>2 Free Clean Helmets</span>
+                </div>
+                <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 shadow-xs">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>15-Min Doorstep Drop</span>
                 </div>
               </div>
 
-              {/* Account Quick Access Bar - only shown when logged in */}
-              {currentUser && (
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-slate-900/80 border border-slate-800 backdrop-blur-md rounded-2xl p-3 px-4 mb-4 text-xs text-slate-300 shadow-lg">
+              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                <button
+                  onClick={() => router.push('/bikes')}
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm py-3.5 px-6 rounded-xl flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition-transform active:scale-95 shrink-0 cursor-pointer"
+                >
+                  <VrindavanScooterIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.2} />
+                  <span>Browse Available Bikes</span>
+                </button>
+
+                <a
+                  href={`https://wa.me/${legalConfig.supportWhatsApp.replace(/[^0-9]/g, '')}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Book Vrindavan Bike on WhatsApp Helpline"
+                  className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-xs sm:text-sm py-3.5 px-6 rounded-xl flex items-center gap-2 shadow-md transition-transform active:scale-95 shrink-0"
+                >
+                  <WhatsAppBrandIcon className="w-4 h-4 sm:w-5 sm:h-5 fill-white" />
+                  <span>WhatsApp Booking Help</span>
+                </a>
+
+                {currentUser && (
+                  <div className="bg-slate-900/80 border border-emerald-500/40 text-emerald-300 font-bold text-xs py-2.5 sm:py-3 px-3.5 sm:px-4 rounded-xl flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Logged in: <strong>{currentUser.name}</strong></span>
+                  </div>
+                )}
+              </div>
+
+              {/* Pilgrim Social Proof Micro-bar */}
+              <div className="flex items-center gap-3 mt-6 pt-4 border-t border-slate-800/80 text-xs text-slate-300">
+                <div className="flex items-center text-amber-400">
+                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                </div>
+                <div>
+                  <strong className="text-white font-bold">4.9 / 5</strong>
+                  <span className="text-slate-400 ml-1.5">• 1,200+ Yatris &amp; Pilgrims Served in Vrindavan</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Hero Visual Photo Card */}
+            <div className="lg:col-span-5">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-teal-500/30 group bg-slate-900">
+                <img
+                  src="/images/hero-rider-vrindavan.jpg"
+                  alt="Pilgrim riding Honda Activa scooter past ancient temples in Vrindavan"
+                  className="w-full h-72 sm:h-84 lg:h-[390px] object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  fetchPriority="high"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
+
+                {/* Top Floating Badge */}
+                <div className="absolute top-3.5 left-3.5 bg-slate-950/85 backdrop-blur-md border border-amber-400/40 text-amber-300 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>UP-85 Mathura Registered Fleet</span>
+                </div>
+
+                {/* Bottom Floating Price & Action Badge */}
+                <div className="absolute bottom-3.5 left-3.5 right-3.5 bg-slate-950/90 backdrop-blur-md border border-slate-700/80 p-3 sm:p-3.5 rounded-2xl flex items-center justify-between text-xs shadow-xl">
+                  <div>
+                    <span className="text-slate-400 block text-[10px] font-semibold uppercase tracking-wider">Activa &amp; EV Scooters</span>
+                    <span className="font-heading font-black text-amber-400 text-sm sm:text-base">From ₹299/day <span className="text-slate-400 text-[11px] font-normal">(₹40/hr)</span></span>
+                  </div>
+                  <button
+                    onClick={() => router.push('/bikes')}
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 shadow-sm"
+                  >
+                    View Fleet &rarr;
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Account Quick Access Bar - only shown when logged in */}
+          {currentUser && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-slate-900/80 border border-slate-800 backdrop-blur-md rounded-2xl p-3 px-4 mb-4 text-xs text-slate-300 shadow-lg">
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
                     <span>
@@ -464,6 +531,97 @@ export const CustomerView = () => {
             )}
           </section>
 
+          {/* VISUAL BRAJ & TEMPLE DARSHAN SECTION */}
+          <section className="bg-gradient-to-b from-white via-amber-50/25 to-white py-14 sm:py-18 border-t border-slate-200">
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+                <span className="text-xs font-extrabold text-amber-700 bg-amber-100/70 border border-amber-300 px-3 py-1 rounded-full uppercase tracking-wider">
+                  Spiritual Freedom in Braj Bhoomi
+                </span>
+                <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 mt-2.5">
+                  Explore Sacred Vrindavan &amp; Mathura on Two Wheels
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+                  Cars and large cabs struggle in the historic narrow galis of Vrindavan. A verified scooter or bike gives you the flexibility to glide right to the temple steps and explore at your own divine rhythm.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                {/* Left: Real Travel Photography Card */}
+                <div className="lg:col-span-5">
+                  <div className="relative rounded-3xl overflow-hidden shadow-xl border border-amber-200/80 group bg-slate-900">
+                    <img
+                      src="/images/prem-mandir-ride.jpg"
+                      alt="Honda Activa and Royal Enfield parked near Prem Mandir temple in Vrindavan with yatris"
+                      className="w-full h-80 sm:h-96 object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
+                    <div className="absolute top-3.5 left-3.5 bg-slate-950/80 backdrop-blur-md border border-amber-400/40 text-amber-300 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Prem Mandir &amp; Raman Reti</span>
+                    </div>
+                    <div className="absolute bottom-3.5 left-3.5 right-3.5 bg-slate-950/85 backdrop-blur-md p-3 rounded-2xl border border-slate-700/80 text-xs text-white">
+                      <p className="font-bold text-amber-300 text-xs mb-0.5">Easy Temple Parking &amp; Zero Traffic Stress</p>
+                      <p className="text-[11px] text-slate-300">Park directly at Vidyapeeth Chauraha or Raman Reti without expensive auto haggling.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Key Temple Circuits */}
+                <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="bg-white p-4.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
+                    <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs mb-2.5">
+                      01
+                    </div>
+                    <h3 className="font-heading font-bold text-slate-900 text-sm mb-1">
+                      Prem Mandir &amp; ISKCON Temple
+                    </h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      Wide Raman Reti corridor with dedicated two-wheeler parking. Ideal for evening musical fountain darshan and sandhya aarti.
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-4.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs mb-2.5">
+                      02
+                    </div>
+                    <h3 className="font-heading font-bold text-slate-900 text-sm mb-1">
+                      Shri Bankey Bihari &amp; Nidhivan
+                    </h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      Inner parikrama marg restricts 4-wheelers. Reach VIP Marg easily and park securely at Vidyapeeth Chauraha or Harinikunj.
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-4.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
+                    <div className="w-9 h-9 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-xs mb-2.5">
+                      03
+                    </div>
+                    <h3 className="font-heading font-bold text-slate-900 text-sm mb-1">
+                      Govardhan 21 km Sacred Parikrama
+                    </h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      Complete the holy parikrama at your own peaceful pace on a smooth Activa or EV scooter without fixed taxi time pressures.
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-4.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
+                    <div className="w-9 h-9 rounded-xl bg-orange-100 text-orange-800 flex items-center justify-center font-bold text-xs mb-2.5">
+                      04
+                    </div>
+                    <h3 className="font-heading font-bold text-slate-900 text-sm mb-1">
+                      Mathura Junction (MTJ) to Vrindavan
+                    </h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      Doorstep delivery available directly outside Platform 1 exit. Reach your hotel or ashram in 20 minutes without negotiation.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* 2. HOW IT WORKS SECTION */}
           <section className="bg-white py-16 border-y border-slate-200">
             <div className="max-w-7xl mx-auto px-4">
@@ -587,69 +745,129 @@ export const CustomerView = () => {
           <section className="bg-slate-900 text-white py-16 border-y border-slate-800 relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 relative z-10">
               <div className="text-center max-w-2xl mx-auto mb-12">
-                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Transparent & Fair</span>
-                <h2 className="font-heading font-extrabold text-3xl text-white mt-1">Digital Bike Inspection System</h2>
-                <p className="text-xs text-slate-400 mt-1">We capture Before vs. After status so you never pay for pre-existing scratches.</p>
+                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Transparent &amp; Fair Handover</span>
+                <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-white mt-1">Digital Bike Inspection System</h2>
+                <p className="text-xs sm:text-sm text-slate-400 mt-2">We capture Before vs. After status with timestamped mobile photos so you never pay for pre-existing scratches.</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {[
-                  { step: '1', title: 'Odometer & Fuel Gauge', desc: 'Record start KM reading & fuel percentage (0-100%).', icon: RefreshCw },
-                  { step: '2', title: '6-Angle Photo Capture', desc: 'Front, Rear, Left, Right, Dashboard & Tyre condition photos.', icon: Camera },
-                  { step: '3', title: 'Damage Zone Logger', desc: 'Select pre-existing scratch locations on interactive diagram.', icon: AlertCircle },
-                  { step: '4', title: 'Dual Signature Lock', desc: 'Customer & Owner confirm timestamped digital audit on app.', icon: Lock }
-                ].map((item, idx) => {
-                  const IconComp = item.icon;
-                  return (
-                    <div key={idx} className="bg-slate-800/90 p-5 rounded-2xl border border-slate-700 text-center flex flex-col items-center shadow-md">
-                      <span className="w-8 h-8 rounded-full bg-amber-500 text-slate-950 font-extrabold text-xs flex items-center justify-center mb-3 shadow-sm border border-amber-300">
-                        {item.step}
-                      </span>
-                      <div className="w-12 h-12 rounded-2xl bg-slate-950 text-emerald-400 border-2 border-emerald-400/40 flex items-center justify-center mb-3 shadow-inner">
-                        <IconComp className="w-6 h-6 text-emerald-400" strokeWidth={2.5} />
-                      </div>
-                      <p className="font-heading font-bold text-white text-sm mb-1">{item.title}</p>
-                      <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                {/* Visual Image Preview */}
+                <div className="lg:col-span-5">
+                  <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-700 bg-slate-950 group">
+                    <img
+                      src="/images/bike-inspection-mobile.jpg"
+                      alt="Digital vehicle inspection on mobile smartphone in Vrindavan"
+                      className="w-full h-80 sm:h-96 object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
+                    <div className="absolute top-3.5 left-3.5 bg-slate-950/85 backdrop-blur-md border border-emerald-400/40 text-emerald-300 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                      <Camera className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Live 6-Angle Photo Audit</span>
                     </div>
-                  );
-                })}
+                    <div className="absolute bottom-3.5 left-3.5 right-3.5 bg-slate-950/90 backdrop-blur-md p-3 rounded-2xl border border-slate-700 text-xs text-white">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-amber-300">Dual Signature Verified</span>
+                        <span className="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full font-bold">100% Paperless</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 mt-1">Odometer reading, fuel gauge &amp; scratch audit locked on WhatsApp before key handover.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4 Inspection Steps */}
+                <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {[
+                    { step: '1', title: 'Odometer & Fuel Gauge', desc: 'Record start KM reading & fuel percentage (0-100%) to ensure fair usage.', icon: RefreshCw },
+                    { step: '2', title: '6-Angle Photo Capture', desc: 'Front, Rear, Left, Right, Dashboard & Tyre condition timestamped photos.', icon: Camera },
+                    { step: '3', title: 'Damage Zone Logger', desc: 'Tag pre-existing scratches on the vehicle diagram so you are never charged.', icon: AlertCircle },
+                    { step: '4', title: 'Dual Signature Lock', desc: 'Customer & Owner confirm digital audit on app before driving away.', icon: Lock }
+                  ].map((item, idx) => {
+                    const IconComp = item.icon;
+                    return (
+                      <div key={idx} className="bg-slate-800/80 hover:bg-slate-800 p-4.5 rounded-2xl border border-slate-700/80 shadow-md transition-all">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-extrabold text-xs flex items-center justify-center shadow-xs">
+                            {item.step}
+                          </span>
+                          <div className="w-8 h-8 rounded-xl bg-slate-900 text-emerald-400 border border-emerald-400/30 flex items-center justify-center">
+                            <IconComp className="w-4 h-4 text-emerald-400" strokeWidth={2.2} />
+                          </div>
+                        </div>
+                        <h3 className="font-heading font-bold text-white text-sm mb-1">{item.title}</h3>
+                        <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </section>
 
           {/* 5. FOR BIKE OWNERS SECTION */}
           <section className="max-w-7xl mx-auto px-4 py-16">
-            <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-slate-950 rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="max-w-2xl relative z-10">
-                <span className="bg-slate-950 text-amber-400 text-[10px] font-extrabold uppercase px-3 py-1 rounded-full mb-4 inline-block">
-                  Earn in Vrindavan
-                </span>
-                <h2 className="font-heading font-extrabold text-3xl sm:text-4xl text-slate-950 tracking-tight mb-3">
-                  Your bike can earn when you're not using it.
-                </h2>
-                <p className="text-slate-900 text-xs sm:text-sm font-medium leading-relaxed mb-6">
-                  Turn your idle scooter or motorcycle into passive income. Verified yatra riders, digital inspection locks, and direct 24h bank payouts.
-                </p>
-                <button
-                  onClick={promptSwitchToHost}
-                  className="bg-slate-950 hover:bg-slate-900 text-white font-extrabold text-sm py-3.5 px-7 rounded-xl flex items-center gap-2 shadow-xl transition-transform active:scale-95 cursor-pointer"
-                >
-                  <Key className="w-5 h-5 text-amber-400" />
-                  <span>List Your Bike</span>
-                </button>
-              </div>
+            <div className="bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-white rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden border border-amber-500/20">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                {/* Left: Real Local Host Photo */}
+                <div className="lg:col-span-5">
+                  <div className="relative rounded-2xl overflow-hidden shadow-xl border border-amber-400/30 group bg-slate-950">
+                    <img
+                      src="/images/vrindavan-host-handover.jpg"
+                      alt="Local Vrindavan bike host handing over scooter keys to pilgrim"
+                      className="w-full h-72 sm:h-84 object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent pointer-events-none"></div>
+                    <div className="absolute top-3.5 left-3.5 bg-slate-950/85 backdrop-blur-md border border-amber-400/40 text-amber-300 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                      <Key className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Host in Vrindavan • UP-85</span>
+                    </div>
+                    <div className="absolute bottom-3.5 left-3.5 right-3.5 bg-slate-950/90 backdrop-blur-md p-3 rounded-xl border border-slate-700 text-xs">
+                      <p className="font-bold text-amber-300">Verified Pilgrims Only</p>
+                      <p className="text-[11px] text-slate-300 mt-0.5">Every customer must verify Aadhaar &amp; Driving Licence before pickup.</p>
+                    </div>
+                  </div>
+                </div>
 
-              <div className="bg-slate-950 text-white p-6 rounded-2xl border border-amber-400/30 text-xs space-y-3 w-full md:w-72 shrink-0 relative z-10 shadow-xl">
-                <div className="text-amber-400 font-extrabold text-sm">Owner Earnings Estimator</div>
-                <div className="border-t border-slate-800 pt-2 flex justify-between">
-                  <span className="text-slate-400">1 Scooty (Activa/Jupiter):</span>
-                  <strong className="text-emerald-400">₹8,000 - ₹12,000/mo</strong>
+                {/* Right: Content & Earnings Box */}
+                <div className="lg:col-span-7 space-y-5">
+                  <div>
+                    <span className="bg-amber-500/20 text-amber-300 border border-amber-400/40 text-[10px] font-extrabold uppercase px-3 py-1 rounded-full mb-3 inline-block">
+                      Host Your Two-Wheeler
+                    </span>
+                    <h2 className="font-heading font-extrabold text-2xl sm:text-3xl lg:text-4xl text-white tracking-tight leading-tight">
+                      Your bike can earn when you&apos;re not using it.
+                    </h2>
+                    <p className="text-slate-300 text-xs sm:text-sm font-normal leading-relaxed mt-2">
+                      Turn your idle scooter or motorcycle into steady passive income. Verified pilgrim renters, digital inspection locks, and direct 24-hour bank payouts to your UPI.
+                    </p>
+                  </div>
+
+                  {/* Earnings Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div className="bg-slate-800/80 border border-slate-700 p-3.5 rounded-2xl">
+                      <div className="text-slate-400 text-[11px]">Scooty (Activa / Jupiter)</div>
+                      <div className="font-heading font-black text-emerald-400 text-lg sm:text-xl mt-0.5">₹8,000 – ₹12,000<span className="text-xs font-normal text-slate-400">/mo</span></div>
+                      <div className="text-[10px] text-slate-400 mt-1">High demand year-round</div>
+                    </div>
+                    <div className="bg-slate-800/80 border border-slate-700 p-3.5 rounded-2xl">
+                      <div className="text-slate-400 text-[11px]">Cruiser (Classic 350 / Hunter)</div>
+                      <div className="font-heading font-black text-amber-400 text-lg sm:text-xl mt-0.5">₹15,000 – ₹22,000<span className="text-xs font-normal text-slate-400">/mo</span></div>
+                      <div className="text-[10px] text-slate-400 mt-1">Top earner for Parikrama yatris</div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3 pt-1">
+                    <button
+                      onClick={promptSwitchToHost}
+                      className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs sm:text-sm py-3 px-6 rounded-xl flex items-center gap-2 shadow-xl transition-transform active:scale-95 cursor-pointer"
+                    >
+                      <Key className="w-4 h-4 text-slate-950" />
+                      <span>List Your Bike (Takes 2 Mins)</span>
+                    </button>
+                    <span className="text-[11px] text-slate-400">• You keep 85% of every rental booking</span>
+                  </div>
                 </div>
-                <div className="border-t border-slate-800 pt-2 flex justify-between">
-                  <span className="text-slate-400">1 Bike (Classic 350):</span>
-                  <strong className="text-emerald-400">₹15,000 - ₹22,000/mo</strong>
-                </div>
-                <div className="text-[10px] text-slate-500 pt-1">• 85% net payout kept by owner</div>
               </div>
             </div>
           </section>
