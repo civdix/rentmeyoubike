@@ -2,15 +2,15 @@ import React from 'react';
 import { CustomerView } from '../src/views/CustomerView';
 
 export const metadata = {
-  title: 'Bike & Scooty Rental in Vrindavan | Rent on Cent',
+  title: 'Bike & Scooty on Rent in Vrindavan | Rent on Cent',
   description:
-    'Rent bikes & scooty in Vrindavan from ₹299/day or ₹40/hr. Verified Honda Activa, EV scooters & hotel delivery. Instant WhatsApp booking: +91 97209 65985.',
+    'Best bike & scooty on rent in Vrindavan from ₹299/day or ₹40/hr. Verified Honda Activa, EV scooters & hotel delivery. Instant WhatsApp booking: +91 97209 65985.',
   alternates: {
     canonical: 'https://rentoncent.bond'
   },
   openGraph: {
-    title: 'Bike & Scooty Rental in Vrindavan | Rent on Cent',
-    description: 'Rent Honda Activa, EV scooters & bikes in Vrindavan from ₹299/day. Doorstep hotel delivery and verified hosts.',
+    title: 'Bike & Scooty on Rent in Vrindavan | Rent on Cent',
+    description: 'Rent Honda Activa, EV scooters & bikes on rent in Vrindavan from ₹299/day. Doorstep hotel delivery and verified hosts.',
     url: 'https://rentoncent.bond',
     siteName: 'Rent on Cent',
     locale: 'en_IN',
@@ -22,14 +22,14 @@ export const metadata = {
         width: 1200,
         height: 1200,
         type: 'image/jpeg',
-        alt: 'Rent on Cent - Rent Ride Explore Bike & Scooty Rental'
+        alt: 'Rent on Cent - Bike & Scooty on Rent in Vrindavan'
       }
     ]
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Bike & Scooty Rental in Vrindavan | Rent on Cent',
-    description: 'Rent Honda Activa, EV scooters & bikes in Vrindavan from ₹299/day. Doorstep hotel delivery and verified hosts.',
+    title: 'Bike & Scooty on Rent in Vrindavan | Rent on Cent',
+    description: 'Best bike & scooty on rent in Vrindavan from ₹299/day. Verified Activa, EV scooters & doorstep delivery.',
     images: ['https://rentoncent.bond/og-customer.jpg']
   }
 };
@@ -45,10 +45,10 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto space-y-8">
           <div className="border-b border-slate-800 pb-6">
             <h2 className="text-xl font-bold text-amber-400 font-heading">
-              Rent on Cent — #1 Bike &amp; Scooty Rental in Vrindavan &amp; Mathura
+              Rent on Cent — #1 Bike &amp; Scooty on Rent in Vrindavan &amp; Mathura
             </h2>
             <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-              Rent on Cent is Braj Bhoomi&apos;s leading peer-to-peer two-wheeler rental platform, offering verified Honda Activa, TVS Jupiter, Royal Enfield Classic, and high-efficiency electric scooters (EV) for devotees, tourists, and pilgrims visiting Vrindavan, Mathura, Govardhan, and Barsana. Experience peaceful parikramas and convenient temple darshan with transparent daily pricing starting at just ₹299/day and hourly rentals from ₹40/hour.
+              Looking for a verified <strong>bike on rent in Vrindavan</strong> or <strong>scooty on rent in Vrindavan</strong>? Rent on Cent is Braj Bhoomi&apos;s leading peer-to-peer two-wheeler rental platform, offering verified Honda Activa 6G, TVS Jupiter, Royal Enfield Classic 350, and high-efficiency electric scooters (EV) for devotees, tourists, and pilgrims visiting Vrindavan, Mathura, Govardhan, and Barsana. Experience peaceful parikramas and convenient temple darshan with transparent daily pricing starting at just ₹299/day and hourly rentals from ₹40/hour.
             </p>
           </div>
 

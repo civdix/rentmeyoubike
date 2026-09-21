@@ -10,6 +10,15 @@ export const metadata = {
   description:
     'Affordable, peer-to-peer bike and scooty rentals in Vrindavan and Mathura. Rent Honda Activa, EV scooters, Royal Enfield starting at ₹40/hour or ₹299/day. Verified hosts, doorstep delivery, instant WhatsApp booking.',
   keywords: [
+    'scooty on rent in vrindavan',
+    'bike on rent in vrindavan',
+    'scooty on rent vrindavan',
+    'bike on rent vrindavan',
+    'activa on rent in vrindavan',
+    'scooty on rent in mathura',
+    'bike on rent in mathura',
+    'two wheeler on rent in vrindavan',
+    'scooty on rent near me in vrindavan',
     'bike rental vrindavan',
     'scooty rental vrindavan',
     'rent bike in mathura',
@@ -87,13 +96,13 @@ const autoRentalSchema = {
   '@context': 'https://schema.org',
   '@type': 'AutoRental',
   name: 'Rent on Cent',
-  alternateName: 'Rent to Cent Vrindavan',
+  alternateName: 'Rent to Cent Vrindavan - Bike & Scooty on Rent',
   slogan: 'Rent Ride Explore',
   url: 'https://rentoncent.bond',
   logo: 'https://rentoncent.bond/full_Logo_rentoncent.svg',
   image: 'https://rentoncent.bond/logo_square_share_area.png',
   description:
-    'Peer-to-peer bike and electric scooty rental platform in Vrindavan & Mathura. Best rates for Honda Activa, Royal Enfield, EV Scooters with doorstep delivery and verified safety.',
+    'Best platform for bike and scooty on rent in Vrindavan & Mathura. Rent verified Honda Activa, Royal Enfield, EV Scooters with doorstep hotel delivery and zero deposit options.',
   telephone: '+919720965985',
   email: 'support@rentoncent.bond',
   priceRange: '₹299 - ₹1200 / day',
@@ -136,26 +145,26 @@ const faqSchema = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'How do I rent a bike or scooty in Vrindavan with Rent on Cent?',
+      name: 'How do I get a bike or scooty on rent in Vrindavan?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Select your preferred two-wheeler online at rentoncent.bond, choose rental dates, complete quick digital KYC (Aadhaar/Driving Licence), and confirm booking instantly via WhatsApp. Pickup at Prem Mandir or get doorstep delivery at your hotel.'
+        text: 'Select your preferred two-wheeler online at rentoncent.bond, choose rental dates, complete quick digital KYC (Aadhaar/Driving Licence), and confirm booking instantly via WhatsApp helpline +91 97209 65985. Pickup at Prem Mandir or get doorstep delivery at your hotel.'
       }
     },
     {
       '@type': 'Question',
-      name: 'What documents are required to rent a scooty in Mathura-Vrindavan?',
+      name: 'What is the price of scooty on rent in Vrindavan?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A valid Indian Driving Licence (DL) and Government Identity Proof (Aadhaar Card or Voter ID). International tourists can provide Passport with International Driving Permit.'
+        text: 'Scooty on rent in Vrindavan starts at ₹40/hour and ₹299/day for standard scooters like Honda Activa and TVS Jupiter. Electric Scooters and Royal Enfield Classic 350 are also available at transparent daily rates with 2 free ISI helmets included.'
       }
     },
     {
       '@type': 'Question',
-      name: 'What is the starting price for scooty and bike rental?',
+      name: 'What documents are required to take a bike or scooty on rent in Vrindavan?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Prices start at ₹40/hour and ₹299/day for standard scooters like Honda Activa and TVS Jupiter. Electric Scooters and Royal Enfield Classic 350 are also available at competitive daily rates.'
+        text: 'A valid Indian Driving Licence (DL) and Government Identity Proof (Aadhaar Card or Passport). Verification is completed 100% digitally before key handover.'
       }
     },
     {
@@ -163,7 +172,7 @@ const faqSchema = {
       name: 'Can I host my bike on Rent on Cent to earn money?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes! Two-wheeler owners in Vrindavan and Mathura can switch to Host mode on Rent on Cent and list their vehicles with 0 upfront cost, earning up to ₹15,000 monthly with complete safety audits.'
+        text: 'Yes! Two-wheeler owners in Vrindavan and Mathura can switch to Host mode on Rent on Cent and list their vehicles with 0 upfront cost, earning up to ₹15,000 to ₹22,000 monthly with digital safety inspections.'
       }
     }
   ]

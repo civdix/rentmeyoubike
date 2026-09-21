@@ -22,20 +22,44 @@ export const KYCWizardModal = ({ bookingId, onClose, onSuccess }) => {
   const { bookings, verifyKYC, currentUser, openLoginModal } = useApp();
   const booking = bookings.find((b) => b.id === bookingId);
 
-  const [activeStep, setActiveStep] = useState(1); // 1: Aadhaar, 2: PAN, 3: Driving Licence
+  // Single-time verification check: If user's Aadhaar & PAN are already verified on file
+  const hasVerifiedIdentity = Boolean(
+    currentUser?.kycStatus === 'Verified' ||
+    currentUser?.kycVerified ||
+    (currentUser?.kycData?.aadhaarNumber && currentUser?.kycData?.panNumber) ||
+    (currentUser?.documents?.aadhaarUrl && currentUser?.documents?.panUrl)
+  );
 
-  // Document Fields
-  const [aadhaarNumber, setAadhaarNumber] = useState('');
-  const [aadhaarDoc, setAadhaarDoc] = useState({ name: '', preview: null, fileId: null, url: '', uploaded: false });
+  const [activeStep, setActiveStep] = useState(() => (hasVerifiedIdentity ? 3 : 1)); // Jump to DL if Aadhaar & PAN already verified
+
+  // Document Fields pre-populated from verified account
+  const [aadhaarNumber, setAadhaarNumber] = useState(
+    () => currentUser?.kycData?.aadhaarNumber || currentUser?.documents?.aadhaarNumber || ''
+  );
+  const [aadhaarDoc, setAadhaarDoc] = useState(() => ({
+    name: currentUser?.documents?.aadhaar || 'Verified_Aadhaar.pdf',
+    preview: currentUser?.documents?.aadhaarUrl || null,
+    fileId: null,
+    url: currentUser?.documents?.aadhaarUrl || '',
+    uploaded: Boolean(hasVerifiedIdentity || currentUser?.documents?.aadhaarUrl || currentUser?.kycData?.aadhaarNumber)
+  }));
   const [isUploadingAadhaar, setIsUploadingAadhaar] = useState(false);
   const [aadhaarError, setAadhaarError] = useState('');
 
-  const [panNumber, setPanNumber] = useState('');
-  const [panDoc, setPanDoc] = useState({ name: '', preview: null, fileId: null, url: '', uploaded: false });
+  const [panNumber, setPanNumber] = useState(
+    () => currentUser?.kycData?.panNumber || currentUser?.documents?.panNumber || ''
+  );
+  const [panDoc, setPanDoc] = useState(() => ({
+    name: currentUser?.documents?.pan || 'Verified_PAN.pdf',
+    preview: currentUser?.documents?.panUrl || null,
+    fileId: null,
+    url: currentUser?.documents?.panUrl || '',
+    uploaded: Boolean(hasVerifiedIdentity || currentUser?.documents?.panUrl || currentUser?.kycData?.panNumber)
+  }));
   const [isUploadingPan, setIsUploadingPan] = useState(false);
   const [panError, setPanError] = useState('');
 
-  const [dlNumber, setDlNumber] = useState('');
+  const [dlNumber, setDlNumber] = useState(() => currentUser?.kycData?.dlNumber || '');
   const [dlDoc, setDlDoc] = useState({ name: '', preview: null, fileId: null, url: '', uploaded: false });
   const [isUploadingDl, setIsUploadingDl] = useState(false);
   const [dlError, setDlError] = useState('');
@@ -183,14 +207,14 @@ export const KYCWizardModal = ({ bookingId, onClose, onSuccess }) => {
     try {
       await verifyKYC(bookingId, {
         kycStatus: 'Verified',
-        aadhaarNumber: aadhaarNumber.replace(/\s+/g, ''),
-        panNumber: panNumber.trim().toUpperCase(),
+        aadhaarNumber: (aadhaarNumber || currentUser?.kycData?.aadhaarNumber || '').replace(/\s+/g, ''),
+        panNumber: (panNumber || currentUser?.kycData?.panNumber || '').trim().toUpperCase(),
         dlNumber: trimmedDl,
         documents: {
-          aadhaar: aadhaarDoc.name,
-          aadhaarUrl: aadhaarDoc.url,
-          pan: panDoc.name,
-          panUrl: panDoc.url,
+          aadhaar: aadhaarDoc.name || currentUser?.documents?.aadhaar || 'Verified_Aadhaar.pdf',
+          aadhaarUrl: aadhaarDoc.url || currentUser?.documents?.aadhaarUrl || '',
+          pan: panDoc.name || currentUser?.documents?.pan || 'Verified_PAN.pdf',
+          panUrl: panDoc.url || currentUser?.documents?.panUrl || '',
           dl: dlDoc.name,
           dlUrl: dlDoc.url
         }
@@ -242,6 +266,18 @@ export const KYCWizardModal = ({ bookingId, onClose, onSuccess }) => {
             256-Bit SSL Encrypted
           </span>
         </div>
+
+        {hasVerifiedIdentity && (
+          <div className="bg-emerald-100/90 border-b border-emerald-300 px-6 py-2 text-xs text-emerald-950 font-bold flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+              Aadhaar & PAN are already verified on your account. Jump straight to Driving Licence.
+            </span>
+            <span className="bg-emerald-200 text-emerald-900 text-[10px] px-2 py-0.5 rounded-full border border-emerald-300 shrink-0 font-extrabold">
+              Pre-Verified
+            </span>
+          </div>
+        )}
 
         {/* Wizard Steps Navigation */}
         <div className="p-3.5 px-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between">

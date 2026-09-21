@@ -147,8 +147,16 @@ export const CustomerView = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // FAQ List (All 7 required prompt items)
+  // FAQ List
   const faqData = [
+    {
+      q: 'How do I get a bike or scooty on rent in Vrindavan?',
+      a: 'Browse verified two-wheelers on Rent on Cent, choose your rental dates, complete instant digital KYC (Aadhaar & Driving Licence), and confirm booking on WhatsApp (+91 97209 65985). Pickup at Prem Mandir or get 15-minute doorstep delivery at your hotel or Mathura Junction.'
+    },
+    {
+      q: 'What is the price of scooty on rent in Vrindavan?',
+      a: 'Scooty on rent in Vrindavan starts from ₹40/hour and ₹299/day for Honda Activa 6G and TVS Jupiter. High-mileage bikes, Royal Enfield Classic 350, and eco-friendly EV scooters are also available with 2 free ISI helmets and zero deposit options.'
+    },
     {
       q: 'What documents are required?',
       a: 'You will need an original Government-issued photo ID (Aadhaar Card or Passport), a valid Driving Licence (DL) for two-wheelers, and a mobile phone linked to WhatsApp. Documents are uploaded digitally before pickup.'
@@ -196,11 +204,11 @@ export const CustomerView = () => {
               </span>
 
               <h1 className="font-heading text-3xl sm:text-5xl lg:text-5xl font-extrabold tracking-tight text-white mb-4 leading-[1.15]">
-                Bike &amp; Scooty Rental in Vrindavan
+                Bike &amp; Scooty on Rent in Vrindavan
               </h1>
 
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-6 font-normal max-w-2xl">
-                Rent verified Honda Activa, EV scooters &amp; Royal Enfield for seamless temple darshan and Govardhan Parikrama. Transparent daily rates from ₹299/day or ₹40/hr with free doorstep delivery to your ashram or railway station.
+                Looking for a verified <strong>bike or scooty on rent in Vrindavan</strong>? Rent Honda Activa, EV scooters &amp; Royal Enfield for seamless temple darshan and Govardhan Parikrama. Transparent daily rates from ₹299/day or ₹40/hr with free doorstep delivery to your ashram or railway station.
               </p>
 
               {/* Key Value Points */}
@@ -319,7 +327,7 @@ export const CustomerView = () => {
               <div className="bg-white rounded-2xl p-4 sm:p-6 text-slate-900 shadow-2xl border border-amber-500/30">
                 <div className="flex items-center gap-2 mb-3 text-xs font-bold text-slate-700">
                   <Search className="w-4 h-4 text-emerald-600" />
-                  <span>Search & Rent Bikes in Vrindavan</span>
+                  <span>Search &amp; Book Scooty on Rent in Vrindavan</span>
                 </div>
 
                 <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">

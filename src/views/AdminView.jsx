@@ -49,7 +49,9 @@ import {
   Phone,
   ExternalLink,
   Clock,
-  Sparkles
+  Sparkles,
+  X,
+  Maximize2
 } from 'lucide-react';
 
 export const AdminView = () => {
@@ -141,6 +143,10 @@ export const AdminView = () => {
   // Change request modal state
   const [changeReqModalVehicle, setChangeReqModalVehicle] = useState(null);
   const [changeReqNote, setChangeReqNote] = useState('');
+
+  // Vehicle Document & KYC Inspection Modal State
+  const [inspectingVehicle, setInspectingVehicle] = useState(null);
+  const [inspectDocPreview, setInspectDocPreview] = useState(null); // { title: string, url: string }
 
   // Manual WhatsApp Booking Creation State
   const [manualBookingModalOpen, setManualBookingModalOpen] = useState(false);
@@ -1386,102 +1392,185 @@ export const AdminView = () => {
             </div>
 
             <div className="grid grid-cols-1 gap-4">
-              {filteredVehicles.map((veh) => (
-                <div
-                  key={veh.id}
-                  className="bg-slate-900 p-5 rounded-2xl border border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 shadow-lg hover:border-slate-700 transition-all"
-                >
-                  <div className="flex flex-col sm:flex-row gap-4 items-start">
-                    <img
-                      src={veh.images[0]}
-                      alt={veh.name}
-                      className="w-full sm:w-28 h-28 object-cover rounded-xl shrink-0 border border-slate-800"
-                    />
+              {filteredVehicles.map((veh) => {
+                const hasRc = Boolean(veh.documents?.rc || veh.documents?.rcUrl);
+                const hasInsurance = Boolean(veh.documents?.insurance || veh.documents?.insuranceUrl);
+                const hasGovtId = Boolean(veh.documents?.governmentId || veh.documents?.governmentIdUrl || veh.documents?.governmentIdNumber);
+                const hasPan = Boolean(veh.documents?.panCard || veh.documents?.panCardUrl || veh.documents?.panNumber);
+                const isApproved = veh.verificationStatus === 'Verified' || Boolean(veh.vehicleVerified);
 
-                    <div className="space-y-1.5 text-xs">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h4 className="font-heading font-extrabold text-white text-base">{veh.name}</h4>
-                        <span className="font-mono text-emerald-400 bg-slate-950 px-2.5 py-0.5 rounded border border-slate-800 font-bold">
-                          {veh.registrationNumber}
-                        </span>
-                        <span className="capitalize text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-semibold">
-                          {veh.type}
+                return (
+                  <div
+                    key={veh.id}
+                    className="bg-slate-900 p-5 rounded-2xl border border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 shadow-lg hover:border-slate-700 transition-all group"
+                  >
+                    {/* Clickable Vehicle Overview (Click to Inspect Documents & Photos) */}
+                    <div
+                      onClick={() => setInspectingVehicle(veh)}
+                      className="flex flex-col sm:flex-row gap-4 items-start cursor-pointer flex-1"
+                      title="Click to inspect RC, Insurance, Host Aadhaar & PAN, and 6 photos"
+                    >
+                      <div className="relative shrink-0">
+                        <img
+                          src={veh.images?.[0] || 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=600&q=80'}
+                          alt={veh.name}
+                          className="w-full sm:w-28 h-28 object-cover rounded-xl shrink-0 border border-slate-800 group-hover:border-indigo-500/60 transition-all shadow"
+                        />
+                        <span className="absolute bottom-1.5 right-1.5 bg-slate-950/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 border border-slate-700">
+                          <Eye className="w-2.5 h-2.5 text-indigo-400" />
+                          Audit
                         </span>
                       </div>
 
-                      <div className="text-slate-300">
-                        Owner: <strong className="text-white">{veh.ownerName}</strong> ({veh.ownerPhone || 'Verified Host'})
-                      </div>
+                      <div className="space-y-1.5 text-xs">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h4 className="font-heading font-extrabold text-white text-base group-hover:text-indigo-300 transition-colors flex items-center gap-1.5">
+                            {veh.name}
+                          </h4>
+                          <span className="font-mono text-emerald-400 bg-slate-950 px-2.5 py-0.5 rounded border border-slate-800 font-bold">
+                            {veh.registrationNumber}
+                          </span>
+                          <span className="capitalize text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-semibold">
+                            {veh.type}
+                          </span>
+                          {isApproved ? (
+                            <span className="bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                              <CheckCircle2 className="w-2.5 h-2.5" /> Verified
+                            </span>
+                          ) : veh.verificationStatus === 'Rejected' ? (
+                            <span className="bg-rose-950 text-rose-300 border border-rose-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                              Rejected
+                            </span>
+                          ) : veh.verificationStatus === 'Changes Requested' ? (
+                            <span className="bg-amber-950 text-amber-300 border border-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                              Changes Requested
+                            </span>
+                          ) : (
+                            <span className="bg-yellow-950 text-yellow-300 border border-yellow-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                              Pending Review
+                            </span>
+                          )}
+                        </div>
 
-                      <div className="text-slate-400">
-                        Pickup: {veh.pickupAddress || veh.locationArea} • <strong className="text-emerald-400">₹{veh.dailyRate}/day</strong>
-                      </div>
+                        <div className="text-slate-300">
+                          Owner: <strong className="text-white">{veh.ownerName}</strong> ({veh.ownerPhone || 'Verified Host'})
+                        </div>
 
-                      {/* Documents verification status */}
-                      <div className="flex flex-wrap gap-2 pt-1">
-                        <span className="bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
-                          <CheckCircle2 className="w-3 h-3 text-emerald-400" /> RC Verified
-                        </span>
-                        <span className="bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
-                          <CheckCircle2 className="w-3 h-3 text-emerald-400" /> Insurance Valid
-                        </span>
-                        <span className="bg-slate-950 text-slate-400 border border-slate-800 px-2 py-0.5 rounded text-[10px]">
-                          Availability: {veh.status === 'active' ? '🟢 Live' : '🔴 Paused'}
-                        </span>
+                        <div className="text-slate-400">
+                          Pickup: {veh.pickupAddress || veh.locationArea} • <strong className="text-emerald-400">₹{veh.dailyRate}/day</strong>
+                        </div>
+
+                        {/* Real Dynamic Document Compliance Badges */}
+                        <div className="flex flex-wrap items-center gap-2 pt-1">
+                          {/* RC Badge */}
+                          {isApproved ? (
+                            <span className="bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-400" /> RC Verified
+                            </span>
+                          ) : hasRc ? (
+                            <span className="bg-blue-950/80 text-blue-300 border border-blue-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
+                              <FileText className="w-3 h-3 text-blue-400" /> RC Attached
+                            </span>
+                          ) : (
+                            <span className="bg-amber-950/80 text-amber-300 border border-amber-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
+                              <AlertTriangle className="w-3 h-3 text-amber-400" /> RC Missing
+                            </span>
+                          )}
+
+                          {/* Insurance Badge */}
+                          {isApproved ? (
+                            <span className="bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-400" /> Insurance Valid
+                            </span>
+                          ) : hasInsurance ? (
+                            <span className="bg-blue-950/80 text-blue-300 border border-blue-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
+                              <FileText className="w-3 h-3 text-blue-400" /> Insurance Attached
+                            </span>
+                          ) : (
+                            <span className="bg-amber-950/80 text-amber-300 border border-amber-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
+                              <AlertTriangle className="w-3 h-3 text-amber-400" /> Insurance Missing
+                            </span>
+                          )}
+
+                          {/* Host Aadhaar & PAN KYC Badge */}
+                          {isApproved || (hasGovtId && hasPan) ? (
+                            <span className="bg-indigo-950/80 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
+                              <ShieldCheck className="w-3 h-3 text-indigo-400" /> Host ID & PAN Attached
+                            </span>
+                          ) : (
+                            <span className="bg-amber-950/80 text-amber-300 border border-amber-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
+                              <ShieldAlert className="w-3 h-3 text-amber-400" /> Host KYC Pending
+                            </span>
+                          )}
+
+                          <span className="bg-slate-950 text-slate-400 border border-slate-800 px-2 py-0.5 rounded text-[10px]">
+                            {veh.status === 'active' ? '🟢 Live' : '🔴 Paused'}
+                          </span>
+                        </div>
                       </div>
                     </div>
+
+                    {/* ADMIN ACTIONS: Inspect Modal Button, Approve, Reject, Request changes, Suspend */}
+                    <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-800 shrink-0">
+                      {/* Action 0: Inspect Documents & Photos */}
+                      <button
+                        onClick={() => setInspectingVehicle(veh)}
+                        className="px-3.5 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white shadow-md hover:shadow-indigo-600/30 transition-all"
+                        title="Inspect RC, Insurance, Host Aadhaar & PAN, and 6 photos"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        Inspect Documents & Photos
+                      </button>
+
+                      {/* Action 1: Approve */}
+                      <button
+                        onClick={() => verifyVehicle(veh.id, 'Verified')}
+                        className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
+                          isApproved
+                            ? 'bg-emerald-950 text-emerald-400 border border-emerald-800 cursor-default opacity-80'
+                            : 'bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold shadow-md'
+                        }`}
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        Approve
+                      </button>
+
+                      {/* Action 2: Reject */}
+                      <button
+                        onClick={() => verifyVehicle(veh.id, 'Rejected')}
+                        className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
+                          veh.verificationStatus === 'Rejected'
+                            ? 'bg-rose-950 text-rose-400 border border-rose-800 cursor-default opacity-80'
+                            : 'bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-800'
+                        }`}
+                      >
+                        <XCircle className="w-3.5 h-3.5" />
+                        Reject
+                      </button>
+
+                      {/* Action 3: Request changes */}
+                      <button
+                        onClick={() => {
+                          setChangeReqModalVehicle(veh);
+                          setChangeReqNote('');
+                        }}
+                        className="bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-800 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-all"
+                      >
+                        <AlertTriangle className="w-3.5 h-3.5" />
+                        Request Changes
+                      </button>
+
+                      {/* Action 4: Suspend / Reactivate */}
+                      <button
+                        onClick={() => toggleVehicleStatus(veh.id)}
+                        className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold transition-all"
+                      >
+                        {veh.status === 'active' ? 'Suspend' : 'Re-Activate'}
+                      </button>
+                    </div>
                   </div>
-
-                  {/* ADMIN ACTIONS: Approve, Reject, Request changes, Suspend */}
-                  <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-800">
-                    {/* Action 1: Approve */}
-                    <button
-                      onClick={() => verifyVehicle(veh.id, 'Verified')}
-                      className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
-                        veh.verificationStatus === 'Verified' || Boolean(veh.vehicleVerified)
-                          ? 'bg-emerald-950 text-emerald-400 border border-emerald-800 cursor-default opacity-80'
-                          : 'bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold shadow-md'
-                      }`}
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      Approve
-                    </button>
-
-                    {/* Action 2: Reject */}
-                    <button
-                      onClick={() => verifyVehicle(veh.id, 'Rejected')}
-                      className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
-                        veh.verificationStatus === 'Rejected'
-                          ? 'bg-rose-950 text-rose-400 border border-rose-800 cursor-default opacity-80'
-                          : 'bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-800'
-                      }`}
-                    >
-                      <XCircle className="w-3.5 h-3.5" />
-                      Reject
-                    </button>
-
-                    {/* Action 3: Request changes */}
-                    <button
-                      onClick={() => {
-                        setChangeReqModalVehicle(veh);
-                        setChangeReqNote('');
-                      }}
-                      className="bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-800 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-all"
-                    >
-                      <AlertTriangle className="w-3.5 h-3.5" />
-                      Request Changes
-                    </button>
-
-                    {/* Action 4: Suspend / Reactivate */}
-                    <button
-                      onClick={() => toggleVehicleStatus(veh.id)}
-                      className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold transition-all"
-                    >
-                      {veh.status === 'active' ? 'Suspend' : 'Re-Activate'}
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -2547,6 +2636,732 @@ export const AdminView = () => {
                   7. Send Instructions
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ----------------------------------------------------
+          MODAL: VEHICLE & HOST COMPLIANCE DOCUMENT AUDIT
+          Opens when admin clicks on any vehicle card or 'Inspect Documents & Photos'
+          ---------------------------------------------------- */}
+      {inspectingVehicle && (
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 font-sans animate-in fade-in duration-150">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+            {/* Modal Header */}
+            <div className="bg-slate-950 px-6 py-4 border-b border-slate-800 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-heading font-extrabold text-lg text-white">
+                      Vehicle & Host Compliance Document Audit
+                    </h3>
+                    <span className="font-mono text-emerald-400 font-extrabold bg-slate-900 px-2.5 py-0.5 rounded border border-slate-800 text-xs">
+                      {inspectingVehicle.registrationNumber}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Fleet ID: #{inspectingVehicle.id} • {inspectingVehicle.name} • {inspectingVehicle.type}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setInspectingVehicle(null)}
+                className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+                title="Close Audit Modal"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Scrollable Audit Content */}
+            <div className="p-6 overflow-y-auto space-y-6 custom-scrollbar text-xs">
+              {/* Host Overview & Verification Status Bar */}
+              <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-400">Host / Owner:</span>
+                    <strong className="text-white text-sm">{inspectingVehicle.ownerName}</strong>
+                    {inspectingVehicle.ownerVerified ? (
+                      <span className="bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-400" /> KYC Verified Host
+                      </span>
+                    ) : (
+                      <span className="bg-amber-950 text-amber-300 border border-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <ShieldAlert className="w-3 h-3 text-amber-400" /> Pending Admin Approval
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-slate-400 flex flex-wrap items-center gap-3">
+                    <span>Phone: <strong className="text-slate-200">{inspectingVehicle.ownerPhone || 'N/A'}</strong></span>
+                    <span>Email: <strong className="text-slate-200">{inspectingVehicle.ownerEmail || 'N/A'}</strong></span>
+                    <span>City: <strong className="text-slate-200">{inspectingVehicle.ownerCity || inspectingVehicle.city || 'Vrindavan'}</strong></span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <a
+                    href={`https://wa.me/${(inspectingVehicle.ownerPhone || '').replace(/[^0-9]/g, '')}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#25D366] border border-[#25D366]/40 font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5 fill-[#25D366]" />
+                    WhatsApp Host
+                  </a>
+                  {inspectingVehicle.ownerPhone && (
+                    <a
+                      href={`tel:${inspectingVehicle.ownerPhone}`}
+                      className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all"
+                    >
+                      <Phone className="w-3.5 h-3.5" />
+                      Call
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* ------------------------------------------------
+                  SECTION 1: HOST IDENTITY & TAX KYC DOCUMENTS
+                  (Aadhaar / Government ID + PAN Card)
+                  ------------------------------------------------ */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-heading font-extrabold text-white text-sm flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                    1. Host Identity & Tax Documents (Aadhaar & PAN Verification)
+                  </h4>
+                  <span className="text-[11px] text-slate-400">
+                    UIDAI & Income Tax Compliance Record
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Document 1: Government Photo ID (Aadhaar) */}
+                  <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between border-b border-slate-850 pb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-white text-sm">
+                            {inspectingVehicle.documents?.governmentIdType || 'Government ID (Aadhaar)'}
+                          </span>
+                          <span className="bg-indigo-950 text-indigo-300 border border-indigo-800 text-[10px] font-bold px-2 py-0.5 rounded">
+                            Host Identity
+                          </span>
+                        </div>
+                        {inspectingVehicle.documents?.governmentIdUrl || inspectingVehicle.documents?.governmentId ? (
+                          <span className="text-emerald-400 font-bold text-[11px] flex items-center gap-1">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Uploaded
+                          </span>
+                        ) : (
+                          <span className="text-amber-400 font-bold text-[11px] flex items-center gap-1">
+                            <AlertTriangle className="w-3.5 h-3.5" /> Missing
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="space-y-1.5 pt-2">
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Document Number:</span>
+                          <strong className="font-mono text-white text-xs">
+                            {inspectingVehicle.documents?.governmentIdNumber || 'Not provided'}
+                          </strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">File Name:</span>
+                          <span className="text-slate-300 truncate max-w-[200px]" title={inspectingVehicle.documents?.governmentId}>
+                            {inspectingVehicle.documents?.governmentId || 'Aadhaar_Document'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Visual Document Preview */}
+                      <div className="pt-2">
+                        {inspectingVehicle.documents?.governmentIdUrl ? (
+                          <div className="relative group rounded-xl overflow-hidden border border-slate-800 bg-slate-900 aspect-video flex items-center justify-center">
+                            <img
+                              src={inspectingVehicle.documents.governmentIdUrl}
+                              alt="Host Government ID"
+                              className="w-full h-full object-contain cursor-pointer"
+                              onClick={() =>
+                                setInspectDocPreview({
+                                  title: `${inspectingVehicle.documents?.governmentIdType || 'Host Government ID'} - ${inspectingVehicle.ownerName}`,
+                                  url: inspectingVehicle.documents.governmentIdUrl
+                                })
+                              }
+                            />
+                            <div
+                              onClick={() =>
+                                setInspectDocPreview({
+                                  title: `${inspectingVehicle.documents?.governmentIdType || 'Host Government ID'} - ${inspectingVehicle.ownerName}`,
+                                  url: inspectingVehicle.documents.governmentIdUrl
+                                })
+                              }
+                              className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 cursor-pointer text-white font-bold text-xs"
+                            >
+                              <Maximize2 className="w-4 h-4 text-emerald-400" />
+                              <span>Click to Inspect Full Screen</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="bg-slate-900 border border-dashed border-slate-800 rounded-xl p-4 text-center text-slate-400">
+                            <FileText className="w-8 h-8 mx-auto mb-1 text-slate-600" />
+                            <p className="font-medium text-slate-300">
+                              {inspectingVehicle.documents?.governmentId || 'Government ID file registered on account'}
+                            </p>
+                            <p className="text-[10px] text-slate-500 mt-0.5">
+                              ID Number: {inspectingVehicle.documents?.governmentIdNumber || 'Verified on file'}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="pt-2 flex items-center gap-2">
+                      {inspectingVehicle.documents?.governmentIdUrl && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setInspectDocPreview({
+                              title: `${inspectingVehicle.documents?.governmentIdType || 'Host Government ID'} - ${inspectingVehicle.ownerName}`,
+                              url: inspectingVehicle.documents.governmentIdUrl
+                            })
+                          }
+                          className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 transition-colors"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          View Document Full Size
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Document 2: PAN Card */}
+                  <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between border-b border-slate-850 pb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-white text-sm">Permanent Account Number (PAN)</span>
+                          <span className="bg-blue-950 text-blue-300 border border-blue-800 text-[10px] font-bold px-2 py-0.5 rounded">
+                            Tax Compliance
+                          </span>
+                        </div>
+                        {inspectingVehicle.documents?.panCardUrl || inspectingVehicle.documents?.panCard ? (
+                          <span className="text-emerald-400 font-bold text-[11px] flex items-center gap-1">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Uploaded
+                          </span>
+                        ) : (
+                          <span className="text-amber-400 font-bold text-[11px] flex items-center gap-1">
+                            <AlertTriangle className="w-3.5 h-3.5" /> Missing
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="space-y-1.5 pt-2">
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">PAN Number:</span>
+                          <strong className="font-mono text-emerald-400 text-xs tracking-wider">
+                            {inspectingVehicle.documents?.panNumber || 'Not provided'}
+                          </strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">File Name:</span>
+                          <span className="text-slate-300 truncate max-w-[200px]" title={inspectingVehicle.documents?.panCard}>
+                            {inspectingVehicle.documents?.panCard || 'PAN_Card'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Visual Document Preview */}
+                      <div className="pt-2">
+                        {inspectingVehicle.documents?.panCardUrl ? (
+                          <div className="relative group rounded-xl overflow-hidden border border-slate-800 bg-slate-900 aspect-video flex items-center justify-center">
+                            <img
+                              src={inspectingVehicle.documents.panCardUrl}
+                              alt="Host PAN Card"
+                              className="w-full h-full object-contain cursor-pointer"
+                              onClick={() =>
+                                setInspectDocPreview({
+                                  title: `PAN Card - ${inspectingVehicle.ownerName} (${inspectingVehicle.documents?.panNumber || ''})`,
+                                  url: inspectingVehicle.documents.panCardUrl
+                                })
+                              }
+                            />
+                            <div
+                              onClick={() =>
+                                setInspectDocPreview({
+                                  title: `PAN Card - ${inspectingVehicle.ownerName} (${inspectingVehicle.documents?.panNumber || ''})`,
+                                  url: inspectingVehicle.documents.panCardUrl
+                                })
+                              }
+                              className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 cursor-pointer text-white font-bold text-xs"
+                            >
+                              <Maximize2 className="w-4 h-4 text-emerald-400" />
+                              <span>Click to Inspect Full Screen</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="bg-slate-900 border border-dashed border-slate-800 rounded-xl p-4 text-center text-slate-400">
+                            <CreditCard className="w-8 h-8 mx-auto mb-1 text-slate-600" />
+                            <p className="font-medium text-slate-300">
+                              {inspectingVehicle.documents?.panCard || 'PAN Card record on file'}
+                            </p>
+                            <p className="text-[10px] text-slate-500 mt-0.5">
+                              PAN: {inspectingVehicle.documents?.panNumber || 'Verified on file'}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="pt-2 flex items-center gap-2">
+                      {inspectingVehicle.documents?.panCardUrl && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setInspectDocPreview({
+                              title: `PAN Card - ${inspectingVehicle.ownerName} (${inspectingVehicle.documents?.panNumber || ''})`,
+                              url: inspectingVehicle.documents.panCardUrl
+                            })
+                          }
+                          className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 transition-colors"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          View PAN Full Size
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-indigo-950/40 border border-indigo-800/60 rounded-xl p-3 text-[11px] text-indigo-300 flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <span>
+                    <strong>Single-Time Verification Guarantee:</strong> Once approved, {inspectingVehicle.ownerName}&apos;s Aadhaar & PAN will be permanently validated. Subsequent vehicles added by this host will not prompt them for ID/PAN re-upload.
+                  </span>
+                </div>
+              </div>
+
+              {/* ------------------------------------------------
+                  SECTION 2: VEHICLE COMPLIANCE DOCUMENTS
+                  (RC + Insurance + Permits)
+                  ------------------------------------------------ */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-heading font-extrabold text-white text-sm flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-cyan-400" />
+                    2. Vehicle Legal Compliance Documents (RC & Insurance)
+                  </h4>
+                  <span className="text-[11px] text-slate-400">
+                    MoRTH Parivahan & IRDAI Verified
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* RC Document */}
+                  <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between border-b border-slate-850 pb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-white text-sm">Registration Certificate (RC)</span>
+                          <span className="bg-cyan-950 text-cyan-300 border border-cyan-800 text-[10px] font-bold px-2 py-0.5 rounded">
+                            UP 85
+                          </span>
+                        </div>
+                        {inspectingVehicle.documents?.rcUrl || inspectingVehicle.documents?.rc ? (
+                          <span className="text-emerald-400 font-bold text-[11px] flex items-center gap-1">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Attached
+                          </span>
+                        ) : (
+                          <span className="text-rose-400 font-bold text-[11px] flex items-center gap-1">
+                            <XCircle className="w-3.5 h-3.5" /> Not Found
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="space-y-1.5 pt-2">
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Registration Number:</span>
+                          <strong className="font-mono text-cyan-400 text-xs">
+                            {inspectingVehicle.registrationNumber}
+                          </strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">File Document:</span>
+                          <span className="text-slate-300 truncate max-w-[200px]">
+                            {inspectingVehicle.documents?.rc || 'Vehicle_RC.pdf'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="pt-2">
+                        {inspectingVehicle.documents?.rcUrl ? (
+                          <div className="relative group rounded-xl overflow-hidden border border-slate-800 bg-slate-900 aspect-video flex items-center justify-center">
+                            <img
+                              src={inspectingVehicle.documents.rcUrl}
+                              alt="Vehicle RC Document"
+                              className="w-full h-full object-contain cursor-pointer"
+                              onClick={() =>
+                                setInspectDocPreview({
+                                  title: `RC Document - ${inspectingVehicle.registrationNumber} (${inspectingVehicle.name})`,
+                                  url: inspectingVehicle.documents.rcUrl
+                                })
+                              }
+                            />
+                            <div
+                              onClick={() =>
+                                setInspectDocPreview({
+                                  title: `RC Document - ${inspectingVehicle.registrationNumber} (${inspectingVehicle.name})`,
+                                  url: inspectingVehicle.documents.rcUrl
+                                })
+                              }
+                              className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 cursor-pointer text-white font-bold text-xs"
+                            >
+                              <Maximize2 className="w-4 h-4 text-cyan-400" />
+                              <span>Click to Inspect Full Screen</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="bg-slate-900 border border-dashed border-slate-800 rounded-xl p-4 text-center text-slate-400">
+                            <FileText className="w-8 h-8 mx-auto mb-1 text-slate-600" />
+                            <p className="font-medium text-slate-300">
+                              {inspectingVehicle.documents?.rc || 'Registration Certificate Document on file'}
+                            </p>
+                            <p className="text-[10px] text-slate-500 mt-0.5">
+                              Reg: {inspectingVehicle.registrationNumber}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="pt-2">
+                      {inspectingVehicle.documents?.rcUrl && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setInspectDocPreview({
+                              title: `RC Document - ${inspectingVehicle.registrationNumber} (${inspectingVehicle.name})`,
+                              url: inspectingVehicle.documents.rcUrl
+                            })
+                          }
+                          className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 transition-colors"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          View RC Full Size
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Insurance Certificate */}
+                  <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between border-b border-slate-850 pb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-white text-sm">Insurance Policy Certificate</span>
+                          <span className="bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">
+                            Comprehensive
+                          </span>
+                        </div>
+                        {inspectingVehicle.documents?.insuranceUrl || inspectingVehicle.documents?.insurance ? (
+                          <span className="text-emerald-400 font-bold text-[11px] flex items-center gap-1">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Active
+                          </span>
+                        ) : (
+                          <span className="text-rose-400 font-bold text-[11px] flex items-center gap-1">
+                            <XCircle className="w-3.5 h-3.5" /> Not Found
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="space-y-1.5 pt-2">
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Coverage Status:</span>
+                          <strong className="text-emerald-400 text-xs">Valid for Vrindavan & Mathura</strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">File Document:</span>
+                          <span className="text-slate-300 truncate max-w-[200px]">
+                            {inspectingVehicle.documents?.insurance || 'Insurance_Policy.pdf'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="pt-2">
+                        {inspectingVehicle.documents?.insuranceUrl ? (
+                          <div className="relative group rounded-xl overflow-hidden border border-slate-800 bg-slate-900 aspect-video flex items-center justify-center">
+                            <img
+                              src={inspectingVehicle.documents.insuranceUrl}
+                              alt="Vehicle Insurance Certificate"
+                              className="w-full h-full object-contain cursor-pointer"
+                              onClick={() =>
+                                setInspectDocPreview({
+                                  title: `Insurance Policy - ${inspectingVehicle.name} (${inspectingVehicle.registrationNumber})`,
+                                  url: inspectingVehicle.documents.insuranceUrl
+                                })
+                              }
+                            />
+                            <div
+                              onClick={() =>
+                                setInspectDocPreview({
+                                  title: `Insurance Policy - ${inspectingVehicle.name} (${inspectingVehicle.registrationNumber})`,
+                                  url: inspectingVehicle.documents.insuranceUrl
+                                })
+                              }
+                              className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 cursor-pointer text-white font-bold text-xs"
+                            >
+                              <Maximize2 className="w-4 h-4 text-emerald-400" />
+                              <span>Click to Inspect Full Screen</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="bg-slate-900 border border-dashed border-slate-800 rounded-xl p-4 text-center text-slate-400">
+                            <FileText className="w-8 h-8 mx-auto mb-1 text-slate-600" />
+                            <p className="font-medium text-slate-300">
+                              {inspectingVehicle.documents?.insurance || 'Vehicle Insurance Policy Document on file'}
+                            </p>
+                            <p className="text-[10px] text-slate-500 mt-0.5">
+                              Verified Comprehensive Coverage
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="pt-2">
+                      {inspectingVehicle.documents?.insuranceUrl && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setInspectDocPreview({
+                              title: `Insurance Policy - ${inspectingVehicle.name} (${inspectingVehicle.registrationNumber})`,
+                              url: inspectingVehicle.documents.insuranceUrl
+                            })
+                          }
+                          className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 transition-colors"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          View Insurance Full Size
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ------------------------------------------------
+                  SECTION 3: 6-ANGLE VEHICLE INSPECTION PHOTOS
+                  ------------------------------------------------ */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-heading font-extrabold text-white text-sm flex items-center gap-2">
+                    <Camera className="w-4 h-4 text-emerald-400" />
+                    3. 6-Angle Vehicle Inspection Gallery
+                  </h4>
+                  <span className="text-[11px] text-slate-400">
+                    Front, Rear, Sides, Odometer & Damage Check
+                  </span>
+                </div>
+
+                {(() => {
+                  const anglePhotos = [
+                    { label: '1. Front View', url: inspectingVehicle.photos?.front || inspectingVehicle.images?.[0] },
+                    { label: '2. Rear View', url: inspectingVehicle.photos?.rear || inspectingVehicle.images?.[1] },
+                    { label: '3. Left Side', url: inspectingVehicle.photos?.left || inspectingVehicle.images?.[2] },
+                    { label: '4. Right Side', url: inspectingVehicle.photos?.right || inspectingVehicle.images?.[3] },
+                    { label: '5. Dashboard & Odometer', url: inspectingVehicle.photos?.dashboard || inspectingVehicle.images?.[4] },
+                    { label: '6. Damage / Scratch Check', url: inspectingVehicle.photos?.damageCloseUp || inspectingVehicle.images?.[5] }
+                  ];
+
+                  return (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                      {anglePhotos.map((photo, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() =>
+                            photo.url &&
+                            setInspectDocPreview({
+                              title: `${photo.label} - ${inspectingVehicle.name} (${inspectingVehicle.registrationNumber})`,
+                              url: photo.url
+                            })
+                          }
+                          className="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden p-2 group hover:border-emerald-500/50 transition-all cursor-pointer flex flex-col justify-between"
+                        >
+                          <div className="relative aspect-square rounded-xl overflow-hidden bg-slate-900 flex items-center justify-center">
+                            {photo.url ? (
+                              <>
+                                <img
+                                  src={photo.url}
+                                  alt={photo.label}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                />
+                                <div className="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                  <Maximize2 className="w-4 h-4 text-white" />
+                                </div>
+                              </>
+                            ) : (
+                              <div className="text-center p-2 text-slate-600">
+                                <Camera className="w-6 h-6 mx-auto mb-1 opacity-50" />
+                                <span className="text-[10px] block">No Photo</span>
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-[11px] font-bold text-slate-300 block text-center pt-2 truncate" title={photo.label}>
+                            {photo.label}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* ------------------------------------------------
+                  SECTION 4: VEHICLE SPECS & PRICING SUMMARY
+                  ------------------------------------------------ */}
+              <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2.5">
+                <h4 className="font-heading font-extrabold text-white text-xs flex items-center gap-2">
+                  <Bike className="w-4 h-4 text-emerald-400" />
+                  Vehicle Specifications & Onboarding Data
+                </h4>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-slate-300">
+                  <div>
+                    <span className="text-slate-500 block text-[10px] uppercase font-bold">Make & Model</span>
+                    <strong className="text-white">{inspectingVehicle.name}</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block text-[10px] uppercase font-bold">Year & Fuel</span>
+                    <strong className="text-white">{inspectingVehicle.year || '2024'} • {inspectingVehicle.fuelType || 'Petrol'}</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block text-[10px] uppercase font-bold">Daily Rental Rate</span>
+                    <strong className="text-emerald-400 font-extrabold">₹{inspectingVehicle.dailyRate}/day</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block text-[10px] uppercase font-bold">Pickup Location</span>
+                    <span className="text-slate-200 truncate block">{inspectingVehicle.pickupAddress || inspectingVehicle.locationArea || 'Prem Mandir, Vrindavan'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Sticky Footer Actions */}
+            <div className="bg-slate-950 px-6 py-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+              <div className="text-xs text-slate-400">
+                Current Status:{' '}
+                <strong className="text-white capitalize">
+                  {inspectingVehicle.verificationStatus || inspectingVehicle.status}
+                </strong>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+                {/* Action 1: Approve Vehicle & Mark Host KYC Verified */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    verifyVehicle(inspectingVehicle.id, 'Verified');
+                    setInspectingVehicle((prev) => (prev ? { ...prev, verificationStatus: 'Verified', vehicleVerified: true, status: 'active' } : prev));
+                    alert(`✅ Vehicle "${inspectingVehicle.name}" (${inspectingVehicle.registrationNumber}) and Host KYC have been Approved & Activated!`);
+                  }}
+                  className="px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 shadow-md transition-all"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  Approve Vehicle & Host KYC
+                </button>
+
+                {/* Action 2: Request Changes */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setChangeReqModalVehicle(inspectingVehicle);
+                    setChangeReqNote('');
+                    setInspectingVehicle(null);
+                  }}
+                  className="px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-800 transition-all"
+                >
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  Request Changes
+                </button>
+
+                {/* Action 3: Reject */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    verifyVehicle(inspectingVehicle.id, 'Rejected');
+                    setInspectingVehicle((prev) => (prev ? { ...prev, verificationStatus: 'Rejected', status: 'rejected' } : prev));
+                  }}
+                  className="px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-800 transition-all"
+                >
+                  <XCircle className="w-3.5 h-3.5" />
+                  Reject
+                </button>
+
+                {/* Action 4: Suspend / Reactivate */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    toggleVehicleStatus(inspectingVehicle.id);
+                    setInspectingVehicle((prev) => (prev ? { ...prev, status: prev.status === 'active' ? 'suspended' : 'active' } : prev));
+                  }}
+                  className="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all"
+                >
+                  {inspectingVehicle.status === 'active' ? 'Suspend' : 'Re-Activate'}
+                </button>
+
+                {/* Close */}
+                <button
+                  type="button"
+                  onClick={() => setInspectingVehicle(null)}
+                  className="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 transition-all"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ----------------------------------------------------
+          SUB-MODAL: FULL-RESOLUTION DOCUMENT & PHOTO LIGHTBOX
+          ---------------------------------------------------- */}
+      {inspectDocPreview && (
+        <div className="fixed inset-0 z-60 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 font-sans animate-in fade-in duration-150">
+          <div className="max-w-4xl w-full max-h-[95vh] flex flex-col bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+            <div className="bg-slate-950 px-5 py-3 border-b border-slate-800 flex items-center justify-between">
+              <span className="font-heading font-extrabold text-sm text-white truncate max-w-[80%]">
+                {inspectDocPreview.title}
+              </span>
+              <div className="flex items-center gap-2">
+                <a
+                  href={inspectDocPreview.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-2.5 py-1 rounded-lg flex items-center gap-1 border border-slate-700"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  New Tab
+                </a>
+                <button
+                  onClick={() => setInspectDocPreview(null)}
+                  className="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-4 flex-1 flex items-center justify-center bg-slate-950 overflow-auto">
+              <img
+                src={inspectDocPreview.url}
+                alt={inspectDocPreview.title}
+                className="max-w-full max-h-[80vh] object-contain rounded-xl shadow-lg border border-slate-800"
+              />
             </div>
           </div>
         </div>

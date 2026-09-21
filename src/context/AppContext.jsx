@@ -373,13 +373,30 @@ export const AppProvider = ({ children }) => {
       throw new Error('Host login required to list a bike.');
     }
 
+    // Check if this host is already verified on platform
+    let hostIsVerified = Boolean(
+      currentUser.kycVerified ||
+      currentUser.ownerVerified ||
+      currentUser.kycStatus === 'Verified'
+    );
+
+    if (typeof window !== 'undefined') {
+      try {
+        const verifiedHosts = JSON.parse(localStorage.getItem('vr_verified_hosts') || '[]');
+        const checkKeys = [currentUser.id, currentUser.phone, currentUser.name, vehicleData.ownerId, vehicleData.ownerPhone, vehicleData.ownerName].filter(Boolean);
+        if (checkKeys.some((k) => verifiedHosts.includes(k))) {
+          hostIsVerified = true;
+        }
+      } catch {}
+    }
+
     const newId = `veh-${Date.now()}`;
     const newVeh = {
       id: newId,
       ...vehicleData,
       rating: 5.0,
       reviewsCount: 1,
-      ownerVerified: true,
+      ownerVerified: hostIsVerified,
       vehicleVerified: false,
       verificationStatus: 'Pending',
       documentsVerified: false,
@@ -430,6 +447,8 @@ export const AppProvider = ({ children }) => {
       vStatus = 'Suspended';
     }
 
+    const targetVeh = vehicles.find((v) => v.id === vehicleId);
+
     setVehicles((prev) =>
       prev.map((v) =>
         v.id === vehicleId
@@ -443,6 +462,70 @@ export const AppProvider = ({ children }) => {
           : v
       )
     );
+
+    // When admin approves vehicle, automatically verify Host Identity & KYC permanently
+    if (isVerified && targetVeh) {
+      // Update hosts directory
+      setOwners((prev) =>
+        prev.map((o) => {
+          const isMatch =
+            (targetVeh.ownerId && o.id === targetVeh.ownerId) ||
+            (targetVeh.ownerName && o.name === targetVeh.ownerName) ||
+            (targetVeh.ownerPhone && o.phone === targetVeh.ownerPhone);
+          if (isMatch) {
+            return {
+              ...o,
+              verified: true,
+              kycVerified: true,
+              documentsVerified: true,
+              documents: { ...(o.documents || {}), ...(targetVeh.documents || {}) }
+            };
+          }
+          return o;
+        })
+      );
+
+      // Persist verified host IDs/phones in localStorage so Aadhaar & PAN are never asked again
+      if (typeof window !== 'undefined') {
+        try {
+          const verifiedHosts = JSON.parse(localStorage.getItem('vr_verified_hosts') || '[]');
+          const hostKeys = [targetVeh.ownerId, targetVeh.ownerPhone, targetVeh.ownerName].filter(Boolean);
+          let updated = false;
+          hostKeys.forEach((k) => {
+            if (!verifiedHosts.includes(k)) {
+              verifiedHosts.push(k);
+              updated = true;
+            }
+          });
+          if (updated) {
+            localStorage.setItem('vr_verified_hosts', JSON.stringify(verifiedHosts));
+          }
+        } catch {}
+      }
+
+      // If active session belongs to this owner, update currentUser
+      setCurrentUser((prev) => {
+        if (!prev) return prev;
+        const isMatch =
+          (targetVeh.ownerId && prev.id === targetVeh.ownerId) ||
+          (targetVeh.ownerName && prev.name === targetVeh.ownerName) ||
+          (targetVeh.ownerPhone && prev.phone === targetVeh.ownerPhone);
+        if (isMatch) {
+          const updatedUser = {
+            ...prev,
+            ownerVerified: true,
+            kycVerified: true,
+            kycStatus: 'Verified',
+            documents: { ...(prev.documents || {}), ...(targetVeh.documents || {}) }
+          };
+          try {
+            localStorage.setItem('vr_user', JSON.stringify(updatedUser));
+          } catch {}
+          return updatedUser;
+        }
+        return prev;
+      });
+    }
 
     // Sync with backend API
     apiVerifyVehicle(vehicleId, actionState).catch((err) => console.warn('API verifyVehicle error:', err));
@@ -773,11 +856,33 @@ export const AppProvider = ({ children }) => {
       })
     );
 
-    setCurrentUser((prev) => (prev ? { ...prev, kycStatus: 'Verified' } : prev));
+    setCurrentUser((prev) => {
+      const updated = prev
+        ? {
+            ...prev,
+            kycStatus: 'Verified',
+            kycVerified: true,
+            kycData: { ...(prev.kycData || {}), ...kycData },
+            documents: { ...(prev.documents || {}), ...(kycData.documents || {}) }
+          }
+        : prev;
+      if (typeof window !== 'undefined' && updated) {
+        try {
+          localStorage.setItem('vr_user', JSON.stringify(updated));
+        } catch {}
+      }
+      return updated;
+    });
+
     setCustomers((prev) =>
       prev.map((c) =>
         c.phone === currentUser.phone || c.id === currentUser.id
-          ? { ...c, kycStatus: 'Verified' }
+          ? {
+              ...c,
+              kycStatus: 'Verified',
+              kycVerified: true,
+              documents: { ...(c.documents || {}), ...(kycData.documents || {}) }
+            }
           : c
       )
     );

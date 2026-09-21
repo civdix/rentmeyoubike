@@ -19,6 +19,19 @@ import {
   OdometerGaugeIcon, DigitalInspectionIcon, RupeeStackIcon, KeyHandoverIcon
 } from '../components/CustomIcons';
 
+const POPULAR_VEHICLE_FEATURES = [
+  'USB Phone Charging Port',
+  'Mobile Phone Holder',
+  '33L Prasad Boot Storage',
+  'Sanitized Helmets Included',
+  'GPS Live Tracking',
+  'Fast Charger Included',
+  'Front Disc Brake / ABS',
+  'Tubeless Tyres',
+  'Luggage Carrier Rack',
+  'First Aid Kit'
+];
+
 export const OwnerView = () => {
   const {
     vehicles,
@@ -181,9 +194,90 @@ export const OwnerView = () => {
   const [hostPanDoc, setHostPanDoc] = useState({ name: '', uploaded: false, preview: null, fileId: null, url: '' });
   const [isUploadingHostPan, setIsUploadingHostPan] = useState(false);
   const [hostPanError, setHostPanError] = useState('');
+  const [showDocEdit, setShowDocEdit] = useState(false);
 
   const hostIdInputRef = useRef(null);
   const hostPanInputRef = useRef(null);
+
+  // Check if host's KYC / Identity (Aadhaar & PAN) has already been verified
+  const existingVerifiedListing = React.useMemo(() => {
+    return vehicles.find(
+      (v) =>
+        (v.ownerId === currentUser?.id ||
+         (currentUser?.phone && v.ownerPhone === currentUser?.phone) ||
+         (currentUser?.name && v.ownerName === currentUser?.name)) &&
+        (v.verificationStatus === 'Verified' || v.vehicleVerified || v.documentsVerified) &&
+        (v.documents?.panNumber || v.documents?.governmentIdNumber)
+    );
+  }, [vehicles, currentUser]);
+
+  const existingListingWithDocs = React.useMemo(() => {
+    return vehicles.find(
+      (v) =>
+        (v.ownerId === currentUser?.id ||
+         (currentUser?.phone && v.ownerPhone === currentUser?.phone) ||
+         (currentUser?.name && v.ownerName === currentUser?.name)) &&
+        (v.documents?.panNumber || v.documents?.governmentIdNumber)
+    );
+  }, [vehicles, currentUser]);
+
+  const isHostIdentityVerified = React.useMemo(() => {
+    if (currentUser?.kycVerified || currentUser?.ownerVerified || currentUser?.kycStatus === 'Verified') {
+      return true;
+    }
+    if (existingVerifiedListing) return true;
+    if (typeof window !== 'undefined') {
+      try {
+        const verifiedHosts = JSON.parse(localStorage.getItem('vr_verified_hosts') || '[]');
+        if (
+          (currentUser?.id && verifiedHosts.includes(currentUser.id)) ||
+          (currentUser?.phone && verifiedHosts.includes(currentUser.phone)) ||
+          (currentUser?.name && verifiedHosts.includes(currentUser.name))
+        ) {
+          return true;
+        }
+      } catch {}
+    }
+    // Also if currentUser has documents with pan & govt ID
+    if (currentUser?.documents?.panNumber && currentUser?.documents?.governmentIdNumber) {
+      return true;
+    }
+    return false;
+  }, [currentUser, existingVerifiedListing]);
+
+  // Pre-fill verified Aadhaar & PAN so the host never has to re-enter or re-upload them
+  React.useEffect(() => {
+    const verifiedSource = currentUser?.documents || existingVerifiedListing?.documents || existingListingWithDocs?.documents;
+    if (verifiedSource) {
+      if (verifiedSource.governmentIdType && (!hostIdType || hostIdType === 'Aadhaar Card')) {
+        setHostIdType(verifiedSource.governmentIdType);
+      }
+      if (verifiedSource.governmentIdNumber && !hostIdNumber) {
+        setHostIdNumber(verifiedSource.governmentIdNumber);
+      }
+      if (verifiedSource.panNumber && !hostPanNumber) {
+        setHostPanNumber(verifiedSource.panNumber);
+      }
+      if ((verifiedSource.governmentId || verifiedSource.governmentIdUrl) && !hostIdDoc.uploaded) {
+        setHostIdDoc({
+          name: verifiedSource.governmentId || 'Aadhaar_Verified.pdf',
+          preview: verifiedSource.governmentIdUrl || null,
+          fileId: null,
+          url: verifiedSource.governmentIdUrl || '',
+          uploaded: true
+        });
+      }
+      if ((verifiedSource.panCard || verifiedSource.panCardUrl) && !hostPanDoc.uploaded) {
+        setHostPanDoc({
+          name: verifiedSource.panCard || 'PAN_Verified.pdf',
+          preview: verifiedSource.panCardUrl || null,
+          fileId: null,
+          url: verifiedSource.panCardUrl || '',
+          uploaded: true
+        });
+      }
+    }
+  }, [currentUser, existingVerifiedListing, existingListingWithDocs]);
 
   const handleHostDocUpload = async (type, file) => {
     if (!file) return;
@@ -265,6 +359,25 @@ export const OwnerView = () => {
   const [nearbyChargingStations, setNearbyChargingStations] = useState('');
   const [spareBatteryAvailable, setSpareBatteryAvailable] = useState(false);
 
+  // Features & Inclusions State (Host explicitly selects features — nothing automatically attached!)
+  const [selectedFeatures, setSelectedFeatures] = useState([]);
+  const [customFeatureInput, setCustomFeatureInput] = useState('');
+
+  const toggleFeature = (feat) => {
+    setSelectedFeatures((prev) =>
+      prev.includes(feat) ? prev.filter((f) => f !== feat) : [...prev, feat]
+    );
+  };
+
+  const handleAddCustomFeature = (e) => {
+    if (e) e.preventDefault();
+    const clean = customFeatureInput.trim();
+    if (clean && !selectedFeatures.includes(clean)) {
+      setSelectedFeatures((prev) => [...prev, clean]);
+      setCustomFeatureInput('');
+    }
+  };
+
   // STEP 4: Vehicle Documents Upload Files & State
   const [rcDoc, setRcDoc] = useState({ name: '', uploaded: false, preview: null });
   const [insuranceDoc, setInsuranceDoc] = useState({ name: '', uploaded: false, preview: null });
@@ -274,18 +387,19 @@ export const OwnerView = () => {
   const insuranceInputRef = useRef(null);
   const otherDocInputRef = useRef(null);
 
-  const handleDocFileUpload = (type, file) => {
+  const handleDocFileUpload = async (type, file) => {
     if (!file) return;
     if (file.size > MAX_PHOTO_UPLOAD_BYTES) {
       const mb = (file.size / (1024 * 1024)).toFixed(1);
       alert(`File "${file.name}" (${mb} MB) exceeds the 5 MB limit. Please select a document under 5 MB.`);
       return;
     }
-    const docData = { name: file.name, uploaded: true, preview: null };
+    const docData = { name: file.name, uploaded: true, preview: null, url: '' };
     if (file.type && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (e) => {
         docData.preview = e.target.result;
+        docData.url = e.target.result;
         if (type === 'rc') setRcDoc({ ...docData });
         if (type === 'insurance') setInsuranceDoc({ ...docData });
         if (type === 'other') setOtherDoc({ ...docData });
@@ -295,6 +409,20 @@ export const OwnerView = () => {
       if (type === 'rc') setRcDoc(docData);
       if (type === 'insurance') setInsuranceDoc(docData);
       if (type === 'other') setOtherDoc(docData);
+    }
+
+    try {
+      const res = await apiUploadPhoto(file, {
+        category: `vehicle_${type}`,
+        fileName: file.name
+      });
+      if (res?.url) {
+        if (type === 'rc') setRcDoc((prev) => ({ ...prev, url: res.url, uploaded: true }));
+        if (type === 'insurance') setInsuranceDoc((prev) => ({ ...prev, url: res.url, uploaded: true }));
+        if (type === 'other') setOtherDoc((prev) => ({ ...prev, url: res.url, uploaded: true }));
+      }
+    } catch (err) {
+      console.warn(`[VehicleDoc] upload notice for ${type}:`, err);
     }
   };
 
@@ -328,9 +456,7 @@ export const OwnerView = () => {
       return;
     }
 
-
-
-    if (!hostIdDoc.uploaded || !hostPanDoc.uploaded) {
+    if (!isHostIdentityVerified && (!hostIdDoc.uploaded || !hostPanDoc.uploaded)) {
       alert('Please upload your Government Photo ID and PAN Card in Step 2.');
       setStep(2);
       return;
@@ -388,18 +514,21 @@ export const OwnerView = () => {
       images: vehicleImages.length > 0 ? vehicleImages : [],
       photos,
       documents: {
-        rc: rcDoc.name,
-        insurance: insuranceDoc.name,
-        other: otherDoc.name,
-        governmentId: hostIdDoc.name,
-        governmentIdUrl: hostIdDoc.url || hostIdDoc.preview,
-        governmentIdType: hostIdType,
-        governmentIdNumber: hostIdNumber,
-        panCard: hostPanDoc.name,
-        panCardUrl: hostPanDoc.url || hostPanDoc.preview,
-        panNumber: hostPanNumber.toUpperCase()
+        rc: rcDoc.name || 'Vehicle_RC.pdf',
+        rcUrl: rcDoc.url || rcDoc.preview || '',
+        insurance: insuranceDoc.name || 'Vehicle_Insurance.pdf',
+        insuranceUrl: insuranceDoc.url || insuranceDoc.preview || '',
+        other: otherDoc.name || '',
+        otherUrl: otherDoc.url || otherDoc.preview || '',
+        governmentId: hostIdDoc.name || currentUser?.documents?.governmentId || existingVerifiedListing?.documents?.governmentId || 'Aadhaar_Verified.pdf',
+        governmentIdUrl: hostIdDoc.url || hostIdDoc.preview || currentUser?.documents?.governmentIdUrl || existingVerifiedListing?.documents?.governmentIdUrl || '',
+        governmentIdType: hostIdType || 'Aadhaar Card',
+        governmentIdNumber: hostIdNumber || currentUser?.documents?.governmentIdNumber || existingVerifiedListing?.documents?.governmentIdNumber || 'VERIFIED_ON_FILE',
+        panCard: hostPanDoc.name || currentUser?.documents?.panCard || existingVerifiedListing?.documents?.panCard || 'PAN_Verified.pdf',
+        panCardUrl: hostPanDoc.url || hostPanDoc.preview || currentUser?.documents?.panCardUrl || existingVerifiedListing?.documents?.panCardUrl || '',
+        panNumber: (hostPanNumber || currentUser?.documents?.panNumber || existingVerifiedListing?.documents?.panNumber || 'VERIFIED_ON_FILE').toUpperCase()
       },
-      features: ['USB Phone Charging Port', 'Mobile Phone Holder', '33L Prasad Boot Storage', 'Sanitized Helmets Included'],
+      features: selectedFeatures,
       rentalRules: ['Valid Driving Licence required for self-ride', 'Helmets mandatory for safety'],
       availability: {
         from: availableFrom,
@@ -1021,242 +1150,333 @@ export const OwnerView = () => {
                     </p>
                   </div>
 
-                  <div className="space-y-4 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200">
-                    {/* Document 1: Government Photo ID */}
-                    <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-extrabold text-slate-900 text-sm">1. Government Photo ID *</span>
-                            {hostIdDoc.uploaded ? (
-                              <span className="bg-emerald-100 text-emerald-950 font-bold text-[10px] px-2.5 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1">
-                                <CheckCircle2 className="w-3 h-3 text-emerald-700" />
-                                Document Uploaded • Under Verification
-                              </span>
-                            ) : (
-                              <span className="bg-amber-100 text-amber-950 font-bold text-[10px] px-2.5 py-0.5 rounded-full border border-amber-300">
-                                Upload Required
-                              </span>
-                            )}
+                  {/* Verified Identity Card for Pre-Verified Hosts */}
+                  {isHostIdentityVerified && !showDocEdit ? (
+                    <div className="bg-emerald-50 border-2 border-emerald-400 rounded-2xl p-5 space-y-4 shadow-sm animate-in fade-in">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-slate-950 flex items-center justify-center font-bold shrink-0 shadow">
+                            <ShieldCheck className="w-7 h-7 text-slate-950" strokeWidth={2.5} />
                           </div>
-                          <span className="text-slate-500 text-xs block mt-0.5">
-                            Aadhaar Card, Indian Passport, or Voter ID
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-heading font-extrabold text-emerald-950 text-base">
+                                Identity & Tax KYC Already Verified
+                              </h4>
+                              <span className="bg-emerald-200 text-emerald-900 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-300">
+                                Verified Host
+                              </span>
+                            </div>
+                            <p className="text-xs text-emerald-800 mt-0.5 leading-relaxed">
+                              Your Aadhaar / Government ID and PAN Card have already been authenticated and approved by Rent on Cent compliance. Per platform policy, you only verify your identity once — no need to upload them again!
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <div className="bg-white p-3.5 rounded-xl border border-emerald-200 flex items-center justify-between">
+                          <div>
+                            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">
+                              Verified {hostIdType || 'Government ID'}
+                            </span>
+                            <span className="text-sm font-mono font-extrabold text-slate-900">
+                              {hostIdNumber
+                                ? (hostIdNumber.length > 4 ? `•••• •••• ${hostIdNumber.slice(-4)}` : hostIdNumber)
+                                : 'Verified on File'}
+                            </span>
+                          </div>
+                          <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> On File
+                          </span>
+                        </div>
+
+                        <div className="bg-white p-3.5 rounded-xl border border-emerald-200 flex items-center justify-between">
+                          <div>
+                            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">
+                              Verified PAN Card
+                            </span>
+                            <span className="text-sm font-mono font-extrabold text-slate-900">
+                              {hostPanNumber
+                                ? (hostPanNumber.length > 4 ? `${hostPanNumber.slice(0, 3)}••••${hostPanNumber.slice(-2)}` : hostPanNumber)
+                                : 'Verified on File'}
+                            </span>
+                          </div>
+                          <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> On File
                           </span>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-xs font-bold text-slate-700 mb-1">Select ID Document Type *</label>
-                          <select
-                            value={hostIdType}
-                            onChange={(e) => setHostIdType(e.target.value)}
-                            className="w-full text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-emerald-200/80">
+                        <button
+                          type="button"
+                          onClick={() => setShowDocEdit(true)}
+                          className="text-xs text-slate-600 hover:text-slate-900 font-semibold underline underline-offset-2"
+                        >
+                          Need to replace or update your documents? Click here
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setStep(3)}
+                          className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black text-xs px-5 py-3 rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-all"
+                        >
+                          <span>Proceed to Step 3: Vehicle Info</span>
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200">
+                      {isHostIdentityVerified && (
+                        <div className="flex items-center justify-between bg-emerald-100/80 border border-emerald-300 px-3 py-2 rounded-xl text-xs text-emerald-900 font-bold">
+                          <span>Identity is already verified. You can proceed directly or replace documents below.</span>
+                          <button
+                            type="button"
+                            onClick={() => setShowDocEdit(false)}
+                            className="text-emerald-950 underline text-[11px] font-bold"
                           >
-                            <option value="Aadhaar Card">Aadhaar Card</option>
-                            <option value="Indian Passport">Indian Passport</option>
-                            <option value="Voter ID Card">Voter ID Card</option>
-                            <option value="Driving Licence">Driving Licence</option>
-                          </select>
+                            Hide Editor
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Document 1: Government Photo ID */}
+                      <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-extrabold text-slate-900 text-sm">1. Government Photo ID *</span>
+                              {hostIdDoc.uploaded ? (
+                                <span className="bg-emerald-100 text-emerald-950 font-bold text-[10px] px-2.5 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1">
+                                  <CheckCircle2 className="w-3 h-3 text-emerald-700" />
+                                  Document Uploaded • Under Verification
+                                </span>
+                              ) : (
+                                <span className="bg-amber-100 text-amber-950 font-bold text-[10px] px-2.5 py-0.5 rounded-full border border-amber-300">
+                                  Upload Required
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-slate-500 text-xs block mt-0.5">
+                              Aadhaar Card, Indian Passport, or Voter ID
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 mb-1">Select ID Document Type *</label>
+                            <select
+                              value={hostIdType}
+                              onChange={(e) => setHostIdType(e.target.value)}
+                              className="w-full text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            >
+                              <option value="Aadhaar Card">Aadhaar Card</option>
+                              <option value="Indian Passport">Indian Passport</option>
+                              <option value="Voter ID Card">Voter ID Card</option>
+                              <option value="Driving Licence">Driving Licence</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 mb-1">
+                              {hostIdType} Number *
+                            </label>
+                            <input
+                              type="text"
+                              placeholder={hostIdType === 'Aadhaar Card' ? '1234 5678 9012' : 'Enter document number'}
+                              value={hostIdNumber}
+                              onChange={(e) => setHostIdNumber(e.target.value)}
+                              className="w-full text-xs font-mono font-semibold px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            />
+                          </div>
+                        </div>
+
+                        {/* ID Upload Box */}
+                        <div className="border border-dashed border-slate-300 rounded-xl p-3 text-center bg-slate-50/70">
+                          {isUploadingHostId ? (
+                            <div className="py-2 flex items-center justify-center gap-2 text-xs font-bold text-slate-700">
+                              <Loader2 className="w-4 h-4 text-emerald-600 animate-spin" />
+                              <span>Uploading {hostIdType} photo...</span>
+                            </div>
+                          ) : hostIdDoc.uploaded ? (
+                            <div className="flex items-center justify-between p-2 bg-emerald-50 border border-emerald-300 rounded-xl">
+                              <div className="flex items-center gap-2 text-left">
+                                {hostIdDoc.preview ? (
+                                  <img
+                                    src={hostIdDoc.preview}
+                                    alt="Host ID"
+                                    className="w-10 h-10 rounded-lg object-cover border border-emerald-200"
+                                  />
+                                ) : (
+                                  <div className="w-10 h-10 rounded-lg bg-emerald-200 text-emerald-800 flex items-center justify-center font-bold text-[10px]">
+                                    DOC
+                                  </div>
+                                )}
+                                <div>
+                                  <span className="text-xs font-bold text-emerald-950 block truncate max-w-[200px]">
+                                    {hostIdDoc.name}
+                                  </span>
+                                  <span className="text-[10px] text-emerald-700 font-medium flex items-center gap-1">
+                                    <CheckCircle2 className="w-3 h-3" />
+                                    Attached • Pending Admin Verification
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => hostIdInputRef.current?.click()}
+                                  className="text-[11px] font-bold px-2.5 py-1 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 text-slate-700"
+                                >
+                                  Replace
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setHostIdDoc({ name: '', uploaded: false, preview: null, fileId: null, url: '' })}
+                                  className="p-1 text-slate-400 hover:text-red-600"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="py-1 flex flex-col sm:flex-row items-center justify-between gap-2 px-2">
+                              <div className="text-left">
+                                <span className="text-xs font-bold text-slate-800 block">Upload {hostIdType} Document</span>
+                                <span className="text-[10px] text-slate-500">Front & back photo or PDF • Max 5 MB</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => hostIdInputRef.current?.click()}
+                                className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg shadow-sm"
+                              >
+                                <Upload className="w-3.5 h-3.5" />
+                                <span>Select File</span>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        {hostIdError && (
+                          <p className="text-[11px] text-red-600 font-medium flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3" />
+                            {hostIdError}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Document 2: PAN Card */}
+                      <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-extrabold text-slate-900 text-sm">2. PAN Card Verification *</span>
+                              {hostPanDoc.uploaded ? (
+                                <span className="bg-emerald-100 text-emerald-950 font-bold text-[10px] px-2.5 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1">
+                                  <CheckCircle2 className="w-3 h-3 text-emerald-700" />
+                                  Document Uploaded • Under Verification
+                                </span>
+                              ) : (
+                                <span className="bg-amber-100 text-amber-950 font-bold text-[10px] px-2.5 py-0.5 rounded-full border border-amber-300">
+                                  Upload Required
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-slate-500 text-xs block mt-0.5">
+                              Mandatory for bank settlement & host tax compliance
+                            </span>
+                          </div>
                         </div>
 
                         <div>
                           <label className="block text-xs font-bold text-slate-700 mb-1">
-                            {hostIdType} Number *
+                            10-Character PAN Number *
                           </label>
                           <input
                             type="text"
-                            placeholder={hostIdType === 'Aadhaar Card' ? '1234 5678 9012' : 'Enter document number'}
-                            value={hostIdNumber}
-                            onChange={(e) => setHostIdNumber(e.target.value)}
-                            className="w-full text-xs font-mono font-semibold px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            maxLength={10}
+                            placeholder="ABCDE1234F"
+                            value={hostPanNumber}
+                            onChange={(e) => setHostPanNumber(e.target.value.toUpperCase())}
+                            className="w-full text-xs font-mono uppercase font-semibold px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                           />
                         </div>
-                      </div>
 
-                      {/* ID Upload Box */}
-                      <div className="border border-dashed border-slate-300 rounded-xl p-3 text-center bg-slate-50/70">
-                        {isUploadingHostId ? (
-                          <div className="py-2 flex items-center justify-center gap-2 text-xs font-bold text-slate-700">
-                            <Loader2 className="w-4 h-4 text-emerald-600 animate-spin" />
-                            <span>Uploading {hostIdType} photo...</span>
-                          </div>
-                        ) : hostIdDoc.uploaded ? (
-                          <div className="flex items-center justify-between p-2 bg-emerald-50 border border-emerald-300 rounded-xl">
-                            <div className="flex items-center gap-2 text-left">
-                              {hostIdDoc.preview ? (
-                                <img
-                                  src={hostIdDoc.preview}
-                                  alt="Host ID"
-                                  className="w-10 h-10 rounded-lg object-cover border border-emerald-200"
-                                />
-                              ) : (
-                                <div className="w-10 h-10 rounded-lg bg-emerald-200 text-emerald-800 flex items-center justify-center font-bold text-[10px]">
-                                  DOC
+                        {/* PAN Upload Box */}
+                        <div className="border border-dashed border-slate-300 rounded-xl p-3 text-center bg-slate-50/70">
+                          {isUploadingHostPan ? (
+                            <div className="py-2 flex items-center justify-center gap-2 text-xs font-bold text-slate-700">
+                              <Loader2 className="w-4 h-4 text-emerald-600 animate-spin" />
+                              <span>Uploading PAN card photo...</span>
+                            </div>
+                          ) : hostPanDoc.uploaded ? (
+                            <div className="flex items-center justify-between p-2 bg-emerald-50 border border-emerald-300 rounded-xl">
+                              <div className="flex items-center gap-2 text-left">
+                                {hostPanDoc.preview ? (
+                                  <img
+                                    src={hostPanDoc.preview}
+                                    alt="PAN Card"
+                                    className="w-10 h-10 rounded-lg object-cover border border-emerald-200"
+                                  />
+                                ) : (
+                                  <div className="w-10 h-10 rounded-lg bg-emerald-200 text-emerald-800 flex items-center justify-center font-bold text-[10px]">
+                                    DOC
+                                  </div>
+                                )}
+                                <div>
+                                  <span className="text-xs font-bold text-emerald-950 block truncate max-w-[200px]">
+                                    {hostPanDoc.name}
+                                  </span>
+                                  <span className="text-[10px] text-emerald-700 font-medium flex items-center gap-1">
+                                    <CheckCircle2 className="w-3 h-3" />
+                                    Attached • Pending Admin Verification
+                                  </span>
                                 </div>
-                              )}
-                              <div>
-                                <span className="text-xs font-bold text-emerald-950 block truncate max-w-[200px]">
-                                  {hostIdDoc.name}
-                                </span>
-                                <span className="text-[10px] text-emerald-700 font-medium flex items-center gap-1">
-                                  <CheckCircle2 className="w-3 h-3" />
-                                  Attached • Pending Admin Verification
-                                </span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => hostPanInputRef.current?.click()}
+                                  className="text-[11px] font-bold px-2.5 py-1 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 text-slate-700"
+                                >
+                                  Replace
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setHostPanDoc({ name: '', uploaded: false, preview: null, fileId: null, url: '' })}
+                                  className="p-1 text-slate-400 hover:text-red-600"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
                               </div>
                             </div>
-                            <div className="flex items-center gap-1">
-                              <button
-                                type="button"
-                                onClick={() => hostIdInputRef.current?.click()}
-                                className="text-[11px] font-bold px-2.5 py-1 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 text-slate-700"
-                              >
-                                Replace
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setHostIdDoc({ name: '', uploaded: false, preview: null, fileId: null, url: '' })}
-                                className="p-1 text-slate-400 hover:text-red-600"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="py-1 flex flex-col sm:flex-row items-center justify-between gap-2 px-2">
-                            <div className="text-left">
-                              <span className="text-xs font-bold text-slate-800 block">Upload {hostIdType} Document</span>
-                              <span className="text-[10px] text-slate-500">Front & back photo or PDF • Max 5 MB</span>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => hostIdInputRef.current?.click()}
-                              className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg shadow-sm"
-                            >
-                              <Upload className="w-3.5 h-3.5" />
-                              <span>Select File</span>
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                      {hostIdError && (
-                        <p className="text-[11px] text-red-600 font-medium flex items-center gap-1">
-                          <AlertCircle className="w-3 h-3" />
-                          {hostIdError}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Document 2: PAN Card */}
-                    <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-extrabold text-slate-900 text-sm">2. PAN Card Verification *</span>
-                            {hostPanDoc.uploaded ? (
-                              <span className="bg-emerald-100 text-emerald-950 font-bold text-[10px] px-2.5 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1">
-                                <CheckCircle2 className="w-3 h-3 text-emerald-700" />
-                                Document Uploaded • Under Verification
-                              </span>
-                            ) : (
-                              <span className="bg-amber-100 text-amber-950 font-bold text-[10px] px-2.5 py-0.5 rounded-full border border-amber-300">
-                                Upload Required
-                              </span>
-                            )}
-                          </div>
-                          <span className="text-slate-500 text-xs block mt-0.5">
-                            Mandatory for bank settlement & host tax compliance
-                          </span>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">
-                          10-Character PAN Number *
-                        </label>
-                        <input
-                          type="text"
-                          maxLength={10}
-                          placeholder="ABCDE1234F"
-                          value={hostPanNumber}
-                          onChange={(e) => setHostPanNumber(e.target.value.toUpperCase())}
-                          className="w-full text-xs font-mono uppercase font-semibold px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
-                      </div>
-
-                      {/* PAN Upload Box */}
-                      <div className="border border-dashed border-slate-300 rounded-xl p-3 text-center bg-slate-50/70">
-                        {isUploadingHostPan ? (
-                          <div className="py-2 flex items-center justify-center gap-2 text-xs font-bold text-slate-700">
-                            <Loader2 className="w-4 h-4 text-emerald-600 animate-spin" />
-                            <span>Uploading PAN card photo...</span>
-                          </div>
-                        ) : hostPanDoc.uploaded ? (
-                          <div className="flex items-center justify-between p-2 bg-emerald-50 border border-emerald-300 rounded-xl">
-                            <div className="flex items-center gap-2 text-left">
-                              {hostPanDoc.preview ? (
-                                <img
-                                  src={hostPanDoc.preview}
-                                  alt="PAN Card"
-                                  className="w-10 h-10 rounded-lg object-cover border border-emerald-200"
-                                />
-                              ) : (
-                                <div className="w-10 h-10 rounded-lg bg-emerald-200 text-emerald-800 flex items-center justify-center font-bold text-[10px]">
-                                  DOC
-                                </div>
-                              )}
-                              <div>
-                                <span className="text-xs font-bold text-emerald-950 block truncate max-w-[200px]">
-                                  {hostPanDoc.name}
-                                </span>
-                                <span className="text-[10px] text-emerald-700 font-medium flex items-center gap-1">
-                                  <CheckCircle2 className="w-3 h-3" />
-                                  Attached • Pending Admin Verification
-                                </span>
+                          ) : (
+                            <div className="py-1 flex flex-col sm:flex-row items-center justify-between gap-2 px-2">
+                              <div className="text-left">
+                                <span className="text-xs font-bold text-slate-800 block">Upload PAN Card Document</span>
+                                <span className="text-[10px] text-slate-500">Clear front photo or PDF • Max 5 MB</span>
                               </div>
-                            </div>
-                            <div className="flex items-center gap-1">
                               <button
                                 type="button"
                                 onClick={() => hostPanInputRef.current?.click()}
-                                className="text-[11px] font-bold px-2.5 py-1 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 text-slate-700"
+                                className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg shadow-sm"
                               >
-                                Replace
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setHostPanDoc({ name: '', uploaded: false, preview: null, fileId: null, url: '' })}
-                                className="p-1 text-slate-400 hover:text-red-600"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
+                                <Upload className="w-3.5 h-3.5" />
+                                <span>Select File</span>
                               </button>
                             </div>
-                          </div>
-                        ) : (
-                          <div className="py-1 flex flex-col sm:flex-row items-center justify-between gap-2 px-2">
-                            <div className="text-left">
-                              <span className="text-xs font-bold text-slate-800 block">Upload PAN Card Document</span>
-                              <span className="text-[10px] text-slate-500">Clear front photo or PDF • Max 5 MB</span>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => hostPanInputRef.current?.click()}
-                              className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg shadow-sm"
-                            >
-                              <Upload className="w-3.5 h-3.5" />
-                              <span>Select File</span>
-                            </button>
-                          </div>
+                          )}
+                        </div>
+                        {hostPanError && (
+                          <p className="text-[11px] text-red-600 font-medium flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3" />
+                            {hostPanError}
+                          </p>
                         )}
                       </div>
-                      {hostPanError && (
-                        <p className="text-[11px] text-red-600 font-medium flex items-center gap-1">
-                          <AlertCircle className="w-3 h-3" />
-                          {hostPanError}
-                        </p>
-                      )}
                     </div>
-                  </div>
+                  )}
 
                   <div className="flex gap-2 pt-2">
                     <button
@@ -1269,6 +1489,10 @@ export const OwnerView = () => {
                     <button
                       type="button"
                       onClick={() => {
+                        if (isHostIdentityVerified) {
+                          setStep(3);
+                          return;
+                        }
                         if (!hostIdNumber.trim()) {
                           alert(`Please enter your ${hostIdType} number.`);
                           return;
@@ -1496,6 +1720,95 @@ export const OwnerView = () => {
                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-medium"
                       required
                     />
+                  </div>
+
+                  {/* Vehicle Features & Inclusions Checklist (Host selectively attaches) */}
+                  <div className="pt-2 border-t border-slate-100 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="font-heading font-extrabold text-slate-800 text-xs sm:text-sm flex items-center gap-1.5">
+                        <Sparkles className="w-4 h-4 text-emerald-600" />
+                        Vehicle Features & Accessories (Optional)
+                      </label>
+                      <span className="text-[11px] font-semibold text-slate-500">
+                        {selectedFeatures.length === 0 ? 'None selected (Default)' : `${selectedFeatures.length} selected`}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500">
+                      Tap only the features that your vehicle actually has. Leave unselected if your vehicle does not include them.
+                    </p>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {POPULAR_VEHICLE_FEATURES.map((feat) => {
+                        const checked = selectedFeatures.includes(feat);
+                        return (
+                          <button
+                            type="button"
+                            key={feat}
+                            onClick={() => toggleFeature(feat)}
+                            className={`p-2.5 rounded-xl text-left font-semibold border transition-all text-xs flex items-center justify-between gap-1.5 cursor-pointer ${
+                              checked
+                                ? 'bg-emerald-50 border-emerald-500 text-emerald-950 font-bold shadow-xs'
+                                : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                            }`}
+                          >
+                            <span className="line-clamp-1">{feat}</span>
+                            {checked ? (
+                              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={2.5} />
+                            ) : (
+                              <div className="w-4 h-4 rounded-full border border-slate-300 shrink-0" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Add Custom Feature */}
+                    <div className="flex gap-2 items-center pt-1">
+                      <input
+                        type="text"
+                        value={customFeatureInput}
+                        onChange={(e) => setCustomFeatureInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddCustomFeature();
+                          }
+                        }}
+                        placeholder="Add custom feature (e.g. Phone Mount, Extra Helmet)"
+                        className="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium focus:border-emerald-500 outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddCustomFeature}
+                        disabled={!customFeatureInput.trim()}
+                        className="px-3 py-2 rounded-xl bg-slate-900 hover:bg-emerald-600 disabled:opacity-50 text-white font-bold text-xs transition-colors shrink-0"
+                      >
+                        + Add
+                      </button>
+                    </div>
+
+                    {/* Show custom items tags if added outside default list */}
+                    {selectedFeatures.filter((f) => !POPULAR_VEHICLE_FEATURES.includes(f)).length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {selectedFeatures
+                          .filter((f) => !POPULAR_VEHICLE_FEATURES.includes(f))
+                          .map((customFeat) => (
+                            <span
+                              key={customFeat}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-950 font-bold text-[11px] border border-emerald-300"
+                            >
+                              {customFeat}
+                              <button
+                                type="button"
+                                onClick={() => toggleFeature(customFeat)}
+                                className="text-emerald-700 hover:text-emerald-950 cursor-pointer ml-1"
+                              >
+                                &times;
+                              </button>
+                            </span>
+                          ))}
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex gap-2 pt-2">
