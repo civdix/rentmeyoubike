@@ -4,11 +4,11 @@ import { Providers } from './providers';
 export const metadata = {
   metadataBase: new URL('https://rentoncent.bond'),
   title: {
-    default: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty from ₹299 - Rent on Cent',
+    default: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty',
     template: '%s | Rent on Cent'
   },
   description:
-    'Best bike on rent in Vrindavan & Vrindavan rental portal starting ₹299/day or ₹40/hr. Rent verified Honda Activa 6G, EV scooters, Royal Enfield with free hotel delivery, 2 helmets & ₹0 deposit. WhatsApp: +91 97209 65985.',
+    'Rent bike and scooty in Vrindavan from ₹299/day. Verified Activa 6G & EV with zero deposit, free helmets & hotel delivery. Instant WhatsApp booking.',
   keywords: [
     'bike on rent in vrindavan',
     'vrindavan rental',
@@ -40,9 +40,9 @@ export const metadata = {
   creator: 'Rent on Cent',
   publisher: 'Rent on Cent',
   openGraph: {
-    title: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty from ₹299 - Rent on Cent',
+    title: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty',
     description:
-      'Rent verified Honda Activa, EV scooters & Royal Enfield in Vrindavan & Mathura from ₹299/day. Doorstep delivery to ashrams, hotels & railway station.',
+      'Rent verified Honda Activa, EV scooters & bikes in Vrindavan from ₹299/day. Free helmets and doorstep delivery.',
     url: 'https://rentoncent.bond',
     siteName: 'Rent on Cent - Vrindavan Rental',
     locale: 'en_IN',
@@ -60,8 +60,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Bike on Rent in Vrindavan | Vrindavan Rental from ₹299',
-    description: 'Rent Activa, Royal Enfield, and EV Scooters in Vrindavan starting ₹299/day with free helmets.',
+    title: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty',
+    description: 'Rent Activa, Royal Enfield & EV in Vrindavan from ₹299/day with free helmets.',
     images: ['https://rentoncent.bond/og-customer.jpg']
   },
   icons: {

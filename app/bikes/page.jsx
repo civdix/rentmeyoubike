@@ -1,15 +1,15 @@
 import BikesClient from './BikesClient';
 
 export const metadata = {
-  title: 'Bike on Rent in Vrindavan - Available Fleet & Scooty Rates | Rent on Cent',
+  title: 'Bikes & Scooty on Rent in Vrindavan',
   description:
-    'Compare verified bike on rent in Vrindavan and scooty rental options. Honda Activa 6G, EV scooty & Royal Enfield from ₹299/day. Zero deposit & hotel delivery across Vrindavan rental hubs.',
+    'Compare bikes and scooty on rent in Vrindavan. Rent Honda Activa 6G, EV & Royal Enfield from ₹299/day with ₹0 deposit and doorstep delivery.',
   alternates: {
     canonical: 'https://rentoncent.bond/bikes'
   },
   openGraph: {
-    title: 'Bike on Rent in Vrindavan - Available Fleet & Scooty Rates | Rent on Cent',
-    description: 'Rent Honda Activa 6G, EV Scooters, and Cruisers from ₹299/day. Verified Vrindavan rental with zero deposit.',
+    title: 'Bikes & Scooty on Rent in Vrindavan | Rent on Cent',
+    description: 'Compare Honda Activa 6G, EV & Royal Enfield on rent in Vrindavan from ₹299/day.',
     url: 'https://rentoncent.bond/bikes',
     siteName: 'Rent on Cent',
     locale: 'en_IN',
@@ -27,8 +27,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'Bike on Rent in Vrindavan - Available Fleet & Scooty Rates | Rent on Cent',
-    description: 'Rent Activa, EV Scooters, and Cruisers starting at ₹299/day in Vrindavan & Mathura.',
+    title: 'Bikes & Scooty on Rent in Vrindavan | Rent on Cent',
+    description: 'Rent Activa, EV & Enfield in Vrindavan from ₹299/day.',
     images: ['https://rentoncent.bond/logo_square_share_area.png']
   }
 };

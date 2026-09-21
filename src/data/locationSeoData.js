@@ -6,9 +6,9 @@ export const LOCATION_SEO_DATA = {
     slug: 'mathura-cut-yamuna-expressway',
     name: 'Mathura Cut (Yamuna Expressway)',
     shortName: 'Mathura Cut',
-    metaTitle: 'Bike on Rent on Mathura Cut Yamuna Expressway | Rent on Cent',
+    metaTitle: 'Mathura Cut Expressway Bike Rental',
     metaDescription:
-      'Rent a bike or scooty directly at Mathura Cut on Yamuna Expressway near Vrindavan. Doorstep vehicle handover for tourists arriving from Delhi, Noida & Agra starting ₹299/day.',
+      'Rent a bike or scooty at Mathura Cut on Yamuna Expressway. Doorstep delivery for tourists from Delhi, Noida & Agra starting ₹299/day.',
     keywords: [
       'bike on rent on mathura cut',
       'scooty rental mathura cut yamuna expressway',
@@ -68,9 +68,9 @@ export const LOCATION_SEO_DATA = {
     slug: 'raya-cut-yamuna-expressway',
     name: 'Raya Cut (Yamuna Expressway)',
     shortName: 'Raya Cut',
-    metaTitle: 'Raya Cut Yamuna Expressway Bike Rental near Vrindavan | Rent on Cent',
+    metaTitle: 'Raya Cut Expressway Bike Rental',
     metaDescription:
-      'Book a bike or scooty on rent at Raya Cut Yamuna Expressway near Vrindavan & Mathura. Avoid transit hassle with instant two-wheeler handover starting ₹299/day.',
+      'Book a bike or scooty on rent at Raya Cut Yamuna Expressway near Vrindavan. Fast handover, zero deposit options from ₹299/day.',
     keywords: [
       'raya cut yamuna expressway bike rental',
       'raya cut scooty on rent near vrindavan',
@@ -125,9 +125,9 @@ export const LOCATION_SEO_DATA = {
     slug: 'chattikara-road',
     name: 'Chattikara Road & Vaishno Devi Marg',
     shortName: 'Chattikara',
-    metaTitle: 'Bike Rental Service near Chattikara Vrindavan | Rent on Cent',
+    metaTitle: 'Chattikara Road Bike Rental',
     metaDescription:
-      'Top-rated bike rental service near Chattikara Road, Vaishno Devi Mandir, and Rukmini Vihar in Vrindavan. Rent Honda Activa, EV & bikes from ₹299/day with doorstep delivery.',
+      'Rent Honda Activa and EV scooty near Chattikara Road, Vaishno Devi Mandir & Rukmini Vihar. Doorstep delivery from ₹299/day.',
     keywords: [
       'bike rental service near chattikara',
       'chattikara vrindavan scooty hire',
@@ -182,9 +182,9 @@ export const LOCATION_SEO_DATA = {
     slug: 'bankey-bihari-temple',
     name: 'Near Bankey Bihari Ji Mandir',
     shortName: 'Bankey Bihari',
-    metaTitle: 'Bike on Rent near Bankey Bihari Ji Mandir Vrindavan | Rent on Cent',
+    metaTitle: 'Bankey Bihari Mandir Bike Rental',
     metaDescription:
-      'Rent a scooty or bike near Shri Bankey Bihari Ji Temple, Vidyapeeth Chauraha, and Nidhivan in Vrindavan. Best rates, temple parking guidance, starting ₹299/day.',
+      'Rent a scooty near Bankey Bihari Ji Temple and Vidyapeeth Chauraha in Vrindavan. Easy temple parking guidance from ₹299/day.',
     keywords: [
       'bike on rent near bankey bihari ji',
       'scooty rental near banke bihari mandir vrindavan',
@@ -239,9 +239,9 @@ export const LOCATION_SEO_DATA = {
     slug: 'prem-mandir-raman-reti',
     name: 'Near Prem Mandir & Raman Reti Road',
     shortName: 'Prem Mandir',
-    metaTitle: 'Scooty & Bike Rental near Prem Mandir Vrindavan | Rent on Cent',
+    metaTitle: 'Prem Mandir Vrindavan Scooty Rental',
     metaDescription:
-      'Affordable scooty and bike rental near Prem Mandir, ISKCON Temple, and Raman Reti Road in Vrindavan. Rent Honda Activa from ₹40/hr or ₹299/day with doorstep pickup.',
+      'Scooty and bike on rent near Prem Mandir & ISKCON Temple on Raman Reti Road. Fast pickup, 2 free helmets from ₹299/day.',
     keywords: [
       'scooty rental near prem mandir vrindavan',
       'bike hire raman reti road',
@@ -296,9 +296,9 @@ export const LOCATION_SEO_DATA = {
     slug: 'mathura-junction-railway-station',
     name: 'Mathura Junction Railway Station',
     shortName: 'Mathura Junction',
-    metaTitle: 'Bike on Rent at Mathura Junction Railway Station | Rent on Cent',
+    metaTitle: 'Mathura Junction Railway Bike Rental',
     metaDescription:
-      'Rent a bike or scooty right outside Mathura Junction Railway Station (MTJ) and Mathura Cantt. Step off your train and ride straight to Vrindavan starting ₹299/day.',
+      'Rent a bike or scooty outside Mathura Junction (MTJ) Platform 1. Step off your train and ride straight to Vrindavan from ₹299/day.',
     keywords: [
       'bike on rent in mathura junction',
       'mathura railway station bike rental',
@@ -349,9 +349,9 @@ export const LOCATION_SEO_DATA = {
     slug: 'govardhan-parikrama',
     name: 'Govardhan 21 KM Parikrama Marg',
     shortName: 'Govardhan Parikrama',
-    metaTitle: 'Bike & Scooty Rental for Govardhan Parikrama | Rent on Cent',
+    metaTitle: 'Govardhan Parikrama Bike & Scooty',
     metaDescription:
-      'Rent an electric scooter or bike for the sacred 21 km Govardhan Parikrama, Radha Kund, and Dan Ghati Mandir. Smooth, quiet EV & Activa rentals starting ₹299/day.',
+      'Rent an electric scooter or Activa for the 21 km Govardhan Parikrama, Radha Kund & Dan Ghati. Smooth rides from ₹299/day.',
     keywords: [
       'govardhan parikrama scooty rent',
       'electric scooter for govardhan 21 km parikrama',
@@ -402,9 +402,9 @@ export const LOCATION_SEO_DATA = {
     slug: 'hotels-tourist-service',
     name: 'Vrindavan Hotels & Tourist Doorstep Service',
     shortName: 'Hotel Doorstep Delivery',
-    metaTitle: 'Hotel Doorstep Bike & Scooty Delivery in Vrindavan | Rent on Cent',
+    metaTitle: 'Vrindavan Hotel Doorstep Bike Delivery',
     metaDescription:
-      'Get two-wheelers delivered directly to your hotel or ashram in Vrindavan & Mathura. Best alternative to auto-rickshaws for tourists and families from ₹299/day.',
+      'Get a scooty delivered to your hotel or ashram in Vrindavan & Mathura. Best alternative to auto-rickshaws starting ₹299/day.',
     keywords: [
       'vrindavan hotel bike delivery',
       'doorstep scooty rental mathura hotel',

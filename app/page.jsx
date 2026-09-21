@@ -2,15 +2,17 @@ import React from 'react';
 import { CustomerView } from '../src/views/CustomerView';
 
 export const metadata = {
-  title: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty from ₹299 - Rent on Cent',
+  title: {
+    absolute: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty'
+  },
   description:
-    'Best bike on rent in Vrindavan & scooty rental from ₹299/day or ₹40/hr. Verified Honda Activa 6G, EV scooters & Royal Enfield with zero deposit, free helmets & hotel delivery. Instant WhatsApp booking: +91 97209 65985.',
+    'Rent bike and scooty in Vrindavan from ₹299/day. Verified Activa 6G & EV with zero deposit, free helmets & hotel delivery. Instant WhatsApp booking.',
   alternates: {
     canonical: 'https://rentoncent.bond'
   },
   openGraph: {
-    title: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty from ₹299 - Rent on Cent',
-    description: 'Rent Honda Activa 6G, EV scooters & Royal Enfield in Vrindavan from ₹299/day. Zero deposit, 2 free helmets & doorstep hotel delivery.',
+    title: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty',
+    description: 'Rent Activa 6G, EV & Royal Enfield in Vrindavan from ₹299/day with zero deposit & doorstep delivery.',
     url: 'https://rentoncent.bond',
     siteName: 'Rent on Cent',
     locale: 'en_IN',
@@ -28,8 +30,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty from ₹299 - Rent on Cent',
-    description: 'Best bike on rent in Vrindavan from ₹299/day. Verified Activa 6G, EV scooters & doorstep hotel delivery.',
+    title: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty',
+    description: 'Rent Activa 6G & EV in Vrindavan from ₹299/day with free helmets.',
     images: ['https://rentoncent.bond/og-customer.jpg']
   }
 };

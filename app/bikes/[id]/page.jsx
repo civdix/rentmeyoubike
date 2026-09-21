@@ -5,8 +5,8 @@ export async function generateMetadata({ params }) {
   const id = resolvedParams?.id || '';
 
   return {
-    title: `Vehicle Rental in Vrindavan (${id})`,
-    description: `Rent verified scooter or bike (${id}) in Vrindavan & Mathura. Best daily & hourly rates, doorstep delivery, and sacred protection.`,
+    title: 'Vehicle Rental in Vrindavan',
+    description: 'Rent verified scooter or bike in Vrindavan & Mathura. Best daily rates, zero deposit options, and doorstep delivery.',
     alternates: {
       canonical: `https://rentoncent.bond/bikes/${encodeURIComponent(id)}`
     },
