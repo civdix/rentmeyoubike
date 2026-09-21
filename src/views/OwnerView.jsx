@@ -35,6 +35,7 @@ const POPULAR_VEHICLE_FEATURES = [
 export const OwnerView = () => {
   const {
     vehicles,
+    owners,
     bookings,
     addVehicle,
     updateVehicle,
@@ -205,45 +206,66 @@ export const OwnerView = () => {
       (v) =>
         (v.ownerId === currentUser?.id ||
          (currentUser?.phone && v.ownerPhone === currentUser?.phone) ||
-         (currentUser?.name && v.ownerName === currentUser?.name)) &&
-        (v.verificationStatus === 'Verified' || v.vehicleVerified || v.documentsVerified) &&
-        (v.documents?.panNumber || v.documents?.governmentIdNumber)
+         (currentUser?.name && v.ownerName === currentUser?.name) ||
+         (ownerPhone && v.ownerPhone === ownerPhone) ||
+         (ownerName && v.ownerName?.toLowerCase().trim() === ownerName.toLowerCase().trim())) &&
+        (v.verificationStatus === 'Verified' || v.vehicleVerified || v.documentsVerified || v.ownerVerified)
     );
-  }, [vehicles, currentUser]);
+  }, [vehicles, currentUser, ownerPhone, ownerName]);
 
   const existingListingWithDocs = React.useMemo(() => {
     return vehicles.find(
       (v) =>
         (v.ownerId === currentUser?.id ||
          (currentUser?.phone && v.ownerPhone === currentUser?.phone) ||
-         (currentUser?.name && v.ownerName === currentUser?.name)) &&
-        (v.documents?.panNumber || v.documents?.governmentIdNumber)
+         (currentUser?.name && v.ownerName === currentUser?.name) ||
+         (ownerPhone && v.ownerPhone === ownerPhone) ||
+         (ownerName && v.ownerName?.toLowerCase().trim() === ownerName.toLowerCase().trim())) &&
+        (v.documents?.panNumber || v.documents?.governmentIdNumber || v.documents?.panCardUrl || v.documents?.governmentIdUrl)
     );
-  }, [vehicles, currentUser]);
+  }, [vehicles, currentUser, ownerPhone, ownerName]);
 
   const isHostIdentityVerified = React.useMemo(() => {
-    if (currentUser?.kycVerified || currentUser?.ownerVerified || currentUser?.kycStatus === 'Verified') {
+    // 1. Current user session verification flags
+    if (currentUser?.kycVerified || currentUser?.ownerVerified || currentUser?.verified || currentUser?.kycStatus === 'Verified') {
       return true;
     }
+
+    // 2. Owners directory check (Admin verified)
+    if (owners && owners.length > 0) {
+      const matchOwner = owners.find(
+        (o) =>
+          (currentUser?.id && o.id === currentUser.id) ||
+          (currentUser?.phone && o.phone === currentUser.phone) ||
+          (ownerPhone && o.phone === ownerPhone) ||
+          (ownerName && o.name?.toLowerCase().trim() === ownerName.toLowerCase().trim())
+      );
+      if (matchOwner && (matchOwner.verificationStatus === 'Verified' || matchOwner.verified || matchOwner.kycVerified)) {
+        return true;
+      }
+    }
+
+    // 3. Any vehicle owned by this host with ownerVerified or Verified status
     if (existingVerifiedListing) return true;
+
+    // 4. LocalStorage vr_verified_hosts check
     if (typeof window !== 'undefined') {
       try {
         const verifiedHosts = JSON.parse(localStorage.getItem('vr_verified_hosts') || '[]');
-        if (
-          (currentUser?.id && verifiedHosts.includes(currentUser.id)) ||
-          (currentUser?.phone && verifiedHosts.includes(currentUser.phone)) ||
-          (currentUser?.name && verifiedHosts.includes(currentUser.name))
-        ) {
+        const checkKeys = [currentUser?.id, currentUser?.phone, currentUser?.name, ownerPhone, ownerName].filter(Boolean);
+        if (checkKeys.some((k) => verifiedHosts.includes(k))) {
           return true;
         }
       } catch {}
     }
-    // Also if currentUser has documents with pan & govt ID
+
+    // 5. Existing documents on currentUser
     if (currentUser?.documents?.panNumber && currentUser?.documents?.governmentIdNumber) {
       return true;
     }
+
     return false;
-  }, [currentUser, existingVerifiedListing]);
+  }, [currentUser, existingVerifiedListing, owners, ownerPhone, ownerName]);
 
   // Pre-fill verified Aadhaar & PAN so the host never has to re-enter or re-upload them
   React.useEffect(() => {
@@ -276,8 +298,30 @@ export const OwnerView = () => {
           uploaded: true
         });
       }
+    } else if (isHostIdentityVerified) {
+      // If host is verified but doesn't have local document objects in memory, auto-populate verified state
+      if (!hostIdDoc.uploaded) {
+        setHostIdDoc({
+          name: 'Aadhaar_Verified_On_File.pdf',
+          preview: null,
+          fileId: null,
+          url: '',
+          uploaded: true
+        });
+      }
+      if (!hostPanDoc.uploaded) {
+        setHostPanDoc({
+          name: 'PAN_Verified_On_File.pdf',
+          preview: null,
+          fileId: null,
+          url: '',
+          uploaded: true
+        });
+      }
+      if (!hostIdNumber) setHostIdNumber('VERIFIED_ON_FILE');
+      if (!hostPanNumber) setHostPanNumber('VERIFIED_ON_FILE');
     }
-  }, [currentUser, existingVerifiedListing, existingListingWithDocs]);
+  }, [currentUser, existingVerifiedListing, existingListingWithDocs, isHostIdentityVerified]);
 
   const handleHostDocUpload = async (type, file) => {
     if (!file) return;
@@ -535,6 +579,7 @@ export const OwnerView = () => {
         to: availableTo,
         days: availableDays
       },
+      ownerVerified: isHostIdentityVerified,
       status: 'pending_approval' // Clear status: Pending Verification
     });
 
@@ -1098,12 +1143,30 @@ export const OwnerView = () => {
                         alert('Please enter your residential address in Step 1.');
                         return;
                       }
-                      setStep(2);
+                      if (isHostIdentityVerified) {
+                        setStep(3);
+                      } else {
+                        setStep(2);
+                      }
                     }}
-                    className="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2"
+                    className={`w-full font-extrabold py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                      isHostIdentityVerified
+                        ? 'bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black'
+                        : 'bg-slate-900 hover:bg-slate-800 text-white'
+                    }`}
                   >
-                    <span>Proceed to Step 2: Identity Verification</span>
-                    <ChevronRight className="w-4 h-4" />
+                    {isHostIdentityVerified ? (
+                      <>
+                        <ShieldCheck className="w-5 h-5 text-slate-950" strokeWidth={2.5} />
+                        <span>Proceed to Step 3: Vehicle Info (Host KYC Verified ✓)</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </>
+                    ) : (
+                      <>
+                        <span>Proceed to Step 2: Identity Verification</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
                 </div>
               )}

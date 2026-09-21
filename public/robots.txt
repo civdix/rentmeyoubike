@@ -1,7 +1,49 @@
+# Robots.txt for Rent on Cent (rentoncent.bond)
+# Comprehensive SEO & AI (ChatGPT / Perplexity / Gemini / Claude) indexing rules
+
 User-agent: *
 Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
 Disallow: /admin
 Disallow: /api/
 Disallow: /my-bookings
 
+# AI Search & Crawler Agents (Authorized for Indexing & Summary Citation)
+User-agent: OAI-SearchBot
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+User-agent: GPTBot
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+User-agent: ChatGPT-User
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+User-agent: ClaudeBot
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+User-agent: Google-Extended
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+User-agent: Applebot-Extended
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+
 Sitemap: https://rentoncent.bond/sitemap.xml
+Host: https://rentoncent.bond

@@ -1,15 +1,15 @@
 import BikesClient from './BikesClient';
 
 export const metadata = {
-  title: 'Bikes & Scooty on Rent in Vrindavan | Rent on Cent',
+  title: 'Bike on Rent in Vrindavan - Available Fleet & Scooty Rates | Rent on Cent',
   description:
-    'Search available Honda Activa, TVS Jupiter, Royal Enfield Classic 350, and EV scooty on rent in Vrindavan & Mathura. Best hourly & daily rates from ₹299/day with doorstep delivery.',
+    'Compare verified bike on rent in Vrindavan and scooty rental options. Honda Activa 6G, EV scooty & Royal Enfield from ₹299/day. Zero deposit & hotel delivery across Vrindavan rental hubs.',
   alternates: {
     canonical: 'https://rentoncent.bond/bikes'
   },
   openGraph: {
-    title: 'Bikes & Scooty on Rent in Vrindavan | Rent on Cent',
-    description: 'Rent Activa, EV Scooters, and Cruisers starting at ₹299/day in Vrindavan & Mathura.',
+    title: 'Bike on Rent in Vrindavan - Available Fleet & Scooty Rates | Rent on Cent',
+    description: 'Rent Honda Activa 6G, EV Scooters, and Cruisers from ₹299/day. Verified Vrindavan rental with zero deposit.',
     url: 'https://rentoncent.bond/bikes',
     siteName: 'Rent on Cent',
     locale: 'en_IN',
@@ -21,13 +21,13 @@ export const metadata = {
         width: 540,
         height: 540,
         type: 'image/png',
-        alt: 'Rent on Cent - Vrindavan Bike & Scooty Rental'
+        alt: 'Rent on Cent - Bike on Rent in Vrindavan'
       }
     ]
   },
   twitter: {
     card: 'summary',
-    title: 'Bikes & Scooty on Rent in Vrindavan | Rent on Cent',
+    title: 'Bike on Rent in Vrindavan - Available Fleet & Scooty Rates | Rent on Cent',
     description: 'Rent Activa, EV Scooters, and Cruisers starting at ₹299/day in Vrindavan & Mathura.',
     images: ['https://rentoncent.bond/logo_square_share_area.png']
   }
@@ -36,11 +36,11 @@ export const metadata = {
 export default function BikesPage() {
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Hidden SSR Heading for SEO crawlers */}
+      {/* Hidden SSR Heading for SEO crawlers & AI bots */}
       <div className="sr-only">
-        <h1>All Bikes and Scooty on Rent in Vrindavan &amp; Mathura</h1>
+        <h1>Bike on Rent in Vrindavan &mdash; All Verified Two-Wheelers &amp; Scooty Fleet</h1>
         <p>
-          Compare verified two-wheelers including automatic gearless scooty on rent in Vrindavan (Honda Activa 6G, TVS Jupiter), commuter bikes, electric EV scooters, and Royal Enfield cruisers available for daily and weekly hire.
+          Compare verified two-wheelers including automatic gearless scooty on rent in Vrindavan (Honda Activa 6G, TVS Jupiter), commuter bikes, electric EV scooters, and Royal Enfield cruisers available for daily and weekly Vrindavan rental hire.
         </p>
       </div>
 

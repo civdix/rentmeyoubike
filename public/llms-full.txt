@@ -1,0 +1,43 @@
+# Rent on Cent — Comprehensive Platform Documentation for LLMs
+
+> Complete knowledge base for Rent on Cent (https://rentoncent.bond), the top-ranked peer-to-peer bike and scooty rental service in Vrindavan, Mathura, Govardhan, and Barsana.
+
+## 1. Entity Overview
+- **Name:** Rent on Cent
+- **Alternate Names:** Vrindavan Rental, Rent on Cent Vrindavan, Rent to Cent, rentoncent.bond
+- **Entity Type:** AutoRental / Peer-to-Peer Two-Wheeler Sharing Platform
+- **Headquarters:** Raman Reti Road, Near Prem Mandir, Vrindavan, Uttar Pradesh 281121, India
+- **Primary Website:** https://rentoncent.bond
+- **WhatsApp Helpline:** +91 97209 65985
+- **Support Email:** support@rentoncent.bond
+- **Coverage Areas:** Vrindavan, Mathura, Govardhan, Barsana, Raman Reti, Chattikara, Yamuna Expressway (Mathura Cut & Raya Cut), Mathura Cantt, Mathura Junction Railway Station
+
+## 2. Rental Fleet & Tariff Structure
+All rentals include 2 sanitized ISI-approved helmets, clean vehicle inspection, smartphone mount, and 24x7 local roadside assistance.
+
+| Vehicle Model | Type | Engine / Battery | Daily Tariff | Hourly Tariff | Security Deposit | Best Use Case |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Honda Activa 6G** | Gearless Scooter | 110cc Petrol | ₹299 / day | ₹40 / hr | ₹0 Options | Bankey Bihari, Prem Mandir, town lanes |
+| **TVS Jupiter 125** | Gearless Scooter | 125cc Petrol | ₹320 / day | ₹45 / hr | ₹0 Options | Couples, family darshan, prasad storage |
+| **Hero Destini / Maestro** | Gearless Scooter | 125cc Petrol | ₹320 / day | ₹45 / hr | ₹0 Options | Comfortable town and highway commuting |
+| **High-Range EV Scooter** | Electric Scooter | 80-100 km range | ₹349 / day | ₹50 / hr | ₹0 Options | Silent sacred darshan, zero fuel cost |
+| **Royal Enfield Classic 350**| Cruiser Motorcycle | 350cc Petrol | ₹899 / day | ₹120 / hr | Standard | Govardhan Parikrama, Barsana, highway |
+
+## 3. How Booking Works
+1. **Choose Vehicle:** Visit https://rentoncent.bond/bikes or message WhatsApp +91 97209 65985.
+2. **Select Dates & Location:** Pick dates and preferred pickup location (Prem Mandir hub or doorstep hotel delivery).
+3. **Quick Digital KYC:** Upload photo of original Driving Licence and Aadhaar Card. Verification completes in 2 minutes.
+4. **Key Handover:** Meet the local verified host, inspect the vehicle using the 6-angle photo checklist, receive keys and 2 clean helmets.
+5. **Ride & Explore:** Enjoy your Vrindavan pilgrimage with 24x7 local support.
+
+## 4. Distance & Travel Time Guide for Yatris
+- **Prem Mandir to Shri Bankey Bihari Temple:** 3.5 km (approx. 10 minutes on a scooter).
+- **Prem Mandir to ISKCON Vrindavan:** 1.2 km (approx. 4 minutes).
+- **Vrindavan to Sri Krishna Janmabhoomi (Mathura):** 12 km (approx. 20 minutes).
+- **Vrindavan to Govardhan 21 km Sacred Parikrama:** 24 km (approx. 35 minutes).
+- **Vrindavan to Barsana (Radha Rani Temple):** 42 km (approx. 55 minutes).
+- **Mathura Cut (Yamuna Expressway) to Prem Mandir:** 12 km (approx. 18 minutes).
+- **Chattikara Road to Prem Mandir:** 4.8 km (approx. 10 minutes).
+
+## 5. Host Onboarding & Wealth Creation
+Local vehicle owners in Vrindavan and Mathura can list their idle scooters or motorcycles on Rent on Cent to earn ₹15,000 to ₹22,000 per month with complete digital safety inspection, verified renter KYC, and insurance protection. Learn more at https://rentoncent.bond/host.

@@ -70,6 +70,7 @@ export const AdminView = () => {
     createBooking,
     verifyKYC,
     verifyVehicle,
+    verifyOwner,
     toggleVehicleStatus,
     toggleCustomerStatus,
     toggleOwnerStatus,
@@ -144,8 +145,9 @@ export const AdminView = () => {
   const [changeReqModalVehicle, setChangeReqModalVehicle] = useState(null);
   const [changeReqNote, setChangeReqNote] = useState('');
 
-  // Vehicle Document & KYC Inspection Modal State
+  // Vehicle & Host Document Audit Modal State
   const [inspectingVehicle, setInspectingVehicle] = useState(null);
+  const [inspectingOwner, setInspectingOwner] = useState(null);
   const [inspectDocPreview, setInspectDocPreview] = useState(null); // { title: string, url: string }
 
   // Manual WhatsApp Booking Creation State
@@ -1289,63 +1291,107 @@ export const AdminView = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800">
-                  {filteredOwners.map((o) => (
-                    <tr key={o.id} className="hover:bg-slate-850/50">
-                      <td className="p-4">
-                        <div className="font-bold text-white text-sm flex items-center gap-1.5">
-                          {o.name}
-                          <VerifiedOwnerBadge />
-                        </div>
-                        <div className="text-[11px] text-slate-500">Joined {o.joinedDate || '2026'}</div>
-                      </td>
-                      <td className="p-4">
-                        <div className="font-mono text-slate-200">{o.phone}</div>
-                        <div className="text-[11px] text-slate-400">{o.email}</div>
-                        {o.upiId ? (
-                          <div className="text-[10px] text-emerald-400 font-mono mt-0.5 flex items-center gap-1">
-                            <span className="text-slate-500">UPI:</span> {o.upiId}
+                  {filteredOwners.map((o) => {
+                    const isOwnerVerified = o.verificationStatus === 'Verified' || o.verified || o.kycVerified;
+                    return (
+                      <tr key={o.id} className="hover:bg-slate-850/50 transition-colors">
+                        <td className="p-4">
+                          <div
+                            onClick={() => setInspectingOwner(o)}
+                            className="cursor-pointer group"
+                            title="Click to view full host profile, Aadhaar/PAN documents & fleet"
+                          >
+                            <div className="font-bold text-white text-sm flex items-center gap-1.5 group-hover:text-indigo-300 transition-colors">
+                              {o.name}
+                              {isOwnerVerified && <VerifiedOwnerBadge />}
+                            </div>
+                            <div className="text-[11px] text-slate-500 group-hover:text-slate-400">
+                              Joined {o.joinedDate || '2026'} • <span className="text-indigo-400 font-semibold underline">Click to inspect</span>
+                            </div>
                           </div>
-                        ) : (
-                          <div className="text-[10px] text-slate-500 font-mono mt-0.5">UPI: Not configured</div>
-                        )}
-                      </td>
-                      <td className="p-4">
-                        <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            o.verificationStatus === 'Verified'
-                              ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
-                              : 'bg-amber-950 text-amber-400 border border-amber-800'
-                          }`}
-                        >
-                          <ShieldCheck className="w-3 h-3" />
-                          {o.verificationStatus}
-                        </span>
-                      </td>
-                      <td className="p-4 text-center font-bold text-white text-sm">{o.vehiclesCount || 0}</td>
-                      <td className="p-4 font-bold text-emerald-400 text-sm">₹{o.earnings || 0}</td>
-                      <td className="p-4">
-                        <span
-                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
-                            o.status === 'active' ? 'bg-emerald-900/60 text-emerald-300' : 'bg-rose-900/60 text-rose-300'
-                          }`}
-                        >
-                          {o.status}
-                        </span>
-                      </td>
-                      <td className="p-4 text-right">
-                        <button
-                          onClick={() => toggleOwnerStatus(o.id)}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
-                            o.status === 'active'
-                              ? 'bg-rose-950/60 hover:bg-rose-900 text-rose-300 border-rose-800'
-                              : 'bg-emerald-950/60 hover:bg-emerald-900 text-emerald-300 border-emerald-800'
-                          }`}
-                        >
-                          {o.status === 'active' ? 'Suspend Owner' : 'Re-Activate Owner'}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                        <td className="p-4">
+                          <div className="font-mono text-slate-200">{o.phone}</div>
+                          <div className="text-[11px] text-slate-400">{o.email}</div>
+                          {o.upiId ? (
+                            <div className="text-[10px] text-emerald-400 font-mono mt-0.5 flex items-center gap-1">
+                              <span className="text-slate-500">UPI:</span> {o.upiId}
+                            </div>
+                          ) : (
+                            <div className="text-[10px] text-slate-500 font-mono mt-0.5">UPI: Not configured</div>
+                          )}
+                        </td>
+                        <td className="p-4">
+                          <span
+                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                              isOwnerVerified
+                                ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
+                                : 'bg-amber-950 text-amber-400 border border-amber-800'
+                            }`}
+                          >
+                            <ShieldCheck className="w-3 h-3" />
+                            {o.verificationStatus || (isOwnerVerified ? 'Verified' : 'Pending')}
+                          </span>
+                        </td>
+                        <td className="p-4 text-center font-bold text-white text-sm">{o.vehiclesCount || 0}</td>
+                        <td className="p-4 font-bold text-emerald-400 text-sm">₹{o.earnings || 0}</td>
+                        <td className="p-4">
+                          <span
+                            className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
+                              o.status === 'active' ? 'bg-emerald-900/60 text-emerald-300' : 'bg-rose-900/60 text-rose-300'
+                            }`}
+                          >
+                            {o.status}
+                          </span>
+                        </td>
+                        <td className="p-4 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            {/* Inspect Host Modal Button */}
+                            <button
+                              type="button"
+                              onClick={() => setInspectingOwner(o)}
+                              className="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1 transition-all cursor-pointer"
+                              title="Inspect host KYC documents & vehicle listings"
+                            >
+                              <Eye className="w-3.5 h-3.5 text-indigo-400" />
+                              <span>Host Details</span>
+                            </button>
+
+                            {/* One-Click Verify Host KYC Button */}
+                            {isOwnerVerified ? (
+                              <span className="px-2.5 py-1 rounded-xl text-[10px] font-extrabold text-emerald-400 bg-emerald-950/80 border border-emerald-800 flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                                Verified
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => verifyOwner(o.id, 'Verified')}
+                                className="px-3 py-1.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-slate-950 flex items-center gap-1 shadow-sm transition-all cursor-pointer"
+                                title="Approve host KYC & mark Aadhaar/PAN verified"
+                              >
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                Verify Host
+                              </button>
+                            )}
+
+                            {/* Suspend / Reactivate */}
+                            <button
+                              type="button"
+                              onClick={() => toggleOwnerStatus(o.id)}
+                              className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                                o.status === 'active'
+                                  ? 'bg-rose-950/60 hover:bg-rose-900 text-rose-300 border-rose-800'
+                                  : 'bg-emerald-950/60 hover:bg-emerald-900 text-emerald-300 border-emerald-800'
+                              }`}
+                            >
+                              {o.status === 'active' ? 'Suspend' : 'Re-Activate'}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -1493,9 +1539,9 @@ export const AdminView = () => {
                           )}
 
                           {/* Host Aadhaar & PAN KYC Badge */}
-                          {isApproved || (hasGovtId && hasPan) ? (
-                            <span className="bg-indigo-950/80 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
-                              <ShieldCheck className="w-3 h-3 text-indigo-400" /> Host ID & PAN Attached
+                          {isApproved || veh.ownerVerified || (hasGovtId && hasPan) ? (
+                            <span className="bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
+                              <ShieldCheck className="w-3 h-3 text-emerald-400" /> Host KYC Verified
                             </span>
                           ) : (
                             <span className="bg-amber-950/80 text-amber-300 border border-amber-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
@@ -3326,6 +3372,473 @@ export const AdminView = () => {
           </div>
         </div>
       )}
+
+      {/* ----------------------------------------------------
+          MODAL: HOST DETAILS & VERIFICATION AUDIT HUB
+          ---------------------------------------------------- */}
+      {inspectingOwner && (() => {
+        const isOwnerVerified = inspectingOwner.verificationStatus === 'Verified' || inspectingOwner.verified || inspectingOwner.kycVerified;
+        const hostVehicles = vehicles.filter((v) =>
+          (v.ownerId && v.ownerId === inspectingOwner.id) ||
+          (inspectingOwner.phone && v.ownerPhone === inspectingOwner.phone) ||
+          (inspectingOwner.name && v.ownerName === inspectingOwner.name)
+        );
+        const hostVehWithDocs = hostVehicles.find((v) =>
+          v.documents?.governmentIdUrl || v.documents?.panCardUrl || v.documents?.panNumber || v.documents?.governmentIdNumber || v.documents?.governmentId || v.documents?.panCard
+        );
+        const ownerDocs = inspectingOwner.documents || hostVehWithDocs?.documents || {};
+        const aadhaarDoc = ownerDocs.governmentIdUrl || ownerDocs.governmentId;
+        const aadhaarNumber = ownerDocs.governmentIdNumber || inspectingOwner.documents?.governmentIdNumber || 'VERIFIED_ON_FILE';
+        const panDoc = ownerDocs.panCardUrl || ownerDocs.panCard;
+        const panNumber = ownerDocs.panNumber || inspectingOwner.documents?.panNumber || 'VERIFIED_ON_FILE';
+
+        return (
+          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 font-sans animate-in fade-in duration-200">
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+              {/* Modal Header */}
+              <div className="bg-slate-950 px-6 py-4 border-b border-slate-800 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
+                    <User className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-heading font-extrabold text-base sm:text-lg text-white">
+                        Host Profile & KYC Verification Audit
+                      </h3>
+                      <span className="font-mono text-indigo-400 font-extrabold bg-slate-900 px-2 py-0.5 rounded border border-slate-800 text-[11px]">
+                        ID: #{inspectingOwner.id}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      {inspectingOwner.name} • Registered Bike Host in Vrindavan
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setInspectingOwner(null)}
+                  className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  title="Close Host Modal"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Scrollable Modal Content */}
+              <div className="p-6 overflow-y-auto space-y-6 custom-scrollbar text-xs">
+                {/* Section 1: Host Overview & Direct Contact */}
+                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="space-y-1.5 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-lg font-extrabold text-white">{inspectingOwner.name}</span>
+                      {isOwnerVerified ? (
+                        <span className="bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-400" /> KYC Verified Host
+                        </span>
+                      ) : (
+                        <span className="bg-amber-950 text-amber-300 border border-amber-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                          <AlertTriangle className="w-3 h-3 text-amber-400" /> Pending Admin Verification
+                        </span>
+                      )}
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${inspectingOwner.status === 'active' ? 'bg-emerald-900/60 text-emerald-300' : 'bg-rose-900/60 text-rose-300'}`}>
+                        {inspectingOwner.status === 'active' ? 'Account Active' : 'Account Suspended'}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 pt-2 text-slate-300 text-xs">
+                      <div>
+                        <span className="text-slate-500 text-[10px] uppercase font-bold block">Mobile Phone</span>
+                        <strong className="text-white font-mono">{inspectingOwner.phone || 'N/A'}</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 text-[10px] uppercase font-bold block">Email Address</span>
+                        <span className="text-slate-200">{inspectingOwner.email || 'N/A'}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 text-[10px] uppercase font-bold block">Payout UPI VPA</span>
+                        <span className="font-mono text-emerald-400">{inspectingOwner.upiId || 'Not configured'}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 text-[10px] uppercase font-bold block">Joined Date</span>
+                        <span className="text-slate-300">{inspectingOwner.joinedDate || '2026'}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 text-[10px] uppercase font-bold block">Vehicles in Fleet</span>
+                        <span className="text-white font-bold">{hostVehicles.length} vehicles listed</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 text-[10px] uppercase font-bold block">Estimated Earnings</span>
+                        <span className="text-emerald-400 font-extrabold font-mono">₹{inspectingOwner.earnings || 0}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex sm:flex-col items-center gap-2 shrink-0">
+                    <a
+                      href={`https://wa.me/${(inspectingOwner.phone || '').replace(/[^0-9]/g, '')}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#25D366] border border-[#25D366]/40 font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 transition-all text-xs"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5 fill-[#25D366]" />
+                      WhatsApp Host
+                    </a>
+                    {inspectingOwner.phone && (
+                      <a
+                        href={`tel:${inspectingOwner.phone}`}
+                        className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 transition-all text-xs"
+                      >
+                        <Phone className="w-3.5 h-3.5" />
+                        Call Host
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                {/* Section 2: Aadhaar Card & PAN Card Documents */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-heading font-extrabold text-white text-sm flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                      Host Identity & Tax Documents (Aadhaar & PAN Verification)
+                    </h4>
+                    <span className="text-[11px] text-slate-400">
+                      Single-time verification for all vehicles listed by this host
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Aadhaar Card Box */}
+                    <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between border-b border-slate-850 pb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-white text-sm">
+                              {ownerDocs.governmentIdType || 'Government Photo ID (Aadhaar)'}
+                            </span>
+                            <span className="bg-indigo-950 text-indigo-300 border border-indigo-800 text-[10px] font-bold px-2 py-0.5 rounded">
+                              Host Identity
+                            </span>
+                          </div>
+                          {ownerDocs.governmentIdUrl || ownerDocs.governmentId || isOwnerVerified ? (
+                            <span className="text-emerald-400 font-bold text-[11px] flex items-center gap-1">
+                              <CheckCircle2 className="w-3.5 h-3.5" /> Uploaded / On File
+                            </span>
+                          ) : (
+                            <span className="text-amber-400 font-bold text-[11px] flex items-center gap-1">
+                              <AlertTriangle className="w-3.5 h-3.5" /> Missing
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="space-y-1.5 pt-2">
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">Document Number:</span>
+                            <strong className="font-mono text-white text-xs">
+                              {aadhaarNumber}
+                            </strong>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">Record Name:</span>
+                            <span className="text-slate-300 truncate max-w-[200px]">
+                              {ownerDocs.governmentId || 'Aadhaar_Verified.pdf'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Document visual preview */}
+                        <div className="pt-2">
+                          {ownerDocs.governmentIdUrl ? (
+                            <div className="relative group rounded-xl overflow-hidden border border-slate-800 bg-slate-900 aspect-video flex items-center justify-center">
+                              <img
+                                src={ownerDocs.governmentIdUrl}
+                                alt="Host Government ID"
+                                className="w-full h-full object-contain cursor-pointer"
+                                onClick={() =>
+                                  setInspectDocPreview({
+                                    title: `${ownerDocs.governmentIdType || 'Host Government ID'} - ${inspectingOwner.name}`,
+                                    url: ownerDocs.governmentIdUrl
+                                  })
+                                }
+                              />
+                              <div
+                                onClick={() =>
+                                  setInspectDocPreview({
+                                    title: `${ownerDocs.governmentIdType || 'Host Government ID'} - ${inspectingOwner.name}`,
+                                    url: ownerDocs.governmentIdUrl
+                                  })
+                                }
+                                className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 cursor-pointer text-white font-bold text-xs"
+                              >
+                                <Maximize2 className="w-4 h-4 text-emerald-400" />
+                                <span>Click to Inspect Full Screen</span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="bg-slate-900 border border-dashed border-slate-800 rounded-xl p-4 text-center text-slate-400">
+                              <FileText className="w-8 h-8 mx-auto mb-1 text-slate-600" />
+                              <p className="font-medium text-slate-300">
+                                {ownerDocs.governmentId || 'Aadhaar / Government ID Document on File'}
+                              </p>
+                              <p className="text-[10px] text-slate-500 mt-0.5">
+                                Document: {aadhaarNumber}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {ownerDocs.governmentIdUrl && (
+                        <div className="pt-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setInspectDocPreview({
+                                title: `${ownerDocs.governmentIdType || 'Host Government ID'} - ${inspectingOwner.name}`,
+                                url: ownerDocs.governmentIdUrl
+                              })
+                            }
+                            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            View Document Full Size
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* PAN Card Box */}
+                    <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between border-b border-slate-850 pb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-white text-sm">Permanent Account Number (PAN)</span>
+                            <span className="bg-blue-950 text-blue-300 border border-blue-800 text-[10px] font-bold px-2 py-0.5 rounded">
+                              Tax Compliance
+                            </span>
+                          </div>
+                          {ownerDocs.panCardUrl || ownerDocs.panCard || isOwnerVerified ? (
+                            <span className="text-emerald-400 font-bold text-[11px] flex items-center gap-1">
+                              <CheckCircle2 className="w-3.5 h-3.5" /> Uploaded / On File
+                            </span>
+                          ) : (
+                            <span className="text-amber-400 font-bold text-[11px] flex items-center gap-1">
+                              <AlertTriangle className="w-3.5 h-3.5" /> Missing
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="space-y-1.5 pt-2">
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">PAN Number:</span>
+                            <strong className="font-mono text-emerald-400 text-xs tracking-wider">
+                              {panNumber}
+                            </strong>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">File Name:</span>
+                            <span className="text-slate-300 truncate max-w-[200px]">
+                              {ownerDocs.panCard || 'PAN_Card.pdf'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Visual Document Preview */}
+                        <div className="pt-2">
+                          {ownerDocs.panCardUrl ? (
+                            <div className="relative group rounded-xl overflow-hidden border border-slate-800 bg-slate-900 aspect-video flex items-center justify-center">
+                              <img
+                                src={ownerDocs.panCardUrl}
+                                alt="Host PAN Card"
+                                className="w-full h-full object-contain cursor-pointer"
+                                onClick={() =>
+                                  setInspectDocPreview({
+                                    title: `PAN Card - ${inspectingOwner.name} (${panNumber})`,
+                                    url: ownerDocs.panCardUrl
+                                  })
+                                }
+                              />
+                              <div
+                                onClick={() =>
+                                  setInspectDocPreview({
+                                    title: `PAN Card - ${inspectingOwner.name} (${panNumber})`,
+                                    url: ownerDocs.panCardUrl
+                                  })
+                                }
+                                className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 cursor-pointer text-white font-bold text-xs"
+                              >
+                                <Maximize2 className="w-4 h-4 text-emerald-400" />
+                                <span>Click to Inspect Full Screen</span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="bg-slate-900 border border-dashed border-slate-800 rounded-xl p-4 text-center text-slate-400">
+                              <CreditCard className="w-8 h-8 mx-auto mb-1 text-slate-600" />
+                              <p className="font-medium text-slate-300">
+                                {ownerDocs.panCard || 'PAN Card Record on File'}
+                              </p>
+                              <p className="text-[10px] text-slate-500 mt-0.5">
+                                PAN: {panNumber}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {ownerDocs.panCardUrl && (
+                        <div className="pt-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setInspectDocPreview({
+                                title: `PAN Card - ${inspectingOwner.name} (${panNumber})`,
+                                url: ownerDocs.panCardUrl
+                              })
+                            }
+                            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            View PAN Full Size
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="bg-indigo-950/40 border border-indigo-800/60 rounded-xl p-3 text-[11px] text-indigo-300 flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-indigo-400 shrink-0" />
+                    <span>
+                      <strong>Permanent KYC Guarantee:</strong> When you click &quot;Verify Host&quot;, {inspectingOwner.name}&apos;s Aadhaar & PAN verification is permanently recorded. The host will never be prompted to upload Aadhaar or PAN again when listing additional bikes or managing bookings.
+                    </span>
+                  </div>
+                </div>
+
+                {/* Section 3: Registered Fleet Vehicles */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-heading font-extrabold text-white text-sm flex items-center gap-2">
+                      <Bike className="w-4 h-4 text-emerald-400" />
+                      Fleet of Vehicles Listed by {inspectingOwner.name} ({hostVehicles.length})
+                    </h4>
+                  </div>
+
+                  {hostVehicles.length === 0 ? (
+                    <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 text-center text-slate-400">
+                      <Bike className="w-8 h-8 mx-auto mb-2 text-slate-600" />
+                      <p className="font-semibold text-slate-300">No vehicles listed yet by this host</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">When they submit bikes or scooters, they will appear here automatically.</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                      {hostVehicles.map((veh) => (
+                        <div
+                          key={veh.id}
+                          className="bg-slate-950 border border-slate-800 rounded-2xl p-3 flex flex-col justify-between hover:border-slate-700 transition-colors"
+                        >
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="font-mono font-bold text-cyan-400 text-xs bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                                {veh.registrationNumber}
+                              </span>
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${veh.verificationStatus === 'Verified' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}`}>
+                                {veh.verificationStatus || 'Pending'}
+                              </span>
+                            </div>
+                            <h5 className="font-bold text-white text-xs truncate">{veh.name}</h5>
+                            <div className="text-[11px] text-slate-400">
+                              Rate: <strong className="text-emerald-400">₹{veh.dailyRate}/day</strong> • {veh.locationArea}
+                            </div>
+                          </div>
+
+                          <div className="pt-2 border-t border-slate-900 mt-2 flex justify-between items-center">
+                            <span className="text-[10px] text-slate-500">
+                              Status: {veh.status === 'active' ? '🟢 Live' : '🔴 Paused'}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setInspectingOwner(null);
+                                setInspectingVehicle(veh);
+                              }}
+                              className="text-xs font-bold text-indigo-400 hover:text-indigo-300 underline cursor-pointer"
+                            >
+                              Audit Bike
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Modal Sticky Footer Actions */}
+              <div className="bg-slate-950 px-6 py-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+                <div className="text-xs text-slate-400">
+                  Verification Status:{' '}
+                  <strong className={isOwnerVerified ? 'text-emerald-400' : 'text-amber-400'}>
+                    {isOwnerVerified ? 'Verified & Authorized Host' : 'Pending Verification'}
+                  </strong>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+                  {/* Action 1: Verify Host KYC */}
+                  {!isOwnerVerified ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        verifyOwner(inspectingOwner.id, 'Verified');
+                        setInspectingOwner((prev) => (prev ? { ...prev, verificationStatus: 'Verified', status: 'active' } : null));
+                      }}
+                      className="px-4 py-2.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-slate-950 flex items-center gap-1.5 shadow-md transition-all cursor-pointer"
+                    >
+                      <CheckCircle2 className="w-4 h-4" />
+                      Verify Host KYC & Approve
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        verifyOwner(inspectingOwner.id, 'Pending');
+                        setInspectingOwner((prev) => (prev ? { ...prev, verificationStatus: 'Pending' } : null));
+                      }}
+                      className="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-800 transition-all cursor-pointer"
+                    >
+                      Revoke Verification
+                    </button>
+                  )}
+
+                  {/* Action 2: Suspend / Reactivate */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      toggleOwnerStatus(inspectingOwner.id);
+                      setInspectingOwner((prev) => (prev ? { ...prev, status: prev.status === 'active' ? 'suspended' : 'active' } : null));
+                    }}
+                    className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                      inspectingOwner.status === 'active'
+                        ? 'bg-rose-950/60 hover:bg-rose-900 text-rose-300 border-rose-800'
+                        : 'bg-emerald-950/60 hover:bg-emerald-900 text-emerald-300 border-emerald-800'
+                    }`}
+                  >
+                    {inspectingOwner.status === 'active' ? 'Suspend Host' : 'Re-Activate Host'}
+                  </button>
+
+                  {/* Close */}
+                  <button
+                    type="button"
+                    onClick={() => setInspectingOwner(null)}
+                    className="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 transition-all cursor-pointer"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ----------------------------------------------------
           SUB-MODAL: FULL-RESOLUTION DOCUMENT & PHOTO LIGHTBOX

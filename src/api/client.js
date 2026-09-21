@@ -205,6 +205,13 @@ export async function apiToggleOwnerStatus(id) {
   });
 }
 
+export async function apiVerifyOwner(id, status = 'Verified') {
+  return request(`/owners/${id}/verify`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status })
+  });
+}
+
 export async function apiFetchOwnerUpi() {
   return request('/owners/payout/upi');
 }

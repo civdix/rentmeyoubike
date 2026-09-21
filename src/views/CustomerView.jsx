@@ -204,11 +204,11 @@ export const CustomerView = () => {
               </span>
 
               <h1 className="font-heading text-3xl sm:text-5xl lg:text-5xl font-extrabold tracking-tight text-white mb-4 leading-[1.15]">
-                Bike &amp; Scooty on Rent in Vrindavan
+                Bike on Rent in Vrindavan &mdash; Scooty &amp; Two Wheeler Rental
               </h1>
 
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-6 font-normal max-w-2xl">
-                Looking for a verified <strong>bike or scooty on rent in Vrindavan</strong>? Rent Honda Activa, EV scooters &amp; Royal Enfield for seamless temple darshan and Govardhan Parikrama. Transparent daily rates from ₹299/day or ₹40/hr with free doorstep delivery to your ashram or railway station.
+                Looking for a verified <strong>bike on rent in Vrindavan</strong> or the most reliable <strong>Vrindavan rental</strong> service? Rent Honda Activa 6G, EV scooters &amp; Royal Enfield for seamless temple darshan and Govardhan Parikrama. Transparent daily rates from ₹299/day or ₹40/hr with ₹0 deposit and free doorstep delivery to your ashram or railway station.
               </p>
 
               {/* Key Value Points */}

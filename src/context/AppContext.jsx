@@ -29,6 +29,7 @@ import {
   apiToggleCustomerStatus,
   apiFetchOwners,
   apiToggleOwnerStatus,
+  apiVerifyOwner,
   apiFetchOwnerUpi,
   apiSaveOwnerUpi,
   apiFetchDisputes,
@@ -620,6 +621,91 @@ export const AppProvider = ({ children }) => {
     apiToggleOwnerStatus(ownerId).catch((err) => console.warn('API toggleOwnerStatus error:', err));
   };
 
+  const verifyOwner = async (ownerId, verificationStatus = 'Verified') => {
+    if (!currentUser || currentUser.role !== 'admin') {
+      openLoginModal('admin');
+      return;
+    }
+
+    const targetOwner = owners.find((o) => o.id === ownerId);
+    const isApproved = verificationStatus === 'Verified';
+
+    // 1. Update owners state
+    setOwners((prev) =>
+      prev.map((o) =>
+        o.id === ownerId
+          ? {
+              ...o,
+              verificationStatus,
+              verified: isApproved,
+              kycVerified: isApproved,
+              status: isApproved ? 'active' : o.status
+            }
+          : o
+      )
+    );
+
+    // 2. Cascade ownerVerified to all vehicles belonging to this host
+    setVehicles((prev) =>
+      prev.map((v) => {
+        const isMatch =
+          targetOwner && (
+            (v.ownerId && v.ownerId === ownerId) ||
+            (v.ownerPhone && targetOwner.phone && v.ownerPhone === targetOwner.phone) ||
+            (v.ownerName && targetOwner.name && v.ownerName === targetOwner.name)
+          );
+        return isMatch ? { ...v, ownerVerified: isApproved } : v;
+      })
+    );
+
+    // 3. Persist verified host identifiers in localStorage
+    if (isApproved && typeof window !== 'undefined') {
+      try {
+        const verifiedHosts = JSON.parse(localStorage.getItem('vr_verified_hosts') || '[]');
+        const keys = [ownerId, targetOwner?.phone, targetOwner?.name, targetOwner?.email].filter(Boolean);
+        let updated = false;
+        keys.forEach((k) => {
+          if (!verifiedHosts.includes(k)) {
+            verifiedHosts.push(k);
+            updated = true;
+          }
+        });
+        if (updated) {
+          localStorage.setItem('vr_verified_hosts', JSON.stringify(verifiedHosts));
+        }
+      } catch {}
+    }
+
+    // 4. Update currentUser if they are this host
+    setCurrentUser((prev) => {
+      if (!prev) return prev;
+      const isMatch =
+        prev.id === ownerId ||
+        (targetOwner?.phone && prev.phone === targetOwner.phone) ||
+        (targetOwner?.email && prev.email === targetOwner.email);
+      if (isMatch) {
+        const updatedUser = {
+          ...prev,
+          ownerVerified: isApproved,
+          kycVerified: isApproved,
+          kycStatus: isApproved ? 'Verified' : prev.kycStatus
+        };
+        try {
+          localStorage.setItem('vr_user', JSON.stringify(updatedUser));
+        } catch {}
+        return updatedUser;
+      }
+      return prev;
+    });
+
+    // 5. Sync with backend API
+    try {
+      await apiVerifyOwner(ownerId, verificationStatus);
+    } catch (err) {
+      console.warn('API verifyOwner error:', err);
+    }
+  };
+
   const saveOwnerUpi = async (upiId) => {
     const cleanUpi = String(upiId).trim();
     if (typeof window !== 'undefined') {
@@ -974,6 +1060,7 @@ export const AppProvider = ({ children }) => {
         addVehicle,
         updateVehicle,
         verifyVehicle,
+        verifyOwner,
         toggleVehicleStatus,
         toggleCustomerStatus,
         toggleOwnerStatus,

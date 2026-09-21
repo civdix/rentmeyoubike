@@ -164,6 +164,38 @@ router.patch('/:id/status', requireRole('admin'), async (req, res) => {
   }
 });
 
+// PATCH /api/owners/:id/verify - Verify or reject host KYC (Admin only)
+router.patch('/:id/verify', requireRole('admin'), async (req, res) => {
+  try {
+    const { status = 'Verified' } = req.body;
+    const current = await db.prepare('SELECT * FROM owners WHERE id = ?').get(req.params.id);
+    if (!current) {
+      return res.status(404).json({ error: 'Owner not found' });
+    }
+
+    await db.prepare('UPDATE owners SET verificationStatus = ?, status = ? WHERE id = ?').run(
+      status,
+      status === 'Verified' ? 'active' : current.status,
+      req.params.id
+    );
+
+    // Cascade ownerVerified to all vehicles owned by this host
+    if (status === 'Verified') {
+      try {
+        await db.prepare('UPDATE vehicles SET ownerVerified = 1 WHERE ownerId = ? OR ownerPhone = ?').run(req.params.id, current.phone);
+      } catch (vehErr) {
+        console.warn('Could not cascade ownerVerified to vehicles:', vehErr.message);
+      }
+    }
+
+    const updated = await db.prepare(`SELECT ${SAFE_OWNER_COLUMNS} FROM owners WHERE id = ?`).get(req.params.id);
+    res.json(sanitizeUser(updated));
+  } catch (error) {
+    console.error('Error verifying owner:', error);
+    res.status(500).json({ error: 'Failed to verify owner' });
+  }
+});
+
 // PUT /api/owners/:id/upi - Save UPI ID by owner id
 router.put('/:id/upi', async (req, res) => {
   try {

@@ -3,7 +3,21 @@ export default function robots() {
     rules: [
       {
         userAgent: '*',
-        allow: '/',
+        allow: ['/', '/llms.txt', '/llms-full.txt'],
+        disallow: ['/api/', '/admin', '/my-bookings']
+      },
+      {
+        userAgent: [
+          'OAI-SearchBot',
+          'GPTBot',
+          'ChatGPT-User',
+          'PerplexityBot',
+          'ClaudeBot',
+          'anthropic-ai',
+          'Google-Extended',
+          'Applebot-Extended'
+        ],
+        allow: ['/', '/llms.txt', '/llms-full.txt', '/bikes', '/locations'],
         disallow: ['/api/', '/admin', '/my-bookings']
       }
     ],
