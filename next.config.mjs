@@ -46,6 +46,36 @@ const nextConfig = {
         destination: `${cleanHost}/uploads/:path*`
       }
     ];
+  },
+  async headers() {
+    return [
+      {
+        source: '/.well-known/api-catalog',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/linkset+json'
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*'
+          },
+          {
+            key: 'Link',
+            value: '</.well-known/api-catalog>; rel="api-catalog"'
+          }
+        ]
+      },
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Link',
+            value: '</.well-known/api-catalog>; rel="api-catalog"'
+          }
+        ]
+      }
+    ];
   }
 };
 

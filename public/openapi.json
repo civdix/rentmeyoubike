@@ -1,0 +1,48 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Rent on Cent API",
+    "version": "1.0.0",
+    "description": "Peer-to-peer bike and scooter rental platform API for Vrindavan and Mathura.",
+    "contact": {
+      "name": "Rent on Cent Support",
+      "url": "https://rentoncent.bond",
+      "email": "support@rentoncent.bond"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://rentoncent.bond",
+      "description": "Production Server"
+    }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health check",
+        "description": "Returns backend service health status.",
+        "responses": {
+          "200": { "description": "Service is healthy" }
+        }
+      }
+    },
+    "/api/vehicles": {
+      "get": {
+        "summary": "List available rental vehicles",
+        "description": "Fetches verified scooters, bikes, and EVs available for rent in Vrindavan and Mathura.",
+        "responses": {
+          "200": { "description": "Array of vehicle listings" }
+        }
+      }
+    },
+    "/api/bookings": {
+      "post": {
+        "summary": "Create booking reservation",
+        "description": "Submits a rental booking request for a vehicle.",
+        "responses": {
+          "200": { "description": "Booking confirmation" }
+        }
+      }
+    }
+  }
+}
