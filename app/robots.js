@@ -17,7 +17,7 @@ export default function robots() {
           'Google-Extended',
           'Applebot-Extended'
         ],
-        allow: ['/', '/llms.txt', '/llms-full.txt', '/bikes', '/locations'],
+        allow: ['/', '/llms.txt', '/llms-full.txt', '/bikes', '/locations', '/rent-bike-cars-scooty-in', '/reviews', '/jobs-in-vrindavan'],
         disallow: ['/api/', '/admin', '/my-bookings']
       }
     ],
