@@ -4,7 +4,7 @@
 
 ## 1. Entity Overview
 - **Name:** Rent on Cent
-- **Alternate Names:** Vrindavan Rental, Rent on Cent Vrindavan, Rent to Cent, rentoncent.bond
+- **Alternate Names:** Vrindavan Rental, Rent on Cent Vrindavan, Rent on Cent, rentoncent.bond
 - **Entity Type:** AutoRental / Peer-to-Peer Two-Wheeler Sharing Platform
 - **Headquarters:** Raman Reti Road, Near Prem Mandir, Vrindavan, Uttar Pradesh 281121, India
 - **Primary Website:** https://rentoncent.bond

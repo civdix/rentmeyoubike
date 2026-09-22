@@ -160,11 +160,11 @@ export async function sendEmail({ to, subject, text, html }) {
 
 export async function sendEmailOtp(toEmail, otp, role = 'customer') {
   const normalized = normalizeEmail(toEmail);
-  const subject = `🌸 Your Rent to Cent Verification Code: ${otp}`;
-  const text = `Radhe Radhe!\n\nYour 6-digit verification code is: ${otp}\n\nValid for 10 minutes. Please do not share this OTP with anyone.\n\nRent to Cent`;
+  const subject = `🌸 Your Rent on Cent Verification Code: ${otp}`;
+  const text = `Radhe Radhe!\n\nYour 6-digit verification code is: ${otp}\n\nValid for 10 minutes. Please do not share this OTP with anyone.\n\nRent on Cent`;
   const html = `
     <div style="font-family: Arial, sans-serif; padding: 24px; max-width: 480px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; background: #ffffff;">
-      <h2 style="color: #059669; margin-top: 0; font-size: 20px;">🌸 Rent to Cent</h2>
+      <h2 style="color: #059669; margin-top: 0; font-size: 20px;">🌸 Rent on Cent</h2>
       <p style="color: #334155; font-size: 14px;">Radhe Radhe! Your email verification code is:</p>
       <div style="background: #ecfdf5; border: 2px dashed #059669; padding: 16px; text-align: center; border-radius: 12px; margin: 20px 0;">
         <span style="font-family: monospace; font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #065f46;">${otp}</span>
@@ -187,7 +187,7 @@ export async function sendBookingNotificationToAdmin(booking) {
 
   const text =
     `Radhe Radhe Admin!\n\n` +
-    `A new rental booking has been received on Rent to Cent:\n\n` +
+    `A new rental booking has been received on Rent on Cent:\n\n` +
     `📋 Booking Reference: #${ref}\n` +
     `🛵 Vehicle: ${vehicleName} (${booking.vehicleId || 'N/A'})\n` +
     `👤 Customer Name: ${booking.customerName || 'Pilgrim'}\n` +

@@ -78,11 +78,11 @@ app.use(authenticateUser);
 app.use((req, res, next) => {
   if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
     const isPublic = req.path.startsWith('/api/auth/') ||
-                     req.path.startsWith('/api/upload') ||
-                     req.path.startsWith('/api/contact') ||
-                     req.path.startsWith('/api/messages') ||
-                     req.path.startsWith('/api/bookings') ||
-                     req.path.startsWith('/api/health');
+      req.path.startsWith('/api/upload') ||
+      req.path.startsWith('/api/contact') ||
+      req.path.startsWith('/api/messages') ||
+      req.path.startsWith('/api/bookings') ||
+      req.path.startsWith('/api/health');
 
     if (!isPublic && (!req.user || !req.user.isAuthenticated)) {
       return res.status(401).json({
@@ -98,7 +98,7 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   res.json({
     status: 'online',
-    service: '🌸 Rent to Cent Backend API',
+    service: '🌸 Rent on Cent Backend API',
     apiBase: '/api',
     healthCheck: '/api/health',
     endpoints: {
@@ -119,7 +119,7 @@ app.get('/', (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
-    service: 'Rent to Cent P2P Backend API',
+    service: 'Rent on Cent P2P Backend API',
     timestamp: new Date().toISOString()
   });
 });
@@ -145,6 +145,6 @@ app.use((req, res) => {
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`🌸 Rent to Cent Backend running at http://localhost:${PORT}`);
+  console.log(`🌸 Rent on Cent Backend running at http://localhost:${PORT}`);
   console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
 });

@@ -172,7 +172,7 @@ export const Header = () => {
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 sm:gap-2">
               <span className="font-heading font-extrabold text-base sm:text-xl tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap">
-                Rent to Cent
+                Rent on Cent
               </span>
               <span className="hidden md:inline-block bg-emerald-950/90 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-800">
                 Rent Ride Explore
@@ -194,20 +194,18 @@ export const Header = () => {
                 setHostTab('inventory');
                 if (pathname !== '/host') router.push('/host?tab=inventory');
               }}
-              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
-                pathname === '/host' && (hostTab === 'inventory' || hostTab === 'my_listings')
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${pathname === '/host' && (hostTab === 'inventory' || hostTab === 'my_listings')
                   ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-              }`}
+                }`}
             >
               <Bike className="w-3.5 h-3.5 shrink-0" />
               <span>Inventory</span>
               {myVehiclesCount > 0 && (
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
-                  pathname === '/host' && (hostTab === 'inventory' || hostTab === 'my_listings')
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${pathname === '/host' && (hostTab === 'inventory' || hostTab === 'my_listings')
                     ? 'bg-slate-950 text-amber-300'
                     : 'bg-slate-800 text-slate-300 border border-slate-700'
-                }`}>
+                  }`}>
                   {myVehiclesCount}
                 </span>
               )}
@@ -219,11 +217,10 @@ export const Header = () => {
                 setHostTab('add_new');
                 if (pathname !== '/host') router.push('/host?tab=add_new');
               }}
-              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
-                pathname === '/host' && hostTab === 'add_new'
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${pathname === '/host' && hostTab === 'add_new'
                   ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-              }`}
+                }`}
             >
               <PlusCircle className="w-3.5 h-3.5 shrink-0" />
               <span>List Bike</span>
@@ -235,20 +232,18 @@ export const Header = () => {
                 setHostTab('bookings');
                 if (pathname !== '/host') router.push('/host?tab=bookings');
               }}
-              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
-                pathname === '/host' && hostTab === 'bookings'
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${pathname === '/host' && hostTab === 'bookings'
                   ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-              }`}
+                }`}
             >
               <CalendarCheck className="w-3.5 h-3.5 shrink-0" />
               <span>Fleet Bookings</span>
               {myHostBookingsCount > 0 && (
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
-                  pathname === '/host' && hostTab === 'bookings'
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${pathname === '/host' && hostTab === 'bookings'
                     ? 'bg-slate-950 text-amber-300'
                     : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                }`}>
+                  }`}>
                   {myHostBookingsCount}
                 </span>
               )}
@@ -260,11 +255,10 @@ export const Header = () => {
                 setHostTab('payments');
                 if (pathname !== '/host') router.push('/host?tab=payments');
               }}
-              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
-                pathname === '/host' && hostTab === 'payments'
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${pathname === '/host' && hostTab === 'payments'
                   ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-              }`}
+                }`}
             >
               <IndianRupee className="w-3.5 h-3.5 shrink-0" />
               <span>Payouts</span>
@@ -276,61 +270,55 @@ export const Header = () => {
             <Link
               href="/"
               aria-label="Rent on Cent Marketplace Home"
-              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1 shrink-0 ${
-                isHome
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1 shrink-0 ${isHome
                   ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-              }`}
+                }`}
             >
               <span>Home</span>
             </Link>
             <Link
               href="/bikes"
-              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 shrink-0 ${
-                isBikes
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 shrink-0 ${isBikes
                   ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-              }`}
+                }`}
             >
               <Search className="w-3.5 h-3.5 shrink-0" />
               <span>Browse Marketplace</span>
               {activeVehiclesCount > 0 && (
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
-                  isBikes
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${isBikes
                     ? 'bg-emerald-700 text-white'
                     : 'bg-slate-800 text-slate-300 border border-slate-700'
-                }`}>
+                  }`}>
                   {activeVehiclesCount}
                 </span>
               )}
             </Link>
             <Link
               href="/my-bookings"
-              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 shrink-0 relative ${
-                isBookings
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 shrink-0 relative ${isBookings
                   ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-              }`}
+                }`}
             >
               <CalendarCheck className="w-3.5 h-3.5 shrink-0" />
               <span>My Bookings</span>
               {userBookingsCount > 0 && (
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
-                  isBookings
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${isBookings
                     ? 'bg-emerald-700 text-white'
                     : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                }`}>
+                  }`}>
                   {userBookingsCount}
                 </span>
               )}
             </Link>
             <Link
               href="/jobs-in-vrindavan"
-              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 shrink-0 ${
-                pathname === '/jobs-in-vrindavan' || pathname === '/jobs'
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 shrink-0 ${pathname === '/jobs-in-vrindavan' || pathname === '/jobs'
                   ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
                   : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800/50'
-              }`}
+                }`}
             >
               <Briefcase className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span>Jobs (Earn 10%)</span>
@@ -355,7 +343,7 @@ export const Header = () => {
             <button
               onClick={handleHostClick}
               className="inline-flex items-center gap-1 sm:gap-1.5 bg-slate-800/80 hover:bg-slate-800 text-amber-300 hover:text-amber-200 font-bold text-[11px] sm:text-xs px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-amber-500/30 hover:border-amber-400/60 transition-all shadow-sm active:scale-95 shrink-0 group cursor-pointer"
-              title="List your vehicle and earn up to 85% on Rent to Cent"
+              title="List your vehicle and earn up to 85% on Rent on Cent"
             >
               <KeyHandoverIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 group-hover:scale-110 transition-transform shrink-0" />
               <span className="hidden sm:inline">List Your Bike</span>

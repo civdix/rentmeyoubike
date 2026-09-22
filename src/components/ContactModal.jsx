@@ -166,7 +166,7 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
                 Contact & Support
               </h3>
               <p className="text-slate-400 text-xs">
-                Send a direct inquiry to the Rent to Cent team
+                Send a direct inquiry to the Rent on Cent team
               </p>
             </div>
           </div>
@@ -264,9 +264,8 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
                     placeholder="e.g. Radhe Krishna"
-                    className={`w-full bg-slate-950 text-white pl-10 pr-3 py-2.5 rounded-xl border ${
-                      fieldErrors.name ? 'border-rose-500' : 'border-slate-800'
-                    } focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50`}
+                    className={`w-full bg-slate-950 text-white pl-10 pr-3 py-2.5 rounded-xl border ${fieldErrors.name ? 'border-rose-500' : 'border-slate-800'
+                      } focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50`}
                   />
                 </div>
                 {fieldErrors.name && (
@@ -289,9 +288,8 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
                     value={formData.email}
                     onChange={(e) => handleChange('email', e.target.value)}
                     placeholder="e.g. name@domain.com"
-                    className={`w-full bg-slate-950 text-white pl-10 pr-3 py-2.5 rounded-xl border ${
-                      fieldErrors.email ? 'border-rose-500' : 'border-slate-800'
-                    } focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50`}
+                    className={`w-full bg-slate-950 text-white pl-10 pr-3 py-2.5 rounded-xl border ${fieldErrors.email ? 'border-rose-500' : 'border-slate-800'
+                      } focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50`}
                   />
                 </div>
                 {fieldErrors.email && (
@@ -315,9 +313,8 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
                     value={formData.subject}
                     onChange={(e) => handleChange('subject', e.target.value)}
                     placeholder="e.g. Question about scooter pickup near ISKCON temple"
-                    className={`w-full bg-slate-950 text-white pl-10 pr-3 py-2.5 rounded-xl border ${
-                      fieldErrors.subject ? 'border-rose-500' : 'border-slate-800'
-                    } focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50`}
+                    className={`w-full bg-slate-950 text-white pl-10 pr-3 py-2.5 rounded-xl border ${fieldErrors.subject ? 'border-rose-500' : 'border-slate-800'
+                      } focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50`}
                   />
                 </div>
                 {fieldErrors.subject && (
@@ -339,9 +336,8 @@ export const ContactModal = ({ isOpen, onClose, initialData = {} }) => {
                     value={formData.message}
                     onChange={(e) => handleChange('message', e.target.value)}
                     placeholder="Write your inquiry or feedback here (min. 10 characters)..."
-                    className={`w-full bg-slate-950 text-white p-3 rounded-xl border ${
-                      fieldErrors.message ? 'border-rose-500' : 'border-slate-800'
-                    } focus:outline-none focus:border-emerald-500 transition-colors resize-none disabled:opacity-50 leading-relaxed`}
+                    className={`w-full bg-slate-950 text-white p-3 rounded-xl border ${fieldErrors.message ? 'border-rose-500' : 'border-slate-800'
+                      } focus:outline-none focus:border-emerald-500 transition-colors resize-none disabled:opacity-50 leading-relaxed`}
                   />
                 </div>
                 <div className="flex justify-between items-center text-[10px] text-slate-500">

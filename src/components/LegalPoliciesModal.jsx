@@ -26,7 +26,7 @@ export const LegalPoliciesModal = ({ initialTab = 'rental_terms', onClose }) => 
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="font-heading text-lg font-extrabold text-white">Rent to Cent Legal & Policy Center</h2>
+                <h2 className="font-heading text-lg font-extrabold text-white">Rent on Cent Legal & Policy Center</h2>
                 <span className="bg-amber-500/20 text-amber-300 text-[10px] font-extrabold px-2 py-0.5 rounded border border-amber-400/30 flex items-center gap-1">
                   <VrindavanFeatherIcon className="w-3 h-3 text-amber-400" />
                   <span>Radhe Verified</span>
@@ -52,11 +52,10 @@ export const LegalPoliciesModal = ({ initialTab = 'rental_terms', onClose }) => 
               <button
                 key={t.id}
                 onClick={() => setActiveTab(t.id)}
-                className={`py-3.5 px-4 border-b-2 transition-all flex items-center gap-2 whitespace-nowrap ${
-                  activeTab === t.id
+                className={`py-3.5 px-4 border-b-2 transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === t.id
                     ? 'border-emerald-600 text-emerald-700 font-extrabold bg-white rounded-t-xl'
                     : 'border-transparent text-slate-600 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 <IconComp className={`w-4 h-4 ${activeTab === t.id ? 'text-emerald-600' : 'text-slate-400'}`} />
                 <span>{t.label}</span>
@@ -75,7 +74,7 @@ export const LegalPoliciesModal = ({ initialTab = 'rental_terms', onClose }) => 
                   1. Vrindavan Rental Terms & Yatra Guidelines
                 </h3>
                 <p className="text-slate-700 leading-relaxed">
-                  These terms govern two-wheeler (scooter, motorcycle, electric vehicle, and bicycle) rentals operated through the Rent to Cent peer-to-peer marketplace.
+                  These terms govern two-wheeler (scooter, motorcycle, electric vehicle, and bicycle) rentals operated through the Rent on Cent peer-to-peer marketplace.
                 </p>
               </div>
 
@@ -123,7 +122,7 @@ export const LegalPoliciesModal = ({ initialTab = 'rental_terms', onClose }) => 
                   <span>Privacy First Guarantee — We Protect Your Data</span>
                 </div>
                 <p className="text-slate-300 leading-relaxed">
-                  At Rent to Cent, your personal privacy and trust are paramount. We strictly enforce data protection policies to ensure a safe, spam-free experience for pilgrims and hosts.
+                  At Rent on Cent, your personal privacy and trust are paramount. We strictly enforce data protection policies to ensure a safe, spam-free experience for pilgrims and hosts.
                 </p>
               </div>
 
@@ -138,7 +137,7 @@ export const LegalPoliciesModal = ({ initialTab = 'rental_terms', onClose }) => 
                 <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-1">
                   <h4 className="font-bold text-slate-900 text-sm">2. Host Phone Number Shielding</h4>
                   <p className="text-slate-600 leading-relaxed">
-                    To prevent harassment and unsolicited marketing calls, host personal phone numbers are hidden from public listings. All pre-booking communications are securely mediated through the official Rent to Cent WhatsApp channel (`{legalConfig.supportWhatsApp}`).
+                    To prevent harassment and unsolicited marketing calls, host personal phone numbers are hidden from public listings. All pre-booking communications are securely mediated through the official Rent on Cent WhatsApp channel (`{legalConfig.supportWhatsApp}`).
                   </p>
                 </div>
 
@@ -268,7 +267,7 @@ export const LegalPoliciesModal = ({ initialTab = 'rental_terms', onClose }) => 
                 <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-1">
                   <h4 className="font-bold text-slate-900 text-sm">1. Host Earnings & 85% Net Payout</h4>
                   <p className="text-slate-600 leading-relaxed">
-                    Vehicle owners keep <strong>85% of gross rental earnings</strong>. Rent to Cent retains a modest 15% platform commission to cover payment gateway fees, digital inspection servers, customer support, and marketing yatra traffic.
+                    Vehicle owners keep <strong>85% of gross rental earnings</strong>. Rent on Cent retains a modest 15% platform commission to cover payment gateway fees, digital inspection servers, customer support, and marketing yatra traffic.
                   </p>
                 </div>
 
@@ -282,7 +281,7 @@ export const LegalPoliciesModal = ({ initialTab = 'rental_terms', onClose }) => 
                 <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-1">
                   <h4 className="font-bold text-slate-900 text-sm">3. Dispute Arbitration</h4>
                   <p className="text-slate-600 leading-relaxed">
-                    In the event of damage or inspection disparity upon return, Rent to Cent Admin team conducts an independent audit using timestamped Before vs. After photos and videos to reach a fair settlement.
+                    In the event of damage or inspection disparity upon return, Rent on Cent Admin team conducts an independent audit using timestamped Before vs. After photos and videos to reach a fair settlement.
                   </p>
                 </div>
               </div>
@@ -292,7 +291,7 @@ export const LegalPoliciesModal = ({ initialTab = 'rental_terms', onClose }) => 
 
         {/* Modal Footer */}
         <div className="bg-slate-50 border-t border-slate-200 p-4 px-6 flex items-center justify-between text-xs shrink-0">
-          <span className="text-slate-500 font-medium">© 2026 Rent to Cent P2P Marketplace</span>
+          <span className="text-slate-500 font-medium">© 2026 Rent on Cent P2P Marketplace</span>
           <button
             onClick={onClose}
             className="bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-5 py-2.5 rounded-xl shadow-sm"

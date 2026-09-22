@@ -1,4 +1,4 @@
-// Production Initial Data for Rent to Cent P2P Platform
+// Production Initial Data for Rent on Cent P2P Platform
 // All collections start completely clean for production hosting.
 
 export const INITIAL_VEHICLES = [];

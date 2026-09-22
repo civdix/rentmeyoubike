@@ -149,7 +149,7 @@ router.post('/', contactFormLimiter, async (req, res) => {
       <body style="margin: 0; padding: 24px; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b;">
         <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
           <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); padding: 24px; color: #ffffff;">
-            <h2 style="margin: 0; font-size: 20px; font-weight: 700;">&#127800; Rent to Cent &mdash; Contact Inquiry</h2>
+            <h2 style="margin: 0; font-size: 20px; font-weight: 700;">&#127800; Rent on Cent &mdash; Contact Inquiry</h2>
             <p style="margin: 6px 0 0 0; font-size: 13px; opacity: 0.9;">New message submitted via website contact form</p>
           </div>
           <div style="padding: 24px;">

@@ -35,7 +35,7 @@ export const SwitchToHostModal = ({ isOpen, onClose, onConfirm, currentUser, onR
                 </h3>
                 <VrindavanFeatherIcon className="w-4 h-4 text-amber-400" />
               </div>
-              <p className="text-[11px] text-slate-400">Rent to Cent Host Portal</p>
+              <p className="text-[11px] text-slate-400">Rent on Cent Host Portal</p>
             </div>
           </div>
           <button
@@ -54,7 +54,7 @@ export const SwitchToHostModal = ({ isOpen, onClose, onConfirm, currentUser, onR
             <div className="flex items-start gap-3">
               <Sparkles className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
               <p className="text-xs sm:text-sm font-bold text-amber-100 leading-snug">
-                You will be switched to host on rent to cent where you can list your bike to host on renttocent.
+                You will be switched to host on Rent on Cent where you can list your bike to host on renttocent.
               </p>
             </div>
           </div>

@@ -22,12 +22,12 @@ export const Footer = () => {
               <img src="/logo_square_share_area.png" alt="Rent on Cent Vrindavan Bike Rentals" width={40} height={40} loading="lazy" decoding="async" className="w-full h-full object-contain" />
             </div>
             <div>
-              <span className="block leading-tight group-hover:text-emerald-400 transition-colors">Rent to Cent</span>
+              <span className="block leading-tight group-hover:text-emerald-400 transition-colors">Rent on Cent</span>
               <span className="text-[11px] font-semibold text-emerald-400 font-sans tracking-wide">Rent • Ride • Explore</span>
             </div>
           </Link>
           <p className="text-slate-400 leading-relaxed text-xs max-w-sm">
-            &quot;Rent to Cent&quot; — The premier peer-to-peer bike and scooter rental platform connecting local hosts with visiting pilgrims and tourists in Vrindavan &amp; Mathura.
+            &quot;Rent on Cent&quot; — The premier peer-to-peer bike and scooter rental platform connecting local hosts with visiting pilgrims and tourists in Vrindavan &amp; Mathura.
           </p>
           <div className="flex items-center gap-2 text-amber-400 font-bold text-xs">
             <span className="bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded border border-amber-400/40">🪶 Radhe Radhe!</span>

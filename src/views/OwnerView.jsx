@@ -90,7 +90,7 @@ export const OwnerView = () => {
               }
             }
           })
-          .catch(() => {});
+          .catch(() => { });
       }
     }
     return () => {
@@ -205,10 +205,10 @@ export const OwnerView = () => {
     return vehicles.find(
       (v) =>
         (v.ownerId === currentUser?.id ||
-         (currentUser?.phone && v.ownerPhone === currentUser?.phone) ||
-         (currentUser?.name && v.ownerName === currentUser?.name) ||
-         (ownerPhone && v.ownerPhone === ownerPhone) ||
-         (ownerName && v.ownerName?.toLowerCase().trim() === ownerName.toLowerCase().trim())) &&
+          (currentUser?.phone && v.ownerPhone === currentUser?.phone) ||
+          (currentUser?.name && v.ownerName === currentUser?.name) ||
+          (ownerPhone && v.ownerPhone === ownerPhone) ||
+          (ownerName && v.ownerName?.toLowerCase().trim() === ownerName.toLowerCase().trim())) &&
         (v.verificationStatus === 'Verified' || v.vehicleVerified || v.documentsVerified || v.ownerVerified)
     );
   }, [vehicles, currentUser, ownerPhone, ownerName]);
@@ -217,10 +217,10 @@ export const OwnerView = () => {
     return vehicles.find(
       (v) =>
         (v.ownerId === currentUser?.id ||
-         (currentUser?.phone && v.ownerPhone === currentUser?.phone) ||
-         (currentUser?.name && v.ownerName === currentUser?.name) ||
-         (ownerPhone && v.ownerPhone === ownerPhone) ||
-         (ownerName && v.ownerName?.toLowerCase().trim() === ownerName.toLowerCase().trim())) &&
+          (currentUser?.phone && v.ownerPhone === currentUser?.phone) ||
+          (currentUser?.name && v.ownerName === currentUser?.name) ||
+          (ownerPhone && v.ownerPhone === ownerPhone) ||
+          (ownerName && v.ownerName?.toLowerCase().trim() === ownerName.toLowerCase().trim())) &&
         (v.documents?.panNumber || v.documents?.governmentIdNumber || v.documents?.panCardUrl || v.documents?.governmentIdUrl)
     );
   }, [vehicles, currentUser, ownerPhone, ownerName]);
@@ -256,7 +256,7 @@ export const OwnerView = () => {
         if (checkKeys.some((k) => verifiedHosts.includes(k))) {
           return true;
         }
-      } catch {}
+      } catch { }
     }
 
     // 5. Existing documents on currentUser
@@ -698,7 +698,7 @@ export const OwnerView = () => {
               Host Sign In Required
             </span>
             <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900">
-              Sign In to List Your Bike on Rent to Cent
+              Sign In to List Your Bike on Rent on Cent
             </h2>
             <p className="text-xs text-slate-600 leading-relaxed max-w-md mx-auto">
               To list your scooter or motorcycle, manage fleet availability, and receive 85% payouts, please sign in or register with your mobile number.
@@ -761,7 +761,7 @@ export const OwnerView = () => {
                   Your vehicle has been submitted for verification.
                 </h3>
                 <p className="text-xs text-slate-700 mt-1 leading-relaxed">
-                  Our Rent to Cent admin team is auditing your RC, Insurance, and 6-angle photos. <strong>Admin must approve the listing before it becomes publicly visible</strong> on the marketplace (/bikes).
+                  Our Rent on Cent admin team is auditing your RC, Insurance, and 6-angle photos. <strong>Admin must approve the listing before it becomes publicly visible</strong> on the marketplace (/bikes).
                 </p>
               </div>
             </div>
@@ -885,8 +885,8 @@ export const OwnerView = () => {
                               type="button"
                               onClick={() => toggleVehicleStatus(v.id)}
                               className={`font-bold text-xs px-3 py-1.5 rounded-xl border transition-colors cursor-pointer ${v.status === 'active'
-                                  ? 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
-                                  : 'bg-emerald-50 text-emerald-900 border-emerald-300 hover:bg-emerald-100'
+                                ? 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
+                                : 'bg-emerald-50 text-emerald-900 border-emerald-300 hover:bg-emerald-100'
                                 }`}
                             >
                               {v.status === 'active' ? 'Suspend Vehicle' : 'Activate Vehicle'}
@@ -1149,11 +1149,10 @@ export const OwnerView = () => {
                         setStep(2);
                       }
                     }}
-                    className={`w-full font-extrabold py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                      isHostIdentityVerified
+                    className={`w-full font-extrabold py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer ${isHostIdentityVerified
                         ? 'bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black'
                         : 'bg-slate-900 hover:bg-slate-800 text-white'
-                    }`}
+                      }`}
                   >
                     {isHostIdentityVerified ? (
                       <>
@@ -1808,11 +1807,10 @@ export const OwnerView = () => {
                             type="button"
                             key={feat}
                             onClick={() => toggleFeature(feat)}
-                            className={`p-2.5 rounded-xl text-left font-semibold border transition-all text-xs flex items-center justify-between gap-1.5 cursor-pointer ${
-                              checked
+                            className={`p-2.5 rounded-xl text-left font-semibold border transition-all text-xs flex items-center justify-between gap-1.5 cursor-pointer ${checked
                                 ? 'bg-emerald-50 border-emerald-500 text-emerald-950 font-bold shadow-xs'
                                 : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
-                            }`}
+                              }`}
                           >
                             <span className="line-clamp-1">{feat}</span>
                             {checked ? (
@@ -1942,8 +1940,8 @@ export const OwnerView = () => {
                           type="button"
                           onClick={() => rcInputRef.current?.click()}
                           className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1.5 ${rcDoc.uploaded
-                              ? 'bg-emerald-100 text-emerald-950 border-emerald-400'
-                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300'
+                            ? 'bg-emerald-100 text-emerald-950 border-emerald-400'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300'
                             }`}
                         >
                           <Upload className="w-3.5 h-3.5" />
@@ -1968,8 +1966,8 @@ export const OwnerView = () => {
                           type="button"
                           onClick={() => insuranceInputRef.current?.click()}
                           className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1.5 ${insuranceDoc.uploaded
-                              ? 'bg-emerald-100 text-emerald-950 border-emerald-400'
-                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300'
+                            ? 'bg-emerald-100 text-emerald-950 border-emerald-400'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300'
                             }`}
                         >
                           <Upload className="w-3.5 h-3.5" />
@@ -1991,8 +1989,8 @@ export const OwnerView = () => {
                           type="button"
                           onClick={() => otherDocInputRef.current?.click()}
                           className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1.5 ${otherDoc.uploaded
-                              ? 'bg-emerald-100 text-emerald-950 border-emerald-400'
-                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300'
+                            ? 'bg-emerald-100 text-emerald-950 border-emerald-400'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300'
                             }`}
                         >
                           <Upload className="w-3.5 h-3.5" />
@@ -2100,8 +2098,8 @@ export const OwnerView = () => {
                           type="button"
                           onClick={() => toggleDay(day)}
                           className={`px-4 py-2 rounded-xl text-xs font-extrabold border transition-all ${availableDays.includes(day)
-                              ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-                              : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
+                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                            : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
                           {day}
@@ -2287,8 +2285,8 @@ export const OwnerView = () => {
                   type="button"
                   onClick={() => setBookingFilter('all')}
                   className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${bookingFilter === 'all'
-                      ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                    ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                     }`}
                 >
                   All Bookings ({myBookings.length})
@@ -2297,8 +2295,8 @@ export const OwnerView = () => {
                   type="button"
                   onClick={() => setBookingFilter('active')}
                   className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${bookingFilter === 'active'
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                     }`}
                 >
                   Active / In-Use ({myBookings.filter((b) => b.status === 'Confirmed' || b.status === 'In-use').length})
@@ -2307,8 +2305,8 @@ export const OwnerView = () => {
                   type="button"
                   onClick={() => setBookingFilter('completed')}
                   className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${bookingFilter === 'completed'
-                      ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                    ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                     }`}
                 >
                   Completed Trips ({myBookings.filter((b) => b.status === 'Completed').length})
@@ -2317,8 +2315,8 @@ export const OwnerView = () => {
                   type="button"
                   onClick={() => setBookingFilter('inquiry')}
                   className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${bookingFilter === 'inquiry'
-                      ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                    ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                     }`}
                 >
                   Inquiries / Pending ({myBookings.filter((b) => b.status === 'Inquiry' || b.status === 'Payment Pending').length})
@@ -2565,7 +2563,7 @@ export const OwnerView = () => {
                   Payments &amp; Refunds Management
                 </h1>
                 <p className="text-xs text-slate-300 leading-relaxed font-normal">
-                  Transparent earnings breakdown for your fleet in Vrindavan. Rent to Cent automatically settles your 85% host net payout every day at 11:00 AM via Direct UPI. Audit customer refundable security deposits.
+                  Transparent earnings breakdown for your fleet in Vrindavan. Rent on Cent automatically settles your 85% host net payout every day at 11:00 AM via Direct UPI. Audit customer refundable security deposits.
                 </p>
               </div>
 
@@ -2715,7 +2713,7 @@ export const OwnerView = () => {
                 )}
 
                 <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Rent to Cent validates UPI VPAs before disbursing daily batches. Ensure the bank account linked with this UPI ID has active incoming transfers enabled.
+                  Rent on Cent validates UPI VPAs before disbursing daily batches. Ensure the bank account linked with this UPI ID has active incoming transfers enabled.
                 </p>
               </form>
             </div>

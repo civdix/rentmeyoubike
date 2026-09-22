@@ -34,8 +34,8 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
     conversationId,
     bookingId: booking?.id || null,
     senderRole: 'admin',
-    senderName: 'Rent to Cent Admin',
-    text: `Radhe Radhe! 🙏 Welcome to Rent to Cent Vrindavan.\n\nWe have received your booking inquiry for *${vehicleName}* (Ref: #${booking?.id || 'NEW'}).\nOur administrative desk is online right now. You can reply or ask any questions here directly, or proceed with verification below.`,
+    senderName: 'Rent on Cent Admin',
+    text: `Radhe Radhe! 🙏 Welcome to Rent on Cent Vrindavan.\n\nWe have received your booking inquiry for *${vehicleName}* (Ref: #${booking?.id || 'NEW'}).\nOur administrative desk is online right now. You can reply or ask any questions here directly, or proceed with verification below.`,
     isRead: false,
     createdAt: new Date(Date.now() + 1000).toISOString()
   };
@@ -142,7 +142,7 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
               customerName,
               customerPhone,
               senderRole: 'admin',
-              text: `Radhe Radhe! 🙏 Welcome to Rent to Cent Vrindavan.\n\nWe have received your booking inquiry for *${vehicleName}* (Ref: #${booking?.id || 'NEW'}).\nOur administrative desk is online right now. You can reply or ask any questions here directly, or proceed with verification below.`
+              text: `Radhe Radhe! 🙏 Welcome to Rent on Cent Vrindavan.\n\nWe have received your booking inquiry for *${vehicleName}* (Ref: #${booking?.id || 'NEW'}).\nOur administrative desk is online right now. You can reply or ask any questions here directly, or proceed with verification below.`
             });
 
             if (isMounted) {
@@ -285,7 +285,7 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-sm sm:text-base text-white">Rent to Cent Support &amp; Chat</h3>
+                <h3 className="font-bold text-sm sm:text-base text-white">Rent on Cent Support &amp; Chat</h3>
                 <ShieldCheck className="w-4 h-4 text-emerald-300" />
               </div>
               <p className="text-[11px] text-emerald-100 flex items-center gap-1.5">
@@ -362,15 +362,14 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
                     return (
                       <div
                         key={msg.id || index}
-                        className={`max-w-[85%] rounded-lg p-3 text-xs shadow-sm relative transition-all ${
-                          isMe
+                        className={`max-w-[85%] rounded-lg p-3 text-xs shadow-sm relative transition-all ${isMe
                             ? 'bg-[#d9fdd3] text-slate-900 self-end rounded-tr-none'
                             : 'bg-white text-slate-900 self-start rounded-tl-none border border-slate-200/50'
-                        }`}
+                          }`}
                       >
                         {!isMe && (
                           <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 mb-1">
-                            <span>{msg.senderName || 'Rent to Cent Admin'}</span>
+                            <span>{msg.senderName || 'Rent on Cent Admin'}</span>
                             <ShieldCheck className="w-3 h-3 text-emerald-600" />
                           </div>
                         )}

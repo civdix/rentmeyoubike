@@ -28,7 +28,7 @@ export const metadata = {
     'two wheeler rental mathura',
     'rentoncent',
     'rent on cent',
-    'rent to cent',
+    'Rent on Cent',
     'govardhan parikrama scooty rent',
     'bike on rent on mathura cut',
     'raya cut yamuna expressway bike rental',
@@ -95,7 +95,7 @@ const autoRentalSchema = {
     'Vrindavan Rental',
     'Bike on Rent in Vrindavan',
     'Rent on Cent Vrindavan',
-    'Rent to Cent',
+    'Rent on Cent',
     'Rentoncent'
   ],
   slogan: 'Rent Ride Explore — Best Bike & Scooty on Rent in Vrindavan',

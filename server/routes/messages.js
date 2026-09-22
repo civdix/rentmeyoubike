@@ -158,7 +158,7 @@ router.post('/', async (req, res) => {
       : (isAdmin ? 'admin' : 'customer');
     const receiverRole = senderRole === 'admin' ? 'customer' : 'admin';
     const senderName = senderRole === 'admin'
-      ? (req.user?.name || 'Rent to Cent Admin')
+      ? (req.user?.name || 'Rent on Cent Admin')
       : (inputName || req.user?.name || 'Vrindavan Pilgrim');
     const senderPhone = senderRole === 'admin' ? '' : (inputPhone || req.user?.phone || '');
 

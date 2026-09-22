@@ -214,12 +214,12 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
         <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-2.5 sm:gap-3">
             <div className="w-10 h-10 rounded-2xl bg-white border border-emerald-400/40 p-1 flex items-center justify-center shadow-lg text-white shrink-0">
-              <img src="/logo_square_share_area.png" alt="Rent to Cent Logo" className="w-full h-full object-contain" />
+              <img src="/logo_square_share_area.png" alt="Rent on Cent Logo" className="w-full h-full object-contain" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
                 <h3 className="font-heading font-extrabold text-base text-white">
-                  {mode === 'login' ? 'Welcome to Rent to Cent' : 'Create Your Account'}
+                  {mode === 'login' ? 'Welcome to Rent on Cent' : 'Create Your Account'}
                 </h3>
                 <VrindavanFeatherIcon className="w-4 h-4 text-amber-400" />
               </div>
@@ -244,11 +244,10 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
             <button
               type="button"
               onClick={() => handleModeSwitch('login')}
-              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                mode === 'login'
+              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${mode === 'login'
                   ? 'bg-slate-800 text-white shadow-md border border-slate-700'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
-              }`}
+                }`}
             >
               <LogIn className="w-3.5 h-3.5" />
               <span>Log In</span>
@@ -257,11 +256,10 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
             <button
               type="button"
               onClick={() => handleModeSwitch('signup')}
-              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                mode === 'signup'
+              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${mode === 'signup'
                   ? 'bg-emerald-600 text-white shadow-md'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
-              }`}
+                }`}
             >
               <UserPlus className="w-3.5 h-3.5" />
               <span>Sign Up / Register</span>
@@ -358,18 +356,17 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full mt-2 py-3 rounded-xl text-sm font-extrabold transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer active:scale-[0.98] ${
-                  targetRole === 'admin'
+                className={`w-full mt-2 py-3 rounded-xl text-sm font-extrabold transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer active:scale-[0.98] ${targetRole === 'admin'
                     ? 'bg-purple-600 hover:bg-purple-500 text-white'
                     : 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                }`}
+                  }`}
               >
                 {loading ? (
                   <span>Authenticating...</span>
                 ) : (
                   <>
                     <LogIn className="w-4 h-4" />
-                    <span>{targetRole === 'admin' ? 'Unlock Admin Console' : 'Log In to Rent to Cent'}</span>
+                    <span>{targetRole === 'admin' ? 'Unlock Admin Console' : 'Log In to Rent on Cent'}</span>
                   </>
                 )}
               </button>
@@ -480,18 +477,17 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
               <button
                 type="submit"
                 disabled={loading || !isSignupEmailVerified}
-                className={`w-full mt-2 py-3 rounded-xl text-sm font-extrabold transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] ${
-                  isSignupEmailVerified
+                className={`w-full mt-2 py-3 rounded-xl text-sm font-extrabold transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] ${isSignupEmailVerified
                     ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
                     : 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                }`}
+                  }`}
               >
                 {loading ? (
                   <span>Creating Account...</span>
                 ) : (
                   <>
                     <UserPlus className="w-4 h-4" />
-                    <span>Create Rent to Cent Account</span>
+                    <span>Create Rent on Cent Account</span>
                   </>
                 )}
               </button>
