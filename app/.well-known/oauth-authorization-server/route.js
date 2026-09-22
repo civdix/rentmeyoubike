@@ -6,7 +6,7 @@ const oauthMetadata = {
   authorization_endpoint: 'https://rentoncent.bond/api/oauth/authorize',
   token_endpoint: 'https://rentoncent.bond/api/oauth/token',
   jwks_uri: 'https://rentoncent.bond/.well-known/jwks.json',
-  registration_endpoint: 'https://rentoncent.bond/api/agent/register',
+  registration_endpoint: 'https://rentoncent.bond/agent/register',
   scopes_supported: [
     'read:fleet',
     'create:booking',
@@ -27,34 +27,27 @@ const oauthMetadata = {
     'private_key_jwt'
   ],
   agent_auth: {
-    skill: 'https://rentoncent.bond/.well-known/agent-skills/rentoncent-bike-booking/SKILL.md',
-    register_uri: 'https://rentoncent.bond/api/agent/register',
-    revocation_uri: 'https://rentoncent.bond/api/agent/revoke',
+    skill: 'https://rentoncent.bond/.well-known/agent-skills/index.json',
+    register_uri: 'https://rentoncent.bond/agent/register',
     identity_types_supported: [
-      'identity_assertion',
-      'anonymous'
+      'anonymous',
+      'identity_assertion'
     ],
+    anonymous: {
+      credential_types_supported: [
+        'api_key'
+      ],
+      claim_uri: 'https://rentoncent.bond/agent/claim'
+    },
     identity_assertion: {
       assertion_types_supported: [
         'urn:ietf:params:oauth:token-type:id-jag',
         'verified_email'
       ],
-      credential_types: [
-        'bearer_token',
-        'jwk',
-        'api_key'
-      ],
-      claim_uri: 'https://rentoncent.bond/api/agent/claim-email'
-    },
-    anonymous: {
       credential_types_supported: [
-        'ephemeral_token'
-      ],
-      claim_uri: 'https://rentoncent.bond/api/agent/anonymous-claim'
-    },
-    events_supported: [
-      'revocation'
-    ]
+        'oauth_client'
+      ]
+    }
   }
 };
 
