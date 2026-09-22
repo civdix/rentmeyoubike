@@ -187,20 +187,20 @@ export const Header = () => {
 
         {/* Role-Specific Nav Links */}
         {role === 'owner' ? (
-          <nav className="hidden md:flex items-center gap-1.5 bg-slate-950/80 p-1.5 rounded-2xl border border-amber-500/30 text-xs font-bold">
+          <nav className="hidden md:flex items-center gap-1 bg-slate-950/80 p-1 rounded-2xl border border-amber-500/30 text-[11px] font-bold whitespace-nowrap shrink-0">
             <button
               type="button"
               onClick={() => {
                 setHostTab('inventory');
                 if (pathname !== '/host') router.push('/host?tab=inventory');
               }}
-              className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
                 pathname === '/host' && (hostTab === 'inventory' || hostTab === 'my_listings')
                   ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
-              <Bike className="w-3.5 h-3.5" />
+              <Bike className="w-3.5 h-3.5 shrink-0" />
               <span>Inventory</span>
               {myVehiclesCount > 0 && (
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
@@ -219,14 +219,14 @@ export const Header = () => {
                 setHostTab('add_new');
                 if (pathname !== '/host') router.push('/host?tab=add_new');
               }}
-              className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
                 pathname === '/host' && hostTab === 'add_new'
                   ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
-              <PlusCircle className="w-3.5 h-3.5" />
-              <span>List Your Bike</span>
+              <PlusCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>List Bike</span>
             </button>
 
             <button
@@ -235,14 +235,14 @@ export const Header = () => {
                 setHostTab('bookings');
                 if (pathname !== '/host') router.push('/host?tab=bookings');
               }}
-              className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
                 pathname === '/host' && hostTab === 'bookings'
                   ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
-              <CalendarCheck className="w-3.5 h-3.5" />
-              <span>My Bookings</span>
+              <CalendarCheck className="w-3.5 h-3.5 shrink-0" />
+              <span>Fleet Bookings</span>
               {myHostBookingsCount > 0 && (
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
                   pathname === '/host' && hostTab === 'bookings'
@@ -260,23 +260,23 @@ export const Header = () => {
                 setHostTab('payments');
                 if (pathname !== '/host') router.push('/host?tab=payments');
               }}
-              className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
                 pathname === '/host' && hostTab === 'payments'
                   ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
-              <IndianRupee className="w-3.5 h-3.5" />
-              <span>Payments &amp; Refunds</span>
+              <IndianRupee className="w-3.5 h-3.5 shrink-0" />
+              <span>Payouts</span>
             </button>
           </nav>
         ) : (
           /* Customer Center Nav Links (Next.js real routes) */
-          <nav className="hidden md:flex items-center gap-1.5 bg-slate-950/70 p-1.5 rounded-2xl border border-slate-800/80 text-xs font-bold">
+          <nav className="hidden md:flex items-center gap-1 bg-slate-950/80 p-1 rounded-2xl border border-slate-800/80 text-[11px] font-bold whitespace-nowrap shrink-0">
             <Link
               href="/"
               aria-label="Rent on Cent Marketplace Home"
-              className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1 shrink-0 ${
                 isHome
                   ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
@@ -286,13 +286,13 @@ export const Header = () => {
             </Link>
             <Link
               href="/bikes"
-              className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 shrink-0 ${
                 isBikes
                   ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
-              <Search className="w-3.5 h-3.5" />
+              <Search className="w-3.5 h-3.5 shrink-0" />
               <span>Browse Marketplace</span>
               {activeVehiclesCount > 0 && (
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
@@ -306,13 +306,13 @@ export const Header = () => {
             </Link>
             <Link
               href="/my-bookings"
-              className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 relative ${
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 shrink-0 relative ${
                 isBookings
                   ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
-              <CalendarCheck className="w-3.5 h-3.5" />
+              <CalendarCheck className="w-3.5 h-3.5 shrink-0" />
               <span>My Bookings</span>
               {userBookingsCount > 0 && (
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
@@ -326,25 +326,25 @@ export const Header = () => {
             </Link>
             <Link
               href="/jobs-in-vrindavan"
-              className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1.5 shrink-0 ${
                 pathname === '/jobs-in-vrindavan' || pathname === '/jobs'
                   ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
                   : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800/50'
               }`}
             >
-              <Briefcase className="w-3.5 h-3.5 text-amber-400" />
+              <Briefcase className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span>Jobs (Earn 10%)</span>
             </Link>
           </nav>
         )}
 
         {/* Right Side Actions: Host CTA + Profile / Sign In */}
-        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           {/* Host CTA Button */}
           {role === 'owner' ? (
             <button
               onClick={handleSwitchToRenter}
-              className="inline-flex items-center gap-1 sm:gap-1.5 bg-amber-500 text-slate-950 hover:bg-amber-400 font-extrabold text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl transition-all shadow-sm active:scale-95 shrink-0 cursor-pointer"
+              className="inline-flex items-center gap-1 sm:gap-1.5 bg-amber-500 text-slate-950 hover:bg-amber-400 font-extrabold text-[11px] sm:text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition-all shadow-sm active:scale-95 shrink-0 cursor-pointer"
               title="Return to Customer Rental Marketplace"
             >
               <VrindavanScooterIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 shrink-0" />
@@ -372,20 +372,15 @@ export const Header = () => {
               <div>
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center gap-1.5 sm:gap-2 bg-slate-800 hover:bg-slate-750 border border-slate-700 py-1 sm:py-1.5 px-2 sm:px-3 rounded-xl text-xs transition-all shadow-sm cursor-pointer"
+                  className="flex flex-col items-center justify-center bg-slate-800 hover:bg-slate-750 border border-slate-700 py-1 px-2 rounded-xl transition-all shadow-sm cursor-pointer shrink-0"
+                  title={`${currentUser.name} (${currentUser.role === 'admin' ? 'Admin' : role === 'owner' ? 'Host' : 'Renter'})`}
                 >
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 text-white font-extrabold flex items-center justify-center text-[11px] shadow-sm shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 text-white font-extrabold flex items-center justify-center text-[10px] shadow-xs">
                     {currentUser.name ? currentUser.name[0].toUpperCase() : 'U'}
                   </div>
-                  <div className="text-left hidden sm:block">
-                    <div className="font-bold text-white text-[11px] leading-tight truncate max-w-[90px] md:max-w-[120px]">
-                      {currentUser.name}
-                    </div>
-                    <div className="text-[9px] text-emerald-400 uppercase font-semibold">
-                      {currentUser.role === 'admin' ? 'Admin 🛡️' : role === 'owner' ? 'Host Mode' : 'Renter Mode'}
-                    </div>
-                  </div>
-                  <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
+                  <span className="text-[8px] font-black text-emerald-400 uppercase tracking-tighter leading-none mt-0.5">
+                    {currentUser.role === 'admin' ? 'Admin' : role === 'owner' ? 'Host' : 'Renter'}
+                  </span>
                 </button>
 
                 {profileDropdownOpen && (

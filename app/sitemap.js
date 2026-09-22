@@ -5,7 +5,7 @@ export default function sitemap() {
   const currentDate = new Date().toISOString();
 
   const locationUrls = ALL_LOCATIONS.map((location) => ({
-    url: `${baseUrl}/locations/${location.slug}`,
+    url: `${baseUrl}/rent-bike-cars-scooty-in/${location.slug}`,
     lastModified: currentDate,
     changeFrequency: 'weekly',
     priority: 0.85
@@ -25,7 +25,7 @@ export default function sitemap() {
       priority: 0.95
     },
     {
-      url: `${baseUrl}/locations`,
+      url: `${baseUrl}/rent-bike-cars-scooty-in`,
       lastModified: currentDate,
       changeFrequency: 'weekly',
       priority: 0.9

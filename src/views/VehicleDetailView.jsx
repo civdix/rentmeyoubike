@@ -214,6 +214,7 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
                 <img
                   src={currentImage}
                   alt={vehicleName}
+                  decoding="async"
                   className="w-full h-full object-cover transition-all duration-300"
                 />
                 {/* <div className="absolute top-3 left-3 flex flex-wrap gap-1">
@@ -221,7 +222,7 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
                 </div> */}
               </div>
 
-              {/* Thumbnails */}
+              {/* Thumbnails (loaded on demand when detail modal is open) */}
               <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
                 {galleryImages.map((imgUrl, idx) => (
                   <button
@@ -232,7 +233,7 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
                       : 'border-slate-200 opacity-70 hover:opacity-100'
                       }`}
                   >
-                    <img src={imgUrl} alt="" className="w-full h-full object-cover" />
+                    <img src={imgUrl} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>

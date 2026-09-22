@@ -41,7 +41,7 @@ export const Footer = () => {
           <p className="text-white font-bold mb-3 uppercase text-[11px] tracking-wider">Quick Links</p>
           <ul className="space-y-2">
             <li>
-              <Link href="/locations" className="hover:text-white transition-colors">
+              <Link href="/rent-bike-cars-scooty-in" className="hover:text-white transition-colors">
                 Pickup Locations (13+)
               </Link>
             </li>
@@ -175,60 +175,60 @@ export const Footer = () => {
             <MapPin className="w-3.5 h-3.5 text-emerald-400" />
             <span>Popular Rental Pickup Hubs &amp; Expressway Cuts</span>
           </p>
-          <Link href="/locations" aria-label="Explore all 13+ rental pickup locations in Mathura and Vrindavan" className="text-emerald-400 hover:underline text-[11px] font-semibold">
+          <Link href="/rent-bike-cars-scooty-in" aria-label="Explore all 13+ rental pickup locations in Mathura and Vrindavan" className="text-emerald-400 hover:underline text-[11px] font-semibold">
             View All 13+ Pickup Locations →
           </Link>
         </div>
         <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-slate-400">
-          <Link href="/locations/mathura-cut-yamuna-expressway" className="hover:text-emerald-400 transition-colors">
+          <Link href="/rent-bike-cars-scooty-in/mathura-cut-yamuna-expressway" className="hover:text-emerald-400 transition-colors">
             Mathura Cut (Yamuna Exp.)
           </Link>
           <span className="text-slate-700">•</span>
-          <Link href="/locations/raya-cut-yamuna-expressway" className="hover:text-emerald-400 transition-colors">
+          <Link href="/rent-bike-cars-scooty-in/raya-cut-yamuna-expressway" className="hover:text-emerald-400 transition-colors">
             Raya Cut (Yamuna Exp.)
           </Link>
           <span className="text-slate-700">•</span>
-          <Link href="/locations/chattikara-road" className="hover:text-emerald-400 transition-colors">
+          <Link href="/rent-bike-cars-scooty-in/chattikara-road" className="hover:text-emerald-400 transition-colors">
             Chattikara Road / NH19
           </Link>
           <span className="text-slate-700">•</span>
-          <Link href="/locations/bankey-bihari-temple" className="hover:text-emerald-400 transition-colors">
+          <Link href="/rent-bike-cars-scooty-in/bankey-bihari-temple" className="hover:text-emerald-400 transition-colors">
             Bankey Bihari Temple Marg
           </Link>
           <span className="text-slate-700">•</span>
-          <Link href="/locations/prem-mandir-raman-reti" className="hover:text-emerald-400 transition-colors">
+          <Link href="/rent-bike-cars-scooty-in/prem-mandir-raman-reti" className="hover:text-emerald-400 transition-colors">
             Prem Mandir &amp; Raman Reti
           </Link>
           <span className="text-slate-700">•</span>
-          <Link href="/locations/iskcon-temple-vrindavan" className="hover:text-emerald-400 transition-colors">
+          <Link href="/rent-bike-cars-scooty-in/iskcon-temple-vrindavan" className="hover:text-emerald-400 transition-colors">
             ISKCON Krishna Balaram Mandir
           </Link>
           <span className="text-slate-700">•</span>
-          <Link href="/locations/nidhivan-seva-kunj" className="hover:text-emerald-400 transition-colors">
+          <Link href="/rent-bike-cars-scooty-in/nidhivan-seva-kunj" className="hover:text-emerald-400 transition-colors">
             Nidhivan &amp; Seva Kunj
           </Link>
           <span className="text-slate-700">•</span>
-          <Link href="/locations/barsana-radha-rani-temple" className="hover:text-emerald-400 transition-colors">
+          <Link href="/rent-bike-cars-scooty-in/barsana-radha-rani-temple" className="hover:text-emerald-400 transition-colors">
             Barsana Shri Radha Rani Mandir
           </Link>
           <span className="text-slate-700">•</span>
-          <Link href="/locations/mathura-krishna-janmabhoomi" className="hover:text-emerald-400 transition-colors">
+          <Link href="/rent-bike-cars-scooty-in/mathura-krishna-janmabhoomi" className="hover:text-emerald-400 transition-colors">
             Krishna Janmabhoomi Mathura
           </Link>
           <span className="text-slate-700">•</span>
-          <Link href="/locations/gokul-raman-reti" className="hover:text-emerald-400 transition-colors">
+          <Link href="/rent-bike-cars-scooty-in/gokul-raman-reti" className="hover:text-emerald-400 transition-colors">
             Gokul Dham &amp; Brahmand Ghat
           </Link>
           <span className="text-slate-700">•</span>
-          <Link href="/locations/mathura-junction-railway-station" className="hover:text-emerald-400 transition-colors">
+          <Link href="/rent-bike-cars-scooty-in/mathura-junction-railway-station" className="hover:text-emerald-400 transition-colors">
             Mathura Jn Railway Station
           </Link>
           <span className="text-slate-700">•</span>
-          <Link href="/locations/govardhan-parikrama" className="hover:text-emerald-400 transition-colors">
+          <Link href="/rent-bike-cars-scooty-in/govardhan-parikrama" className="hover:text-emerald-400 transition-colors">
             Govardhan Parikrama Marg
           </Link>
           <span className="text-slate-700">•</span>
-          <Link href="/locations/hotels-tourist-service" className="hover:text-emerald-400 transition-colors">
+          <Link href="/rent-bike-cars-scooty-in/hotels-tourist-service" className="hover:text-emerald-400 transition-colors">
             Hotel &amp; Ashram Doorstep Handover
           </Link>
         </div>

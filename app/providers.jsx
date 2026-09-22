@@ -16,10 +16,13 @@ import { LoginModal } from '../src/components/LoginModal';
 import { ContactModal } from '../src/components/ContactModal';
 import { SwitchToHostModal } from '../src/components/SwitchToHostModal';
 import { FloatingChatButton } from '../src/components/FloatingChatButton';
+import { UniversalModal } from '../src/components/UniversalModal';
 
 function AppShell({ children }) {
   const {
     currentUser,
+    universalModal,
+    closeUniversalModal,
     activeWhatsAppModal,
     setActiveWhatsAppModal,
     activeKYCModal,
@@ -147,6 +150,17 @@ function AppShell({ children }) {
           onClose={closeSwitchToHostModal}
           onConfirm={handleConfirmSwitchToHost}
           onRequireLogin={() => openLoginModal('owner')}
+        />
+      )}
+
+      {/* Universal Floating Glass Modal */}
+      {universalModal && (
+        <UniversalModal
+          {...universalModal}
+          onClose={() => {
+            if (universalModal.onClose) universalModal.onClose();
+            closeUniversalModal();
+          }}
         />
       )}
     </div>

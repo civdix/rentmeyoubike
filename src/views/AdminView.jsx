@@ -51,7 +51,8 @@ import {
   Clock,
   Sparkles,
   X,
-  Maximize2
+  Maximize2,
+  User
 } from 'lucide-react';
 
 export const AdminView = () => {

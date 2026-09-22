@@ -181,6 +181,17 @@ export const AppProvider = ({ children }) => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [contactModalInitialData, setContactModalInitialData] = useState({});
 
+  // Universal Modal State (simple modal opening operations)
+  const [universalModal, setUniversalModal] = useState(null);
+
+  const openUniversalModal = (config) => {
+    setUniversalModal(config || null);
+  };
+
+  const closeUniversalModal = () => {
+    setUniversalModal(null);
+  };
+
   const openContactModal = (initialData = {}) => {
     setContactModalInitialData(initialData || {});
     setIsContactModalOpen(true);
@@ -195,8 +206,15 @@ export const AppProvider = ({ children }) => {
     const handleOpenContact = (e) => {
       openContactModal(e.detail || {});
     };
+    const handleOpenUniversalModal = (e) => {
+      openUniversalModal(e.detail || null);
+    };
     window.addEventListener('vr_open_contact', handleOpenContact);
-    return () => window.removeEventListener('vr_open_contact', handleOpenContact);
+    window.addEventListener('open_universal_modal', handleOpenUniversalModal);
+    return () => {
+      window.removeEventListener('vr_open_contact', handleOpenContact);
+      window.removeEventListener('open_universal_modal', handleOpenUniversalModal);
+    };
   }, []);
   const [activeFilter, setActiveFilter] = useState({
     type: 'all',
@@ -1055,6 +1073,9 @@ export const AppProvider = ({ children }) => {
         contactModalInitialData,
         openContactModal,
         closeContactModal,
+        universalModal,
+        openUniversalModal,
+        closeUniversalModal,
         activeFilter,
         setActiveFilter,
         addVehicle,

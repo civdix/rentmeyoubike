@@ -91,49 +91,51 @@ export default function LocationsHubPage() {
 
               <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between">
                 <Link
-                  href={`/locations/${loc.slug}`}
+                  href={`/rent-bike-cars-scooty-in/${loc.slug}`}
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors"
                 >
                   <span>View Rates &amp; Details</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
 
-                <a
-                  href={`https://wa.me/919720965985?text=Radhe%20Radhe!%20I%20want%20to%20rent%20a%20bike%20at%20${encodeURIComponent(loc.name)}.`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-[11px] font-bold text-emerald-600 hover:underline"
-                >
-                  WhatsApp Booking
-                </a>
+                <span className="text-[11px] text-slate-400 font-medium">
+                  {loc.postalCode}
+                </span>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Tourist Advantages Banner */}
-        <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-3xl p-8 sm:p-10 border border-slate-700 shadow-xl space-y-6">
-          <div className="max-w-2xl">
-            <span className="text-xs font-extrabold text-amber-400 uppercase tracking-wider">Smart Travel in Braj</span>
-            <h3 className="text-2xl font-bold font-heading mt-1">Why Tourists Prefer Bikes Over Autos &amp; E-Rickshaws</h3>
-            <p className="text-xs text-slate-300 mt-2 leading-relaxed">
-              Auto-rickshaws and cabs face strict route bans, traffic bottlenecks, and inflated tourist pricing during weekends and temple festivals. Renting your own scooty gives you freedom to attend early morning Mangala Aarti, do Govardhan Parikrama, and reach narrow temple streets comfortably without bargaining.
+        {/* Value Proposition Callout */}
+        <div className="bg-slate-900 text-white rounded-3xl p-8 sm:p-10 border border-slate-800 grid grid-cols-1 md:grid-cols-3 gap-6 shadow-xl">
+          <div className="space-y-2">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
+              <VrindavanScooterIcon className="w-5 h-5 text-amber-400" />
+            </div>
+            <h3 className="font-bold text-white text-base">₹0 Cash Deposit</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              We trust pilgrims with simple digital KYC via DigiLocker. No original documents withheld.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-            <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
-              <h4 className="font-bold text-amber-300 mb-1">Save ₹800–₹1,500 Daily</h4>
-              <p className="text-slate-400">Fixed rate of ₹299/day versus paying ₹100-₹200 for every single auto ride.</p>
+          <div className="space-y-2">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+              <ShieldCheck className="w-5 h-5 text-emerald-400" />
             </div>
-            <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
-              <h4 className="font-bold text-emerald-400 mb-1">Zero Wait Time</h4>
-              <p className="text-slate-400">No waiting in lines or bargaining at railway stations and expressway toll cuts.</p>
+            <h3 className="font-bold text-white text-base">Verified Hosts &amp; Fleet</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Mandatory commercial RC, PUC, comprehensive insurance, and physical brake/tire audits.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <div className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center border border-teal-500/30">
+              <Clock className="w-5 h-5 text-teal-400" />
             </div>
-            <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
-              <h4 className="font-bold text-teal-300 mb-1">Doorstep Hotel Return</h4>
-              <p className="text-slate-400">Leave keys at your hotel reception when leaving Vrindavan or Mathura.</p>
-            </div>
+            <h3 className="font-bold text-white text-base">15-Min Doorstep Handover</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Delivery to hotels in Rukmini Vihar, Chaitanya Vihar, Sunrakh Road, and Yamuna Expressway toll cuts.
+            </p>
           </div>
         </div>
       </div>

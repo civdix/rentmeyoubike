@@ -454,8 +454,10 @@ export const CustomerView = () => {
                   >
                     <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden cursor-pointer" onClick={() => setSelectedVehicle(vehicle)}>
                       <img
-                        src={vehicle.images[0]}
+                        src={vehicle.images?.[0] || 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'}
                         alt={vehicle.name}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute top-3 left-3 flex flex-wrap gap-1">
@@ -578,7 +580,7 @@ export const CustomerView = () => {
 
                 {/* Right: Key Temple Circuits */}
                 <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="bg-white p-4.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
+                  <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
                     <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs mb-2.5">
                       01
                     </div>
@@ -590,7 +592,7 @@ export const CustomerView = () => {
                     </p>
                   </div>
 
-                  <div className="bg-white p-4.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
+                  <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
                     <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs mb-2.5">
                       02
                     </div>
@@ -602,7 +604,7 @@ export const CustomerView = () => {
                     </p>
                   </div>
 
-                  <div className="bg-white p-4.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
+                  <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
                     <div className="w-9 h-9 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-xs mb-2.5">
                       03
                     </div>
@@ -614,7 +616,7 @@ export const CustomerView = () => {
                     </p>
                   </div>
 
-                  <div className="bg-white p-4.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
+                  <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
                     <div className="w-9 h-9 rounded-xl bg-orange-100 text-orange-800 flex items-center justify-center font-bold text-xs mb-2.5">
                       04
                     </div>
@@ -793,7 +795,7 @@ export const CustomerView = () => {
                   ].map((item, idx) => {
                     const IconComp = item.icon;
                     return (
-                      <div key={idx} className="bg-slate-800/80 hover:bg-slate-800 p-4.5 rounded-2xl border border-slate-700/80 shadow-md transition-all">
+                      <div key={idx} className="bg-slate-800/80 hover:bg-slate-800 p-5 sm:p-6 rounded-2xl border border-slate-700/80 shadow-md transition-all">
                         <div className="flex items-center justify-between mb-3">
                           <span className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-extrabold text-xs flex items-center justify-center shadow-xs">
                             {item.step}

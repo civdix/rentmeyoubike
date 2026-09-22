@@ -75,14 +75,14 @@
 ## Canonical Web Links
 - Homepage & Online Booking: https://rentoncent.bond
 - Browse Available Fleet: https://rentoncent.bond/bikes
-- All Pickup Locations (13+ Hubs): https://rentoncent.bond/locations
+- All Pickup Locations (13+ Hubs): https://rentoncent.bond/rent-bike-cars-scooty-in
 - Customer Reviews & Ratings (4.9★): https://rentoncent.bond/reviews
 - Jobs in Vrindavan (10% Commission): https://rentoncent.bond/jobs-in-vrindavan
 - Host Onboarding (List your Bike): https://rentoncent.bond/host
-- Mathura Cut Expressway Pickup: https://rentoncent.bond/locations/mathura-cut-yamuna-expressway
-- Prem Mandir & Raman Reti Pickup: https://rentoncent.bond/locations/prem-mandir-raman-reti
-- ISKCON Temple Pickup: https://rentoncent.bond/locations/iskcon-temple-vrindavan
-- Nidhivan & Seva Kunj Pickup: https://rentoncent.bond/locations/nidhivan-seva-kunj
-- Barsana Radha Rani Mandir: https://rentoncent.bond/locations/barsana-radha-rani-temple
-- Krishna Janmabhoomi Mathura: https://rentoncent.bond/locations/mathura-krishna-janmabhoomi
-- Gokul Dham & Brahmand Ghat: https://rentoncent.bond/locations/gokul-raman-reti
+- Mathura Cut Expressway Pickup: https://rentoncent.bond/rent-bike-cars-scooty-in/mathura-cut-yamuna-expressway
+- Prem Mandir & Raman Reti Pickup: https://rentoncent.bond/rent-bike-cars-scooty-in/prem-mandir-raman-reti
+- ISKCON Temple Pickup: https://rentoncent.bond/rent-bike-cars-scooty-in/iskcon-temple-vrindavan
+- Nidhivan & Seva Kunj Pickup: https://rentoncent.bond/rent-bike-cars-scooty-in/nidhivan-seva-kunj
+- Barsana Radha Rani Mandir: https://rentoncent.bond/rent-bike-cars-scooty-in/barsana-radha-rani-temple
+- Krishna Janmabhoomi Mathura: https://rentoncent.bond/rent-bike-cars-scooty-in/mathura-krishna-janmabhoomi
+- Gokul Dham & Brahmand Ghat: https://rentoncent.bond/rent-bike-cars-scooty-in/gokul-raman-reti

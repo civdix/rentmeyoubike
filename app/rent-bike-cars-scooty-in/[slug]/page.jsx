@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { LOCATION_SEO_DATA, ALL_LOCATIONS } from '../../../src/data/locationSeoData';
-import { MapPin, Bike, ArrowRight, ShieldCheck, CheckCircle2, MessageSquare, Phone, HelpCircle, ChevronRight, Clock, Star, Key } from 'lucide-react';
+import { MapPin, Bike, ArrowRight, ShieldCheck, CheckCircle2, Phone, HelpCircle, ChevronRight, Key } from 'lucide-react';
 import { VrindavanScooterIcon, VrindavanFeatherIcon, WhatsAppBrandIcon } from '../../../src/components/CustomIcons';
 
 export async function generateStaticParams() {
@@ -61,7 +61,7 @@ export default async function LocationPage({ params }) {
     '@type': 'AutoRental',
     name: `Rent on Cent — ${loc.name}`,
     description: loc.metaDescription,
-    url: `https://rentoncent.bond/locations/${loc.slug}`,
+    url: `https://rentoncent.bond/rent-bike-cars-scooty-in/${loc.slug}`,
     telephone: '+919720965985',
     email: 'support@rentoncent.bond',
     priceRange: '₹299 - ₹1200 / day',
@@ -114,13 +114,13 @@ export default async function LocationPage({ params }) {
         '@type': 'ListItem',
         position: 2,
         name: 'Locations',
-        item: 'https://rentoncent.bond/locations'
+        item: 'https://rentoncent.bond/rent-bike-cars-scooty-in'
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: loc.name,
-        item: `https://rentoncent.bond/locations/${loc.slug}`
+        item: `https://rentoncent.bond/rent-bike-cars-scooty-in/${loc.slug}`
       }
     ]
   };
@@ -152,7 +152,7 @@ export default async function LocationPage({ params }) {
         <nav aria-label="Breadcrumb" className="text-xs text-slate-500 flex items-center gap-1.5 flex-wrap">
           <Link href="/" className="hover:text-emerald-700">Home</Link>
           <ChevronRight className="w-3 h-3 text-slate-400" />
-          <Link href="/locations" className="hover:text-emerald-700">Locations</Link>
+          <Link href="/rent-bike-cars-scooty-in" className="hover:text-emerald-700">Locations</Link>
           <ChevronRight className="w-3 h-3 text-slate-400" />
           <span className="text-slate-800 font-semibold">{loc.shortName}</span>
         </nav>
@@ -178,20 +178,21 @@ export default async function LocationPage({ params }) {
               {loc.subheadline}
             </p>
 
-            <div className="pt-2 flex flex-wrap items-center gap-3">
+            {/* CTA Buttons */}
+            <div className="pt-2 flex flex-wrap gap-3">
               <a
                 href={waBookingUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-xs sm:text-sm py-3 px-5 rounded-xl inline-flex items-center gap-2 shadow-lg transition-transform active:scale-95"
+                className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-xl flex items-center gap-2 shadow-md transition-transform active:scale-95"
               >
                 <WhatsAppBrandIcon className="w-4 h-4 fill-white" />
-                <span>Book on WhatsApp for {loc.shortName}</span>
+                <span>Book Instant WhatsApp Pickup</span>
               </a>
 
               <Link
                 href="/bikes"
-                className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm py-3 px-5 rounded-xl inline-flex items-center gap-2 shadow-md transition-colors"
+                className="bg-slate-800/80 hover:bg-slate-800 text-white border border-slate-700 font-bold text-xs sm:text-sm px-5 py-3 rounded-xl flex items-center gap-2 transition-colors"
               >
                 <VrindavanScooterIcon className="w-4 h-4 text-white" />
                 <span>Browse All Fleet Models</span>
@@ -360,7 +361,7 @@ export default async function LocationPage({ params }) {
                 {otherLocations.map((other) => (
                   <Link
                     key={other.slug}
-                    href={`/locations/${other.slug}`}
+                    href={`/rent-bike-cars-scooty-in/${other.slug}`}
                     className="block p-2.5 rounded-xl hover:bg-slate-50 border border-slate-100 transition-colors group"
                   >
                     <div className="flex items-center justify-between text-xs font-bold text-slate-900 group-hover:text-emerald-700">

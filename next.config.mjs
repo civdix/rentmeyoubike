@@ -11,6 +11,16 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: '/locations',
+        destination: '/rent-bike-cars-scooty-in',
+        permanent: true
+      },
+      {
+        source: '/locations/:slug',
+        destination: '/rent-bike-cars-scooty-in/:slug',
+        permanent: true
+      },
+      {
         source: '/:path*',
         has: [
           {

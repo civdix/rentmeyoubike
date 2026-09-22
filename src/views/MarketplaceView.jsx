@@ -373,8 +373,10 @@ export const MarketplaceView = () => {
                   >
                     <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden cursor-pointer" onClick={() => setSelectedVehicle(vehicle)}>
                       <img
-                        src={vehicle.images[0]}
+                        src={vehicle.images?.[0] || 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'}
                         alt={vehicle.name}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute top-3 left-3 flex flex-wrap gap-1">
