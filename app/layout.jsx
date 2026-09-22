@@ -149,9 +149,14 @@ const autoRentalSchema = {
       {
         '@type': 'Offer',
         itemOffered: {
-          '@type': 'Vehicle',
+          '@type': 'Service',
           name: 'Honda Activa 6G Scooty on Rent in Vrindavan',
-          description: '110cc automatic scooter with 2 sanitized helmets and mobile holder included.'
+          serviceType: 'Two-Wheeler Rental',
+          description: '110cc automatic scooter with 2 sanitized helmets and mobile holder included.',
+          provider: {
+            '@type': 'AutoRental',
+            name: 'Rent on Cent'
+          }
         },
         price: '299',
         priceCurrency: 'INR',
@@ -161,9 +166,14 @@ const autoRentalSchema = {
       {
         '@type': 'Offer',
         itemOffered: {
-          '@type': 'Vehicle',
+          '@type': 'Service',
           name: 'Electric Scooter (EV) on Rent in Vrindavan',
-          description: 'High-range electric scooter with 80-100 km range per charge. Free charging cables included.'
+          serviceType: 'Electric Scooter Rental',
+          description: 'High-range electric scooter with 80-100 km range per charge. Free charging cables included.',
+          provider: {
+            '@type': 'AutoRental',
+            name: 'Rent on Cent'
+          }
         },
         price: '349',
         priceCurrency: 'INR',
@@ -173,9 +183,14 @@ const autoRentalSchema = {
       {
         '@type': 'Offer',
         itemOffered: {
-          '@type': 'Vehicle',
+          '@type': 'Service',
           name: 'Royal Enfield Classic 350 on Rent in Vrindavan',
-          description: '350cc cruiser bike perfect for Govardhan Parikrama and Mathura-Barsana circuits.'
+          serviceType: 'Cruiser Motorcycle Rental',
+          description: '350cc cruiser bike perfect for Govardhan Parikrama and Mathura-Barsana circuits.',
+          provider: {
+            '@type': 'AutoRental',
+            name: 'Rent on Cent'
+          }
         },
         price: '899',
         priceCurrency: 'INR',
