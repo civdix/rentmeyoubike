@@ -396,6 +396,8 @@ export const VrindavanBentoGuide = () => {
               <img
                 src="/images/prem-mandir-ride.webp"
                 alt="Prem Mandir Vrindavan Bike Ride"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-75"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/50 to-slate-900/20" />
@@ -692,6 +694,8 @@ export const VrindavanBentoGuide = () => {
               <img
                 src="/images/bike-inspection-mobile.webp"
                 alt="Rent on Cent Bike Digital Inspection"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-70"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/60 to-slate-900/20" />
