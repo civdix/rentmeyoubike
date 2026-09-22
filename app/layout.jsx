@@ -314,6 +314,14 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap"
           rel="stylesheet"
         />
+        {/* Preload critical LCP Hero Image for Core Web Vitals */}
+        <link
+          rel="preload"
+          as="image"
+          href="/images/hero-rider-vrindavan.webp"
+          type="image/webp"
+          fetchPriority="high"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(autoRentalSchema) }}

@@ -395,7 +395,9 @@ export const VrindavanBentoGuide = () => {
             <div className="absolute inset-0 z-0">
               <img
                 src="/images/prem-mandir-ride.webp"
-                alt="Prem Mandir Vrindavan Bike Ride"
+                alt="Devotee riding rented scooter near Prem Mandir temple on Raman Reti Road Vrindavan"
+                width={600}
+                height={400}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-75"
@@ -693,7 +695,9 @@ export const VrindavanBentoGuide = () => {
             <div className="absolute inset-0 z-0">
               <img
                 src="/images/bike-inspection-mobile.webp"
-                alt="Rent on Cent Bike Digital Inspection"
+                alt="Paperless 6-angle digital bike inspection audit before rental key handover in Vrindavan"
+                width={600}
+                height={400}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-70"

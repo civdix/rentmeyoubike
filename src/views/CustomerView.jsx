@@ -274,12 +274,18 @@ export const CustomerView = () => {
             {/* Right Column: Hero Visual Photo Card */}
             <div className="lg:col-span-5">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-teal-500/30 group bg-slate-900">
-                <img
-                  src="/images/hero-rider-vrindavan.jpg"
-                  alt="Pilgrim riding Honda Activa scooter past ancient temples in Vrindavan"
-                  className="w-full h-72 sm:h-84 lg:h-[390px] object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                  fetchPriority="high"
-                />
+                <picture>
+                  <source srcSet="/images/hero-rider-vrindavan.webp" type="image/webp" />
+                  <img
+                    src="/images/hero-rider-vrindavan.webp"
+                    alt="Pilgrim riding verified Honda Activa scooter on rent past ancient temples in Vrindavan"
+                    width={800}
+                    height={533}
+                    className="w-full h-72 sm:h-84 lg:h-[390px] object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    fetchPriority="high"
+                    decoding="sync"
+                  />
+                </picture>
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
 
                 {/* Top Floating Badge */}
@@ -455,7 +461,9 @@ export const CustomerView = () => {
                     <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden cursor-pointer" onClick={() => setSelectedVehicle(vehicle)}>
                       <img
                         src={vehicle.images?.[0] || 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'}
-                        alt={vehicle.name}
+                        alt={`${vehicle.name} available for rent in Vrindavan starting ₹${vehicle.dailyRate}/day`}
+                        width={600}
+                        height={375}
                         loading="lazy"
                         decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -560,12 +568,18 @@ export const CustomerView = () => {
                 {/* Left: Real Travel Photography Card */}
                 <div className="lg:col-span-5">
                   <div className="relative rounded-3xl overflow-hidden shadow-xl border border-amber-200/80 group bg-slate-900">
-                    <img
-                      src="/images/prem-mandir-ride.jpg"
-                      alt="Honda Activa and Royal Enfield parked near Prem Mandir temple in Vrindavan with yatris"
-                      className="w-full h-80 sm:h-96 object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
+                    <picture>
+                      <source srcSet="/images/prem-mandir-ride.webp" type="image/webp" />
+                      <img
+                        src="/images/prem-mandir-ride.webp"
+                        alt="Honda Activa and Royal Enfield bikes on rent parked near Prem Mandir temple in Vrindavan"
+                        width={800}
+                        height={600}
+                        className="w-full h-80 sm:h-96 object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </picture>
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
                     <div className="absolute top-3.5 left-3.5 bg-slate-950/80 backdrop-blur-md border border-amber-400/40 text-amber-300 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-amber-400" />
@@ -764,12 +778,18 @@ export const CustomerView = () => {
                 {/* Visual Image Preview */}
                 <div className="lg:col-span-5">
                   <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-700 bg-slate-950 group">
-                    <img
-                      src="/images/bike-inspection-mobile.jpg"
-                      alt="Digital vehicle inspection on mobile smartphone in Vrindavan"
-                      className="w-full h-80 sm:h-96 object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
+                    <picture>
+                      <source srcSet="/images/bike-inspection-mobile.webp" type="image/webp" />
+                      <img
+                        src="/images/bike-inspection-mobile.webp"
+                        alt="Digital 6-angle vehicle inspection system on mobile smartphone for Vrindavan bike rental"
+                        width={800}
+                        height={600}
+                        className="w-full h-80 sm:h-96 object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </picture>
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
                     <div className="absolute top-3.5 left-3.5 bg-slate-950/85 backdrop-blur-md border border-emerald-400/40 text-emerald-300 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
                       <Camera className="w-3.5 h-3.5 text-emerald-400" />
@@ -821,12 +841,18 @@ export const CustomerView = () => {
                 {/* Left: Real Local Host Photo */}
                 <div className="lg:col-span-5">
                   <div className="relative rounded-2xl overflow-hidden shadow-xl border border-amber-400/30 group bg-slate-950">
-                    <img
-                      src="/images/vrindavan-host-handover.jpg"
-                      alt="Local Vrindavan bike host handing over scooter keys to pilgrim"
-                      className="w-full h-72 sm:h-84 object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
+                    <picture>
+                      <source srcSet="/images/vrindavan-host-handover.webp" type="image/webp" />
+                      <img
+                        src="/images/vrindavan-host-handover.webp"
+                        alt="Local Vrindavan bike rental host handing over scooter keys to pilgrim with verified KYC"
+                        width={800}
+                        height={533}
+                        className="w-full h-72 sm:h-84 object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </picture>
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent pointer-events-none"></div>
                     <div className="absolute top-3.5 left-3.5 bg-slate-950/85 backdrop-blur-md border border-amber-400/40 text-amber-300 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
                       <Key className="w-3.5 h-3.5 text-amber-400" />

@@ -19,7 +19,7 @@ export const Footer = () => {
         <div className="col-span-2 space-y-3">
           <Link href="/" aria-label="Rent on Cent - Vrindavan Bike Rentals Home" className="inline-flex items-center gap-3 text-white font-heading font-extrabold text-lg group">
             <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center p-1.5 border border-emerald-400/50 shadow-md group-hover:scale-105 transition-transform">
-              <img src="/logo_square_share_area.png" alt="Rent to Cent Logo" className="w-full h-full object-contain" />
+              <img src="/logo_square_share_area.png" alt="Rent on Cent Vrindavan Bike Rentals" width={40} height={40} loading="lazy" decoding="async" className="w-full h-full object-contain" />
             </div>
             <div>
               <span className="block leading-tight group-hover:text-emerald-400 transition-colors">Rent to Cent</span>
