@@ -24,14 +24,14 @@ import {
   Camera,
   Compass,
   Key,
-  ExternalLink
+  ExternalLink,
+  UserCheck
 } from 'lucide-react';
 import { VrindavanScooterIcon, VrindavanFeatherIcon, WhatsAppBrandIcon } from './CustomIcons';
 
 export const VrindavanBentoGuide = () => {
   const { openUniversalModal } = useApp();
   const [activeReviewIndex, setActiveReviewIndex] = useState(0);
-  const [expandedFaq, setExpandedFaq] = useState(null);
 
   const HINDI_HINGLISH_REVIEWS = [
     {
@@ -431,7 +431,63 @@ export const VrindavanBentoGuide = () => {
             </div>
           </div>
 
-          {/* CARD 3: Hindi & Hinglish Pilgrimage Reviews (Span 2) */}
+          {/* CARD 3: Expressway & Railway Station Doorstep Handover (Span 1) */}
+          <div className="apple-glass-card rounded-3xl p-6 sm:p-7 relative overflow-hidden flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
+              <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase text-sky-900 bg-sky-100 border border-sky-300 px-2.5 py-0.5 rounded-full shadow-2xs">
+                <Clock className="w-3 h-3 text-sky-600" />
+                Instant Handover Hubs
+              </span>
+
+              <h3 className="text-xl font-extrabold text-slate-900 font-heading">
+                Expressway &amp; Railway Handover
+              </h3>
+
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Skip crowded auto haggling. Step off your Delhi/Agra bus or train directly onto your pre-booked scooter.
+              </p>
+
+              <div className="space-y-2 pt-1">
+                <div className="bg-sky-50/70 p-2.5 rounded-xl border border-sky-200/80 text-xs">
+                  <div className="font-bold text-sky-950 flex items-center gap-1">
+                    <Zap className="w-3.5 h-3.5 text-sky-600" />
+                    <span>Mathura Cut (Yamuna Exp.)</span>
+                  </div>
+                  <p className="text-slate-600 text-[11px] mt-0.5">Toll plaza exit handover in 5 mins.</p>
+                </div>
+
+                <div className="bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-200/80 text-xs">
+                  <div className="font-bold text-emerald-950 flex items-center gap-1">
+                    <Zap className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Mathura Junction (MTJ)</span>
+                  </div>
+                  <p className="text-slate-600 text-[11px] mt-0.5">Platform 1 gate handover as train arrives.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={openExpresswayModal}
+                className="w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 px-3.5 py-2 rounded-xl transition-all cursor-pointer shadow-2xs"
+              >
+                <span>Expressway Cut Details</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+              <a
+                href="https://wa.me/919720965985?text=Namaste%2C+I+need+scooter+handover+at+Yamuna+Expressway+or+Mathura+Junction"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#25D366] hover:bg-[#20ba5a] px-3.5 py-2 rounded-xl transition-all shadow-xs"
+              >
+                <WhatsAppBrandIcon className="w-3.5 h-3.5 fill-white" />
+                <span>WhatsApp Booking</span>
+              </a>
+            </div>
+          </div>
+
+          {/* CARD 4: Hindi & Hinglish Pilgrimage Reviews (Span 2) */}
           <div className="lg:col-span-2 apple-glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden flex flex-col justify-between space-y-5">
             <div className="space-y-4">
               <div className="flex items-center justify-between flex-wrap gap-2">
@@ -528,62 +584,6 @@ export const VrindavanBentoGuide = () => {
                   <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
-            </div>
-          </div>
-
-          {/* CARD 4: Expressway & Railway Station Doorstep Handover (Span 1) */}
-          <div className="apple-glass-card rounded-3xl p-6 sm:p-7 relative overflow-hidden flex flex-col justify-between space-y-4">
-            <div className="space-y-3">
-              <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase text-sky-900 bg-sky-100 border border-sky-300 px-2.5 py-0.5 rounded-full shadow-2xs">
-                <Clock className="w-3 h-3 text-sky-600" />
-                Instant Handover Hubs
-              </span>
-
-              <h3 className="text-xl font-extrabold text-slate-900 font-heading">
-                Expressway &amp; Railway Handover
-              </h3>
-
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Skip crowded auto haggling. Step off your Delhi/Agra bus or train directly onto your pre-booked scooter.
-              </p>
-
-              <div className="space-y-2 pt-1">
-                <div className="bg-sky-50/70 p-2.5 rounded-xl border border-sky-200/80 text-xs">
-                  <div className="font-bold text-sky-950 flex items-center gap-1">
-                    <Zap className="w-3.5 h-3.5 text-sky-600" />
-                    <span>Mathura Cut (Yamuna Exp.)</span>
-                  </div>
-                  <p className="text-slate-600 text-[11px] mt-0.5">Toll plaza exit handover in 5 mins.</p>
-                </div>
-
-                <div className="bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-200/80 text-xs">
-                  <div className="font-bold text-emerald-950 flex items-center gap-1">
-                    <Zap className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Mathura Junction (MTJ)</span>
-                  </div>
-                  <p className="text-slate-600 text-[11px] mt-0.5">Platform 1 gate handover as train arrives.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-2 flex flex-col gap-2">
-              <button
-                type="button"
-                onClick={openExpresswayModal}
-                className="w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 px-3.5 py-2 rounded-xl transition-all cursor-pointer shadow-2xs"
-              >
-                <span>Expressway Cut Details</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-              <a
-                href="https://wa.me/919720965985?text=Namaste%2C+I+need+scooter+handover+at+Yamuna+Expressway+or+Mathura+Junction"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#25D366] hover:bg-[#20ba5a] px-3.5 py-2 rounded-xl transition-all shadow-xs"
-              >
-                <WhatsAppBrandIcon className="w-3.5 h-3.5 fill-white" />
-                <span>WhatsApp Booking</span>
-              </a>
             </div>
           </div>
 
@@ -731,79 +731,90 @@ export const VrindavanBentoGuide = () => {
             </div>
           </div>
 
-          {/* CARD 8: Interactive Apple-Style FAQ Accordion (Span 2) */}
-          <div className="lg:col-span-2 apple-glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden space-y-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
-              <div>
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 rounded-full shadow-2xs">
-                  Help &amp; Answers
+          {/* CARD 8: Verified Safe & Transparent Rental Guarantee (Span 2) */}
+          <div className="lg:col-span-2 apple-glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden flex flex-col justify-between space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-300 px-3 py-1 rounded-full shadow-2xs">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+                  Trust &amp; Safety Framework
                 </span>
-                <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 font-heading mt-2">
-                  Frequently Asked Questions &mdash; Two-Wheeler Rentals
-                </h3>
+                <span className="text-xs font-bold text-emerald-700 font-mono bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                  ✓ 100% On-Ground Protected
+                </span>
               </div>
-              <a
-                href="https://wa.me/919720965985?text=Namaste%2C+I+have+a+question+about+bike+rentals"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 hover:text-emerald-950 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 px-3.5 py-2 rounded-xl transition-all w-fit shadow-2xs"
-              >
-                <span>24x7 WhatsApp Help Desk</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </a>
+
+              <div>
+                <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 font-heading">
+                  Verified Safe &amp; Transparent Rental Guarantee
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 mt-1">
+                  How Rent on Cent protects pilgrims, yatris, and vehicle owners in plain, transparent language:
+                </p>
+              </div>
+
+              {/* 3 Trust Pillars in Bento Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+                <div className="bg-slate-50/90 p-4 rounded-2xl border border-slate-200 hover:border-emerald-300 transition-all shadow-2xs space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
+                      <Bike className="w-4 h-4" />
+                    </div>
+                    <h4 className="font-heading font-bold text-xs text-slate-900">1. Vehicle Verification</h4>
+                  </div>
+                  <p className="text-[11px] text-slate-600 leading-relaxed">
+                    Every scooty undergoes physical road-tests, active RC checks, and insurance scrutiny before listing. No breakdown-prone tout bikes.
+                  </p>
+                </div>
+
+                <div className="bg-slate-50/90 p-4 rounded-2xl border border-slate-200 hover:border-teal-300 transition-all shadow-2xs space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-teal-100 flex items-center justify-center text-teal-700 shrink-0">
+                      <UserCheck className="w-4 h-4" />
+                    </div>
+                    <h4 className="font-heading font-bold text-xs text-slate-900">2. Rider KYC in 2 Mins</h4>
+                  </div>
+                  <p className="text-[11px] text-slate-600 leading-relaxed">
+                    Instant digital KYC with Aadhaar &amp; Driving Licence (DigiLocker supported). Data is encrypted—we never hold physical documents.
+                  </p>
+                </div>
+
+                <div className="bg-slate-50/90 p-4 rounded-2xl border border-slate-200 hover:border-amber-300 transition-all shadow-2xs space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center text-amber-800 shrink-0">
+                      <Camera className="w-4 h-4" />
+                    </div>
+                    <h4 className="font-heading font-bold text-xs text-slate-900">3. Digital Inspection</h4>
+                  </div>
+                  <p className="text-[11px] text-slate-600 leading-relaxed">
+                    6 timestamped photos record odometer, fuel &amp; prior marks before handover and at return, completely preventing false damage charges.
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-3">
-              {[
-                {
-                  id: 1,
-                  q: 'How do I get a bike on rent in Vrindavan?',
-                  a: 'You can book instantly online at rentoncent.bond or message our 24x7 WhatsApp desk at +91 97209 65985. Choose your vehicle (Honda Activa 6G, EV scooter, or Royal Enfield), select your pickup location or hotel delivery, submit your Driving License and Aadhaar for digital KYC, and receive your keys in under 15 minutes.'
-                },
-                {
-                  id: 2,
-                  q: 'What is the cost of scooty rental in Vrindavan?',
-                  a: 'Scooty on rent in Vrindavan starts at ₹299 for a full 24-hour day (or ₹40/hour for quick temple visits). Weekly packages are available from ₹1,899/week. All prices include 2 sanitized helmets and basic maintenance support with zero hidden charges.'
-                },
-                {
-                  id: 3,
-                  q: 'What documents are required to rent a two-wheeler?',
-                  a: 'You need a valid Original or DigiLocker Driving License (DL) and one government photo ID (Aadhaar Card, Passport, or Voter ID). International tourists can provide an International Driving Permit (IDP) and passport.'
-                },
-                {
-                  id: 4,
-                  q: 'Can I take the rental scooty for Govardhan Parikrama and Mathura?',
-                  a: 'Yes! All Rent on Cent vehicles have valid UP state permits covering Vrindavan, Mathura, Govardhan, Barsana, Gokul, and Nandgaon. You can smoothly complete the 21 km Govardhan Parikrama without restriction.'
-                },
-                {
-                  id: 5,
-                  q: 'Can I get delivery at Mathura Junction Railway Station or Yamuna Expressway?',
-                  a: 'Yes, we provide doorstep handover at Mathura Junction (Platform 1 exit), Mathura Cantt, and Yamuna Expressway exits (Mathura Cut & Raya Cut) so you can start riding immediately without haggling with station touts.'
-                }
-              ].map((faq) => (
-                <div
-                  key={faq.id}
-                  className="bg-slate-50/90 hover:bg-slate-100/90 rounded-2xl border border-slate-200 overflow-hidden transition-all shadow-2xs"
+            <div className="pt-3 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200">
+              <span className="text-xs text-slate-600 font-medium">
+                🛡️ Zero security deposit options, free helmets, and 24x7 roadside assist across Vrindavan.
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={openSafetyModal}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 hover:text-emerald-950 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 px-3.5 py-1.5 rounded-xl transition-all cursor-pointer shadow-2xs"
                 >
-                  <button
-                    type="button"
-                    onClick={() => setExpandedFaq(expandedFaq === faq.id ? null : faq.id)}
-                    className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-3 text-xs sm:text-sm font-bold text-slate-900 hover:text-emerald-700 transition-colors cursor-pointer"
-                  >
-                    <span>{faq.q}</span>
-                    <ChevronDown
-                      className={`w-4 h-4 text-slate-500 shrink-0 transition-transform duration-200 ${
-                        expandedFaq === faq.id ? 'rotate-180 text-emerald-600' : ''
-                      }`}
-                    />
-                  </button>
-                  {expandedFaq === faq.id && (
-                    <div className="px-4 sm:px-5 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-200 pt-3 animate-fadeIn">
-                      {faq.a}
-                    </div>
-                  )}
-                </div>
-              ))}
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>Safety &amp; Protection Terms</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+                <Link
+                  href="/about"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-slate-700 hover:text-slate-950 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl border border-slate-300 transition-all"
+                >
+                  <span>About Our Mission</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </div>
           </div>
 
