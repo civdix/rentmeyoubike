@@ -58,6 +58,7 @@ export default function AboutPage() {
       '@type': 'Person',
       name: 'Shivam Dixit',
       jobTitle: 'Founder & CEO',
+      image: 'https://rentoncent.bond/data/profile-image/shivamdixit.png',
       url: 'https://shivamdixit.vercel.app',
       sameAs: [
         'https://linkedin.com/in/shivdix',
@@ -137,8 +138,15 @@ export default function AboutPage() {
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             {/* Avatar & Badges */}
             <div className="flex flex-col items-center sm:items-start shrink-0 mx-auto sm:mx-0">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-tr from-slate-900 via-teal-900 to-emerald-900 text-white flex items-center justify-center font-heading font-black text-3xl shadow-xl border-2 border-emerald-400/50">
-                <span>SD</span>
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shadow-xl border-2 border-emerald-400/50 bg-slate-900 relative group">
+                <img
+                  src="/data/profile-image/shivamdixit.png"
+                  alt="Shivam Dixit - Founder & CEO, Rent on Cent"
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                  width={112}
+                  height={112}
+                  loading="lazy"
+                />
               </div>
 
               <div className="mt-4 text-center sm:text-left space-y-1">

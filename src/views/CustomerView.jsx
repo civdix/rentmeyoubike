@@ -147,42 +147,51 @@ export const CustomerView = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // FAQ List
+  // FAQ List with both short visible summary answers and detailed explanations
   const faqData = [
     {
       q: 'How do I get a bike or scooty on rent in Vrindavan?',
+      shortA: 'Choose bike online or WhatsApp (+91 97209 65985), submit Aadhaar & DL for 2-min KYC, and collect keys in 15 mins at Prem Mandir or hotel delivery.',
       a: 'Browse verified two-wheelers on Rent on Cent, choose your rental dates, complete instant digital KYC (Aadhaar & Driving Licence), and confirm booking on WhatsApp (+91 97209 65985). Pickup at Prem Mandir or get 15-minute doorstep delivery at your hotel or Mathura Junction.'
     },
     {
       q: 'What is the price of scooty on rent in Vrindavan?',
+      shortA: 'Starts from ₹40/hr and ₹299/day for Honda Activa & TVS Jupiter with 2 free sanitized ISI helmets and zero security deposit.',
       a: 'Scooty on rent in Vrindavan starts from ₹40/hour and ₹299/day for Honda Activa 6G and TVS Jupiter. High-mileage bikes, Royal Enfield Classic 350, and eco-friendly EV scooters are also available with 2 free ISI helmets and zero deposit options.'
     },
     {
       q: 'What documents are required?',
+      shortA: 'Valid 2-wheeler Driving Licence (DL) + Aadhaar Card or Passport. DigiLocker uploads are 100% accepted.',
       a: 'You will need an original Government-issued photo ID (Aadhaar Card or Passport), a valid Driving Licence (DL) for two-wheelers, and a mobile phone linked to WhatsApp. Documents are uploaded digitally before pickup.'
     },
     {
       q: 'Is a driving licence required?',
+      shortA: 'Yes, a valid Indian or International Driving Licence is legally mandatory for self-drive two-wheeler rentals.',
       a: 'Yes, a valid Indian or International Driving Licence (MCWG / LMV class) is mandatory for renting any scooter or motorcycle on Rent on Cent.'
     },
     {
       q: 'How does booking work?',
+      shortA: 'Select bike → confirm on WhatsApp → complete instant digital KYC → collect keys & start your Vrindavan parikrama.',
       a: 'Browse bikes -> Click "Book on WhatsApp" -> Submit your preferred dates & vehicle -> Verify your ID & DL online -> Complete payment link -> Receive pickup location pin in Vrindavan.'
     },
     {
       q: 'How does the bike inspection work?',
+      shortA: 'You and host record fuel, odometer, and 6 timestamped photos before handover and at return, completely preventing unfair scratch fees.',
       a: 'Before taking keys, both you and the owner log odometer reading, fuel level, and capture 6 photos plus a 30-second walkaround video in our digital inspection tool. The same inspection is performed upon return to protect both parties.'
     },
     {
       q: 'What happens if the bike is damaged?',
+      shortA: 'Pre-existing scratches logged in pre-inspection are 100% exempt. New damages are settled at authorized service rates or covered by protection.',
       a: 'Pre-existing damages are logged during pre-inspection and won\'t be charged. For new damages incurred during your rental, repair costs are calculated transparently using standard authorized service center rates or covered under applicable Protection Plan terms.'
     },
     {
       q: 'What happens if I need to cancel?',
+      shortA: '100% free cancellation up to 12 hours before pickup. Cancellations within 12 hours receive a full 12-month credit voucher.',
       a: 'Free cancellation up to 12 hours before pickup. Cancellations made within 12 hours receive a full credit voucher valid for 12 months for your next Vrindavan trip.'
     },
     {
       q: 'How does protection/insurance work?',
+      shortA: 'Protection plans cover 24/7 on-ground roadside assistance across Mathura-Vrindavan, third-party liability, and digital damage audit.',
       a: 'Our optional Protection Plan covers roadside assistance in Vrindavan, third-party liability, and digital inspection audit protection without requiring huge security cash deposits.'
     }
   ];
@@ -413,6 +422,79 @@ export const CustomerView = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      </section>
+
+      {/* COMPACT TRUST BOX: Vehicle Verification, Rider KYC & Inspection Steps in Plain Language */}
+      <section className="max-w-7xl mx-auto px-4 pt-6 pb-2">
+        <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 text-white rounded-3xl p-5 sm:p-7 border border-emerald-500/30 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div className="relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-emerald-500/20">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-400 shrink-0">
+                  <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-extrabold text-base sm:text-lg text-white">
+                    Verified Safe &amp; Transparent Rental Guarantee
+                  </h3>
+                  <p className="text-xs text-slate-300">
+                    How Rent on Cent protects pilgrims and tourists in plain, transparent language:
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-extrabold bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-400/30 flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                  <span>100% On-Ground Protected</span>
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+              {/* 1. Vehicle Verification */}
+              <div className="bg-slate-900/80 p-4 rounded-2xl border border-emerald-500/20 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                    <Bike className="w-4 h-4" />
+                  </div>
+                  <h4 className="font-heading font-bold text-sm text-white">1. Vehicle Verification</h4>
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Every scooty and bike undergoes physical road-tests and document scrutiny (active RC, fitness check, and valid insurance) before going live. No illegal touts or breakdown-prone bikes.
+                </p>
+              </div>
+
+              {/* 2. Rider KYC */}
+              <div className="bg-slate-900/80 p-4 rounded-2xl border border-emerald-500/20 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-teal-500/20 flex items-center justify-center text-teal-400 shrink-0">
+                    <UserCheck className="w-4 h-4" />
+                  </div>
+                  <h4 className="font-heading font-bold text-sm text-white">2. Rider KYC in 2 Mins</h4>
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Fast digital verification with your Aadhaar / Passport and valid Driving Licence (DigiLocker supported). Data is securely encrypted—we never hold your original physical documents.
+                </p>
+              </div>
+
+              {/* 3. Inspection Steps */}
+              <div className="bg-slate-900/80 p-4 rounded-2xl border border-emerald-500/20 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
+                    <Camera className="w-4 h-4" />
+                  </div>
+                  <h4 className="font-heading font-bold text-sm text-white">3. Digital Inspection Steps</h4>
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Before keys handover, you and the host capture 6 exterior photos plus fuel and odometer readings. The exact same check on return ensures zero false scratch disputes or hidden fees.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -914,8 +996,15 @@ export const CustomerView = () => {
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             {/* Avatar & Info */}
             <div className="flex flex-col items-center sm:items-start shrink-0 mx-auto sm:mx-0">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-tr from-slate-900 via-teal-900 to-emerald-900 text-white flex items-center justify-center font-heading font-black text-3xl shadow-xl border-2 border-emerald-400/50">
-                <span>SD</span>
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shadow-xl border-2 border-emerald-400/50 bg-slate-900 relative group">
+                <img
+                  src="/data/profile-image/shivamdixit.png"
+                  alt="Shivam Dixit - Founder & CEO, Rent on Cent"
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                  width={112}
+                  height={112}
+                  loading="lazy"
+                />
               </div>
 
               <div className="mt-4 text-center sm:text-left space-y-1">
@@ -1024,28 +1113,68 @@ export const CustomerView = () => {
       {/* 6. FAQ SECTION */}
       <section className="bg-white py-16 border-t border-slate-200">
         <div className="max-w-4xl mx-auto px-4">
-          <div className="text-center mb-10">
+          <div className="text-center mb-8">
             <span className="text-xs font-extrabold text-emerald-700 uppercase tracking-wider font-mono">Got Questions?</span>
             <h2 className="font-heading font-extrabold text-3xl text-slate-900 mt-1">Frequently Asked Questions</h2>
+            <p className="text-xs text-slate-500 mt-1">Quick, transparent answers for yatris, tourists, and bike renters in Vrindavan.</p>
+          </div>
+
+          {/* Quick Answers at a Glance for Most Common Questions */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+            <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-4 space-y-1">
+              <span className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider font-mono">Top Answer • Pricing</span>
+              <h4 className="font-bold text-slate-900 text-xs">How much does scooty rental cost?</h4>
+              <p className="text-xs text-slate-700 leading-relaxed">
+                Starts from <strong>₹40/hr</strong> &amp; <strong>₹299/day</strong> for Activa 6G &amp; EV scooters. Includes 2 sanitized ISI helmets, roadside help, and zero security deposit.
+              </p>
+            </div>
+            <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-4 space-y-1">
+              <span className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider font-mono">Top Answer • Documents</span>
+              <h4 className="font-bold text-slate-900 text-xs">What documents do I need to rent?</h4>
+              <p className="text-xs text-slate-700 leading-relaxed">
+                Just a valid <strong>two-wheeler Driving Licence (DL)</strong> and government photo ID (<strong>Aadhaar/Passport</strong>). DigiLocker is 100% accepted—no physical papers kept.
+              </p>
+            </div>
+            <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-4 space-y-1">
+              <span className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider font-mono">Top Answer • Cancellation</span>
+              <h4 className="font-bold text-slate-900 text-xs">What if I need to cancel my booking?</h4>
+              <p className="text-xs text-slate-700 leading-relaxed">
+                <strong>100% free cancellation</strong> up to 12 hours before pickup. If cancelled within 12 hours, you get a full 100% rental credit voucher valid for 12 months.
+              </p>
+            </div>
+            <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-4 space-y-1">
+              <span className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider font-mono">Top Answer • Inspection</span>
+              <h4 className="font-bold text-slate-900 text-xs">How does digital inspection protect me?</h4>
+              <p className="text-xs text-slate-700 leading-relaxed">
+                A <strong>6-photo digital check</strong> records fuel, odometer, and prior scratches before handover. You are never blamed or charged for pre-existing marks.
+              </p>
+            </div>
           </div>
 
           <div className="space-y-3">
             {faqData.map((faq, idx) => (
-              <div key={idx} className="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50">
+              <div key={idx} className="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50 transition-all">
                 <button
                   onClick={() => setOpenFaqIndex(openFaqIndex === idx ? -1 : idx)}
-                  className="w-full text-left p-4 sm:p-5 flex items-center justify-between gap-4 font-heading font-bold text-slate-900 text-sm hover:bg-slate-100 transition-colors"
+                  className="w-full text-left p-4 sm:p-5 flex items-start justify-between gap-4 font-heading font-bold text-slate-900 text-sm hover:bg-slate-100 transition-colors"
                 >
-                  <span className="flex items-center gap-2">
-                    <HelpCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-                    {faq.q}
-                  </span>
+                  <div className="space-y-1 flex-1">
+                    <span className="flex items-center gap-2">
+                      <HelpCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                      {faq.q}
+                    </span>
+                    {/* Short, Visible Answer Directly Displayed on the page */}
+                    <p className="text-xs font-normal text-slate-600 pl-6 leading-relaxed">
+                      <span className="font-bold text-emerald-700">Quick Answer:</span> {faq.shortA}
+                    </p>
+                  </div>
                   <ChevronDown
-                    className={`w-4 h-4 text-slate-500 transition-transform ${openFaqIndex === idx ? 'rotate-180 text-emerald-600' : ''}`}
+                    className={`w-4 h-4 text-slate-500 shrink-0 mt-1 transition-transform ${openFaqIndex === idx ? 'rotate-180 text-emerald-600' : ''}`}
                   />
                 </button>
                 {openFaqIndex === idx && (
                   <div className="p-4 sm:p-5 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-200/60 bg-white">
+                    <span className="font-bold text-slate-800 block mb-1">Detailed Explanation:</span>
                     {faq.a}
                   </div>
                 )}
@@ -1114,7 +1243,33 @@ export const CustomerView = () => {
                 </div>
               </div>
 
-              <div className="space-y-2 pt-2">
+              {/* Cancellation, Refund & Protection Policy Rules Summary */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-1.5 text-left">
+                <div className="font-bold text-slate-900 flex items-center gap-1.5 text-xs text-emerald-800">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Cancellation, Refund &amp; Protection Rules</span>
+                </div>
+                <ul className="space-y-1 text-[11px] text-slate-600 pl-0.5">
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-emerald-600 font-bold shrink-0">•</span>
+                    <span><strong>Free Cancellation:</strong> 100% full refund if cancelled up to 12 hours before scheduled pickup.</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-emerald-600 font-bold shrink-0">•</span>
+                    <span><strong>Flexible Credit Voucher:</strong> Cancellations within 12 hours receive 100% rental credit valid for 12 months.</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-emerald-600 font-bold shrink-0">•</span>
+                    <span><strong>Scratch Protection:</strong> 6-photo pre-ride inspection logs prior scratches so you are never charged for pre-existing wear.</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-emerald-600 font-bold shrink-0">•</span>
+                    <span><strong>Zero Cash Deposit:</strong> Verified riders with valid DL &amp; Aadhaar pay ₹0 security cash deposit.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="space-y-2 pt-1">
                 <button
                   type="submit"
                   className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer shadow-md transition-all active:scale-[0.98]"

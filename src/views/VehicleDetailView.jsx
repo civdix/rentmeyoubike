@@ -434,10 +434,31 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
                       <span>{bookingLoading ? 'Reserving...' : '1-Click Instant Booking (Mails Admin)'}</span>
                     </button>
 
-                    <p className="text-[10px] text-slate-500 text-center flex items-center justify-center gap-1 pt-0.5">
-                      <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                      <span>Zero cancellation fee • Instant email alert sent to admin</span>
-                    </p>
+                    {/* Simple Bullet List: Cancellation, Refund & Protection Rules */}
+                    <div className="mt-3 p-3 bg-slate-50 rounded-xl border border-slate-200 text-left space-y-1.5">
+                      <div className="font-bold text-slate-900 flex items-center gap-1.5 text-xs text-emerald-800">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span>Cancellation, Refund &amp; Protection Rules</span>
+                      </div>
+                      <ul className="space-y-1 text-[11px] text-slate-600 pl-0.5">
+                        <li className="flex items-start gap-1.5">
+                          <span className="text-emerald-600 font-bold shrink-0">•</span>
+                          <span><strong>Free Cancellation:</strong> 100% full refund if cancelled up to 12 hours prior to scheduled pickup.</span>
+                        </li>
+                        <li className="flex items-start gap-1.5">
+                          <span className="text-emerald-600 font-bold shrink-0">•</span>
+                          <span><strong>100% Credit Voucher:</strong> Cancel within 12 hours and receive full credit valid for 12 months.</span>
+                        </li>
+                        <li className="flex items-start gap-1.5">
+                          <span className="text-emerald-600 font-bold shrink-0">•</span>
+                          <span><strong>Scratch Protection:</strong> 6-angle digital inspection logs pre-existing marks to protect you.</span>
+                        </li>
+                        <li className="flex items-start gap-1.5">
+                          <span className="text-emerald-600 font-bold shrink-0">•</span>
+                          <span><strong>Zero Cash Deposit:</strong> No security deposit required with verified KYC (DL + Aadhaar).</span>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 )}
               </div>
@@ -659,9 +680,29 @@ export const VehicleDetailView = ({ vehicle, onClose }) => {
                 10. Frequently asked questions
               </h3>
               <div className="space-y-2">
-                <div className="bg-amber-50 p-3 rounded-xl border border-amber-300">
-                  <span className="font-bold text-amber-950 block">What if I do not have a driving licence or do not know how to ride?</span>
-                  <span className="text-amber-900">Simply add <strong>"Bike Saathi" (₹500/day)</strong> during booking! A verified local Vrindavan rider will drive you around and act as your tour guide.</span>
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-0.5">
+                  <span className="font-bold text-slate-900 block text-xs">What documents are required to rent?</span>
+                  <p className="text-slate-600 text-xs leading-relaxed">
+                    <span className="font-bold text-emerald-700">Quick Answer:</span> Government photo ID (Aadhaar/Passport) and valid 2-wheeler Driving Licence (DL). DigiLocker is 100% accepted—no physical papers kept.
+                  </p>
+                </div>
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-0.5">
+                  <span className="font-bold text-slate-900 block text-xs">How does pickup &amp; doorstep delivery work?</span>
+                  <p className="text-slate-600 text-xs leading-relaxed">
+                    <span className="font-bold text-emerald-700">Quick Answer:</span> Pickup at Prem Mandir hub or request 15-minute doorstep delivery at your hotel, ashram, or Mathura Junction (Platform 1).
+                  </p>
+                </div>
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-0.5">
+                  <span className="font-bold text-slate-900 block text-xs">How does the 6-photo inspection protect me?</span>
+                  <p className="text-slate-600 text-xs leading-relaxed">
+                    <span className="font-bold text-emerald-700">Quick Answer:</span> You and host photograph odometer, fuel &amp; pre-existing scratches before taking keys and at return, completely preventing false scratch disputes.
+                  </p>
+                </div>
+                <div className="bg-amber-50 p-3 rounded-xl border border-amber-300 space-y-0.5">
+                  <span className="font-bold text-amber-950 block text-xs">What if I do not have a driving licence or do not know how to ride?</span>
+                  <p className="text-amber-900 text-xs leading-relaxed">
+                    <span className="font-bold text-amber-950">Quick Answer:</span> Simply add <strong>&quot;Bike Saathi&quot; (₹500/day)</strong> during booking! A verified local Vrindavan rider will drive you around and act as your tour guide.
+                  </p>
                 </div>
               </div>
             </div>

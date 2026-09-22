@@ -605,7 +605,33 @@ export const MarketplaceView = () => {
                 </div>
               </div>
 
-              <div className="space-y-2 pt-2">
+              {/* Cancellation, Refund & Protection Policy Rules Summary */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-1.5 text-left">
+                <div className="font-bold text-slate-900 flex items-center gap-1.5 text-xs text-emerald-800">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Cancellation, Refund &amp; Protection Rules</span>
+                </div>
+                <ul className="space-y-1 text-[11px] text-slate-600 pl-0.5">
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-emerald-600 font-bold shrink-0">•</span>
+                    <span><strong>Free Cancellation:</strong> 100% full refund if cancelled up to 12 hours before scheduled pickup.</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-emerald-600 font-bold shrink-0">•</span>
+                    <span><strong>Flexible Credit Voucher:</strong> Cancellations within 12 hours receive 100% rental credit valid for 12 months.</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-emerald-600 font-bold shrink-0">•</span>
+                    <span><strong>Scratch Protection:</strong> 6-photo pre-ride inspection logs prior scratches so you are never charged for pre-existing wear.</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-emerald-600 font-bold shrink-0">•</span>
+                    <span><strong>Zero Cash Deposit:</strong> Verified riders with valid DL &amp; Aadhaar pay ₹0 security cash deposit.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="space-y-2 pt-1">
                 <button 
                   type="submit" 
                   className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer shadow-md transition-all active:scale-[0.98]"
