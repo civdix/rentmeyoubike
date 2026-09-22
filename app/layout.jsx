@@ -314,6 +314,8 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap"
           rel="stylesheet"
         />
+        <link rel="ai-catalog" href="/.well-known/ai-catalog.json" />
+        <link rel="api-catalog" href="/.well-known/api-catalog" />
         {/* Preload critical LCP Hero Image for Core Web Vitals */}
         <link
           rel="preload"
@@ -321,6 +323,55 @@ export default function RootLayout({ children }) {
           href="/images/hero-rider-vrindavan.webp"
           type="image/webp"
           fetchPriority="high"
+        />
+        {/* WebMCP: Expose site tools to AI agents per WebMachineLearning spec */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined' && 'modelContext' in navigator) {
+                try {
+                  navigator.modelContext.registerTool({
+                    name: 'search_rentoncent_bikes',
+                    description: 'Search available rental scooters, bikes, and EVs in Vrindavan and Mathura with prices starting at ₹299/day.',
+                    inputSchema: {
+                      type: 'object',
+                      properties: {
+                        category: { type: 'string', description: 'scooter, bike, or ev' },
+                        pickupLocation: { type: 'string', description: 'Location in Vrindavan/Mathura' }
+                      }
+                    },
+                    execute: async (params) => {
+                      const res = await fetch('/api/vehicles');
+                      return await res.json();
+                    }
+                  });
+                  navigator.modelContext.registerTool({
+                    name: 'get_rental_rates',
+                    description: 'Get verified rental tariffs for Honda Activa 6G, TVS Jupiter, EV scooters, and Royal Enfield cruisers.',
+                    inputSchema: {
+                      type: 'object',
+                      properties: {
+                        durationDays: { type: 'number', description: 'Rental duration in days' }
+                      }
+                    },
+                    execute: async (params) => {
+                      return {
+                        activa6g: 299 * (params?.durationDays || 1),
+                        jupiter125: 320 * (params?.durationDays || 1),
+                        evScooter: 349 * (params?.durationDays || 1),
+                        classic350: 899 * (params?.durationDays || 1),
+                        currency: 'INR',
+                        deposit: 0,
+                        freeHelmets: 2
+                      };
+                    }
+                  });
+                } catch (e) {
+                  console.debug('WebMCP init', e);
+                }
+              }
+            `
+          }}
         />
         <script
           type="application/ld+json"

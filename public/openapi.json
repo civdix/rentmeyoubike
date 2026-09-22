@@ -3,7 +3,7 @@
   "info": {
     "title": "Rent on Cent API",
     "version": "1.0.0",
-    "description": "Peer-to-peer bike and scooter rental platform API for Vrindavan and Mathura.",
+    "description": "Peer-to-peer bike, scooty, and EV rental platform API for Vrindavan, Mathura, Govardhan, and Yamuna Expressway.",
     "contact": {
       "name": "Rent on Cent Support",
       "url": "https://rentoncent.bond",
@@ -16,13 +16,37 @@
       "description": "Production Server"
     }
   ],
+  "x-service-info": {
+    "serviceName": "Rent on Cent Vrindavan Vehicle Rental Service",
+    "description": "Verified scooter, bike, and electric two-wheeler rentals with doorstep delivery across Mathura and Vrindavan.",
+    "category": "transportation",
+    "pricing": {
+      "model": "per_day",
+      "basePrice": 299,
+      "currency": "INR",
+      "hourlyStarting": 40
+    }
+  },
   "paths": {
     "/api/health": {
       "get": {
         "summary": "Health check",
         "description": "Returns backend service health status.",
         "responses": {
-          "200": { "description": "Service is healthy" }
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "ok" },
+                    "timestamp": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -31,16 +55,118 @@
         "summary": "List available rental vehicles",
         "description": "Fetches verified scooters, bikes, and EVs available for rent in Vrindavan and Mathura.",
         "responses": {
-          "200": { "description": "Array of vehicle listings" }
+          "200": {
+            "description": "Array of vehicle listings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "model": { "type": "string", "example": "Honda Activa 6G" },
+                      "category": { "type": "string", "example": "scooter" },
+                      "pricePerDay": { "type": "number", "example": 299 },
+                      "available": { "type": "boolean", "example": true }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/bookings": {
       "post": {
         "summary": "Create booking reservation",
-        "description": "Submits a rental booking request for a vehicle.",
+        "description": "Submits a rental booking request for a vehicle with doorstep delivery in Vrindavan.",
+        "x-payment-info": {
+          "methods": [
+            "upi",
+            "razorpay",
+            "stripe",
+            "cash"
+          ],
+          "intents": [
+            "charge",
+            "reservation"
+          ],
+          "currencies": [
+            "INR"
+          ],
+          "categories": [
+            "transportation",
+            "vehicle-rental",
+            "tourism"
+          ],
+          "amount": 299,
+          "hasDescription": true,
+          "description": "Two-wheeler rental booking fee starting at ₹299/day with ₹0 cash deposit and 2 free helmets."
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["vehicleId", "startDate", "endDate", "customerName", "phone"],
+                "properties": {
+                  "vehicleId": { "type": "string" },
+                  "startDate": { "type": "string", "format": "date" },
+                  "endDate": { "type": "string", "format": "date" },
+                  "customerName": { "type": "string" },
+                  "phone": { "type": "string" },
+                  "deliveryHub": { "type": "string", "example": "Prem Mandir, Raman Reti" }
+                }
+              }
+            }
+          }
+        },
         "responses": {
-          "200": { "description": "Booking confirmation" }
+          "200": {
+            "description": "Booking confirmation and reservation ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "bookingId": { "type": "string" },
+                    "status": { "type": "string", "example": "confirmed" },
+                    "totalAmount": { "type": "number", "example": 299 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/locations": {
+      "get": {
+        "summary": "List delivery hubs and micro-locations",
+        "description": "Returns verified pickup and doorstep delivery points in Mathura and Vrindavan.",
+        "responses": {
+          "200": {
+            "description": "Array of delivery hubs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": { "type": "string", "example": "Prem Mandir Hub" },
+                      "address": { "type": "string" },
+                      "latitude": { "type": "number" },
+                      "longitude": { "type": "number" }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
