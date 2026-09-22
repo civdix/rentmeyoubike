@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useApp } from '../context/AppContext';
-import { MapPin, User, LogIn, LogOut, ChevronDown, ShieldCheck, Bike, Search, CalendarCheck, UserPlus, Mail, PlusCircle, IndianRupee, Star, Briefcase } from 'lucide-react';
+import { MapPin, User, LogIn, LogOut, ChevronDown, ShieldCheck, Bike, Search, CalendarCheck, UserPlus, Mail, PlusCircle, IndianRupee, Briefcase } from 'lucide-react';
 import { VrindavanScooterIcon, VrindavanFeatherIcon, WhatsAppBrandIcon, KeyHandoverIcon } from './CustomIcons';
 
 export const Header = () => {
@@ -323,17 +323,6 @@ export const Header = () => {
                   {userBookingsCount}
                 </span>
               )}
-            </Link>
-            <Link
-              href="/reviews"
-              className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
-                pathname === '/reviews'
-                  ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-              }`}
-            >
-              <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-              <span>Reviews</span>
             </Link>
             <Link
               href="/jobs-in-vrindavan"
