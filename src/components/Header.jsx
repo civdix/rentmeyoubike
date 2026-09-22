@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useApp } from '../context/AppContext';
@@ -27,6 +27,34 @@ export const Header = () => {
   } = useApp();
 
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const profileDropdownRef = useRef(null);
+
+  // Close profile dropdown when clicking anywhere outside on the screen or pressing Escape
+  useEffect(() => {
+    if (!profileDropdownOpen) return;
+
+    const handleClickOutside = (event) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
+        setProfileDropdownOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [profileDropdownOpen]);
 
   const activeVehiclesCount = useMemo(() => {
     return (vehicles || []).filter(
@@ -374,7 +402,7 @@ export const Header = () => {
           )}
 
           {/* User Profile / Sign In Dropdown */}
-          <div className="relative shrink-0">
+          <div ref={profileDropdownRef} className="relative shrink-0">
             {currentUser ? (
               <div>
                 <button
@@ -382,8 +410,19 @@ export const Header = () => {
                   className="flex flex-col items-center justify-center bg-slate-800 hover:bg-slate-750 border border-slate-700 py-1 px-2 rounded-xl transition-all shadow-sm cursor-pointer shrink-0"
                   title={`${currentUser.name} (${currentUser.role === 'admin' ? 'Admin' : role === 'owner' ? 'Host' : 'Renter'})`}
                 >
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 text-white font-extrabold flex items-center justify-center text-[10px] shadow-xs">
-                    {currentUser.name ? currentUser.name[0].toUpperCase() : 'U'}
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 text-white font-extrabold flex items-center justify-center text-[10px] shadow-xs overflow-hidden">
+                    {currentUser.avatar || currentUser.profileImage || (currentUser.name?.toLowerCase().includes('shivam') ? '/data/profile-image/shivamdixit.png' : null) ? (
+                      <img
+                        src={currentUser.avatar || currentUser.profileImage || '/data/profile-image/shivamdixit.png'}
+                        alt={currentUser.name || 'User Profile'}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      currentUser.name ? currentUser.name[0].toUpperCase() : 'U'
+                    )}
                   </div>
                   <span className="text-[8px] font-black text-emerald-400 uppercase tracking-tighter leading-none mt-0.5">
                     {currentUser.role === 'admin' ? 'Admin' : role === 'owner' ? 'Host' : 'Renter'}
@@ -391,87 +430,96 @@ export const Header = () => {
                 </button>
 
                 {profileDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-60 max-w-[calc(100vw-24px)] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-2 z-50 animate-fadeIn">
-                    <div className="px-3 py-2.5 border-b border-slate-800 text-[11px]">
-                      <p className="text-slate-400">Signed in as</p>
-                      <p className="font-bold text-white truncate text-xs">{currentUser.name}</p>
-                      <p className="text-[10px] text-emerald-400 font-mono mt-0.5 truncate">
-                        {currentUser.phone || currentUser.email || 'Unified Account'}
-                      </p>
-                    </div>
+                  <>
+                    {/* Transparent Click Backdrop: dismisses menu when clicking anywhere on screen */}
+                    <div
+                      className="fixed inset-0 z-40 bg-transparent cursor-default"
+                      onClick={() => setProfileDropdownOpen(false)}
+                      aria-hidden="true"
+                    />
 
-                    <div className="py-1 space-y-0.5 text-xs font-medium">
-                      {role !== 'customer' ? (
+                    <div className="absolute right-0 mt-2 w-60 max-w-[calc(100vw-24px)] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-2 z-50 animate-fadeIn">
+                      <div className="px-3 py-2.5 border-b border-slate-800 text-[11px]">
+                        <p className="text-slate-400">Signed in as</p>
+                        <p className="font-bold text-white truncate text-xs">{currentUser.name}</p>
+                        <p className="text-[10px] text-emerald-400 font-mono mt-0.5 truncate">
+                          {currentUser.phone || currentUser.email || 'Unified Account'}
+                        </p>
+                      </div>
+
+                      <div className="py-1 space-y-0.5 text-xs font-medium">
+                        {role !== 'customer' ? (
+                          <button
+                            onClick={() => {
+                              setProfileDropdownOpen(false);
+                              handleSwitchToRenter();
+                            }}
+                            className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
+                          >
+                            <VrindavanScooterIcon className="w-3.5 h-3.5 text-emerald-400" />
+                            <span>Switch to Renter View</span>
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setProfileDropdownOpen(false);
+                              promptSwitchToHost();
+                            }}
+                            className="w-full text-left px-3 py-2 text-amber-300 hover:text-amber-200 hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2 cursor-pointer font-bold"
+                          >
+                            <KeyHandoverIcon className="w-3.5 h-3.5 text-amber-400" />
+                            <span>Switch to Host / Fleet Host</span>
+                          </button>
+                        )}
+
+                        {role === 'owner' ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setProfileDropdownOpen(false);
+                              setHostTab('bookings');
+                              if (pathname !== '/host') router.push('/host?tab=bookings');
+                            }}
+                            className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
+                          >
+                            <CalendarCheck className="w-3.5 h-3.5 text-teal-400" />
+                            <span>Fleet Bookings ({myHostBookingsCount})</span>
+                          </button>
+                        ) : (
+                          <Link
+                            href="/my-bookings"
+                            onClick={() => setProfileDropdownOpen(false)}
+                            className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2"
+                          >
+                            <CalendarCheck className="w-3.5 h-3.5 text-teal-400" />
+                            <span>My Bookings</span>
+                          </Link>
+                        )}
+
+                        {/* Admin Access ONLY for verified platform administrators */}
+                        {currentUser?.role === 'admin' && (
+                          <Link
+                            href="/admin"
+                            onClick={() => setProfileDropdownOpen(false)}
+                            className="w-full text-left px-3 py-2 text-purple-300 hover:text-white hover:bg-purple-950/40 rounded-xl transition-colors flex items-center gap-2"
+                          >
+                            <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
+                            <span>Admin Control Center</span>
+                          </Link>
+                        )}
+                      </div>
+
+                      <div className="pt-1 border-t border-slate-800">
                         <button
-                          onClick={() => {
-                            setProfileDropdownOpen(false);
-                            handleSwitchToRenter();
-                          }}
-                          className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
+                          onClick={handleSignOut}
+                          className="w-full text-left px-3 py-2 text-xs text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
                         >
-                          <VrindavanScooterIcon className="w-3.5 h-3.5 text-emerald-400" />
-                          <span>Switch to Renter View</span>
+                          <LogOut className="w-3.5 h-3.5 text-rose-400" />
+                          <span>Sign Out</span>
                         </button>
-                      ) : (
-                        <button
-                          onClick={() => {
-                            setProfileDropdownOpen(false);
-                            promptSwitchToHost();
-                          }}
-                          className="w-full text-left px-3 py-2 text-amber-300 hover:text-amber-200 hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2 cursor-pointer font-bold"
-                        >
-                          <KeyHandoverIcon className="w-3.5 h-3.5 text-amber-400" />
-                          <span>Switch to Host / Fleet Host</span>
-                        </button>
-                      )}
-
-                      {role === 'owner' ? (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setProfileDropdownOpen(false);
-                            setHostTab('bookings');
-                            if (pathname !== '/host') router.push('/host?tab=bookings');
-                          }}
-                          className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
-                        >
-                          <CalendarCheck className="w-3.5 h-3.5 text-teal-400" />
-                          <span>Fleet Bookings ({myHostBookingsCount})</span>
-                        </button>
-                      ) : (
-                        <Link
-                          href="/my-bookings"
-                          onClick={() => setProfileDropdownOpen(false)}
-                          className="w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-2"
-                        >
-                          <CalendarCheck className="w-3.5 h-3.5 text-teal-400" />
-                          <span>My Bookings</span>
-                        </Link>
-                      )}
-
-                      {/* Admin Access ONLY for verified platform administrators */}
-                      {currentUser?.role === 'admin' && (
-                        <Link
-                          href="/admin"
-                          onClick={() => setProfileDropdownOpen(false)}
-                          className="w-full text-left px-3 py-2 text-purple-300 hover:text-white hover:bg-purple-950/40 rounded-xl transition-colors flex items-center gap-2"
-                        >
-                          <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
-                          <span>Admin Control Center</span>
-                        </Link>
-                      )}
+                      </div>
                     </div>
-
-                    <div className="pt-1 border-t border-slate-800">
-                      <button
-                        onClick={handleSignOut}
-                        className="w-full text-left px-3 py-2 text-xs text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
-                      >
-                        <LogOut className="w-3.5 h-3.5 text-rose-400" />
-                        <span>Sign Out</span>
-                      </button>
-                    </div>
-                  </div>
+                  </>
                 )}
               </div>
             ) : (
