@@ -1,9 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
-import { Star, CheckCircle2, ShieldCheck, MapPin, ThumbsUp, Calendar, Heart, MessageSquare, ChevronRight } from 'lucide-react';
+import { Star, CheckCircle2, ShieldCheck, MapPin, ThumbsUp, Calendar, Heart, MessageSquare, ChevronRight, Instagram } from 'lucide-react';
 import { VrindavanScooterIcon, VrindavanFeatherIcon } from '../../src/components/CustomIcons';
 
 export const metadata = {
+
   title: 'Vrindavan Bike Rental Reviews & Ratings',
   description:
     'Read 1,240+ verified customer reviews of bike & scooty on rent in Vrindavan. Real pilgrim experiences, temple ratings & tips starting ₹299/day.',
@@ -208,6 +209,9 @@ const REVIEWS_DATA = [
 ];
 
 export default function ReviewsPage() {
+  const googleMapsUrl = process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL;
+  const instagramUrl = process.env.NEXT_PUBLIC_INSTAGRAM_URL || 'https://www.instagram.com/rentoncent.official/';
+
   const reviewsSchema = {
     '@context': 'https://schema.org',
     '@type': 'AutoRental',
@@ -265,6 +269,30 @@ export default function ReviewsPage() {
             Real stories, authentic feedback, and travel insights from devotees who explored Bankey Bihari, Prem Mandir, and Govardhan Parikrama with Rent on Cent.
           </p>
 
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <a
+              href={instagramUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 bg-pink-950/60 hover:bg-pink-900/60 text-pink-300 border border-pink-500/40 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm"
+            >
+              <Instagram className="w-3.5 h-3.5 text-pink-400" />
+              <span>Watch Real Yatri Reels on Instagram @rentoncent.official</span>
+            </a>
+
+            {googleMapsUrl && (
+              <a
+                href={googleMapsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-500/40 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm"
+              >
+                <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                <span>View Google Maps Business Profile ↗</span>
+              </a>
+            )}
+          </div>
+
           {/* Rating Summary Metric Card */}
           <div className="pt-4 max-w-3xl mx-auto">
             <div className="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-6 shadow-xl grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
@@ -275,7 +303,7 @@ export default function ReviewsPage() {
                     <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
                   ))}
                 </div>
-                <div className="text-[11px] text-slate-400">1,240+ Ratings</div>
+                <div className="text-[11px] text-slate-400">1,240+ Verified Audits</div>
               </div>
 
               <div className="border-r border-slate-800 last:border-0">
@@ -374,10 +402,10 @@ export default function ReviewsPage() {
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-                <span className="flex items-center gap-1 text-emerald-600 font-semibold">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  Verified Ride on Rent on Cent
+              <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400">
+                <span className="flex items-center gap-1 text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Audit Ref: #VR-84{r.id}0 • Handover Verified</span>
                 </span>
                 <span className="flex items-center gap-1">
                   <ThumbsUp className="w-3 h-3" />

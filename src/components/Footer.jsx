@@ -27,12 +27,29 @@ export const Footer = () => {
             </div>
           </Link>
           <p className="text-slate-400 leading-relaxed text-xs max-w-sm">
-            &quot;Rent on Cent&quot; — The premier peer-to-peer bike and scooter rental platform connecting local hosts with visiting pilgrims and tourists in Vrindavan &amp; Mathura.
+            &quot;Rent on Cent&quot; — Founded by local Brajwasi engineer Shivam Dixit on Panighat Parikrama Marg. The premier peer-to-peer bike and scooter rental platform connecting verified local hosts with visiting pilgrims in Vrindavan &amp; Mathura.
           </p>
-          <div className="flex items-center gap-2 text-amber-400 font-bold text-xs">
-            <span className="bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded border border-amber-400/40">🪶 Radhe Radhe!</span>
-            <span className="text-slate-500">•</span>
-            <span className="text-slate-300 font-normal">Vrindavan Dham</span>
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded border border-amber-400/40 font-bold">🪶 Radhe Radhe!</span>
+            <a
+              href="https://www.instagram.com/rentoncent.official/"
+              target="_blank"
+              rel="noreferrer"
+              className="bg-pink-950/60 hover:bg-pink-900/60 text-pink-300 border border-pink-500/40 px-2.5 py-0.5 rounded font-bold transition-colors inline-flex items-center gap-1"
+            >
+              <span>Instagram @rentoncent.official</span>
+            </a>
+            {process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL && (
+              <a
+                href={process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded font-bold transition-colors inline-flex items-center gap-1"
+              >
+                <MapPin className="w-3 h-3 text-emerald-400" />
+                <span>Google Maps Profile</span>
+              </a>
+            )}
           </div>
         </div>
 
@@ -40,6 +57,11 @@ export const Footer = () => {
         <div>
           <p className="text-white font-bold mb-3 uppercase text-[11px] tracking-wider">Quick Links</p>
           <ul className="space-y-2">
+            <li>
+              <Link href="/about" className="hover:text-emerald-400 font-semibold transition-colors flex items-center gap-1">
+                <span>About Us &amp; Founder</span>
+              </Link>
+            </li>
             <li>
               <Link href="/rent-bike-cars-scooty-in" className="hover:text-white transition-colors">
                 Pickup Locations (13+)
@@ -142,8 +164,8 @@ export const Footer = () => {
         {/* Column 5: Contact & WhatsApp CTA */}
         <div>
           <p className="text-white font-bold mb-3 uppercase text-[11px] tracking-wider">Contact &amp; Location</p>
-          <p className="mb-3 text-slate-400 leading-relaxed">
-            Vrindavan Dham, Mathura Region, Uttar Pradesh
+          <p className="mb-2 text-slate-400 leading-relaxed text-[11px]">
+            <strong className="text-slate-300">Registered Hub:</strong> Panighat Parikrama Marg, Raman Reti, Vrindavan, Mathura UP 281121
           </p>
           <div className="space-y-2">
             <button
@@ -164,6 +186,17 @@ export const Footer = () => {
               <MessageSquare className="w-4 h-4 fill-white" strokeWidth={2.5} />
               <span>24x7 WhatsApp Helpdesk</span>
             </a>
+            {process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL && (
+              <a
+                href={process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full inline-flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/40 px-3 py-2 rounded-xl font-bold text-xs transition-colors"
+              >
+                <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                <span>View on Google Maps ↗</span>
+              </a>
+            )}
           </div>
         </div>
       </div>

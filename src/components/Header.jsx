@@ -125,6 +125,16 @@ export const Header = () => {
               <span className="hidden sm:inline">WhatsApp Help</span>
             </a>
 
+            <a
+              href="https://www.instagram.com/rentoncent.official/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Rent on Cent Instagram"
+              className="inline-flex items-center gap-1 text-pink-400 hover:text-pink-300 font-bold"
+            >
+              <span>Instagram</span>
+            </a>
+
             <span className="text-slate-700 hidden sm:inline">•</span>
 
             <button
@@ -322,6 +332,15 @@ export const Header = () => {
             >
               <Briefcase className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span>Jobs (Earn 10%)</span>
+            </Link>
+            <Link
+              href="/about"
+              className={`px-2.5 py-1 rounded-xl transition-all flex items-center gap-1 shrink-0 ${pathname === '/about'
+                  ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                }`}
+            >
+              <span>About Us</span>
             </Link>
           </nav>
         )}

@@ -12,7 +12,7 @@ import {
   Info, CheckCircle2, ChevronRight, AlertCircle, Clock, Sparkles, Heart, Compass,
   HelpCircle, ChevronDown, Check, FileText, Camera, IndianRupee, PhoneCall, Key, Award,
   Smartphone, UserCheck, RefreshCw, Lock,
-  Home, LogIn, User, UserPlus, Zap
+  Home, LogIn, User, UserPlus, Zap, Linkedin, Globe, Instagram, ExternalLink
 } from 'lucide-react';
 import { SocialShareBar } from '../components/SocialShareBar';
 import {
@@ -902,6 +902,116 @@ export const CustomerView = () => {
                   <span>List Your Bike (Takes 2 Mins)</span>
                 </button>
                 <span className="text-[11px] text-slate-400">• You keep 85% of every rental booking</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5.5 MEET THE FOUNDER & LOCAL TEAM */}
+      <section className="max-w-7xl mx-auto px-4 py-14">
+        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm relative overflow-hidden">
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
+            {/* Avatar & Info */}
+            <div className="flex flex-col items-center sm:items-start shrink-0 mx-auto sm:mx-0">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-tr from-slate-900 via-teal-900 to-emerald-900 text-white flex items-center justify-center font-heading font-black text-3xl shadow-xl border-2 border-emerald-400/50">
+                <span>SD</span>
+              </div>
+
+              <div className="mt-4 text-center sm:text-left space-y-1">
+                <h3 className="text-xl font-extrabold text-slate-900 font-heading">
+                  Shivam Dixit
+                </h3>
+                <p className="text-xs font-bold text-emerald-700">Founder &amp; CEO, Rent on Cent</p>
+                <p className="text-[11px] text-slate-500 flex items-center justify-center sm:justify-start gap-1">
+                  <MapPin className="w-3 h-3 text-emerald-600 shrink-0" />
+                  <span>Panighat Parikrama Marg, Vrindavan</span>
+                </p>
+              </div>
+
+              {/* Founder Social Profile Links */}
+              <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-100 w-full justify-center sm:justify-start">
+                <a
+                  href="https://linkedin.com/in/shivdix"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-sky-600 transition-colors cursor-pointer"
+                  title="Shivam Dixit LinkedIn"
+                >
+                  <Linkedin className="w-4 h-4" />
+                </a>
+                <a
+                  href="https://shivamdixit.vercel.app"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-emerald-700 transition-colors cursor-pointer"
+                  title="Shivam Dixit Portfolio"
+                >
+                  <Globe className="w-4 h-4" />
+                </a>
+                <a
+                  href="https://www.instagram.com/rentoncent.official/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-pink-600 transition-colors cursor-pointer"
+                  title="Rent on Cent Instagram"
+                >
+                  <Instagram className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+
+            {/* Story & Operations */}
+            <div className="space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed flex-1">
+              <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-900 font-bold text-xs px-3 py-1 rounded-full border border-emerald-200">
+                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Local Brajwasi Leadership • Tech-Backed Trust</span>
+              </div>
+
+              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 font-heading">
+                Built by Locals to Protect Visiting Pilgrims
+              </h2>
+
+              <p>
+                &quot;Growing up on <strong>Panighat Parikrama Marg in Vrindavan</strong>, I watched visiting yatris and families face constant exploitation from unverified touts and unreasonable transport fares. As a software engineer, I built <strong>Rent on Cent</strong> to provide a secure, peer-to-peer two-wheeler sharing network — giving yatris clean, verified bikes from ₹299/day while empowering local vehicle owners with fair daily earnings.&quot;
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
+                <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl">
+                  <div className="font-bold text-slate-900 font-heading">Local Roots</div>
+                  <p className="text-slate-500 text-[11px] mt-0.5">Brajwasi native from Panighat Parikrama Marg, Vrindavan.</p>
+                </div>
+                <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl">
+                  <div className="font-bold text-slate-900 font-heading">Digital Safety</div>
+                  <p className="text-slate-500 text-[11px] mt-0.5">Automated Aadhaar/DL KYC and timestamped 6-photo inspection.</p>
+                </div>
+                <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl">
+                  <div className="font-bold text-slate-900 font-heading">On-Ground Fleet Team</div>
+                  <p className="text-slate-500 text-[11px] mt-0.5">Dedicated hub coordinators at Prem Mandir, Chattikara &amp; Mathura Jn.</p>
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => router.push('/about')}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline cursor-pointer"
+                >
+                  <span>Read our full story &amp; team mission</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+
+                {process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL && (
+                  <a
+                    href={process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-emerald-700 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg border border-slate-200 transition-colors"
+                  >
+                    <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>View on Google Maps ↗</span>
+                  </a>
+                )}
               </div>
             </div>
           </div>
