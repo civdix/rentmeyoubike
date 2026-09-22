@@ -188,10 +188,10 @@ export default function HomePage() {
           <div className="pt-6 border-t border-slate-800 space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                Popular Pickup Points &amp; Expressway Cut Handover Locations
+                Popular Pickup Points &amp; Expressway Cut Handover Locations (13+ Hubs)
               </h3>
               <a href="/locations" aria-label="Explore all pickup locations in Vrindavan and Mathura" className="text-xs text-amber-400 hover:underline font-semibold">
-                View All Locations &rarr;
+                View All 13+ Locations &rarr;
               </a>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
@@ -231,6 +231,41 @@ export default function HomePage() {
                 <div className="text-[11px] text-slate-400">Raman Reti Hub</div>
               </a>
               <a
+                href="/locations/iskcon-temple-vrindavan"
+                className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+              >
+                <div className="font-bold text-teal-300 truncate">ISKCON Krishna Balaram</div>
+                <div className="text-[11px] text-slate-400">Bhaktivedanta Swami Marg</div>
+              </a>
+              <a
+                href="/locations/nidhivan-seva-kunj"
+                className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+              >
+                <div className="font-bold text-emerald-300 truncate">Nidhivan &amp; Seva Kunj</div>
+                <div className="text-[11px] text-slate-400">Heritage Sacred Forest</div>
+              </a>
+              <a
+                href="/locations/barsana-radha-rani-temple"
+                className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+              >
+                <div className="font-bold text-purple-300 truncate">Barsana Radha Rani</div>
+                <div className="text-[11px] text-slate-400">Bhanugarh Hill &amp; Nandgaon</div>
+              </a>
+              <a
+                href="/locations/mathura-krishna-janmabhoomi"
+                className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+              >
+                <div className="font-bold text-amber-300 truncate">Krishna Janmabhoomi</div>
+                <div className="text-[11px] text-slate-400">Mathura Mandir Gate 3</div>
+              </a>
+              <a
+                href="/locations/gokul-raman-reti"
+                className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+              >
+                <div className="font-bold text-amber-300 truncate">Gokul &amp; Brahmand Ghat</div>
+                <div className="text-[11px] text-slate-400">Yamuna Barrage &amp; Ashram</div>
+              </a>
+              <a
                 href="/locations/mathura-junction-railway-station"
                 className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
               >
@@ -244,12 +279,36 @@ export default function HomePage() {
                 <div className="font-bold text-amber-300 truncate">Govardhan Parikrama</div>
                 <div className="text-[11px] text-slate-400">21 KM Sacred Route &amp; EV</div>
               </a>
+            </div>
+
+            {/* Special Callouts: Customer Reviews & Jobs in Vrindavan */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3">
               <a
-                href="/locations/hotels-tourist-service"
-                className="bg-slate-800/80 hover:bg-slate-750 p-2.5 rounded-xl border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+                href="/reviews"
+                className="bg-gradient-to-r from-slate-800 to-teal-950/80 p-3.5 rounded-xl border border-teal-500/30 flex items-center justify-between hover:border-teal-400 transition-colors"
               >
-                <div className="font-bold text-emerald-300 truncate">Hotels &amp; Ashrams</div>
-                <div className="text-[11px] text-slate-400">Doorstep Delivery (Auto Alt.)</div>
+                <div>
+                  <div className="font-bold text-white text-xs flex items-center gap-1.5">
+                    <span className="text-amber-400">★★★★★</span>
+                    <span>1,240+ Verified Pilgrimage Reviews</span>
+                  </div>
+                  <div className="text-[11px] text-slate-300 mt-0.5">Read real devotee travel feedback &amp; temple ratings</div>
+                </div>
+                <span className="text-xs font-bold text-emerald-400">Read &rarr;</span>
+              </a>
+
+              <a
+                href="/jobs-in-vrindavan"
+                className="bg-gradient-to-r from-slate-800 to-amber-950/80 p-3.5 rounded-xl border border-amber-500/30 flex items-center justify-between hover:border-amber-400 transition-colors"
+              >
+                <div>
+                  <div className="font-bold text-amber-300 text-xs flex items-center gap-1.5">
+                    <span>💼</span>
+                    <span>Jobs in Vrindavan &mdash; Earn 10% Commission</span>
+                  </div>
+                  <div className="text-[11px] text-slate-300 mt-0.5">Second hand income for auto drivers, guides &amp; locals</div>
+                </div>
+                <span className="text-xs font-bold text-amber-400">Apply &rarr;</span>
               </a>
             </div>
           </div>

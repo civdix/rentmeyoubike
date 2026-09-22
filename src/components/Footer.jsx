@@ -42,7 +42,7 @@ export const Footer = () => {
           <ul className="space-y-2">
             <li>
               <Link href="/locations" className="hover:text-white transition-colors">
-                Pickup Locations
+                Pickup Locations (13+)
               </Link>
             </li>
             <li>
@@ -51,12 +51,22 @@ export const Footer = () => {
               </Link>
             </li>
             <li>
+              <Link href="/reviews" className="hover:text-amber-400 font-semibold transition-colors flex items-center gap-1">
+                <span>Customer Reviews (4.9★)</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/jobs-in-vrindavan" className="hover:text-amber-300 text-amber-400 font-bold transition-colors flex items-center gap-1">
+                <span>Jobs in Vrindavan (Earn 10%)</span>
+              </Link>
+            </li>
+            <li>
               <button
                 type="button"
                 onClick={handleHostClick}
-                className="hover:text-white text-amber-400 font-bold transition-colors cursor-pointer text-left"
+                className="hover:text-white text-emerald-400 font-bold transition-colors cursor-pointer text-left"
               >
-                Host on Rent to Cent
+                Host on Rent on Cent
               </button>
             </li>
             <li>
@@ -165,8 +175,8 @@ export const Footer = () => {
             <MapPin className="w-3.5 h-3.5 text-emerald-400" />
             <span>Popular Rental Pickup Hubs &amp; Expressway Cuts</span>
           </p>
-          <Link href="/locations" aria-label="Explore all 8+ rental pickup locations in Mathura and Vrindavan" className="text-emerald-400 hover:underline text-[11px] font-semibold">
-            View All 8+ Pickup Locations →
+          <Link href="/locations" aria-label="Explore all 13+ rental pickup locations in Mathura and Vrindavan" className="text-emerald-400 hover:underline text-[11px] font-semibold">
+            View All 13+ Pickup Locations →
           </Link>
         </div>
         <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-slate-400">
@@ -188,6 +198,26 @@ export const Footer = () => {
           <span className="text-slate-700">•</span>
           <Link href="/locations/prem-mandir-raman-reti" className="hover:text-emerald-400 transition-colors">
             Prem Mandir &amp; Raman Reti
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/locations/iskcon-temple-vrindavan" className="hover:text-emerald-400 transition-colors">
+            ISKCON Krishna Balaram Mandir
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/locations/nidhivan-seva-kunj" className="hover:text-emerald-400 transition-colors">
+            Nidhivan &amp; Seva Kunj
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/locations/barsana-radha-rani-temple" className="hover:text-emerald-400 transition-colors">
+            Barsana Shri Radha Rani Mandir
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/locations/mathura-krishna-janmabhoomi" className="hover:text-emerald-400 transition-colors">
+            Krishna Janmabhoomi Mathura
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/locations/gokul-raman-reti" className="hover:text-emerald-400 transition-colors">
+            Gokul Dham &amp; Brahmand Ghat
           </Link>
           <span className="text-slate-700">•</span>
           <Link href="/locations/mathura-junction-railway-station" className="hover:text-emerald-400 transition-colors">

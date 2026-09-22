@@ -454,6 +454,291 @@ export const LOCATION_SEO_DATA = {
         a: 'Yes, all 24-hour daily rentals include overnight keeping at your hotel or ashram parking.'
       }
     ]
+  },
+
+  'iskcon-temple-vrindavan': {
+    slug: 'iskcon-temple-vrindavan',
+    name: 'ISKCON Krishna Balaram Mandir',
+    shortName: 'ISKCON Vrindavan',
+    metaTitle: 'ISKCON Temple Vrindavan Bike Rental',
+    metaDescription:
+      'Rent Honda Activa & EV scooty near ISKCON Temple on Bhaktivedanta Swami Marg. 2 free helmets, ₹0 deposit & fast delivery from ₹299/day.',
+    keywords: [
+      'iskcon vrindavan bike rental',
+      'scooty on rent near iskcon mandir',
+      'krishna balaram mandir scooty hire',
+      'raman reti two wheeler rental',
+      'iskcon temple bike hire vrindavan'
+    ],
+    headline: 'Bike & Scooty Rental near ISKCON Krishna Balaram Mandir',
+    subheadline: 'Convenient two-wheeler pickup on Bhaktivedanta Swami Marg for international devotees, yatris, and volunteers.',
+    geo: {
+      latitude: 27.5735,
+      longitude: 77.6841
+    },
+    landmark: 'Bhaktivedanta Swami Marg, Near ISKCON Krishna Balaram Mandir',
+    postalCode: '281121',
+    pickupDescription:
+      'Located in the heart of Raman Reti, ISKCON Krishna Balaram Mandir is the center of global devotion in Vrindavan. Avoid waiting for autos or negotiating rates by picking up your clean, verified scooty right outside the ISKCON guest house corridor.',
+    highlights: [
+      'Instant delivery to ISKCON Guesthouse and MVT Ashram',
+      'Under-seat storage for prasad, japa mala, and holy books',
+      '2 ISI certified helmets and phone mount included free',
+      '24/7 WhatsApp assistance in Hindi and English'
+    ],
+    travelTips: [
+      'Early morning Mangala Aarti (4:30 AM) is easily reached with an overnight-parked rental scooter.',
+      'Connects directly to Prem Mandir (2 mins) and Bankey Bihari (8 mins).',
+      'Dedicated two-wheeler parking available along the temple boundary wall.'
+    ],
+    pricing: [
+      { model: 'Honda Activa 6G', daily: '₹299/day', hourly: '₹40/hr', deposit: 'Fast KYC' },
+      { model: 'TVS Jupiter 125', daily: '₹320/day', hourly: '₹45/hr', deposit: 'Comfort' },
+      { model: 'High-Range EV Scooter', daily: '₹349/day', hourly: '₹50/hr', deposit: 'Eco Friendly' },
+      { model: 'Royal Enfield Classic 350', daily: '₹899/day', hourly: '₹120/hr', deposit: 'Cruiser' }
+    ],
+    faqs: [
+      {
+        q: 'Can international devotees rent a scooty with a foreign license?',
+        a: 'Yes! International visitors can submit an International Driving Permit (IDP) or national license along with their passport photo for quick digital verification.'
+      },
+      {
+        q: 'Is delivery available to ashrams near ISKCON?',
+        a: 'Yes, we deliver to Fogla Ashram, Maheshwari Bhawan, Ananda Krishna Van, and all accommodations along Bhaktivedanta Swami Marg.'
+      },
+      {
+        q: 'Can I rent a scooter just for Mangala Aarti and Sandhya Aarti?',
+        a: 'Yes, flexible hourly packages starting from ₹40/hr or 24-hour daily rentals starting at ₹299 are available.'
+      }
+    ]
+  },
+
+  'nidhivan-seva-kunj': {
+    slug: 'nidhivan-seva-kunj',
+    name: 'Nidhivan & Seva Kunj Heritage Zone',
+    shortName: 'Nidhivan',
+    metaTitle: 'Nidhivan & Seva Kunj Scooty Rental',
+    metaDescription:
+      'Rent quiet EV scooters & Activa near Nidhivan and Seva Kunj. Navigate narrow heritage galis easily with parking guidance from ₹299/day.',
+    keywords: [
+      'nidhivan vrindavan scooty hire',
+      'bike rental near seva kunj',
+      'nidhivan silent zone ev scooter',
+      'shahji temple bike rental vrindavan',
+      'old vrindavan two wheeler hire'
+    ],
+    headline: 'Scooty & EV Rental near Sacred Nidhivan & Seva Kunj',
+    subheadline: 'Silent, compact two-wheelers ideal for gliding through Vrindavan’s ancient spiritual forests and narrow corridors.',
+    geo: {
+      latitude: 27.5843,
+      longitude: 77.7025
+    },
+    landmark: 'Nidhivan Marg, Near Shahji Mandir & Seva Kunj',
+    postalCode: '281121',
+    pickupDescription:
+      'The sacred forests of Nidhivan and Seva Kunj feature narrow heritage lanes where four-wheelers cannot enter. A lightweight Honda Activa or eco-friendly electric scooter allows peaceful darshan without getting stuck in traffic jams.',
+    highlights: [
+      'Compact gearless scooters ideal for narrow old Vrindavan alleys',
+      'Eco-friendly EV scooters respecting sacred silence zones',
+      'Close to Shahji Temple, Radha Damodar, and Radha Raman Ji',
+      'Dedicated local parking coordination at Harinikunj Chauraha'
+    ],
+    travelTips: [
+      'Nidhivan gates strictly close before dusk (around 6:00 PM - 7:00 PM).',
+      'Always store sunglasses and bags inside the scooter boot to avoid monkey nuisance.',
+      'Park at designated stands near Harinikunj before entering forest lanes.'
+    ],
+    pricing: [
+      { model: 'Honda Activa 6G', daily: '₹299/day', hourly: '₹40/hr', deposit: 'Zero Deposit' },
+      { model: 'Electric Scooter (EV Silence)', daily: '₹349/day', hourly: '₹50/hr', deposit: 'Quiet Zone' },
+      { model: 'TVS Jupiter 125', daily: '₹320/day', hourly: '₹45/hr', deposit: 'Verified ID' },
+      { model: 'Hero Splendor / Commuter', daily: '₹350/day', hourly: '₹50/hr', deposit: 'High Mileage' }
+    ],
+    faqs: [
+      {
+        q: 'Can I drive directly inside Nidhivan?',
+        a: 'No vehicle is permitted inside the sacred forest walls. You can park at the authorized stand near the entrance gate and walk 50 meters to the temple.'
+      },
+      {
+        q: 'Is it safe from monkeys around Nidhivan?',
+        a: 'Yes, our scooters come with fully locked under-seat storage where you can securely store your prasad, specs, and mobile phones.'
+      },
+      {
+        q: 'What is the closest parking for Seva Kunj and Radha Raman Mandir?',
+        a: 'Harinikunj Chauraha and Vidyapeeth stands offer the closest secure two-wheeler parking.'
+      }
+    ]
+  },
+
+  'barsana-radha-rani-temple': {
+    slug: 'barsana-radha-rani-temple',
+    name: 'Barsana Shri Radha Rani Mandir',
+    shortName: 'Barsana Dham',
+    metaTitle: 'Barsana Radha Rani Mandir Bike Rental',
+    metaDescription:
+      'Rent Royal Enfield & Activa for day trips to Barsana Radha Rani Temple and Nandgaon. Highway ready bikes with 2 helmets from ₹299/day.',
+    keywords: [
+      'barsana bike rental',
+      'scooty on rent for barsana yatra',
+      'radha rani mandir bike trip',
+      'vrindavan to barsana bike hire',
+      'nandgaon barsana two wheeler package'
+    ],
+    headline: 'Bike on Rent for Barsana Shri Radha Rani Mandir',
+    subheadline: 'Take a scenic spiritual highway ride from Vrindavan to Barsana, Rangeeli Mahal, and Nandgaon.',
+    geo: {
+      latitude: 27.6493,
+      longitude: 77.3752
+    },
+    landmark: 'Shri Radha Rani Mandir Footwear Stand, Bhanugarh Hill, Barsana',
+    postalCode: '281405',
+    pickupDescription:
+      'Barsana is located 42 km from Vrindavan. Traveling by crowded shared bus or expensive private cab can cost ₹2,000+. Renting a sturdy Royal Enfield Classic 350 or comfortable Honda Activa gives you the freedom to explore Radha Rani Temple, Rangeeli Mahal, Pili Pokhar, and Nandgaon in a single day.',
+    highlights: [
+      'Highway-ready, inspected vehicles with tubeless puncture-resistant tires',
+      '2 ISI-approved helmets included for safe state highway riding',
+      'Easy parking at the base of Bhanugarh hill ropeway station',
+      'Fuel-efficient options allowing full Braj circuit on one tank'
+    ],
+    travelTips: [
+      'Vrindavan to Barsana takes approximately 1 hour 15 minutes via Kosi-Nandgaon Road.',
+      'Visit Radha Rani Temple early morning, followed by Rangeeli Mahal in the afternoon.',
+      'A ropeway is available at Bhanugarh hill for elderly devotees.'
+    ],
+    pricing: [
+      { model: 'Royal Enfield Classic 350', daily: '₹899/day', hourly: '₹120/hr', deposit: 'Best for Highway' },
+      { model: 'Honda Activa 6G (Highway Serviced)', daily: '₹299/day', hourly: '₹40/hr', deposit: 'Reliable' },
+      { model: 'Bajaj Pulsar 150', daily: '₹450/day', hourly: '₹60/hr', deposit: 'Touring' },
+      { model: 'TVS Jupiter 125', daily: '₹320/day', hourly: '₹45/hr', deposit: 'Comfort' }
+    ],
+    faqs: [
+      {
+        q: 'Can a 110cc scooty like Activa easily travel from Vrindavan to Barsana?',
+        a: 'Yes! The highway route is smooth and flat. Hundreds of our riders complete the Vrindavan-Barsana-Nandgaon day circuit on Honda Activa scooters comfortably.'
+      },
+      {
+        q: 'Is parking available near Barsana temple?',
+        a: 'Yes, large designated parking lots are situated right at the base of Radha Rani Mandir and the ropeway entrance.'
+      },
+      {
+        q: 'What is included for long-distance day trips?',
+        a: 'Every rental includes 2 sanitized helmets, mobile phone mount, 24/7 roadside breakdown assistance, and digital RC/insurance papers.'
+      }
+    ]
+  },
+
+  'mathura-krishna-janmabhoomi': {
+    slug: 'mathura-krishna-janmabhoomi',
+    name: 'Mathura Shri Krishna Janmabhoomi',
+    shortName: 'Krishna Janmabhoomi',
+    metaTitle: 'Krishna Janmabhoomi Mathura Bike Rental',
+    metaDescription:
+      'Rent a scooty or bike near Shri Krishna Janmabhoomi & Dwarkadhish Mandir in Mathura. Verified two-wheelers with ₹0 deposit from ₹299/day.',
+    keywords: [
+      'krishna janmabhoomi bike rental mathura',
+      'dwarkadhish temple scooty on rent',
+      'mathura city two wheeler hire',
+      'rent bike in mathura',
+      'vishram ghat bike rental'
+    ],
+    headline: 'Bike & Scooty on Rent near Shri Krishna Janmabhoomi',
+    subheadline: 'Explore Mathura’s ancient holy birthplace, Vishram Ghat, and Dwarkadhish Mandir with complete ease.',
+    geo: {
+      latitude: 27.5050,
+      longitude: 77.6690
+    },
+    landmark: 'Gate No. 3, Shri Krishna Janmabhoomi Complex, Mathura',
+    postalCode: '281001',
+    pickupDescription:
+      'Shri Krishna Janmabhoomi in Mathura is 11 km from Vrindavan. With high traffic congestion and narrow bazaars near Vishram Ghat, two-wheelers are by far the fastest and most economical way to tour Mathura and Vrindavan together.',
+    highlights: [
+      'Pickup near Janmabhoomi complex Gate 3 or Mathura Cantt',
+      'Fast access to Vishram Ghat Yamuna Aarti and Dwarkadhish Mandir',
+      'Luggage footboard space for carrying sweet boxes (Mathura peda)',
+      'Direct highway access back to Vrindavan in just 20 minutes'
+    ],
+    travelTips: [
+      'Electronic devices (mobiles/cameras) are strictly prohibited inside the Janmabhoomi sanctum; store them safely.',
+      'Evening Yamuna Aarti at Vishram Ghat begins around 6:45 PM.',
+      'Two-wheeler parking is available right opposite the Janmabhoomi police post.'
+    ],
+    pricing: [
+      { model: 'Honda Activa 6G', daily: '₹299/day', hourly: '₹40/hr', deposit: 'Zero Deposit' },
+      { model: 'TVS Jupiter 125', daily: '₹320/day', hourly: '₹45/hr', deposit: 'Verified ID' },
+      { model: 'EV Electric Scooter', daily: '₹349/day', hourly: '₹50/hr', deposit: 'Eco Clean' },
+      { model: 'Royal Enfield Classic 350', daily: '₹899/day', hourly: '₹120/hr', deposit: 'Touring' }
+    ],
+    faqs: [
+      {
+        q: 'Where do I park my scooter near Krishna Janmabhoomi?',
+        a: 'Authorized multi-level and open two-wheeler parking is located directly across Gate No. 3 and the Govind Nagar police station.'
+      },
+      {
+        q: 'Can I pick up the scooty in Mathura and drop it off in Vrindavan?',
+        a: 'Yes, cross-city pickup and drop-off between Mathura and Vrindavan is supported with advance notice.'
+      },
+      {
+        q: 'How long does it take to drive from Mathura Janmabhoomi to Vrindavan?',
+        a: 'It takes just 20 to 25 minutes along the smooth Mathura-Vrindavan Marg.'
+      }
+    ]
+  },
+
+  'gokul-raman-reti': {
+    slug: 'gokul-raman-reti',
+    name: 'Gokul Dham & Brahmand Ghat',
+    shortName: 'Gokul Raman Reti',
+    metaTitle: 'Gokul Dham & Brahmand Ghat Bike Hire',
+    metaDescription:
+      'Rent a two-wheeler to visit Gokul Dham, Raman Reti, Brahmand Ghat & 84 Khamba. Escape traffic on smooth Activa & EV scooty from ₹299/day.',
+    keywords: [
+      'gokul bike rental',
+      'scooty on rent in gokul mathura',
+      'brahmand ghat scooter hire',
+      'raman reti gokul two wheeler',
+      'chaurasi khamba mahavan bike hire'
+    ],
+    headline: 'Two-Wheeler Rental for Gokul Dham & Brahmand Ghat',
+    subheadline: 'Experience the serene childhood pastimes of Shri Krishna across Gokul, Mahavan, and holy Yamuna ghats.',
+    geo: {
+      latitude: 27.4420,
+      longitude: 77.7210
+    },
+    landmark: 'Raman Reti Ashram & Brahmand Ghat Entrance, Gokul',
+    postalCode: '281303',
+    pickupDescription:
+      'Gokul lies across the holy Yamuna River, featuring the blessed Raman Reti sand grounds, Brahmand Ghat (where Kanha ate clay), and Chaurasi Khamba temple. Having your own scooter lets you glide through scenic village riverside roads without relying on scarce shared autos.',
+    highlights: [
+      'Scenic Yamuna barrage highway drive from Mathura/Vrindavan',
+      'Direct access to Gokul Raman Reti deer sanctuary and ashram',
+      'Quiet electric and petrol scooters ideal for pastoral rural roads',
+      'Includes 2 helmets and mobile charging port for map navigation'
+    ],
+    travelTips: [
+      'Take the Gokul Barrage route from Mathura (approx 9 km / 18 minutes).',
+      'Roll in the sacred soft sands of Gokul Raman Reti where infant Krishna played.',
+      'Feed the deer and peacocks at Raman Reti ashram grounds.'
+    ],
+    pricing: [
+      { model: 'Honda Activa 6G', daily: '₹299/day', hourly: '₹40/hr', deposit: 'Fast KYC' },
+      { model: 'Electric Scooter (EV Quiet)', daily: '₹349/day', hourly: '₹50/hr', deposit: 'Village Friendly' },
+      { model: 'TVS Jupiter 125', daily: '₹320/day', hourly: '₹45/hr', deposit: 'Comfort' },
+      { model: 'Royal Enfield Classic 350', daily: '₹899/day', hourly: '₹120/hr', deposit: 'Heritage' }
+    ],
+    faqs: [
+      {
+        q: 'How far is Gokul from Vrindavan by scooter?',
+        a: 'Gokul is approximately 22 km from Vrindavan via Mathura Bypass or Raya Cut, taking around 35 to 40 minutes of pleasant riding.'
+      },
+      {
+        q: 'Is parking easy at Gokul Raman Reti?',
+        a: 'Yes, ample shaded parking for two-wheelers is available right outside the Raman Reti Ashram and Brahmand Ghat gates.'
+      },
+      {
+        q: 'Can I visit Gokul and Mathura on the same day?',
+        a: 'Yes, Gokul is only 15 minutes from Mathura, making it the perfect half-day extension to your Mathura Janmabhoomi trip.'
+      }
+    ]
   }
 };
 
