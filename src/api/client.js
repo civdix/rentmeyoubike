@@ -486,6 +486,8 @@ export async function apiFetchMessages(params = {}) {
   if (params.conversationId) query.append('conversationId', params.conversationId);
   if (params.bookingId) query.append('bookingId', params.bookingId);
   if (params.customerPhone) query.append('customerPhone', params.customerPhone);
+  if (params.limit !== undefined && params.limit !== null) query.append('limit', params.limit);
+  if (params.offset !== undefined && params.offset !== null) query.append('offset', params.offset);
   const qs = query.toString();
   return request(`/messages${qs ? `?${qs}` : ''}`);
 }

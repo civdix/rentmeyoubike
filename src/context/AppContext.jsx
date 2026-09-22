@@ -47,39 +47,28 @@ const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   // Active App Role: 'customer' | 'owner' | 'admin'
-  const [role, setRole] = useState(() => {
-    if (typeof window === 'undefined') return 'customer';
-    try {
-      const savedUser = JSON.parse(localStorage.getItem('vr_user') || '{}');
-      if (savedUser?.role === 'admin' || localStorage.getItem('vr_admin_token')) {
-        return 'admin';
-      }
-    } catch {}
-    const saved = localStorage.getItem('vr_role') || 'customer';
-    return saved;
-  });
+  const [role, setRole] = useState('customer');
 
   // Authenticated user session
-  const [currentUser, setCurrentUser] = useState(() => {
-    if (typeof window === 'undefined') return null;
-    try {
-      const saved = localStorage.getItem('vr_user');
-      if (saved) return JSON.parse(saved);
-      if (localStorage.getItem('vr_admin_token')) {
-        return { id: 'admin-1', name: 'Platform Administrator', role: 'admin' };
-      }
-      return null;
-    } catch {
-      return null;
-    }
-  });
+  const [currentUser, setCurrentUser] = useState(null);
 
   // Login Modal State
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [loginRoleTarget, setLoginRoleTarget] = useState('customer');
   const [loginModalMode, setLoginModalMode] = useState('login'); // 'login' | 'signup'
 
+  // State with LocalStorage persistence + API sync (SSR-safe initial defaults)
+  const [vehicles, setVehicles] = useState(INITIAL_VEHICLES);
+  const [bookings, setBookings] = useState(INITIAL_BOOKINGS);
+  const [inspections, setInspections] = useState(INITIAL_INSPECTIONS);
 
+  // Sensitive directory collections kept in reactive memory only (never written to localStorage)
+  const [customers, setCustomers] = useState([]);
+  const [owners, setOwners] = useState([]);
+  const [disputes, setDisputes] = useState([]);
+
+  const [adminSettings, setAdminSettingsState] = useState(INITIAL_ADMIN_SETTINGS);
+  const [legalConfig, setLegalConfigState] = useState(INITIAL_LEGAL_CONFIG);
 
   // Listen for unauthorized 401 events from API
   useEffect(() => {
@@ -91,84 +80,94 @@ export const AppProvider = ({ children }) => {
     return () => window.removeEventListener('vr_unauthorized', handleUnauthorized);
   }, [role]);
 
-  // Security: Purge sensitive collections and legacy mock data from browser localStorage
+  // Client-Side Hydration Sync & Security Cleanup (runs only in browser after hydration)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // Never persist sensitive directory lists in client localStorage
+    if (typeof window === 'undefined') return;
+
+    try {
+      // Purge sensitive collections and legacy mock data
       localStorage.removeItem('vr_customers');
       localStorage.removeItem('vr_owners');
       localStorage.removeItem('vr_disputes');
 
-      const legacyBookings = localStorage.getItem('vr_bookings');
-      if (legacyBookings && legacyBookings.includes('VRB-9021')) {
-        localStorage.removeItem('vr_bookings');
-        setBookings([]);
+      // 1. Restore User and Role safely
+      const savedUserStr = localStorage.getItem('vr_user');
+      let restoredUser = null;
+      if (savedUserStr) {
+        try {
+          restoredUser = JSON.parse(savedUserStr);
+          if (restoredUser && typeof restoredUser === 'object') {
+            setCurrentUser(restoredUser);
+          }
+        } catch {}
+      } else if (localStorage.getItem('vr_admin_token')) {
+        restoredUser = { id: 'admin-1', name: 'Platform Administrator', role: 'admin' };
+        setCurrentUser(restoredUser);
       }
+
+      if (restoredUser?.role === 'admin' || localStorage.getItem('vr_admin_token')) {
+        setRole('admin');
+      } else {
+        const savedRole = localStorage.getItem('vr_role');
+        if (savedRole) setRole(savedRole);
+      }
+
+      // 2. Restore Vehicles
       const legacyVehicles = localStorage.getItem('vr_vehicles');
       if (legacyVehicles && legacyVehicles.includes('Radhe Divine Edition')) {
         localStorage.removeItem('vr_vehicles');
         setVehicles([]);
+      } else if (legacyVehicles) {
+        try {
+          const parsed = JSON.parse(legacyVehicles);
+          if (Array.isArray(parsed) && parsed.length > 0) setVehicles(parsed);
+        } catch {}
       }
+
+      // 3. Restore Bookings
+      const legacyBookings = localStorage.getItem('vr_bookings');
+      if (legacyBookings && legacyBookings.includes('VRB-9021')) {
+        localStorage.removeItem('vr_bookings');
+        setBookings([]);
+      } else if (legacyBookings) {
+        try {
+          const parsed = JSON.parse(legacyBookings);
+          if (Array.isArray(parsed) && parsed.length > 0) setBookings(parsed);
+        } catch {}
+      }
+
+      // 4. Restore Inspections
+      const savedInsp = localStorage.getItem('vr_inspections');
+      if (savedInsp) {
+        try {
+          const parsed = JSON.parse(savedInsp);
+          if (parsed && typeof parsed === 'object') setInspections(parsed);
+        } catch {}
+      }
+
+      // 5. Restore Settings & Legal
+      const savedSettings = localStorage.getItem('vr_admin_settings');
+      if (savedSettings) {
+        try {
+          const parsed = JSON.parse(savedSettings);
+          if (parsed && typeof parsed === 'object') setAdminSettingsState(parsed);
+        } catch {}
+      }
+
+      const savedLegal = localStorage.getItem('vr_legal');
+      if (savedLegal) {
+        try {
+          const parsed = JSON.parse(savedLegal);
+          if (parsed && typeof parsed === 'object') setLegalConfigState(parsed);
+        } catch {}
+      }
+
+      const savedHostTab = localStorage.getItem('vr_host_tab');
+      if (savedHostTab) setHostTab(savedHostTab);
+    } catch (err) {
+      console.warn('[AppContext] Client hydration restoration notice:', err);
     }
   }, []);
-
-  // State with LocalStorage persistence + API sync
-  const [vehicles, setVehicles] = useState(() => {
-    if (typeof window === 'undefined') return INITIAL_VEHICLES;
-    try {
-      const saved = localStorage.getItem('vr_vehicles');
-      if (saved && saved.includes('Radhe Divine Edition')) return [];
-      return saved ? JSON.parse(saved) : INITIAL_VEHICLES;
-    } catch {
-      return [];
-    }
-  });
-
-  const [bookings, setBookings] = useState(() => {
-    if (typeof window === 'undefined') return INITIAL_BOOKINGS;
-    try {
-      const saved = localStorage.getItem('vr_bookings');
-      if (saved && saved.includes('VRB-9021')) return [];
-      return saved ? JSON.parse(saved) : INITIAL_BOOKINGS;
-    } catch {
-      return [];
-    }
-  });
-
-  const [inspections, setInspections] = useState(() => {
-    if (typeof window === 'undefined') return INITIAL_INSPECTIONS;
-    try {
-      const saved = localStorage.getItem('vr_inspections');
-      return saved ? JSON.parse(saved) : INITIAL_INSPECTIONS;
-    } catch {
-      return {};
-    }
-  });
-
-  // Sensitive directory collections kept in reactive memory only (never written to localStorage)
-  const [customers, setCustomers] = useState([]);
-  const [owners, setOwners] = useState([]);
-  const [disputes, setDisputes] = useState([]);
-
-  const [adminSettings, setAdminSettingsState] = useState(() => {
-    if (typeof window === 'undefined') return INITIAL_ADMIN_SETTINGS;
-    try {
-      const saved = localStorage.getItem('vr_admin_settings');
-      return saved ? JSON.parse(saved) : INITIAL_ADMIN_SETTINGS;
-    } catch {
-      return INITIAL_ADMIN_SETTINGS;
-    }
-  });
-
-  const [legalConfig, setLegalConfigState] = useState(() => {
-    if (typeof window === 'undefined') return INITIAL_LEGAL_CONFIG;
-    try {
-      const saved = localStorage.getItem('vr_legal');
-      return saved ? JSON.parse(saved) : INITIAL_LEGAL_CONFIG;
-    } catch {
-      return INITIAL_LEGAL_CONFIG;
-    }
-  });
 
   // Modals & UI Selection state
   const [selectedVehicle, setSelectedVehicle] = useState(null);
@@ -323,10 +322,7 @@ export const AppProvider = ({ children }) => {
   const closeSwitchToHostModal = () => setIsSwitchToHostModalOpen(false);
 
   // Host Portal Navigation Tab: 'inventory' | 'add_new' | 'bookings' | 'payments'
-  const [hostTab, setHostTab] = useState(() => {
-    if (typeof window === 'undefined') return 'inventory';
-    return localStorage.getItem('vr_host_tab') || 'inventory';
-  });
+  const [hostTab, setHostTab] = useState('inventory');
 
   const handleSetHostTab = (newTab) => {
     setHostTab(newTab);

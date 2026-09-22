@@ -40,7 +40,11 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
     createdAt: new Date(Date.now() + 1000).toISOString()
   };
 
-  const [messages, setMessages] = useState([defaultInitialMessage, defaultAdminWelcomeMessage]);
+  const [messages, setMessages] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
   const [inputText, setInputText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const chatContainerRef = useRef(null);
@@ -70,61 +74,105 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
     }
   };
 
-  // Fetch real message history and auto-poll every 2.5 seconds
+  // Fetch real message history and auto-poll every 4 seconds ONLY while modal is open
   useEffect(() => {
     let isMounted = true;
 
-    const fetchHistory = async () => {
+    const fetchHistory = async (isPolling = false) => {
       try {
-        const fetched = await apiFetchMessages({
+        const res = await apiFetchMessages({
           conversationId,
           bookingId: booking?.id,
-          customerPhone: customerPhone || currentUser?.phone
+          customerPhone: customerPhone || currentUser?.phone,
+          limit: 50,
+          offset: 0
         });
 
-        if (isMounted) {
-          if (Array.isArray(fetched) && fetched.length > 0) {
-            setMessages(fetched);
-          } else if (!hasSeededRef.current) {
-            hasSeededRef.current = true;
-            // Persist the booking inquiry and welcome message into the database
-            try {
-              const savedInquiry = await apiSendMessage({
-                conversationId,
-                bookingId: booking?.id || null,
-                customerName,
-                customerPhone,
-                senderRole: 'customer',
-                text: defaultBookingInquiryText
-              });
+        if (!isMounted) return;
 
-              const savedWelcome = await apiSendMessage({
-                conversationId,
-                bookingId: booking?.id || null,
-                customerName,
-                customerPhone,
-                senderRole: 'admin',
-                text: `Radhe Radhe! 🙏 Welcome to Rent to Cent Vrindavan.\n\nWe have received your booking inquiry for *${vehicleName}* (Ref: #${booking?.id || 'NEW'}).\nOur administrative desk is online right now. You can reply or ask any questions here directly, or proceed with verification below.`
-              });
+        const fetchedList = Array.isArray(res) ? res : (res?.messages || []);
+        const total = typeof res?.total === 'number' ? res.total : fetchedList.length;
+        const more = Boolean(res?.hasMore);
 
-              if (isMounted) {
-                setMessages([savedInquiry, savedWelcome]);
+        if (fetchedList.length > 0) {
+          if (!isPolling) {
+            setMessages(fetchedList);
+            setHasMore(more);
+            setTotalCount(total);
+            setIsLoading(false);
+          } else {
+            // Polling: merge any new incoming messages to the bottom, without wiping out earlier messages if loaded
+            setMessages((prev) => {
+              const existingIds = new Set(prev.map((m) => m.id));
+              const newMsgs = fetchedList.filter((m) => !existingIds.has(m.id));
+              if (newMsgs.length === 0) {
+                // Check if read status changed
+                const fetchedMap = new Map(fetchedList.map((m) => [m.id, m]));
+                let changed = false;
+                const next = prev.map((m) => {
+                  const f = fetchedMap.get(m.id);
+                  if (f && f.isRead !== m.isRead) {
+                    changed = true;
+                    return { ...m, isRead: f.isRead };
+                  }
+                  return m;
+                });
+                return changed ? next : prev;
               }
-            } catch (seedErr) {
-              console.warn('Could not auto-seed booking messages:', seedErr.message);
-              if (isMounted) {
-                setMessages([defaultInitialMessage, defaultAdminWelcomeMessage]);
-              }
+              setTotalCount(total);
+              return [...prev, ...newMsgs];
+            });
+          }
+        } else if (!hasSeededRef.current && !isPolling) {
+          hasSeededRef.current = true;
+          // Persist the booking inquiry and welcome message into the database
+          try {
+            const savedInquiry = await apiSendMessage({
+              conversationId,
+              bookingId: booking?.id || null,
+              customerName,
+              customerPhone,
+              senderRole: 'customer',
+              text: defaultBookingInquiryText
+            });
+
+            const savedWelcome = await apiSendMessage({
+              conversationId,
+              bookingId: booking?.id || null,
+              customerName,
+              customerPhone,
+              senderRole: 'admin',
+              text: `Radhe Radhe! 🙏 Welcome to Rent to Cent Vrindavan.\n\nWe have received your booking inquiry for *${vehicleName}* (Ref: #${booking?.id || 'NEW'}).\nOur administrative desk is online right now. You can reply or ask any questions here directly, or proceed with verification below.`
+            });
+
+            if (isMounted) {
+              setMessages([savedInquiry, savedWelcome]);
+              setHasMore(false);
+              setTotalCount(2);
+              setIsLoading(false);
+            }
+          } catch (seedErr) {
+            console.warn('Could not auto-seed booking messages:', seedErr.message);
+            if (isMounted) {
+              setMessages([defaultInitialMessage, defaultAdminWelcomeMessage]);
+              setHasMore(false);
+              setTotalCount(2);
+              setIsLoading(false);
             }
           }
+        } else if (!isPolling) {
+          setIsLoading(false);
         }
       } catch (err) {
-        console.warn('Error polling messages:', err.message);
+        console.warn('Error fetching messages:', err.message);
+        if (isMounted && !isPolling) {
+          setIsLoading(false);
+        }
       }
     };
 
-    fetchHistory();
-    const interval = setInterval(fetchHistory, 2500);
+    fetchHistory(false);
+    const interval = setInterval(() => fetchHistory(true), 4000);
 
     return () => {
       isMounted = false;
@@ -132,12 +180,54 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
     };
   }, [conversationId, booking?.id, customerPhone, currentUser?.phone, customerName, defaultBookingInquiryText, vehicleName]);
 
-  // Scroll ONLY the inner chat feed, never scrolling the outer window or page
+  // Load earlier 50 messages when requested
+  const handleLoadEarlier = async () => {
+    if (isLoadingEarlier || !hasMore) return;
+    setIsLoadingEarlier(true);
+    const scrollContainer = chatContainerRef.current;
+    const prevScrollHeight = scrollContainer ? scrollContainer.scrollHeight : 0;
+    try {
+      const res = await apiFetchMessages({
+        conversationId,
+        bookingId: booking?.id,
+        customerPhone: customerPhone || currentUser?.phone,
+        limit: 50,
+        offset: messages.length
+      });
+      const earlierList = Array.isArray(res) ? res : (res?.messages || []);
+      setHasMore(Boolean(res?.hasMore));
+      if (typeof res?.total === 'number') {
+        setTotalCount(res.total);
+      }
+
+      if (earlierList.length > 0) {
+        setMessages((prev) => {
+          const existingIds = new Set(prev.map((m) => m.id));
+          const uniqueEarlier = earlierList.filter((m) => !existingIds.has(m.id));
+          return [...uniqueEarlier, ...prev];
+        });
+
+        // Preserve scroll position so view doesn't abruptly jump
+        requestAnimationFrame(() => {
+          if (scrollContainer) {
+            const newScrollHeight = scrollContainer.scrollHeight;
+            scrollContainer.scrollTop = newScrollHeight - prevScrollHeight;
+          }
+        });
+      }
+    } catch (err) {
+      console.warn('Failed to load earlier messages:', err);
+    } finally {
+      setIsLoadingEarlier(false);
+    }
+  };
+
+  // Scroll to bottom on initial load and when new messages appear at the bottom
   useEffect(() => {
-    if (chatContainerRef.current) {
+    if (chatContainerRef.current && !isLoading && !isLoadingEarlier) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages.length, isLoading]);
 
   const handleSendMessage = async (e) => {
     if (e) e.preventDefault();
@@ -227,41 +317,84 @@ export const WhatsAppModal = ({ booking, vehicle, onClose, onLaunchKYC }) => {
         <div className="flex-1 min-h-0 flex flex-col bg-[#efeae2] relative overflow-hidden">
           {/* Real Live WhatsApp Chat Feed */}
           <div ref={chatContainerRef} className="p-4 flex-1 min-h-0 overflow-y-auto flex flex-col gap-3 custom-scrollbar">
-            {messages.map((msg, index) => {
-              const isMe = msg.senderRole === 'customer';
-              return (
-                <div
-                  key={msg.id || index}
-                  className={`max-w-[85%] rounded-lg p-3 text-xs shadow-sm relative transition-all ${
-                    isMe
-                      ? 'bg-[#d9fdd3] text-slate-900 self-end rounded-tr-none'
-                      : 'bg-white text-slate-900 self-start rounded-tl-none border border-slate-200/50'
-                  }`}
-                >
-                  {!isMe && (
-                    <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 mb-1">
-                      <span>{msg.senderName || 'Rent to Cent Admin'}</span>
-                      <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                    </div>
-                  )}
-
-                  {isMe && (
-                    <div className="text-[10px] font-semibold text-slate-500 mb-0.5">
-                      <span>You ({customerName})</span>
-                    </div>
-                  )}
-
-                  <p className="whitespace-pre-line leading-relaxed font-sans">{msg.text}</p>
-
-                  <div className="flex items-center justify-end gap-1 mt-1 text-[10px] text-slate-400">
-                    <span>{formatTime(msg.createdAt)}</span>
-                    {isMe && (
-                      <CheckCheck className={`w-3.5 h-3.5 ${msg.isRead ? 'text-sky-500' : 'text-emerald-600'}`} />
-                    )}
-                  </div>
+            {isLoading ? (
+              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-500 my-auto">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mb-3 shadow-xs border border-emerald-200">
+                  <Loader2 className="w-6 h-6 text-emerald-600 animate-spin" />
                 </div>
-              );
-            })}
+                <p className="font-bold text-xs text-slate-800">Connecting to Vrindavan Operations Desk...</p>
+                <p className="text-[11px] text-slate-500 mt-1">Retrieving latest chat &amp; booking updates</p>
+              </div>
+            ) : (
+              <>
+                {/* Pagination: Load earlier messages button */}
+                {hasMore && (
+                  <div className="flex justify-center my-1 shrink-0">
+                    <button
+                      type="button"
+                      onClick={handleLoadEarlier}
+                      disabled={isLoadingEarlier}
+                      className="text-[11px] font-semibold bg-white/95 hover:bg-white text-emerald-800 border border-emerald-300 hover:border-emerald-500 px-3.5 py-1.5 rounded-full shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-60 active:scale-95"
+                    >
+                      {isLoadingEarlier ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-600" />
+                          <span>Loading earlier messages...</span>
+                        </>
+                      ) : (
+                        <>
+                          <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Load earlier messages ({Math.max(0, totalCount - messages.length)} more)</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
+
+                {messages.length === 0 ? (
+                  <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-400 my-auto">
+                    <MessageSquare className="w-8 h-8 text-slate-300 mb-2" />
+                    <p className="text-xs font-medium">No messages yet. Send a greeting or inquiry below!</p>
+                  </div>
+                ) : (
+                  messages.map((msg, index) => {
+                    const isMe = msg.senderRole === 'customer';
+                    return (
+                      <div
+                        key={msg.id || index}
+                        className={`max-w-[85%] rounded-lg p-3 text-xs shadow-sm relative transition-all ${
+                          isMe
+                            ? 'bg-[#d9fdd3] text-slate-900 self-end rounded-tr-none'
+                            : 'bg-white text-slate-900 self-start rounded-tl-none border border-slate-200/50'
+                        }`}
+                      >
+                        {!isMe && (
+                          <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 mb-1">
+                            <span>{msg.senderName || 'Rent to Cent Admin'}</span>
+                            <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                          </div>
+                        )}
+
+                        {isMe && (
+                          <div className="text-[10px] font-semibold text-slate-500 mb-0.5">
+                            <span>You ({customerName})</span>
+                          </div>
+                        )}
+
+                        <p className="whitespace-pre-line leading-relaxed font-sans">{msg.text}</p>
+
+                        <div className="flex items-center justify-end gap-1 mt-1 text-[10px] text-slate-400">
+                          <span>{formatTime(msg.createdAt)}</span>
+                          {isMe && (
+                            <CheckCheck className={`w-3.5 h-3.5 ${msg.isRead ? 'text-sky-500' : 'text-emerald-600'}`} />
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </>
+            )}
           </div>
 
           {/* Quick Reply Suggestions Bar */}

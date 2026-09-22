@@ -306,7 +306,7 @@ const websiteSchema = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -335,7 +335,7 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
       </head>
-      <body className="antialiased min-h-screen bg-slate-50 text-slate-900">
+      <body className="antialiased min-h-screen bg-slate-50 text-slate-900" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>

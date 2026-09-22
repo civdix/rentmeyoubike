@@ -71,45 +71,62 @@ router.get('/conversations', requireRole('admin'), async (req, res) => {
 // GET /api/messages - Fetch messages for a specific conversation / booking / customer
 router.get('/', async (req, res) => {
   try {
-    const { conversationId, bookingId, customerPhone } = req.query;
+    const { conversationId, bookingId, customerPhone, limit, offset } = req.query;
 
     if (!conversationId && !bookingId && !customerPhone) {
       return res.status(400).json({ error: 'conversationId, bookingId, or customerPhone is required' });
     }
 
-    let query = 'SELECT * FROM messages WHERE 1=1';
+    let filterClause = ' WHERE 1=1';
     const params = {};
 
     if (conversationId) {
-      query += ' AND conversationId = @conversationId';
+      filterClause += ' AND conversationId = @conversationId';
       params.conversationId = String(conversationId).trim();
     } else if (bookingId) {
-      query += ' AND (bookingId = @bookingId OR conversationId = @bookingId OR conversationId = @convBooking)';
+      filterClause += ' AND (bookingId = @bookingId OR conversationId = @bookingId OR conversationId = @convBooking)';
       params.bookingId = String(bookingId).trim();
       params.convBooking = `conv-${String(bookingId).trim()}`;
     } else if (customerPhone) {
       const digits = String(customerPhone).replace(/[^0-9]/g, '');
-      query += ' AND (customerPhone LIKE @phonePattern OR conversationId LIKE @phonePattern)';
+      filterClause += ' AND (customerPhone LIKE @phonePattern OR conversationId LIKE @phonePattern)';
       params.phonePattern = `%${digits.slice(-10)}%`;
     }
 
-    query += ' ORDER BY createdAt ASC';
+    // Default limit: 50 messages, max: 100, default offset: 0
+    const parsedLimit = Math.max(1, Math.min(100, parseInt(limit, 10) || 50));
+    const parsedOffset = Math.max(0, parseInt(offset, 10) || 0);
 
-    const rows = await db.prepare(query).all(params);
-    const messages = (rows || []).map(formatMessage);
+    // Get total message count
+    const countRow = await db.prepare(`SELECT COUNT(*) AS total FROM messages${filterClause}`).get(params);
+    const total = Number(countRow?.total || countRow?.TOTAL || 0);
+
+    // Fetch latest messages (ordered DESC) with LIMIT & OFFSET
+    const dataQuery = `SELECT * FROM messages${filterClause} ORDER BY createdAt DESC LIMIT ${parsedLimit} OFFSET ${parsedOffset}`;
+    const rows = await db.prepare(dataQuery).all(params);
+
+    // Reverse to chronological order (oldest to newest for the client's chat feed)
+    const messages = (rows || []).reverse().map(formatMessage);
+    const hasMore = parsedOffset + parsedLimit < total;
 
     // Auto-mark as read based on who is reading
     const isAdmin = req.user && req.user.role === 'admin';
     const targetRole = isAdmin ? 'admin' : 'customer';
 
     if (messages.length > 0) {
-      const activeConvId = conversationId || messages[0].conversationId;
+      const activeConvId = conversationId || messages[messages.length - 1]?.conversationId;
       if (activeConvId) {
         db.prepare('UPDATE messages SET isRead = 1 WHERE conversationId = ? AND receiverRole = ?').run(activeConvId, targetRole);
       }
     }
 
-    res.json(messages);
+    res.json({
+      messages,
+      total,
+      hasMore,
+      limit: parsedLimit,
+      offset: parsedOffset
+    });
   } catch (error) {
     console.error('Error fetching messages:', error);
     res.status(500).json({ error: 'Failed to fetch messages' });

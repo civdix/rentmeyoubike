@@ -214,10 +214,9 @@ export const AdminView = () => {
   const loadActiveMessages = React.useCallback(async (convId) => {
     if (!convId) return;
     try {
-      const data = await apiFetchMessages({ conversationId: convId });
-      if (Array.isArray(data)) {
-        setActiveConvMessages(data);
-      }
+      const data = await apiFetchMessages({ conversationId: convId, limit: 100 });
+      const list = Array.isArray(data) ? data : (data?.messages || []);
+      setActiveConvMessages(list);
     } catch (err) {
       console.warn('Error fetching active chat messages:', err.message);
     }
@@ -250,8 +249,9 @@ export const AdminView = () => {
     setSelectedConvId(conv.conversationId);
     setChatLoading(true);
     try {
-      const data = await apiFetchMessages({ conversationId: conv.conversationId });
-      setActiveConvMessages(Array.isArray(data) ? data : []);
+      const data = await apiFetchMessages({ conversationId: conv.conversationId, limit: 100 });
+      const list = Array.isArray(data) ? data : (data?.messages || []);
+      setActiveConvMessages(list);
       await apiMarkMessagesRead(conv.conversationId);
       setConversations((prev) =>
         prev.map((c) => (c.conversationId === conv.conversationId ? { ...c, unreadCount: 0 } : c))
