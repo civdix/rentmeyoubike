@@ -4,9 +4,9 @@ import { ShieldCheck, MapPin, Heart, CheckCircle2, Bike, Award, Sparkles, Extern
 import { VrindavanFeatherIcon, VrindavanScooterIcon, WhatsAppBrandIcon } from '../../src/components/CustomIcons';
 
 export const metadata = {
-  title: 'About Rent on Cent | Founder, Story & Vrindavan Fleet Operations',
+  title: 'About Us & Vrindavan Fleet',
   description:
-    'Learn about Rent on Cent, founded by local Brajwasi engineer Shivam Dixit in Panighat, Vrindavan. Transparent peer-to-peer bike rentals protecting pilgrims from overcharging.',
+    'Learn about Rent on Cent, founded by Shivam Dixit in Vrindavan. Transparent peer-to-peer bike rentals protecting pilgrims from overcharging.',
   alternates: {
     canonical: 'https://rentoncent.bond/about'
   },
