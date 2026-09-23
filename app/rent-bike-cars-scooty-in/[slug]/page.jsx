@@ -62,6 +62,7 @@ export default async function LocationPage({ params }) {
     name: `Rent on Cent — ${loc.name}`,
     description: loc.metaDescription,
     url: `https://rentoncent.bond/rent-bike-cars-scooty-in/${loc.slug}`,
+    image: 'https://rentoncent.bond/og-customer.jpg',
     telephone: '+919720965985',
     email: 'support@rentoncent.bond',
     priceRange: '₹299 - ₹1200 / day',

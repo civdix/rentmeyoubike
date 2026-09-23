@@ -90,6 +90,7 @@ export const metadata = {
 const autoRentalSchema = {
   '@context': 'https://schema.org',
   '@type': 'AutoRental',
+  '@id': 'https://rentoncent.bond/#autorental',
   name: 'Rent on Cent',
   alternateName: [
     'Vrindavan Rental',
@@ -154,8 +155,7 @@ const autoRentalSchema = {
           serviceType: 'Two-Wheeler Rental',
           description: '110cc automatic scooter with 2 sanitized helmets and mobile holder included.',
           provider: {
-            '@type': 'AutoRental',
-            name: 'Rent on Cent'
+            '@id': 'https://rentoncent.bond/#autorental'
           }
         },
         price: '299',
@@ -171,8 +171,7 @@ const autoRentalSchema = {
           serviceType: 'Electric Scooter Rental',
           description: 'High-range electric scooter with 80-100 km range per charge. Free charging cables included.',
           provider: {
-            '@type': 'AutoRental',
-            name: 'Rent on Cent'
+            '@id': 'https://rentoncent.bond/#autorental'
           }
         },
         price: '349',
@@ -188,8 +187,7 @@ const autoRentalSchema = {
           serviceType: 'Cruiser Motorcycle Rental',
           description: '350cc cruiser bike perfect for Govardhan Parikrama and Mathura-Barsana circuits.',
           provider: {
-            '@type': 'AutoRental',
-            name: 'Rent on Cent'
+            '@id': 'https://rentoncent.bond/#autorental'
           }
         },
         price: '899',
