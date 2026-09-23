@@ -65,9 +65,18 @@ export const metadata = {
     images: ['https://rentoncent.bond/og-customer.jpg']
   },
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      { url: '/favicon.ico', sizes: '48x48 32x32 16x16' },
+      { url: '/favicon-48x48.png', sizes: '48x48', type: 'image/png' },
+      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+      { url: '/web-app-manifest-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/web-app-manifest-512x512.png', sizes: '512x512', type: 'image/png' },
+      { url: '/favicon.svg', type: 'image/svg+xml' }
+    ],
     shortcut: '/favicon-96x96.png',
-    apple: '/apple-touch-icon.png'
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
+    ]
   },
   manifest: '/site.webmanifest',
   robots: {
@@ -101,7 +110,7 @@ const autoRentalSchema = {
   ],
   slogan: 'Rent Ride Explore — Best Bike & Scooty on Rent in Vrindavan',
   url: 'https://rentoncent.bond',
-  logo: 'https://rentoncent.bond/full_Logo_rentoncent.svg',
+  logo: 'https://rentoncent.bond/logo_square_share_area.png',
   image: 'https://rentoncent.bond/og-customer.jpg',
   description:
     'Premier Vrindavan rental platform offering bike on rent in Vrindavan, scooty on rent in Vrindavan, and two wheeler rentals. Rent verified Honda Activa 6G, EV electric scooters, and Royal Enfield Classic 350 starting at ₹40/hr and ₹299/day with doorstep delivery to hotels, ashrams, and Mathura Junction.',
@@ -314,6 +323,15 @@ export default function RootLayout({ children }) {
         />
         <link rel="ai-catalog" href="/.well-known/ai-catalog.json" />
         <link rel="api-catalog" href="/.well-known/api-catalog" />
+        {/* Favicon & Search Engine Result Icons (Google Search Console & Bing Compliant) */}
+        <link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16" />
+        <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+        <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/web-app-manifest-192x192.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/web-app-manifest-512x512.png" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="shortcut icon" href="/favicon-96x96.png" />
         {/* Preload critical LCP Hero Image for Core Web Vitals */}
         <link
           rel="preload"
