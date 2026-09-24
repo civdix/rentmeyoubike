@@ -5,12 +5,12 @@
 
   <!-- Home / Main Rental Portal -->
   <url>
-    <loc>https://rentoncent.bond</loc>
-    <lastmod>2026-09-18T16:20:00+05:30</lastmod>
+    <loc>https://rentoncent.bond/</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
     <image:image>
-      <image:loc>https://rentoncent.bond/logo_square_share_area.png</image:loc>
+      <image:loc>https://rentoncent.bond/og-customer.jpg</image:loc>
       <image:title>Rent on Cent - Bike and Scooty Rental in Vrindavan</image:title>
       <image:caption>Affordable two-wheeler and electric scooter rentals in Vrindavan and Mathura</image:caption>
     </image:image>
@@ -19,7 +19,7 @@
   <!-- Browse Two-Wheelers Marketplace -->
   <url>
     <loc>https://rentoncent.bond/bikes</loc>
-    <lastmod>2026-09-18T16:20:00+05:30</lastmod>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
     <image:image>
@@ -31,8 +31,8 @@
 
   <!-- Location Hub Directory -->
   <url>
-    <loc>https://rentoncent.bond/locations</loc>
-    <lastmod>2026-09-18T16:20:00+05:30</lastmod>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <image:image>
@@ -44,112 +44,136 @@
 
   <!-- Micro-Location: Mathura Cut Yamuna Expressway -->
   <url>
-    <loc>https://rentoncent.bond/locations/mathura-cut-yamuna-expressway</loc>
-    <lastmod>2026-09-18T16:20:00+05:30</lastmod>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/mathura-cut-yamuna-expressway</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.88</priority>
-    <image:image>
-      <image:loc>https://rentoncent.bond/logo_square_share_area.png</image:loc>
-      <image:title>Bike on Rent on Mathura Cut Yamuna Expressway</image:title>
-      <image:caption>Scooter and bike rental delivery at Yamuna Expressway Mathura exit toll</image:caption>
-    </image:image>
   </url>
 
   <!-- Micro-Location: Raya Cut Yamuna Expressway -->
   <url>
-    <loc>https://rentoncent.bond/locations/raya-cut-yamuna-expressway</loc>
-    <lastmod>2026-09-18T16:20:00+05:30</lastmod>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/raya-cut-yamuna-expressway</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.88</priority>
-    <image:image>
-      <image:loc>https://rentoncent.bond/logo_square_share_area.png</image:loc>
-      <image:title>Raya Cut Yamuna Expressway Near Vrindavan Bike Rental Service</image:title>
-      <image:caption>Direct bike hire at Raya Interchange on Yamuna Expressway</image:caption>
-    </image:image>
   </url>
 
   <!-- Micro-Location: Chattikara Road -->
   <url>
-    <loc>https://rentoncent.bond/locations/chattikara-road</loc>
-    <lastmod>2026-09-18T16:20:00+05:30</lastmod>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/chattikara-road</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.88</priority>
-    <image:image>
-      <image:loc>https://rentoncent.bond/logo_square_share_area.png</image:loc>
-      <image:title>Bike Rental Service Near Chattikara Road Vrindavan</image:title>
-      <image:caption>Two-wheeler rental near Chattikara Chauraha, NH19 &amp; Vaishno Devi Mandir</image:caption>
-    </image:image>
   </url>
 
   <!-- Micro-Location: Bankey Bihari Ji Temple -->
   <url>
-    <loc>https://rentoncent.bond/locations/bankey-bihari-temple</loc>
-    <lastmod>2026-09-18T16:20:00+05:30</lastmod>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/bankey-bihari-temple</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.88</priority>
-    <image:image>
-      <image:loc>https://rentoncent.bond/logo_square_share_area.png</image:loc>
-      <image:title>Bike on Rent Near Bankey Bihari Ji Temple Vrindavan</image:title>
-      <image:caption>Rent a scooty for easy darshan access near Bankey Bihari Temple</image:caption>
-    </image:image>
   </url>
 
   <!-- Micro-Location: Prem Mandir & Raman Reti -->
   <url>
-    <loc>https://rentoncent.bond/locations/prem-mandir-raman-reti</loc>
-    <lastmod>2026-09-18T16:20:00+05:30</lastmod>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/prem-mandir-raman-reti</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <image:image>
-      <image:loc>https://rentoncent.bond/logo_square_share_area.png</image:loc>
-      <image:title>Bike &amp; Scooty Rental Near Prem Mandir &amp; Raman Reti Road</image:title>
-      <image:caption>Two-wheeler hire near Prem Mandir, ISKCON temple and Raman Reti ashrams</image:caption>
-    </image:image>
+    <priority>0.88</priority>
   </url>
 
   <!-- Micro-Location: Mathura Junction Railway Station -->
   <url>
-    <loc>https://rentoncent.bond/locations/mathura-junction-railway-station</loc>
-    <lastmod>2026-09-18T16:20:00+05:30</lastmod>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/mathura-junction-railway-station</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <image:image>
-      <image:loc>https://rentoncent.bond/logo_square_share_area.png</image:loc>
-      <image:title>Bike Rental at Mathura Junction Railway Station</image:title>
-      <image:caption>Platform exit delivery for tourists arriving by train at Mathura Cantt and Jn</image:caption>
-    </image:image>
+    <priority>0.88</priority>
   </url>
 
   <!-- Micro-Location: Govardhan Parikrama -->
   <url>
-    <loc>https://rentoncent.bond/locations/govardhan-parikrama</loc>
-    <lastmod>2026-09-18T16:20:00+05:30</lastmod>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/govardhan-parikrama</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <image:image>
-      <image:loc>https://rentoncent.bond/logo_square_share_area.png</image:loc>
-      <image:title>Govardhan Parikrama Bike &amp; Scooty Rental</image:title>
-      <image:caption>Reliable 2-wheeler rental for 21 KM Govardhan Parikrama, Radha Kund, and Kusum Sarovar</image:caption>
-    </image:image>
+    <priority>0.88</priority>
   </url>
 
   <!-- Micro-Location: Hotel & Tourist Service -->
   <url>
-    <loc>https://rentoncent.bond/locations/hotels-tourist-service</loc>
-    <lastmod>2026-09-18T16:20:00+05:30</lastmod>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/hotels-tourist-service</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- Micro-Location: ISKCON Temple Vrindavan -->
+  <url>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/iskcon-temple-vrindavan</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- Micro-Location: Nidhivan Seva Kunj -->
+  <url>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/nidhivan-seva-kunj</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- Micro-Location: Barsana Radha Rani Temple -->
+  <url>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/barsana-radha-rani-temple</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- Micro-Location: Mathura Krishna Janmabhoomi -->
+  <url>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/mathura-krishna-janmabhoomi</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- Micro-Location: Gokul Raman Reti -->
+  <url>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/gokul-raman-reti</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- Customer Reviews -->
+  <url>
+    <loc>https://rentoncent.bond/reviews</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- About Us & Founder -->
+  <url>
+    <loc>https://rentoncent.bond/about</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Jobs in Vrindavan -->
+  <url>
+    <loc>https://rentoncent.bond/jobs-in-vrindavan</loc>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
-    <image:image>
-      <image:loc>https://rentoncent.bond/logo_square_share_area.png</image:loc>
-      <image:title>Hotel &amp; Ashram Doorstep Bike Rental in Vrindavan &amp; Mathura</image:title>
-      <image:caption>Free doorstep handover to any hotel, resort, or dharamshala</image:caption>
-    </image:image>
   </url>
 
   <!-- Host Portal / List Your Bike -->
   <url>
     <loc>https://rentoncent.bond/host</loc>
-    <lastmod>2026-09-18T16:20:00+05:30</lastmod>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
@@ -157,7 +181,7 @@
   <!-- Rental Terms, Policies & Guidelines -->
   <url>
     <loc>https://rentoncent.bond/terms</loc>
-    <lastmod>2026-09-18T16:20:00+05:30</lastmod>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.50</priority>
   </url>
@@ -165,7 +189,7 @@
   <!-- Privacy Policy & KYC Security -->
   <url>
     <loc>https://rentoncent.bond/privacy</loc>
-    <lastmod>2026-09-18T16:20:00+05:30</lastmod>
+    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.50</priority>
   </url>

@@ -13,7 +13,7 @@ export default function sitemap() {
 
   return [
     {
-      url: `${baseUrl}`,
+      url: `${baseUrl}/`,
       lastModified: currentDate,
       changeFrequency: 'daily',
       priority: 1.0
@@ -44,10 +44,10 @@ export default function sitemap() {
       priority: 0.85
     },
     {
-      url: `${baseUrl}/jobs`,
+      url: `${baseUrl}/about`,
       lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.8
+      changeFrequency: 'monthly',
+      priority: 0.85
     },
     {
       url: `${baseUrl}/host`,

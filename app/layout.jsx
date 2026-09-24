@@ -39,11 +39,14 @@ export const metadata = {
   authors: [{ name: 'Rent on Cent', url: 'https://rentoncent.bond' }],
   creator: 'Rent on Cent',
   publisher: 'Rent on Cent',
+  alternates: {
+    canonical: '/'
+  },
   openGraph: {
     title: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty',
     description:
       'Rent verified Honda Activa, EV scooters & bikes in Vrindavan from ₹299/day. Free helmets and doorstep delivery.',
-    url: 'https://rentoncent.bond',
+    url: 'https://rentoncent.bond/',
     siteName: 'Rent on Cent - Vrindavan Rental',
     locale: 'en_IN',
     type: 'website',

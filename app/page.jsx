@@ -9,12 +9,12 @@ export const metadata = {
   description:
     'Rent bike and scooty in Vrindavan from ₹299/day. Verified Activa 6G & EV with zero deposit, free helmets & hotel delivery. Instant WhatsApp booking.',
   alternates: {
-    canonical: 'https://rentoncent.bond'
+    canonical: 'https://rentoncent.bond/'
   },
   openGraph: {
     title: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty',
     description: 'Rent Activa 6G, EV & Royal Enfield in Vrindavan from ₹299/day with zero deposit & doorstep delivery.',
-    url: 'https://rentoncent.bond',
+    url: 'https://rentoncent.bond/',
     siteName: 'Rent on Cent',
     locale: 'en_IN',
     type: 'website',

@@ -49,4 +49,4 @@ Content-Signal: ai-train=no, search=yes, ai-input=no
 Agentmap: https://rentoncent.bond/.well-known/ai-catalog.json
 
 Sitemap: https://rentoncent.bond/sitemap.xml
-Host: https://rentoncent.bond
+Host: rentoncent.bond

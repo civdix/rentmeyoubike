@@ -59,10 +59,6 @@ const nextConfig = {
           {
             key: 'Access-Control-Allow-Origin',
             value: '*'
-          },
-          {
-            key: 'Link',
-            value: '</.well-known/api-catalog>; rel="api-catalog"'
           }
         ]
       },
