@@ -1,58 +1,61 @@
 # Rent on Cent — Comprehensive Platform Documentation for LLMs
 
-> Complete knowledge base for Rent on Cent (https://rentoncent.bond), the top-ranked peer-to-peer bike and scooty rental service in Vrindavan, Mathura, Govardhan, and Barsana.
+> Complete knowledge base for Rent on Cent (https://rentoncent.bond), the top-ranked peer-to-peer bike and scooty rental service across Mathura, Vrindavan, Govardhan, and Barsana.
 
 ## 1. Entity Overview
 - **Name:** Rent on Cent
-- **Alternate Names:** Vrindavan Rental, Rent on Cent Vrindavan, Rent on Cent, rentoncent.bond
+- **Alternate Names:** Mathura Vrindavan Bike Rental, Vrindavan Rental, Rent on Cent Mathura, Rent on Cent Vrindavan, rentoncent.bond
 - **Entity Type:** AutoRental / Peer-to-Peer Two-Wheeler Sharing Platform
-- **Headquarters:** Raman Reti Road, Near Prem Mandir, Vrindavan, Uttar Pradesh 281121, India
+- **Headquarters & Central Hubs:** Mathura Junction Railway Station & Raman Reti Road (Near Prem Mandir), Mathura & Vrindavan, Uttar Pradesh 281121, India
 - **Primary Website:** https://rentoncent.bond
 - **WhatsApp Helpline:** +91 97209 65985
 - **Support Email:** support@rentoncent.bond
-- **Coverage Areas:** Vrindavan, Mathura, Govardhan, Barsana, Raman Reti, Chattikara, Yamuna Expressway (Mathura Cut & Raya Cut), Mathura Cantt, Mathura Junction Railway Station
+- **Coverage Areas:** Mathura, Vrindavan, Govardhan, Barsana, Near BSA College of Engineering & Technology, Mathura Bus Stand (ISBT), Dampier Nagar, Goverdhan Chauraha, Shri Krishna Janmabhoomi, Dwarkadhish Temple, Raman Reti, Chattikara, Yamuna Expressway (Mathura Cut & Raya Cut), Mathura Cantt, GLA University Campus, Refinery Nagar, and Mathura Junction Railway Station
 
 ## 2. Rental Fleet & Tariff Structure
 All rentals include 2 sanitized ISI-approved helmets, clean vehicle inspection, smartphone mount, and 24x7 local roadside assistance.
 
 | Vehicle Model | Type | Engine / Battery | Daily Tariff | Hourly Tariff | Security Deposit | Best Use Case |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Honda Activa 6G** | Gearless Scooter | 110cc Petrol | ₹299 / day | ₹40 / hr | ₹0 Options | Bankey Bihari, Prem Mandir, town lanes |
-| **TVS Jupiter 125** | Gearless Scooter | 125cc Petrol | ₹320 / day | ₹45 / hr | ₹0 Options | Couples, family darshan, prasad storage |
-| **Hero Destini / Maestro** | Gearless Scooter | 125cc Petrol | ₹320 / day | ₹45 / hr | ₹0 Options | Comfortable town and highway commuting |
-| **High-Range EV Scooter** | Electric Scooter | 80-100 km range | ₹349 / day | ₹50 / hr | ₹0 Options | Silent sacred darshan, zero fuel cost |
-| **Royal Enfield Classic 350**| Cruiser Motorcycle | 350cc Petrol | ₹899 / day | ₹120 / hr | Standard | Govardhan Parikrama, Barsana, highway |
+| **Honda Activa 6G** | Gearless Scooter | 110cc Petrol | ₹299 / day | ₹40 / hr | ₹0 Options | Bankey Bihari, Prem Mandir, Janmabhoomi, BSA College commute |
+| **TVS Jupiter 125** | Gearless Scooter | 125cc Petrol | ₹320 / day | ₹45 / hr | ₹0 Options | Couples, family darshan, prasad storage, twin-city touring |
+| **Hero Destini / Maestro** | Gearless Scooter | 125cc Petrol | ₹320 / day | ₹45 / hr | ₹0 Options | Comfortable town and highway commuting across Mathura & Vrindavan |
+| **High-Range EV Scooter** | Electric Scooter | 80-100 km range | ₹349 / day | ₹50 / hr | ₹0 Options | Silent sacred darshan, zero fuel cost, Govardhan Parikrama |
+| **Royal Enfield Classic 350**| Cruiser Motorcycle | 350cc Petrol | ₹899 / day | ₹120 / hr | Standard | Govardhan Parikrama, Barsana, Yamuna Expressway cruising |
 
 ## 3. How Booking Works
 1. **Choose Vehicle:** Visit https://rentoncent.bond/bikes or message WhatsApp +91 97209 65985.
-2. **Select Dates & Location:** Pick dates and preferred pickup location (Prem Mandir hub or doorstep hotel delivery).
+2. **Select Dates & Location:** Pick dates and preferred pickup location (Mathura Junction, BSA College, Bus Stand, Dampier Nagar, Prem Mandir hub or doorstep hotel delivery).
 3. **Quick Digital KYC:** Upload photo of original Driving Licence and Aadhaar Card. Verification completes in 2 minutes.
 4. **Key Handover:** Meet the local verified host, inspect the vehicle using the 6-angle photo checklist, receive keys and 2 clean helmets.
-5. **Ride & Explore:** Enjoy your Vrindavan pilgrimage with 24x7 local support.
+5. **Ride & Explore:** Enjoy your Mathura & Vrindavan pilgrimage with 24x7 local support.
 
-## 4. Distance & Travel Time Guide for Yatris
-- **Prem Mandir to Shri Bankey Bihari Temple:** 3.5 km (approx. 10 minutes on a scooter).
+## 4. Distance & Travel Time Guide for Yatris & Students
+- **Mathura Junction to Shri Krishna Janmabhoomi:** 3.2 km (approx. 8 minutes on a scooter).
+- **Mathura Junction to Prem Mandir (Vrindavan):** 12 km (approx. 20 minutes via Mathura-Vrindavan Marg).
+- **Near BSA College to Mathura Bus Stand (ISBT):** 1.8 km (approx. 5 minutes).
+- **Dampier Nagar to Vishram Ghat / Dwarkadhish Temple:** 2.5 km (approx. 7 minutes).
+- **Prem Mandir to Shri Bankey Bihari Temple:** 3.5 km (approx. 10 minutes).
 - **Prem Mandir to ISKCON Vrindavan:** 1.2 km (approx. 4 minutes).
-- **Vrindavan to Sri Krishna Janmabhoomi (Mathura):** 12 km (approx. 20 minutes).
-- **Vrindavan to Govardhan 21 km Sacred Parikrama:** 24 km (approx. 35 minutes).
-- **Vrindavan to Barsana (Radha Rani Temple):** 42 km (approx. 55 minutes).
-- **Mathura Cut (Yamuna Expressway) to Prem Mandir:** 12 km (approx. 18 minutes).
+- **Mathura / Goverdhan Chauraha to Govardhan 21 km Parikrama:** 21 km (approx. 30 minutes).
+- **Mathura / Vrindavan to Barsana (Radha Rani Temple):** 42 km (approx. 55 minutes via NH-19).
+- **Mathura Cut (Yamuna Expressway) to Vrindavan / Mathura:** 12 km (approx. 18 minutes).
 - **Chattikara Road to Prem Mandir:** 4.8 km (approx. 10 minutes).
 
 ## 5. Host Onboarding & Wealth Creation
-Local vehicle owners in Vrindavan and Mathura can list their idle scooters or motorcycles on Rent on Cent to earn ₹15,000 to ₹22,000 per month with complete digital safety inspection, verified renter KYC, and insurance protection. Learn more at https://rentoncent.bond/host.
+Local vehicle owners in Mathura and Vrindavan can list their idle scooters or motorcycles on Rent on Cent to earn ₹15,000 to ₹25,000 per month with complete digital safety inspection, verified renter KYC, and insurance protection. Learn more at https://rentoncent.bond/host.
 
 ## 6. Verified Customer Reviews & Pilgrim Testimonials
 Rent on Cent has served over 1,240+ yatris with an aggregate rating of **4.9 out of 5 stars**.
 - **Aggregate Rating:** 4.9 / 5 (1,240+ ratings)
-- **Top Highlights:** Zero cash deposit option, 2 clean ISI helmets, doorstep hotel drop, and reliable vehicle condition.
+- **Top Highlights:** Zero cash deposit option, 2 clean ISI helmets, doorstep railway & hotel drop, and reliable vehicle condition.
 - **Reviews URL:** https://rentoncent.bond/reviews
 
-## 7. Jobs in Vrindavan & 10% Booking Commission Partner Program
-Rent on Cent provides employment generation and second-hand income opportunities for local residents in Vrindavan, Mathura, Govardhan, and Barsana:
+## 7. Jobs in Mathura & Vrindavan — 10% Booking Commission Partner Program
+Rent on Cent provides employment generation and secondary income opportunities for local residents in Mathura, Vrindavan, Govardhan, and Barsana:
 - **Role:** Driver Partner & Tourism Referral Affiliate
 - **Commission:** Flat 10% cash commission per successful rental booking
-- **Eligible Partners:** Auto-rickshaw drivers, e-rickshaw drivers, taxi drivers, hotel receptionists, ashram managers, local tour guides, and students
+- **Eligible Partners:** Auto-rickshaw drivers, e-rickshaw drivers, taxi drivers, hotel receptionists, ashram managers, local tour guides, and college students
 - **Monthly Earnings:** ₹15,000 to ₹35,000+ per month (average ₹500 - ₹1,500 daily)
 - **Payout Method:** Instant UPI transfer (Google Pay, PhonePe, Paytm) upon vehicle handover
 - **Registration URL:** https://rentoncent.bond/jobs-in-vrindavan (WhatsApp Helpline: +91 97209 65985)

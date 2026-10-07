@@ -137,7 +137,7 @@ export const Header = () => {
               <span>Radhe Radhe!</span>
             </span>
             <span className="text-slate-300 text-[10px] sm:text-xs truncate">
-              Verified Bike Rentals in <strong className="text-white">Vrindavan Dham</strong>
+              Verified Bike Rentals in <strong className="text-white">Mathura &amp; Vrindavan</strong>
             </span>
           </div>
 
@@ -205,7 +205,7 @@ export const Header = () => {
           className="flex items-center gap-2 sm:gap-3 group shrink-0 min-w-0"
         >
           <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white flex items-center justify-center p-1 sm:p-1.5 shadow-md border border-emerald-400/40 shrink-0 group-hover:scale-105 transition-transform">
-            <img src="/logo_square_share_area.png" alt="Rent on Cent - Verified Bike & Scooty Rental Vrindavan" width={40} height={40} className="w-full h-full object-contain" />
+            <img src="/logo_square_share_area.png" alt="Rent on Cent - Verified Bike & Scooty Rental Mathura & Vrindavan" width={40} height={40} className="w-full h-full object-contain" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 sm:gap-2">

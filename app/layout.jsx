@@ -4,28 +4,34 @@ import { Providers } from './providers';
 export const metadata = {
   metadataBase: new URL('https://rentoncent.bond'),
   title: {
-    default: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty',
+    default: 'Bike on Rent in Mathura & Vrindavan | Scooty Rental & Two-Wheeler Hire',
     template: '%s | Rent on Cent'
   },
   description:
-    'Rent bike and scooty in Vrindavan from ₹299/day. Verified Activa 6G & EV with zero deposit, free helmets & hotel delivery. Instant WhatsApp booking.',
+    'Rent bike and scooty in Mathura & Vrindavan from ₹299/day (₹40/hr). Verified Activa 6G & EV with zero deposit, free helmets & doorstep delivery across Mathura Junction, BSA College, Dampier Nagar, Prem Mandir & hotels. Instant WhatsApp booking.',
   keywords: [
+    'bike on rent in mathura',
+    'scooty on rent in mathura',
     'bike on rent in vrindavan',
-    'vrindavan rental',
     'scooty on rent in vrindavan',
-    'bike rental vrindavan',
-    'scooty rental vrindavan',
-    'two wheeler on rent in vrindavan',
+    'mathura rental',
+    'vrindavan rental',
+    'two wheeler rental mathura vrindavan',
+    'bike rental mathura junction railway station',
+    'scooty on rent near bsa college mathura',
+    'mathura bus stand scooty rental',
+    'dampier nagar bike rental',
+    'bike on rent near krishna janmabhoomi',
+    'activa on rent in mathura',
     'activa on rent in vrindavan',
     'honda activa on rent in vrindavan',
+    'electric scooter rental mathura',
     'electric scooter rental vrindavan',
+    'mathura bike rental price per day',
     'vrindavan bike rental price per day',
-    'bike rental in vrindavan near railway station',
+    'bike rental near mathura cantt',
     'scooty on rent near prem mandir vrindavan',
     'bike on rent near bankey bihari temple',
-    'scooty on rent in mathura',
-    'bike on rent in mathura',
-    'two wheeler rental mathura',
     'rentoncent',
     'rent on cent',
     'Rent on Cent',
@@ -43,11 +49,11 @@ export const metadata = {
     canonical: '/'
   },
   openGraph: {
-    title: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty',
+    title: 'Bike on Rent in Mathura & Vrindavan | Scooty Rental & Two-Wheeler Hire',
     description:
-      'Rent verified Honda Activa, EV scooters & bikes in Vrindavan from ₹299/day. Free helmets and doorstep delivery.',
+      'Rent verified Honda Activa, EV scooters & bikes in Mathura & Vrindavan from ₹299/day. Free helmets and doorstep delivery to Mathura Junction, BSA College, Prem Mandir & hotels.',
     url: 'https://rentoncent.bond/',
-    siteName: 'Rent on Cent - Vrindavan Rental',
+    siteName: 'Rent on Cent - Mathura & Vrindavan Rental',
     locale: 'en_IN',
     type: 'website',
     images: [
@@ -57,14 +63,14 @@ export const metadata = {
         width: 1200,
         height: 1200,
         type: 'image/jpeg',
-        alt: 'Rent on Cent - Bike & Scooty on Rent in Vrindavan'
+        alt: 'Rent on Cent - Bike & Scooty on Rent in Mathura & Vrindavan'
       }
     ]
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty',
-    description: 'Rent Activa, Royal Enfield & EV in Vrindavan from ₹299/day with free helmets.',
+    title: 'Bike on Rent in Mathura & Vrindavan | Scooty Rental & Two-Wheeler Hire',
+    description: 'Rent Activa, Royal Enfield & EV in Mathura & Vrindavan from ₹299/day with free helmets.',
     images: ['https://rentoncent.bond/og-customer.jpg']
   },
   icons: {
@@ -105,18 +111,21 @@ const autoRentalSchema = {
   '@id': 'https://rentoncent.bond/#autorental',
   name: 'Rent on Cent',
   alternateName: [
-    'Vrindavan Rental',
+    'Mathura Vrindavan Rental',
+    'Bike on Rent in Mathura',
     'Bike on Rent in Vrindavan',
+    'Scooty on Rent in Mathura',
+    'Rent on Cent Mathura',
     'Rent on Cent Vrindavan',
     'Rent on Cent',
     'Rentoncent'
   ],
-  slogan: 'Rent Ride Explore — Best Bike & Scooty on Rent in Vrindavan',
+  slogan: 'Rent Ride Explore — Best Bike & Scooty on Rent in Mathura & Vrindavan',
   url: 'https://rentoncent.bond',
   logo: 'https://rentoncent.bond/logo_square_share_area.png',
   image: 'https://rentoncent.bond/og-customer.jpg',
   description:
-    'Premier Vrindavan rental platform offering bike on rent in Vrindavan, scooty on rent in Vrindavan, and two wheeler rentals. Rent verified Honda Activa 6G, EV electric scooters, and Royal Enfield Classic 350 starting at ₹40/hr and ₹299/day with doorstep delivery to hotels, ashrams, and Mathura Junction.',
+    'Premier Mathura and Vrindavan rental platform offering bike on rent in Mathura, bike on rent in Vrindavan, scooty on rent, and two-wheeler rentals. Rent verified Honda Activa 6G, EV electric scooters, and Royal Enfield Classic 350 starting at ₹40/hr and ₹299/day with doorstep delivery to Mathura Junction, Near BSA College, Mathura Bus Stand, Dampier Nagar, Prem Mandir, Bankey Bihari, and all hotels & ashrams.',
   telephone: '+919720965985',
   email: 'support@rentoncent.bond',
   priceRange: '₹299 - ₹1200 / day',
@@ -125,7 +134,7 @@ const autoRentalSchema = {
   address: {
     '@type': 'PostalAddress',
     streetAddress: 'Raman Reti Road, Near Prem Mandir',
-    addressLocality: 'Vrindavan',
+    addressLocality: 'Vrindavan & Mathura',
     addressRegion: 'Uttar Pradesh',
     postalCode: '281121',
     addressCountry: 'IN'
@@ -143,17 +152,20 @@ const autoRentalSchema = {
     ratingCount: '1240'
   },
   knowsAbout: [
+    'Bike on rent in Mathura',
     'Bike on rent in Vrindavan',
+    'Scooty on rent in Mathura',
     'Scooty on rent in Vrindavan',
-    'Vrindavan rental',
-    'Two wheeler rental Mathura',
+    'Bike rental near BSA College Mathura',
+    'Mathura Bus Stand scooty hire',
+    'Mathura Junction railway station bike rental',
+    'Dampier Nagar Mathura bike rent',
+    'Two wheeler rental Mathura Vrindavan',
     'Electric scooter rental Vrindavan',
-    'Honda Activa rental Vrindavan',
+    'Honda Activa rental Mathura',
     'Royal Enfield on rent in Vrindavan',
     'Govardhan Parikrama bike rent',
-    'Prem Mandir bike hire',
-    'Bankey Bihari temple scooter rental',
-    'Doorstep hotel bike delivery Vrindavan'
+    'Doorstep hotel bike delivery Mathura Vrindavan'
   ],
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
@@ -218,14 +230,22 @@ const autoRentalSchema = {
     }
   ],
   areaServed: [
-    { '@type': 'City', name: 'Vrindavan' },
     { '@type': 'City', name: 'Mathura' },
-    { '@type': 'AdministrativeArea', name: 'Govardhan' },
-    { '@type': 'AdministrativeArea', name: 'Barsana' },
-    { '@type': 'AdministrativeArea', name: 'Braj Dham' },
+    { '@type': 'City', name: 'Vrindavan' },
+    { '@type': 'Place', name: 'Near BSA College of Engineering & Technology' },
+    { '@type': 'Place', name: 'Mathura Bus Stand (ISBT)' },
+    { '@type': 'Place', name: 'Mathura Junction Railway Station' },
+    { '@type': 'Place', name: 'Dampier Nagar Mathura' },
+    { '@type': 'Place', name: 'Shri Krishna Janmabhoomi Mathura' },
+    { '@type': 'Place', name: 'Dwarkadhish Temple & Vishram Ghat' },
+    { '@type': 'Place', name: 'Goverdhan Chauraha Mathura' },
     { '@type': 'Place', name: 'Yamuna Expressway Mathura Cut' },
     { '@type': 'Place', name: 'Chattikara Road' },
-    { '@type': 'Place', name: 'Prem Mandir Raman Reti' }
+    { '@type': 'Place', name: 'Prem Mandir Raman Reti' },
+    { '@type': 'Place', name: 'Bankey Bihari Temple Marg' },
+    { '@type': 'AdministrativeArea', name: 'Govardhan' },
+    { '@type': 'AdministrativeArea', name: 'Barsana' },
+    { '@type': 'AdministrativeArea', name: 'Braj Dham' }
   ],
   sameAs: ['https://wa.me/919720965985', 'https://rentoncent.bond']
 };
@@ -236,31 +256,39 @@ const faqSchema = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'How do I get a bike or scooty on rent in Vrindavan?',
+      name: 'How do I get a bike or scooty on rent in Mathura and Vrindavan?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Select your preferred two-wheeler online at rentoncent.bond or via WhatsApp at +91 97209 65985. Complete quick 2-minute digital KYC (Aadhaar & Driving Licence), choose your pickup point (Prem Mandir, Mathura Junction, or your hotel), and receive your vehicle with 2 free sanitized ISI helmets.'
+        text: 'Select your preferred two-wheeler online at rentoncent.bond or via WhatsApp at +91 97209 65985. Complete quick 2-minute digital KYC (Aadhaar & Driving Licence), choose your pickup point (Mathura Junction, BSA College, Mathura Bus Stand, Dampier Nagar, Prem Mandir, or your hotel), and receive your vehicle with 2 free sanitized ISI helmets.'
       }
     },
     {
       '@type': 'Question',
-      name: 'What is the price of bike on rent in Vrindavan?',
+      name: 'What is the price of bike on rent in Mathura and Vrindavan?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Bike and scooty on rent in Vrindavan starts at ₹40/hour and ₹299/day for Honda Activa 6G and TVS Jupiter. High-range electric scooters (EV) are ₹349/day with free charging, and Royal Enfield Classic 350 cruisers are ₹899/day.'
+        text: 'Bike and scooty on rent in Mathura and Vrindavan starts at ₹40/hour and ₹299/day for Honda Activa 6G and TVS Jupiter. High-range electric scooters (EV) are ₹349/day with free charging, and Royal Enfield Classic 350 cruisers are ₹899/day with zero cash deposit options.'
       }
     },
     {
       '@type': 'Question',
-      name: 'What is Vrindavan rental service and how does it help pilgrims?',
+      name: 'Can I pick up a scooty at Mathura Junction or Mathura Bus Stand and return in Vrindavan?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Vrindavan rental by Rent on Cent provides verified peer-to-peer bikes and scooters to avoid expensive e-rickshaws and reach temples like Shri Bankey Bihari, Prem Mandir, Nidhivan, and Govardhan Parikrama independently at transparent fixed rates.'
+        text: 'Yes! Rent on Cent supports flexible cross-city pickups and returns. You can receive your scooter at Mathura Junction Platform 1 or Mathura Bus Stand (ISBT) upon arrival and drop it off at your hotel in Vrindavan or vice versa.'
       }
     },
     {
       '@type': 'Question',
-      name: 'Can I rent a scooty near Prem Mandir or Bankey Bihari Temple?',
+      name: 'Do you deliver near BSA College of Engineering and Dampier Nagar in Mathura?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes! We provide 10-15 minute doorstep vehicle handovers across Mathura city including BSA College Road, Dampier Nagar, Krishna Nagar, Goverdhan Chauraha, and all Mathura hotels & guest houses.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I rent a scooty near Prem Mandir or Bankey Bihari Temple in Vrindavan?',
       acceptedAnswer: {
         '@type': 'Answer',
         text: 'Yes! Rent on Cent has its central hub on Raman Reti Road near Prem Mandir, and provides 10-minute doorstep vehicle handovers across Bankey Bihari Temple, ISKCON, Vidyapeeth Chauraha, and all Vrindavan hotels & ashrams.'
@@ -268,10 +296,10 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
-      name: 'What documents are required to take a bike or scooty on rent in Vrindavan?',
+      name: 'What documents are required to take a bike or scooty on rent in Mathura & Vrindavan?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A valid Indian Driving Licence (DL) and Government Identity Proof (Aadhaar Card or Passport). Verification is completed 100% digitally before vehicle handover.'
+        text: 'A valid Indian Driving Licence (DL) and Government Identity Proof (Aadhaar Card, Student ID, or Passport). Verification is completed 100% digitally before vehicle handover.'
       }
     },
     {
@@ -284,18 +312,18 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
-      name: 'Can I take a rented scooter for Govardhan Parikrama?',
+      name: 'Can I take a rented scooter for Govardhan Parikrama from Mathura or Vrindavan?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes! All Rent on Cent scooters and bikes are permitted and certified for the 21 km Govardhan Parikrama, Radha Kund, Shyam Kund, Barsana, and Mathura circuits.'
+        text: 'Yes! All Rent on Cent scooters and bikes are permitted and certified for the 21 km Govardhan Parikrama, Radha Kund, Shyam Kund, Barsana, and Mathura-Vrindavan circuits.'
       }
     },
     {
       '@type': 'Question',
-      name: 'Can I host my bike on Rent on Cent to earn money?',
+      name: 'Can I host my bike on Rent on Cent in Mathura or Vrindavan to earn money?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes! Two-wheeler owners in Vrindavan and Mathura can switch to Host mode on Rent on Cent and list their vehicles with 0 upfront cost, earning up to ₹15,000 to ₹22,000 monthly with digital safety inspections and verified renter agreements.'
+        text: 'Yes! Two-wheeler owners in Mathura and Vrindavan can switch to Host mode on Rent on Cent and list their vehicles with 0 upfront cost, earning up to ₹15,000 to ₹22,000 monthly with digital safety inspections and verified renter agreements.'
       }
     }
   ]
@@ -305,7 +333,7 @@ const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'Rent on Cent',
-  alternateName: 'Vrindavan Rental',
+  alternateName: 'Mathura & Vrindavan Rental',
   url: 'https://rentoncent.bond',
   potentialAction: {
     '@type': 'SearchAction',

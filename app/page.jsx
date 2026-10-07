@@ -4,16 +4,16 @@ import { VrindavanBentoGuide } from '../src/components/VrindavanBentoGuide';
 
 export const metadata = {
   title: {
-    absolute: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty'
+    absolute: 'Bike on Rent in Mathura & Vrindavan | Scooty Rental & Two-Wheeler Hire'
   },
   description:
-    'Rent bike and scooty in Vrindavan from ₹299/day. Verified Activa 6G & EV with zero deposit, free helmets & hotel delivery. Instant WhatsApp booking.',
+    'Rent bike and scooty in Mathura & Vrindavan from ₹299/day (₹40/hr). Verified Activa 6G & EV with zero deposit, free helmets & doorstep delivery across Mathura Junction, BSA College, Dampier Nagar & Prem Mandir. Instant WhatsApp booking.',
   alternates: {
     canonical: 'https://rentoncent.bond/'
   },
   openGraph: {
-    title: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty',
-    description: 'Rent Activa 6G, EV & Royal Enfield in Vrindavan from ₹299/day with zero deposit & doorstep delivery.',
+    title: 'Bike on Rent in Mathura & Vrindavan | Scooty Rental & Two-Wheeler Hire',
+    description: 'Rent Activa 6G, EV & Royal Enfield in Mathura & Vrindavan from ₹299/day with zero deposit & doorstep delivery.',
     url: 'https://rentoncent.bond/',
     siteName: 'Rent on Cent',
     locale: 'en_IN',
@@ -25,14 +25,14 @@ export const metadata = {
         width: 1200,
         height: 1200,
         type: 'image/jpeg',
-        alt: 'Rent on Cent - Bike on Rent in Vrindavan & Vrindavan Rental'
+        alt: 'Rent on Cent - Bike on Rent in Mathura & Vrindavan'
       }
     ]
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Bike on Rent in Vrindavan | Vrindavan Rental & Scooty',
-    description: 'Rent Activa 6G & EV in Vrindavan from ₹299/day with free helmets.',
+    title: 'Bike on Rent in Mathura & Vrindavan | Scooty Rental & Two-Wheeler Hire',
+    description: 'Rent Activa 6G & EV in Mathura & Vrindavan from ₹299/day with free helmets.',
     images: ['https://rentoncent.bond/og-customer.jpg']
   }
 };

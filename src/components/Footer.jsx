@@ -64,7 +64,7 @@ export const Footer = () => {
             </li>
             <li>
               <Link href="/rent-bike-cars-scooty-in" className="hover:text-white transition-colors">
-                Pickup Locations (13+)
+                Pickup Locations (21+)
               </Link>
             </li>
             <li>
@@ -206,13 +206,73 @@ export const Footer = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
           <p className="text-white font-bold uppercase text-[11px] tracking-wider flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Popular Rental Pickup Hubs &amp; Expressway Cuts</span>
+            <span>Popular Rental Pickup Hubs in Mathura &amp; Vrindavan</span>
           </p>
-          <Link href="/rent-bike-cars-scooty-in" aria-label="Explore all 13+ rental pickup locations in Mathura and Vrindavan" className="text-emerald-400 hover:underline text-[11px] font-semibold">
-            View All 13+ Pickup Locations →
+          <Link href="/rent-bike-cars-scooty-in" aria-label="Explore all 21+ rental pickup locations in Mathura and Vrindavan" className="text-emerald-400 hover:underline text-[11px] font-semibold">
+            View All 21+ Pickup Locations →
           </Link>
         </div>
         <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-slate-400">
+          <Link href="/rent-bike-cars-scooty-in/bsa-college-engineering-mathura" className="hover:text-emerald-400 transition-colors font-semibold text-emerald-300">
+            Near BSA College (Mathura)
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/rent-bike-cars-scooty-in/mathura-bus-stand" className="hover:text-emerald-400 transition-colors font-semibold text-emerald-300">
+            Mathura Bus Stand (ISBT)
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/rent-bike-cars-scooty-in/mathura-junction-railway-station" className="hover:text-emerald-400 transition-colors font-semibold text-emerald-300">
+            Mathura Jn Railway Station (MTJ)
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/rent-bike-cars-scooty-in/dampier-nagar-mathura" className="hover:text-emerald-400 transition-colors font-semibold text-emerald-300">
+            Dampier Nagar (Mathura)
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/rent-bike-cars-scooty-in/mathura-krishna-janmabhoomi" className="hover:text-emerald-400 transition-colors">
+            Krishna Janmabhoomi Mathura
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/rent-bike-cars-scooty-in/dwarkadhish-temple-vishram-ghat" className="hover:text-emerald-400 transition-colors">
+            Dwarkadhish &amp; Vishram Ghat
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/rent-bike-cars-scooty-in/goverdhan-chauraha-mathura" className="hover:text-emerald-400 transition-colors">
+            Goverdhan Chauraha / NH19
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/rent-bike-cars-scooty-in/mathura-cantt-railway-station" className="hover:text-emerald-400 transition-colors">
+            Mathura Cantt Railway Station
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/rent-bike-cars-scooty-in/gla-university-nh19-mathura" className="hover:text-emerald-400 transition-colors">
+            GLA University Campus
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/rent-bike-cars-scooty-in/refinery-nagar-mathura" className="hover:text-emerald-400 transition-colors">
+            Refinery Nagar (Mathura)
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/rent-bike-cars-scooty-in/prem-mandir-raman-reti" className="hover:text-emerald-400 transition-colors">
+            Prem Mandir &amp; Raman Reti
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/rent-bike-cars-scooty-in/bankey-bihari-temple" className="hover:text-emerald-400 transition-colors">
+            Bankey Bihari Temple Marg
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/rent-bike-cars-scooty-in/iskcon-temple-vrindavan" className="hover:text-emerald-400 transition-colors">
+            ISKCON Krishna Balaram Mandir
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/rent-bike-cars-scooty-in/chattikara-road" className="hover:text-emerald-400 transition-colors">
+            Chattikara Road / NH19
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/rent-bike-cars-scooty-in/nidhivan-seva-kunj" className="hover:text-emerald-400 transition-colors">
+            Nidhivan &amp; Seva Kunj
+          </Link>
+          <span className="text-slate-700">•</span>
           <Link href="/rent-bike-cars-scooty-in/mathura-cut-yamuna-expressway" className="hover:text-emerald-400 transition-colors">
             Mathura Cut (Yamuna Exp.)
           </Link>
@@ -221,44 +281,16 @@ export const Footer = () => {
             Raya Cut (Yamuna Exp.)
           </Link>
           <span className="text-slate-700">•</span>
-          <Link href="/rent-bike-cars-scooty-in/chattikara-road" className="hover:text-emerald-400 transition-colors">
-            Chattikara Road / NH19
-          </Link>
-          <span className="text-slate-700">•</span>
-          <Link href="/rent-bike-cars-scooty-in/bankey-bihari-temple" className="hover:text-emerald-400 transition-colors">
-            Bankey Bihari Temple Marg
-          </Link>
-          <span className="text-slate-700">•</span>
-          <Link href="/rent-bike-cars-scooty-in/prem-mandir-raman-reti" className="hover:text-emerald-400 transition-colors">
-            Prem Mandir &amp; Raman Reti
-          </Link>
-          <span className="text-slate-700">•</span>
-          <Link href="/rent-bike-cars-scooty-in/iskcon-temple-vrindavan" className="hover:text-emerald-400 transition-colors">
-            ISKCON Krishna Balaram Mandir
-          </Link>
-          <span className="text-slate-700">•</span>
-          <Link href="/rent-bike-cars-scooty-in/nidhivan-seva-kunj" className="hover:text-emerald-400 transition-colors">
-            Nidhivan &amp; Seva Kunj
+          <Link href="/rent-bike-cars-scooty-in/govardhan-parikrama" className="hover:text-emerald-400 transition-colors">
+            Govardhan Parikrama Marg
           </Link>
           <span className="text-slate-700">•</span>
           <Link href="/rent-bike-cars-scooty-in/barsana-radha-rani-temple" className="hover:text-emerald-400 transition-colors">
-            Barsana Shri Radha Rani Mandir
-          </Link>
-          <span className="text-slate-700">•</span>
-          <Link href="/rent-bike-cars-scooty-in/mathura-krishna-janmabhoomi" className="hover:text-emerald-400 transition-colors">
-            Krishna Janmabhoomi Mathura
+            Barsana Shri Radha Rani
           </Link>
           <span className="text-slate-700">•</span>
           <Link href="/rent-bike-cars-scooty-in/gokul-raman-reti" className="hover:text-emerald-400 transition-colors">
             Gokul Dham &amp; Brahmand Ghat
-          </Link>
-          <span className="text-slate-700">•</span>
-          <Link href="/rent-bike-cars-scooty-in/mathura-junction-railway-station" className="hover:text-emerald-400 transition-colors">
-            Mathura Jn Railway Station
-          </Link>
-          <span className="text-slate-700">•</span>
-          <Link href="/rent-bike-cars-scooty-in/govardhan-parikrama" className="hover:text-emerald-400 transition-colors">
-            Govardhan Parikrama Marg
           </Link>
           <span className="text-slate-700">•</span>
           <Link href="/rent-bike-cars-scooty-in/hotels-tourist-service" className="hover:text-emerald-400 transition-colors">
@@ -270,7 +302,7 @@ export const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 mt-8 pt-6 border-t border-slate-800 text-[11px] text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
         <p>© 2026 Rent on Cent. All rights reserved.</p>
         <p className="flex items-center gap-1">
-          Built for Vrindavan Pilgrims &amp; Local Vehicle Owners
+          Built for Mathura &amp; Vrindavan Pilgrims, Students &amp; Local Vehicle Hosts
         </p>
       </div>
     </footer>

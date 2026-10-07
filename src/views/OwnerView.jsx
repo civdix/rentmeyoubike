@@ -1100,14 +1100,34 @@ export const OwnerView = () => {
                         onChange={(e) => setOwnerLocality(e.target.value)}
                         className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-bold"
                       >
-                        <option value="Prem Mandir Road">Prem Mandir Road</option>
-                        <option value="Bankey Bihari Temple Road">Bankey Bihari Temple Road</option>
-                        <option value="ISKCON Temple Chowk">ISKCON Temple Chowk</option>
-                        <option value="Vrindavan Railway Station">Vrindavan Railway Station</option>
-                        <option value="Chattikara Road">Chattikara Road</option>
-                        <option value="Raman Reti">Raman Reti</option>
-                        <option value="Seva Kunj Road">Seva Kunj Road</option>
-                        <option value="Sunrakh Road">Sunrakh Road</option>
+                        <optgroup label="Mathura City Hubs">
+                          <option value="Mathura Junction Railway Station">Mathura Junction Railway Station</option>
+                          <option value="Near BSA College of Engineering & Technology (Mathura)">Near BSA College (Mathura)</option>
+                          <option value="Mathura Bus Stand (ISBT)">Mathura Bus Stand (ISBT)</option>
+                          <option value="Dampier Nagar Commercial Hub (Mathura)">Dampier Nagar (Mathura)</option>
+                          <option value="Shri Krishna Janmabhoomi (Mathura)">Shri Krishna Janmabhoomi (Mathura)</option>
+                          <option value="Dwarkadhish Temple & Vishram Ghat (Mathura)">Dwarkadhish & Vishram Ghat (Mathura)</option>
+                          <option value="Goverdhan Chauraha / NH-19 (Mathura)">Goverdhan Chauraha (Mathura)</option>
+                          <option value="Mathura Cantt Railway Station">Mathura Cantt Railway Station</option>
+                          <option value="GLA University Campus (NH-19 Mathura)">GLA University (NH-19 Mathura)</option>
+                          <option value="Refinery Nagar & IOCL Township (Mathura)">Refinery Nagar (Mathura)</option>
+                        </optgroup>
+                        <optgroup label="Vrindavan Sacred Hubs">
+                          <option value="Prem Mandir Road">Prem Mandir Road</option>
+                          <option value="Bankey Bihari Temple Road">Bankey Bihari Temple Road</option>
+                          <option value="ISKCON Temple Chowk">ISKCON Temple Chowk</option>
+                          <option value="Raman Reti">Raman Reti</option>
+                          <option value="Chattikara Road">Chattikara Road</option>
+                          <option value="Seva Kunj Road">Seva Kunj Road</option>
+                          <option value="Sunrakh Road">Sunrakh Road</option>
+                          <option value="Vrindavan Railway Station">Vrindavan Railway Station</option>
+                        </optgroup>
+                        <optgroup label="Expressway & Braj Circuits">
+                          <option value="Mathura Cut (Yamuna Expressway)">Mathura Cut (Yamuna Expressway)</option>
+                          <option value="Raya Cut (Yamuna Expressway)">Raya Cut (Yamuna Expressway)</option>
+                          <option value="Govardhan Parikrama Marg">Govardhan Parikrama Marg</option>
+                          <option value="Barsana Radha Rani Temple">Barsana Radha Rani Temple</option>
+                        </optgroup>
                       </select>
                     </div>
                   </div>

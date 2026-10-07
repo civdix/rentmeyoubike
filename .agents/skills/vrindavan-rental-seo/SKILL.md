@@ -50,6 +50,24 @@ This skill defines the technical, semantic, and programmatic SEO architecture fo
   * `bike on rent at mathura junction railway station`
   * `mathura cantt scooty hire`
   * `train arrival doorstep bike delivery mathura`
+* **Near BSA College of Engineering & Technology (Mathura)**:
+  * `bike on rent near bsa college mathura`
+  * `scooty hire near bsa college of engineering and technology`
+  * `bsa engineering college mathura student bike rental`
+* **Mathura Bus Stand (ISBT)**:
+  * `bike on rent mathura bus stand`
+  * `mathura bus stand scooty hire`
+  * `isbt mathura bike rental doorstep delivery`
+* **Dampier Nagar Commercial Hub**:
+  * `dampier nagar mathura bike on rent`
+  * `dampier nagar scooty rental mathura`
+  * `commercial hub two wheeler hire mathura`
+* **Dwarkadhish Temple & Vishram Ghat**:
+  * `bike on rent near dwarkadhish temple mathura`
+  * `vishram ghat scooty hire yamuna aarti`
+* **Goverdhan Chauraha (NH-19 Bypass)**:
+  * `goverdhan chauraha mathura bike rental`
+  * `nh 19 mathura bypass scooty on rent`
 * **Govardhan Parikrama**:
   * `govardhan parikrama scooty rent`
   * `electric scooter for govardhan 21 km parikrama`
@@ -61,22 +79,36 @@ This skill defines the technical, semantic, and programmatic SEO architecture fo
 * `vrindavan tourist sightseeing bike rental package`
 * `auto vs bike rental vrindavan` / `avoid e-rickshaw bargaining vrindavan`
 * `mathura to vrindavan bike ride day trip`
+* `mathura city sightseeing two wheeler rental`
 
 ---
 
 ## 2. Programmatic Landing Page URL Structure
 
-Every micro-location has a dedicated, crawlable Next.js route under `/locations/[slug]`:
+Every micro-location has a dedicated, crawlable Next.js route under both `/locations/[slug]` and `/rent-bike-cars-scooty-in/[slug]`:
 
 | Slug | Canonical URL | Primary Keyword |
 | :--- | :--- | :--- |
+| `bsa-college-engineering-mathura` | `https://rentoncent.bond/locations/bsa-college-engineering-mathura` | Bike on rent near BSA College Mathura |
+| `mathura-bus-stand` | `https://rentoncent.bond/locations/mathura-bus-stand` | Bike on rent Mathura bus stand |
+| `dampier-nagar-mathura` | `https://rentoncent.bond/locations/dampier-nagar-mathura` | Dampier Nagar Mathura bike on rent |
+| `mathura-junction-railway-station` | `https://rentoncent.bond/locations/mathura-junction-railway-station` | Bike on rent Mathura Junction railway station |
+| `mathura-krishna-janmabhoomi` | `https://rentoncent.bond/locations/mathura-krishna-janmabhoomi` | Bike on rent near Krishna Janmabhoomi |
+| `dwarkadhish-temple-vishram-ghat` | `https://rentoncent.bond/locations/dwarkadhish-temple-vishram-ghat` | Bike on rent near Dwarkadhish temple Mathura |
+| `goverdhan-chauraha-mathura` | `https://rentoncent.bond/locations/goverdhan-chauraha-mathura` | Goverdhan Chauraha Mathura bike rental |
+| `mathura-cantt-railway-station` | `https://rentoncent.bond/locations/mathura-cantt-railway-station` | Mathura Cantt railway station bike hire |
+| `gla-university-nh19-mathura` | `https://rentoncent.bond/locations/gla-university-nh19-mathura` | GLA University Mathura student bike rental |
+| `refinery-nagar-mathura` | `https://rentoncent.bond/locations/refinery-nagar-mathura` | Refinery Nagar Mathura scooty rental |
+| `prem-mandir-raman-reti` | `https://rentoncent.bond/locations/prem-mandir-raman-reti` | Scooty rental near Prem Mandir Vrindavan |
+| `bankey-bihari-temple` | `https://rentoncent.bond/locations/bankey-bihari-temple` | Bike on rent near Bankey Bihari Ji |
+| `iskcon-temple-vrindavan` | `https://rentoncent.bond/locations/iskcon-temple-vrindavan` | ISKCON temple Vrindavan bike hire |
+| `nidhivan-seva-kunj` | `https://rentoncent.bond/locations/nidhivan-seva-kunj` | Nidhivan Seva Kunj scooty on rent |
+| `chattikara-road` | `https://rentoncent.bond/locations/chattikara-road` | Bike rental service near Chattikara |
 | `mathura-cut-yamuna-expressway` | `https://rentoncent.bond/locations/mathura-cut-yamuna-expressway` | Bike on rent on Mathura cut |
 | `raya-cut-yamuna-expressway` | `https://rentoncent.bond/locations/raya-cut-yamuna-expressway` | Raya cut Yamuna expressway bike rental |
-| `chattikara-road` | `https://rentoncent.bond/locations/chattikara-road` | Bike rental service near Chattikara |
-| `bankey-bihari-temple` | `https://rentoncent.bond/locations/bankey-bihari-temple` | Bike on rent near Bankey Bihari Ji |
-| `prem-mandir-raman-reti` | `https://rentoncent.bond/locations/prem-mandir-raman-reti` | Scooty rental near Prem Mandir Vrindavan |
-| `mathura-junction-railway-station` | `https://rentoncent.bond/locations/mathura-junction-railway-station` | Bike on rent Mathura Junction railway station |
 | `govardhan-parikrama` | `https://rentoncent.bond/locations/govardhan-parikrama` | Scooty rent for Govardhan parikrama |
+| `barsana-radha-rani-temple` | `https://rentoncent.bond/locations/barsana-radha-rani-temple` | Barsana Radha Rani temple bike rental |
+| `gokul-raman-reti` | `https://rentoncent.bond/locations/gokul-raman-reti` | Gokul Raman Reti scooty hire |
 | `hotels-tourist-service` | `https://rentoncent.bond/locations/hotels-tourist-service` | Vrindavan hotel bike delivery & tourist service |
 
 ---

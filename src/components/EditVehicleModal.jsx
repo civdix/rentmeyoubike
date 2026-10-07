@@ -6,16 +6,26 @@ import {
 import { HelmetsIcon, OdometerGaugeIcon } from './CustomIcons';
 
 const LOCATION_AREAS = [
-  'Prem Mandir Road',
-  'Raman Reti',
-  'ISKCON Temple Road',
-  'Bankey Bihari Temple Gali',
   'Mathura Junction Railway Station',
-  'Chhatikara Road',
-  'Bhaktivedanta Swami Marg',
+  'Near BSA College of Engineering & Technology (Mathura)',
+  'Mathura Bus Stand (ISBT)',
+  'Dampier Nagar Commercial Hub (Mathura)',
+  'Shri Krishna Janmabhoomi (Mathura)',
+  'Dwarkadhish Temple & Vishram Ghat (Mathura)',
+  'Goverdhan Chauraha / NH-19 (Mathura)',
+  'Mathura Cantt Railway Station',
+  'GLA University Campus (NH-19 Mathura)',
+  'Refinery Nagar & IOCL Township (Mathura)',
+  'Prem Mandir Road (Vrindavan)',
+  'Raman Reti (Vrindavan)',
+  'ISKCON Temple Road (Vrindavan)',
+  'Bankey Bihari Temple Gali (Vrindavan)',
+  'Chhatikara Road (Vrindavan)',
+  'Bhaktivedanta Swami Marg (Vrindavan)',
   'Vrindavan Bus Stand',
-  'Nidhivan Area',
-  'Goverdhan Chauraha (Mathura)'
+  'Nidhivan Area (Vrindavan)',
+  'Govardhan Parikrama Marg',
+  'Barsana Radha Rani Temple'
 ];
 
 const COMMON_FEATURES = [

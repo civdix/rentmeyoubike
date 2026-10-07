@@ -739,7 +739,457 @@ export const LOCATION_SEO_DATA = {
         a: 'Yes, Gokul is only 15 minutes from Mathura, making it the perfect half-day extension to your Mathura Janmabhoomi trip.'
       }
     ]
+  },
+
+  'bsa-college-engineering-mathura': {
+    slug: 'bsa-college-engineering-mathura',
+    name: 'Near BSA College of Engineering & Technology',
+    shortName: 'BSA College Mathura',
+    metaTitle: 'BSA College Mathura Bike & Scooty Rental',
+    metaDescription:
+      'Rent a scooty or bike near BSA College of Engineering & Technology in Mathura. Student discounts, zero deposit options & instant delivery from ₹299/day.',
+    keywords: [
+      'bike on rent near bsa college mathura',
+      'bsa college of engineering and technology scooty rental',
+      'bsa college mathura bike hire',
+      'two wheeler rent bsa engineering mathura',
+      'student scooty rental mathura',
+      'scooter hire near bsa road mathura'
+    ],
+    headline: 'Bike & Scooty Rental Near BSA College of Engineering & Technology',
+    subheadline: 'Convenient pickup for college students, faculty, exam candidates, and tourists near BSA College Marg and New Bus Stand corridor.',
+    geo: {
+      latitude: 27.5012,
+      longitude: 77.6685
+    },
+    landmark: 'BSA College Road, Near New Bus Stand & Krishna Nagar Link, Mathura',
+    postalCode: '281004',
+    pickupDescription:
+      'BSA College of Engineering & Technology (BSA CET) is one of Mathura’s premier higher-education landmarks, situated strategically between Mathura City Center, New Bus Stand, and Krishna Nagar. Whether you are a student needing affordable daily or monthly two-wheeler mobility, visiting parents attending campus events, or a tourist exploring nearby Mathura attractions, our hosts offer fast 10-minute doorstep key handovers with zero cash deposit options.',
+    highlights: [
+      'Student-friendly daily, weekly & semester-long rental plans',
+      'Fast handover right outside BSA College main gate or Krishna Nagar',
+      'Fuel-efficient Activa 6G and eco-friendly silent EV scooters',
+      'Easy connectivity to Mathura Junction (1.8 km) and Krishna Janmabhoomi (2.2 km)'
+    ],
+    travelTips: [
+      'From BSA College, Sri Krishna Janmabhoomi is just a 7-minute ride.',
+      'Vrindavan Prem Mandir is easily reached in 20 minutes via the Mathura-Vrindavan link road.',
+      'Petrol pumps and UPI payment convenience stores are located within 200m on BSA Road.'
+    ],
+    pricing: [
+      { model: 'Honda Activa 6G (110cc)', daily: '₹299/day', hourly: '₹40/hr', deposit: 'Zero Deposit / Student ID' },
+      { model: 'TVS Jupiter / Hero Destini', daily: '₹320/day', hourly: '₹45/hr', deposit: 'Verified DL' },
+      { model: 'High-Range EV Scooter', daily: '₹349/day', hourly: '₹50/hr', deposit: 'Zero Fuel Cost' },
+      { model: 'Royal Enfield Classic 350', daily: '₹899/day', hourly: '₹120/hr', deposit: 'Highway Ready' }
+    ],
+    faqs: [
+      {
+        q: 'Can college students rent a scooty near BSA College without large cash deposits?',
+        a: 'Yes! Rent on Cent offers zero cash deposit rentals for verified students and locals. Simply submit your valid Driving Licence and Student ID or Aadhaar card through our 2-minute digital KYC.'
+      },
+      {
+        q: 'Can I get doorstep delivery directly to BSA College hostel or campus gate?',
+        a: 'Yes, our local host meets you right outside the BSA CET campus gate or at your PG/hostel along BSA College Marg with the vehicle and 2 sanitized helmets.'
+      },
+      {
+        q: 'Are weekly or monthly rental discounts available for students?',
+        a: 'Yes, we provide special discounted weekly (from ₹1,899/wk) and monthly packages for students, professors, and interns.'
+      },
+      {
+        q: 'Can I ride this vehicle to Vrindavan and Govardhan?',
+        a: 'Absolutely. All vehicles come with valid UP permits, RC, and insurance, allowing unrestricted riding across Mathura, Vrindavan, Govardhan, and Barsana.'
+      }
+    ]
+  },
+
+  'mathura-bus-stand': {
+    slug: 'mathura-bus-stand',
+    name: 'Mathura Bus Stand (ISBT & New Bus Stand)',
+    shortName: 'Mathura Bus Stand',
+    metaTitle: 'Mathura Bus Stand Scooty & Bike Rental',
+    metaDescription:
+      'Rent a bike or scooty at Mathura Bus Stand (ISBT). Step off your UPSRTC or private bus and ride instantly to Vrindavan & temples from ₹299/day.',
+    keywords: [
+      'scooty on rent at mathura bus stand',
+      'mathura bus stand bike rental',
+      'mathura isbt two wheeler hire',
+      'bike rental mathura new bus stand',
+      'scooter rent near mathura old bus stand',
+      'bus arrival bike delivery mathura'
+    ],
+    headline: 'Bike & Scooty on Rent at Mathura Bus Stand (ISBT)',
+    subheadline: 'Arriving by interstate bus from Delhi, Agra, Jaipur, or Lucknow? Get your verified scooter delivered right at the bus stand exit.',
+    geo: {
+      latitude: 27.4988,
+      longitude: 77.6755
+    },
+    landmark: 'Mathura Central Bus Stand / ISBT Terminal, Near State Bank Colony',
+    postalCode: '281001',
+    pickupDescription:
+      'Mathura Bus Stand is the primary gateway for thousands of passengers arriving via UPSRTC, Rajasthan Roadways, and private sleeper coaches daily. Avoid long queues and arbitrary auto-rickshaw fares by having a clean Honda Activa or motorcycle waiting for you at the terminal entrance. Ride smoothly to Vrindavan, Janmabhoomi, or your hotel within minutes.',
+    highlights: [
+      'Prompt doorstep delivery timed precisely with your bus arrival',
+      'Avoid high auto-rickshaw bargaining outside the bus depot',
+      'Luggage footboard space on all Activa and Jupiter scooters',
+      '2 ISI-certified clean helmets and mobile handlebar mount included'
+    ],
+    travelTips: [
+      'Mathura Bus Stand to Vrindavan is 12 km (approx. 20 minutes) via the main link highway.',
+      'Sri Krishna Janmabhoomi is only 2 km from the New Bus Stand.',
+      'Share your bus live location on WhatsApp when crossing Kosi Kalan or Raya for zero-minute wait.'
+    ],
+    pricing: [
+      { model: 'Honda Activa 6G (Automatic)', daily: '₹299/day', hourly: '₹40/hr', deposit: 'Fast KYC' },
+      { model: 'TVS Jupiter 125', daily: '₹320/day', hourly: '₹45/hr', deposit: 'Wide Footboard' },
+      { model: 'EV Electric Scooter', daily: '₹349/day', hourly: '₹50/hr', deposit: 'Quiet Ride' },
+      { model: 'Royal Enfield Classic 350', daily: '₹899/day', hourly: '₹120/hr', deposit: 'Braj Tour' }
+    ],
+    faqs: [
+      {
+        q: 'Where do I meet the host at Mathura Bus Stand?',
+        a: 'Our host will meet you right outside the main passenger exit of Mathura New Bus Stand or the designated auto-stand parking area.'
+      },
+      {
+        q: 'Can I pick up the scooter at Mathura Bus Stand and drop it in Vrindavan?',
+        a: 'Yes! Cross-hub flexibility is supported. You can collect your vehicle at Mathura Bus Stand and drop it off at your hotel in Vrindavan or Mathura Junction.'
+      },
+      {
+        q: 'What if my bus arrives early morning or late evening?',
+        a: 'We operate handovers from 6:00 AM to 10:00 PM. Early morning arrivals can coordinate handover in advance via WhatsApp.'
+      }
+    ]
+  },
+
+  'dampier-nagar-mathura': {
+    slug: 'dampier-nagar-mathura',
+    name: 'Dampier Nagar Commercial Hub (Mathura)',
+    shortName: 'Dampier Nagar',
+    metaTitle: 'Dampier Nagar Mathura Bike Rental',
+    metaDescription:
+      'Rent Honda Activa & bikes in Dampier Nagar, Mathura. Central market pickup near Museum Road, shopping hubs & top hotels from ₹299/day.',
+    keywords: [
+      'bike on rent in dampier nagar mathura',
+      'dampier nagar scooty hire',
+      'mathura city center two wheeler rental',
+      'dampier park bike rent',
+      'scooty rental museum road mathura',
+      'central mathura bike hire'
+    ],
+    headline: 'Bike & Scooty Rental in Dampier Nagar (Mathura City Center)',
+    subheadline: 'The commercial, shopping, and hospitality epicenter of Mathura — seamless two-wheeler hire near Government Museum and luxury hotels.',
+    geo: {
+      latitude: 27.4941,
+      longitude: 77.6802
+    },
+    landmark: 'Dampier Park, Near Government Museum & Junction Road, Mathura',
+    postalCode: '281001',
+    pickupDescription:
+      'Dampier Nagar is Mathura’s most prestigious commercial and residential enclave, hosting Mathura’s Government Museum, upscale hotels (Brijwasi Royal, Wingston, Goverdhan Palace), banks, and coaching institutes. Renting a scooter here allows business visitors, shoppers, and tourists to navigate Mathura’s busy streets smoothly without parking headaches.',
+    highlights: [
+      'Heart of Mathura city with easy access to top restaurants and hotels',
+      'Quick 3-minute ride to Mathura Junction Railway Station',
+      'Safe, wide roads with organized municipal parking',
+      'Doorstep delivery to all Dampier Nagar hotels, guest houses, and offices'
+    ],
+    travelTips: [
+      'Visit the world-famous Mathura Government Museum located right in Dampier Park.',
+      'Dampier Nagar connects directly to Junction Road, Janmabhoomi Marg, and Tank Chauraha.',
+      'Enjoy famous Brajwasi sweets and local cuisine without four-wheeler traffic jams.'
+    ],
+    pricing: [
+      { model: 'Honda Activa 6G', daily: '₹299/day', hourly: '₹40/hr', deposit: 'Zero Deposit' },
+      { model: 'TVS Jupiter 125', daily: '₹320/day', hourly: '₹45/hr', deposit: 'Verified DL' },
+      { model: 'High-Range EV Scooter', daily: '₹349/day', hourly: '₹50/hr', deposit: 'Eco Choice' },
+      { model: 'Royal Enfield Classic 350', daily: '₹899/day', hourly: '₹120/hr', deposit: 'Heritage Ride' }
+    ],
+    faqs: [
+      {
+        q: 'Do you deliver to hotels located in Dampier Nagar?',
+        a: 'Yes! We deliver to Brijwasi Royal, Hotel Wingston, Hotel Goverdhan Palace, and all boutique hotels and stays in Dampier Nagar within 15 minutes.'
+      },
+      {
+        q: 'How far is Dampier Nagar from Sri Krishna Janmabhoomi and Vishram Ghat?',
+        a: 'Dampier Nagar is approximately 2.5 km from Sri Krishna Janmabhoomi and 3 km from Vishram Ghat (about 8-10 minutes on a scooter).'
+      },
+      {
+        q: 'Can I rent a scooter for corporate or shopping purposes in Dampier Nagar?',
+        a: 'Yes, hourly and daily self-drive packages are fully available for all personal, business, and tourist travel.'
+      }
+    ]
+  },
+
+  'dwarkadhish-temple-vishram-ghat': {
+    slug: 'dwarkadhish-temple-vishram-ghat',
+    name: 'Dwarkadhish Temple & Vishram Ghat (Mathura)',
+    shortName: 'Dwarkadhish & Vishram Ghat',
+    metaTitle: 'Dwarkadhish Mandir & Vishram Ghat Bike Rental',
+    metaDescription:
+      'Rent a scooty near Dwarkadhish Temple & Vishram Ghat in Mathura. Enjoy evening Yamuna Aarti & sweet shopping easily with ₹0 deposit from ₹299/day.',
+    keywords: [
+      'dwarkadhish temple mathura bike rental',
+      'vishram ghat scooty hire',
+      'yamuna aarti mathura two wheeler rent',
+      'old mathura city scooty rental',
+      'mathura peda market bike hire',
+      'chowk bazaar mathura bike rent'
+    ],
+    headline: 'Scooty & Bike Rental near Dwarkadhish Mandir & Vishram Ghat',
+    subheadline: 'Immerse in the eternal Yamuna riverfront, holy boat rides, and the vibrant ancient heart of Mathura with easy two-wheeler mobility.',
+    geo: {
+      latitude: 27.5042,
+      longitude: 77.6858
+    },
+    landmark: 'Vishram Ghat Riverfront / Chowk Bazaar Marg, Old Mathura',
+    postalCode: '281001',
+    pickupDescription:
+      'Dwarkadhish Temple and Vishram Ghat form the sacred spiritual riverfront of Mathura where Lord Krishna rested after defeating Kansa. The surrounding historic alleys and bustling Chowk Bazaar are completely impassable for cars. A compact Honda Activa or EV scooter is the ultimate way to attend the spectacular evening Yamuna Aarti, savor Mathura pedas, and take holy boat rides without exhaustion.',
+    highlights: [
+      'Direct access to Vishram Ghat, Kans Qila, and 25 sacred Yamuna ghats',
+      'Skip strenuous walks through congested Chowk Bazaar and Bengali Ghat',
+      'Dedicated two-wheeler parking guidance near Swami Ghat and Asikunda Ghat',
+      'Locked under-seat storage to protect holy offerings and souvenirs'
+    ],
+    travelTips: [
+      'Evening Yamuna Aarti at Vishram Ghat begins between 6:30 PM and 7:15 PM depending on season.',
+      'Savor hot kachoris and legendary Mathura pedas in Chowk Bazaar nearby.',
+      'Park at the authorized municipal stand near Swami Ghat before walking into the ghat corridor.'
+    ],
+    pricing: [
+      { model: 'Honda Activa 6G (Compact)', daily: '₹299/day', hourly: '₹40/hr', deposit: 'Fast Handover' },
+      { model: 'TVS Jupiter 125', daily: '₹320/day', hourly: '₹45/hr', deposit: 'Comfort Seat' },
+      { model: 'Silent EV Scooter', daily: '₹349/day', hourly: '₹50/hr', deposit: 'Zero Noise' },
+      { model: 'Hero Splendor / Pulsar', daily: '₹399/day', hourly: '₹55/hr', deposit: 'Mileage King' }
+    ],
+    faqs: [
+      {
+        q: 'Can four-wheelers reach Vishram Ghat?',
+        a: 'No, cars and taxis cannot enter the narrow medieval galis around Vishram Ghat. Two-wheelers can ride right up to the authorized parking lot near Swami Ghat, just 50 meters from the river.'
+      },
+      {
+        q: 'What is the morning darshan timing at Dwarkadhish Temple?',
+        a: 'Dwarkadhish Temple opens for morning Mangala at 6:30 AM and Shringar darshan around 7:45 AM. Having a scooter ensures you reach on time.'
+      },
+      {
+        q: 'Is it easy to ride from Vishram Ghat to Vrindavan?',
+        a: 'Yes, the scenic Yamuna river link road connects Vishram Ghat to Vrindavan in just 20 minutes (approx. 11 km).'
+      }
+    ]
+  },
+
+  'goverdhan-chauraha-mathura': {
+    slug: 'goverdhan-chauraha-mathura',
+    name: 'Goverdhan Chauraha & NH-19 Bypass (Mathura)',
+    shortName: 'Goverdhan Chauraha',
+    metaTitle: 'Goverdhan Chauraha Mathura Bike Rental',
+    metaDescription:
+      'Rent a bike or scooty at Goverdhan Chauraha on NH-19 Mathura. Highway delivery point connecting Delhi-Agra Highway & Govardhan Road from ₹299/day.',
+    keywords: [
+      'goverdhan chauraha bike rental mathura',
+      'nh19 mathura scooty hire',
+      'goverdhan road junction two wheeler rental',
+      'mathura bypass bike hire',
+      'highway two wheeler rental mathura'
+    ],
+    headline: 'Bike & Scooty Rental at Goverdhan Chauraha (NH-19 Mathura)',
+    subheadline: 'The premier arterial crossing connecting National Highway 19 (Delhi-Agra), Goverdhan Road, and central Mathura.',
+    geo: {
+      latitude: 27.4875,
+      longitude: 77.6520
+    },
+    landmark: 'Goverdhan Chauraha Flyover, NH-19 Highway Junction, Mathura',
+    postalCode: '281004',
+    pickupDescription:
+      'Goverdhan Chauraha is Mathura’s most vital highway transit crossroads, connecting NH-19 with Goverdhan Road heading west towards the holy Govardhan Hill and Radha Kund. Perfect for highway travelers, commuters from Agra or Delhi, and devotees setting out on the 21 km parikrama circuit directly without entering city traffic jams.',
+    highlights: [
+      'Strategic highway gateway to Govardhan, Barsana, and Mathura city',
+      'Quick vehicle handover near highway restaurants, dhabas, and fuel pumps',
+      'Highway-ready, verified bikes and scooters with emergency toolkit',
+      'Direct link to Mathura Refinery, Janmabhoomi, and Vrindavan Bypass'
+    ],
+    travelTips: [
+      'Goverdhan Chauraha is the direct starting point for the 22 km straight road to Govardhan Dan Ghati.',
+      'Helmets are strictly enforced on the NH-19 service lanes and state highways.',
+      'Multiple 24/7 petrol pumps with air-filling stations are situated right by the flyover.'
+    ],
+    pricing: [
+      { model: 'Honda Activa 6G', daily: '₹299/day', hourly: '₹40/hr', deposit: 'Fast KYC' },
+      { model: 'Bajaj Pulsar 150 / Commuter', daily: '₹450/day', hourly: '₹60/hr', deposit: 'Highway Power' },
+      { model: 'EV Scooter (High Range)', daily: '₹349/day', hourly: '₹50/hr', deposit: 'Eco Friendly' },
+      { model: 'Royal Enfield Classic 350', daily: '₹899/day', hourly: '₹120/hr', deposit: 'Cruiser' }
+    ],
+    faqs: [
+      {
+        q: 'Can I rent a bike at Goverdhan Chauraha and go straight to Govardhan Parikrama?',
+        a: 'Yes! Goverdhan Chauraha offers the most direct and fastest road to Govardhan (approx. 22 km, 30-35 minutes ride).'
+      },
+      {
+        q: 'Is parking available near Goverdhan Chauraha if I come by personal car?',
+        a: 'Yes, there are multiple safe parking lots and highway plazas near the junction where vehicle handovers take place.'
+      }
+    ]
+  },
+
+  'mathura-cantt-railway-station': {
+    slug: 'mathura-cantt-railway-station',
+    name: 'Mathura Cantt Railway Station (MRT)',
+    shortName: 'Mathura Cantt',
+    metaTitle: 'Mathura Cantt Railway Bike & Scooty Rental',
+    metaDescription:
+      'Rent a scooty or bike outside Mathura Cantt Railway Station (MRT). Immediate delivery for arrivals from Bareilly, Kasganj & Kanpur from ₹299/day.',
+    keywords: [
+      'mathura cantt bike rental',
+      'mathura cantt station scooty hire',
+      'mrt railway station bike rent',
+      'mathura cantonment two wheeler hire',
+      'scooter delivery mathura cantt gate'
+    ],
+    headline: 'Bike & Scooty on Rent at Mathura Cantt Railway Station',
+    subheadline: 'Step off your train at Mathura Cantt and start your pilgrimage or commute with instant two-wheeler keys handover.',
+    geo: {
+      latitude: 27.5028,
+      longitude: 77.6972
+    },
+    landmark: 'Mathura Cantt Station Main Exit Gate, Cantonment Road, Mathura',
+    postalCode: '281001',
+    pickupDescription:
+      'Mathura Cantt (MRT) handles passenger and express trains connecting Rohilkhand, Kasganj, Bareilly, Hathras, and eastern Uttar Pradesh. While smaller than Mathura Junction, Cantt station offers peaceful exits and quick access to the eastern bypass and Mathura-Vrindavan link. Have a verified Activa or motorcycle ready at the station exit gate.',
+    highlights: [
+      'Zero-wait train arrival delivery right outside Mathura Cantt exit gate',
+      'Calm, traffic-free cantonment surroundings for smooth driving start',
+      'Easy 15-minute straight ride to Vrindavan via the bypass road',
+      '2 sanitized ISI helmets and mobile charger holder included free'
+    ],
+    travelTips: [
+      'Mathura Cantt is closer to Gokul and Raya than Mathura Junction.',
+      'Vrindavan is approximately 11 km via the Cantt-Vrindavan link road.',
+      'Station parking allows smooth return when boarding your departure train.'
+    ],
+    pricing: [
+      { model: 'Honda Activa 6G', daily: '₹299/day', hourly: '₹40/hr', deposit: 'Fast KYC' },
+      { model: 'TVS Jupiter 125', daily: '₹320/day', hourly: '₹45/hr', deposit: 'Dual Helmet' },
+      { model: 'Hero Splendor / Pulsar', daily: '₹399/day', hourly: '₹55/hr', deposit: 'Fuel Saver' },
+      { model: 'Royal Enfield Classic 350', daily: '₹899/day', hourly: '₹120/hr', deposit: 'Touring' }
+    ],
+    faqs: [
+      {
+        q: 'Will the host meet me at Mathura Cantt station when my train arrives?',
+        a: 'Yes, simply share your train number and estimated arrival time on WhatsApp, and our host will be waiting with the vehicle keys outside Platform 1.'
+      },
+      {
+        q: 'Can I drop off the bike at Mathura Junction if my return train is from MTJ?',
+        a: 'Yes! Flexible drop-off between Mathura Cantt, Mathura Junction, and Vrindavan is fully supported.'
+      }
+    ]
+  },
+
+  'gla-university-nh19-mathura': {
+    slug: 'gla-university-nh19-mathura',
+    name: 'GLA University Campus & NH-19 (Mathura)',
+    shortName: 'GLA University',
+    metaTitle: 'GLA University Mathura Bike & Scooty Rental',
+    metaDescription:
+      'Scooty & bike on rent for GLA University students & faculty on NH-19 Mathura. Flexible weekend & semester rental packages starting ₹299/day.',
+    keywords: [
+      'gla university bike rental',
+      'scooty on rent gla mathura',
+      'chaumuhan mathura bike hire',
+      'college bike rental mathura nh19',
+      'student two wheeler rent gla university',
+      'gla hostel scooty hire'
+    ],
+    headline: 'Bike & Scooty Rental for GLA University Students & Staff',
+    subheadline: 'Affordable two-wheeler freedom for GLA University campus in Chaumuhan, NH-19, connecting to Vrindavan and Mathura.',
+    geo: {
+      latitude: 27.6057,
+      longitude: 77.5933
+    },
+    landmark: 'GLA University Main Entrance Gate, NH-19 (Delhi-Agra Highway), Chaumuhan, Mathura',
+    postalCode: '281406',
+    pickupDescription:
+      'GLA University is one of Uttar Pradesh’s largest private universities, home to over 20,000 students and faculty located on NH-19 in Chaumuhan, Mathura. Public transit from campus to Mathura city or Vrindavan can be irregular and expensive. Rent on Cent provides convenient, student-friendly bike and scooty rentals for weekend outings, exam commutes, and local Braj exploration.',
+    highlights: [
+      'Special discounted student daily and weekend packages',
+      'Convenient doorstep delivery to campus main gate and nearby PG hostels',
+      'Clean helmets, safety checklist, and 24/7 roadside breakdown assistance',
+      'Direct highway ride to Vrindavan (16 km) and Mathura city center (20 km)'
+    ],
+    travelTips: [
+      'GLA University to Vrindavan Chattikara exit takes approximately 15 minutes along NH-19.',
+      'Always ride with helmet buckled and follow national highway speed guidelines.',
+      'EV scooters with home chargers are available for long-term hostel rentals.'
+    ],
+    pricing: [
+      { model: 'Honda Activa 6G (Reliable)', daily: '₹299/day', hourly: '₹40/hr', deposit: 'Student ID' },
+      { model: 'TVS Jupiter 125', daily: '₹320/day', hourly: '₹45/hr', deposit: 'Verified DL' },
+      { model: 'High-Range EV Scooter', daily: '₹349/day', hourly: '₹50/hr', deposit: 'Zero Fuel' },
+      { model: 'Royal Enfield Classic 350', daily: '₹899/day', hourly: '₹120/hr', deposit: 'Weekend Highway' }
+    ],
+    faqs: [
+      {
+        q: 'Can GLA University students rent a bike with their college ID?',
+        a: 'Yes! Along with a valid Driving Licence and Government Aadhaar, college students can present their GLA student ID for quick digital verification and zero security deposit.'
+      },
+      {
+        q: 'Do you deliver to student PGs and hostels in Chaumuhan?',
+        a: 'Yes, we provide doorstep vehicle delivery to Chaumuhan, Akbarpur, and all student residences around GLA University.'
+      }
+    ]
+  },
+
+  'refinery-nagar-mathura': {
+    slug: 'refinery-nagar-mathura',
+    name: 'Refinery Nagar & IOCL Township (Mathura)',
+    shortName: 'Mathura Refinery',
+    metaTitle: 'Mathura Refinery Nagar Bike & Scooty Rental',
+    metaDescription:
+      'Rent a bike or scooty near Mathura IOCL Refinery & Refinery Nagar. Convenient two-wheeler rentals for corporate, residents & visitors from ₹299/day.',
+    keywords: [
+      'mathura refinery bike rental',
+      'refinery nagar scooty hire mathura',
+      'iocl township two wheeler rental',
+      'mathura agra road bike rental',
+      'badh mathura scooter hire'
+    ],
+    headline: 'Bike & Scooty Rental in Refinery Nagar & IOCL Township',
+    subheadline: 'Reliable, verified two-wheeler hire for refinery personnel, contractors, and residents along the Mathura-Agra highway corridor.',
+    geo: {
+      latitude: 27.4285,
+      longitude: 77.6980
+    },
+    landmark: 'Mathura IOCL Refinery Main Gate / Refinery Nagar Township, Mathura-Agra Road',
+    postalCode: '281005',
+    pickupDescription:
+      'Mathura Refinery (Indian Oil Corporation Limited) and Refinery Nagar form a major industrial and residential hub on the southern edge of Mathura along the Agra Road (NH-19). Whether visiting the refinery for official contracts, commuting to the township, or heading on a weekend trip to Vrindavan, our two-wheeler fleet offers comfortable, fuel-efficient daily rentals with zero hassles.',
+    highlights: [
+      'Serving IOCL township, CISF colony, and surrounding business hubs',
+      'Prompt doorstep delivery on Mathura-Agra Road (NH-19)',
+      'Flexible corporate, daily, and monthly billing with GST invoices upon request',
+      'Easy access to Mathura city (8 km) and Gokul Barrage (6 km)'
+    ],
+    travelTips: [
+      'Refinery Nagar connects smoothly to Mathura Junction via Tank Chauraha (approx. 12 mins).',
+      'Scenic Gokul Barrage road is right nearby for a refreshing evening ride.',
+      'Helmets and safety gear strictly mandatory on the industrial corridor.'
+    ],
+    pricing: [
+      { model: 'Honda Activa 6G', daily: '₹299/day', hourly: '₹40/hr', deposit: 'Zero Deposit' },
+      { model: 'Bajaj Pulsar / Hero Splendor', daily: '₹399/day', hourly: '₹55/hr', deposit: 'Commuter' },
+      { model: 'High-Range EV Scooter', daily: '₹349/day', hourly: '₹50/hr', deposit: 'Eco Friendly' },
+      { model: 'Royal Enfield Classic 350', daily: '₹899/day', hourly: '₹120/hr', deposit: 'Highway' }
+    ],
+    faqs: [
+      {
+        q: 'Can refinery engineers and contractors book bikes for multiple weeks?',
+        a: 'Yes, we provide special multi-week and monthly packages with full maintenance and insurance support.'
+      },
+      {
+        q: 'Do you deliver to the IOCL Township residential gates?',
+        a: 'Yes, our hosts provide doorstep handover directly at the township gates or guest houses.'
+      }
+    ]
   }
 };
 
 export const ALL_LOCATIONS = Object.values(LOCATION_SEO_DATA);
+

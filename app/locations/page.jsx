@@ -5,15 +5,15 @@ import { MapPin, Bike, ArrowRight, ShieldCheck, Clock, Sparkles } from 'lucide-r
 import { VrindavanScooterIcon, VrindavanFeatherIcon } from '../../src/components/CustomIcons';
 
 export const metadata = {
-  title: 'Rental Pickup Locations in Vrindavan',
+  title: 'Rental Pickup Locations in Mathura & Vrindavan',
   description:
-    'Find two-wheeler pickup points in Vrindavan and Mathura: Yamuna Expressway exits, Prem Mandir, Bankey Bihari, Chattikara & Mathura Junction.',
+    'Find 21+ two-wheeler pickup points across Mathura & Vrindavan: BSA College, Mathura Bus Stand, Mathura Junction, Dampier Nagar, Prem Mandir, Bankey Bihari & Expressway exits.',
   alternates: {
     canonical: 'https://rentoncent.bond/rent-bike-cars-scooty-in'
   },
   openGraph: {
-    title: 'Rental Pickup Locations in Vrindavan | Rent on Cent',
-    description: 'Find two-wheeler pickup points across Mathura and Vrindavan.',
+    title: 'Rental Pickup Locations in Mathura & Vrindavan | Rent on Cent',
+    description: 'Find 21+ two-wheeler pickup points across Mathura and Vrindavan starting ₹299/day.',
     url: 'https://rentoncent.bond/rent-bike-cars-scooty-in',
     siteName: 'Rent on Cent',
     locale: 'en_IN',
@@ -25,14 +25,14 @@ export const metadata = {
         width: 540,
         height: 540,
         type: 'image/png',
-        alt: 'Rent on Cent - Vrindavan Bike & Scooty Rental'
+        alt: 'Rent on Cent - Mathura & Vrindavan Bike & Scooty Rental'
       }
     ]
   },
   twitter: {
     card: 'summary',
-    title: 'Rental Pickup Locations in Vrindavan | Rent on Cent',
-    description: 'Find two-wheeler pickup points across Mathura and Vrindavan.',
+    title: 'Rental Pickup Locations in Mathura & Vrindavan | Rent on Cent',
+    description: 'Find 21+ two-wheeler pickup points across Mathura and Vrindavan starting ₹299/day.',
     images: ['https://rentoncent.bond/logo_square_share_area.png']
   }
 };

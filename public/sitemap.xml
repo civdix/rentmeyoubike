@@ -6,26 +6,26 @@
   <!-- Home / Main Rental Portal -->
   <url>
     <loc>https://rentoncent.bond/</loc>
-    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
+    <lastmod>2026-10-08T00:00:00+05:30</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
     <image:image>
       <image:loc>https://rentoncent.bond/og-customer.jpg</image:loc>
-      <image:title>Rent on Cent - Bike and Scooty Rental in Vrindavan</image:title>
-      <image:caption>Affordable two-wheeler and electric scooter rentals in Vrindavan and Mathura</image:caption>
+      <image:title>Rent on Cent - Bike and Scooty Rental in Mathura and Vrindavan</image:title>
+      <image:caption>Affordable two-wheeler and electric scooter rentals in Mathura and Vrindavan</image:caption>
     </image:image>
   </url>
 
   <!-- Browse Two-Wheelers Marketplace -->
   <url>
     <loc>https://rentoncent.bond/bikes</loc>
-    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
+    <lastmod>2026-10-08T00:00:00+05:30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
     <image:image>
       <image:loc>https://rentoncent.bond/logo_square_share_area.png</image:loc>
-      <image:title>Browse All Bikes and Scooters in Vrindavan</image:title>
-      <image:caption>Rent Honda Activa, Royal Enfield, and EV Scooters in Mathura-Vrindavan</image:caption>
+      <image:title>Browse All Bikes and Scooters in Mathura and Vrindavan</image:title>
+      <image:caption>Rent Honda Activa, Royal Enfield, and EV Scooters in Mathura and Vrindavan</image:caption>
     </image:image>
   </url>
 
@@ -141,7 +141,71 @@
   <!-- Micro-Location: Gokul Raman Reti -->
   <url>
     <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/gokul-raman-reti</loc>
-    <lastmod>2026-09-25T00:00:00+05:30</lastmod>
+    <lastmod>2026-10-08T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- Micro-Location: Near BSA College of Engineering & Technology -->
+  <url>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/bsa-college-engineering-mathura</loc>
+    <lastmod>2026-10-08T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- Micro-Location: Mathura Bus Stand (ISBT) -->
+  <url>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/mathura-bus-stand</loc>
+    <lastmod>2026-10-08T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- Micro-Location: Dampier Nagar Commercial Hub -->
+  <url>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/dampier-nagar-mathura</loc>
+    <lastmod>2026-10-08T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- Micro-Location: Dwarkadhish Temple & Vishram Ghat -->
+  <url>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/dwarkadhish-temple-vishram-ghat</loc>
+    <lastmod>2026-10-08T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- Micro-Location: Goverdhan Chauraha / NH-19 Bypass -->
+  <url>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/goverdhan-chauraha-mathura</loc>
+    <lastmod>2026-10-08T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- Micro-Location: Mathura Cantt Railway Station -->
+  <url>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/mathura-cantt-railway-station</loc>
+    <lastmod>2026-10-08T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- Micro-Location: GLA University Campus & NH-19 -->
+  <url>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/gla-university-nh19-mathura</loc>
+    <lastmod>2026-10-08T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- Micro-Location: Refinery Nagar & IOCL Township -->
+  <url>
+    <loc>https://rentoncent.bond/rent-bike-cars-scooty-in/refinery-nagar-mathura</loc>
+    <lastmod>2026-10-08T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.88</priority>
   </url>

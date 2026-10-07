@@ -70,7 +70,15 @@ export default async function LocationPage({ params }) {
     address: {
       '@type': 'PostalAddress',
       streetAddress: loc.landmark,
-      addressLocality: loc.name.includes('Mathura') ? 'Mathura' : 'Vrindavan',
+      addressLocality: (loc.name.includes('Mathura') || loc.slug.includes('mathura') || loc.slug.includes('bsa-college') || loc.slug.includes('dampier'))
+        ? 'Mathura'
+        : loc.slug.includes('govardhan')
+        ? 'Govardhan'
+        : loc.slug.includes('barsana')
+        ? 'Barsana'
+        : loc.slug.includes('gokul')
+        ? 'Gokul'
+        : 'Vrindavan',
       addressRegion: 'Uttar Pradesh',
       postalCode: loc.postalCode,
       addressCountry: 'IN'

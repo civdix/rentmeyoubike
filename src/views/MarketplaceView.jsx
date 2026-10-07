@@ -165,7 +165,7 @@ export const MarketplaceView = () => {
                 <span>Rent • Ride • Explore</span>
               </span>
             </div>
-            <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-white">Browse Bikes & Scooters in Vrindavan</h1>
+            <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-white">Browse Bikes & Scooters in Mathura & Vrindavan</h1>
             <p className="text-xs text-slate-400 mt-1">Verified bikes with transparent pricing, zero security deposits, and direct WhatsApp handover.</p>
           </div>
 
@@ -284,21 +284,33 @@ export const MarketplaceView = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">Pickup Area in Vrindavan</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">Pickup Area in Mathura &amp; Vrindavan</label>
               <select
                 value={pickupAreaFilter}
                 onChange={(e) => setPickupAreaFilter(e.target.value)}
                 className="w-full text-xs p-2.5 rounded-xl border border-slate-300 bg-slate-50 font-semibold focus:outline-none focus:border-emerald-600"
               >
-                <option value="all">All Vrindavan Hubs</option>
-                <option value="Prem Mandir Road">Prem Mandir Road</option>
-                <option value="Bankey Bihari Temple Road">Bankey Bihari Temple Road</option>
-                <option value="ISKCON Temple Chowk">ISKCON Temple Chowk</option>
-                <option value="Vrindavan Railway Station">Vrindavan Railway Station</option>
-                <option value="Chattikara Road">Chattikara Road</option>
-                <option value="Seva Kunj Road">Seva Kunj Road</option>
-                <option value="Raman Reti">Raman Reti</option>
-                <option value="Sunrakh Road">Sunrakh Road</option>
+                <option value="all">All Mathura &amp; Vrindavan Hubs</option>
+                <optgroup label="Mathura City &amp; Transit Hubs">
+                  <option value="Mathura Junction Railway Station">Mathura Junction Railway Station (MTJ)</option>
+                  <option value="Mathura Bus Stand">Mathura Bus Stand (ISBT)</option>
+                  <option value="Near BSA College of Engineering">Near BSA College of Engg.</option>
+                  <option value="Dampier Nagar">Dampier Nagar (City Center)</option>
+                  <option value="Shri Krishna Janmabhoomi">Shri Krishna Janmabhoomi</option>
+                  <option value="Dwarkadhish Temple & Vishram Ghat">Dwarkadhish Temple &amp; Vishram Ghat</option>
+                  <option value="Goverdhan Chauraha (Mathura)">Goverdhan Chauraha / NH-19 Bypass</option>
+                  <option value="Mathura Cantt Railway Station">Mathura Cantt Railway Station</option>
+                </optgroup>
+                <optgroup label="Vrindavan Temple Hubs">
+                  <option value="Prem Mandir Road">Prem Mandir &amp; Raman Reti</option>
+                  <option value="Bankey Bihari Temple Road">Bankey Bihari Temple Road</option>
+                  <option value="ISKCON Temple Chowk">ISKCON Temple Chowk</option>
+                  <option value="Chattikara Road">Chattikara Road</option>
+                  <option value="Seva Kunj Road">Seva Kunj Road</option>
+                  <option value="Raman Reti">Raman Reti</option>
+                  <option value="Sunrakh Road">Sunrakh Road</option>
+                  <option value="Vrindavan Railway Station">Vrindavan Railway Station</option>
+                </optgroup>
               </select>
             </div>
 
@@ -516,18 +528,32 @@ export const MarketplaceView = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">Pickup Area</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">Pickup Area in Mathura &amp; Vrindavan</label>
               <select
                 value={pickupAreaFilter}
                 onChange={(e) => setPickupAreaFilter(e.target.value)}
                 className="w-full text-xs p-2.5 rounded-xl border border-slate-300 bg-slate-50 font-semibold"
               >
-                <option value="all">All Vrindavan Hubs</option>
-                <option value="Prem Mandir Road">Prem Mandir Road</option>
-                <option value="Bankey Bihari Temple Road">Bankey Bihari Temple Road</option>
-                <option value="ISKCON Temple Chowk">ISKCON Temple Chowk</option>
-                <option value="Vrindavan Railway Station">Vrindavan Railway Station</option>
-                <option value="Chattikara Road">Chattikara Road</option>
+                <option value="all">All Mathura &amp; Vrindavan Hubs</option>
+                <optgroup label="Mathura City &amp; Transit Hubs">
+                  <option value="Mathura Junction Railway Station">Mathura Junction (MTJ)</option>
+                  <option value="Mathura Bus Stand">Mathura Bus Stand (ISBT)</option>
+                  <option value="Near BSA College of Engineering">Near BSA College</option>
+                  <option value="Dampier Nagar">Dampier Nagar</option>
+                  <option value="Shri Krishna Janmabhoomi">Shri Krishna Janmabhoomi</option>
+                  <option value="Dwarkadhish Temple & Vishram Ghat">Dwarkadhish &amp; Vishram Ghat</option>
+                  <option value="Goverdhan Chauraha (Mathura)">Goverdhan Chauraha</option>
+                  <option value="Mathura Cantt Railway Station">Mathura Cantt</option>
+                </optgroup>
+                <optgroup label="Vrindavan Temple Hubs">
+                  <option value="Prem Mandir Road">Prem Mandir &amp; Raman Reti</option>
+                  <option value="Bankey Bihari Temple Road">Bankey Bihari Temple</option>
+                  <option value="ISKCON Temple Chowk">ISKCON Temple</option>
+                  <option value="Chattikara Road">Chattikara Road</option>
+                  <option value="Seva Kunj Road">Seva Kunj &amp; Nidhivan</option>
+                  <option value="Raman Reti">Raman Reti</option>
+                  <option value="Vrindavan Railway Station">Vrindavan Station</option>
+                </optgroup>
               </select>
             </div>
 

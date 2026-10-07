@@ -129,7 +129,7 @@ export const CustomerView = () => {
 
     if (!isOneClick) {
       const supportPhone = (legalConfig?.supportWhatsApp || '+919720965985').replace(/[^0-9]/g, '');
-      const prefilled = `Hi, I want to rent ${bookedVehicle.name} (${bookedVehicle.id}) in Vrindavan.\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n📅 Dates: ${startDate} to ${endDate}\n\nPlease confirm availability.`;
+      const prefilled = `Hi, I want to rent ${bookedVehicle.name} (${bookedVehicle.id}) in Mathura & Vrindavan.\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n📅 Dates: ${startDate} to ${endDate}\n\nPlease confirm availability.`;
       if (typeof window !== 'undefined') {
         window.open(`https://wa.me/${supportPhone}?text=${encodeURIComponent(prefilled)}`, '_blank');
       }
@@ -150,19 +150,24 @@ export const CustomerView = () => {
   // FAQ List with both short visible summary answers and detailed explanations
   const faqData = [
     {
-      q: 'How do I get a bike or scooty on rent in Vrindavan?',
-      shortA: 'Choose bike online or WhatsApp (+91 97209 65985), submit Aadhaar & DL for 2-min KYC, and collect keys in 15 mins at Prem Mandir or hotel delivery.',
-      a: 'Browse verified two-wheelers on Rent on Cent, choose your rental dates, complete instant digital KYC (Aadhaar & Driving Licence), and confirm booking on WhatsApp (+91 97209 65985). Pickup at Prem Mandir or get 15-minute doorstep delivery at your hotel or Mathura Junction.'
+      q: 'How do I get a bike or scooty on rent in Mathura & Vrindavan?',
+      shortA: 'Choose bike online or WhatsApp (+91 97209 65985), submit Aadhaar & DL for 2-min KYC, and collect keys in 15 mins at Mathura Junction, BSA College, Prem Mandir or hotel delivery.',
+      a: 'Browse verified two-wheelers on Rent on Cent, choose your rental dates, complete instant digital KYC (Aadhaar & Driving Licence), and confirm booking on WhatsApp (+91 97209 65985). Pickup at Mathura Junction, Mathura Bus Stand, BSA College, Prem Mandir, or enjoy 15-minute doorstep delivery to your hotel or ashram.'
     },
     {
-      q: 'What is the price of scooty on rent in Vrindavan?',
+      q: 'What is the price of scooty on rent in Mathura and Vrindavan?',
       shortA: 'Starts from ₹40/hr and ₹299/day for Honda Activa & TVS Jupiter with 2 free sanitized ISI helmets and zero security deposit.',
-      a: 'Scooty on rent in Vrindavan starts from ₹40/hour and ₹299/day for Honda Activa 6G and TVS Jupiter. High-mileage bikes, Royal Enfield Classic 350, and eco-friendly EV scooters are also available with 2 free ISI helmets and zero deposit options.'
+      a: 'Scooty on rent in Mathura and Vrindavan starts from ₹40/hour and ₹299/day for Honda Activa 6G and TVS Jupiter. High-mileage bikes, Royal Enfield Classic 350, and eco-friendly EV scooters are also available with 2 free ISI helmets and zero deposit options.'
+    },
+    {
+      q: 'Can I pick up in Mathura and return in Vrindavan (or vice-versa)?',
+      shortA: 'Yes! Cross-city handovers between Mathura Junction/Bus Stand and Vrindavan hotels or ashrams are fully supported.',
+      a: 'Yes, cross-city pickup and drop-off is supported. You can collect your vehicle upon arrival at Mathura Junction Platform 1 or Mathura Bus Stand and return it in Vrindavan after completing your darshan.'
     },
     {
       q: 'What documents are required?',
-      shortA: 'Valid 2-wheeler Driving Licence (DL) + Aadhaar Card or Passport. DigiLocker uploads are 100% accepted.',
-      a: 'You will need an original Government-issued photo ID (Aadhaar Card or Passport), a valid Driving Licence (DL) for two-wheelers, and a mobile phone linked to WhatsApp. Documents are uploaded digitally before pickup.'
+      shortA: 'Valid 2-wheeler Driving Licence (DL) + Aadhaar Card, Student ID, or Passport. DigiLocker uploads are 100% accepted.',
+      a: 'You will need an original Government-issued photo ID (Aadhaar Card, Student ID for college discounts, or Passport), a valid Driving Licence (DL) for two-wheelers, and a mobile phone linked to WhatsApp. Documents are uploaded digitally before pickup.'
     },
     {
       q: 'Is a driving licence required?',
@@ -171,8 +176,8 @@ export const CustomerView = () => {
     },
     {
       q: 'How does booking work?',
-      shortA: 'Select bike → confirm on WhatsApp → complete instant digital KYC → collect keys & start your Vrindavan parikrama.',
-      a: 'Browse bikes -> Click "Book on WhatsApp" -> Submit your preferred dates & vehicle -> Verify your ID & DL online -> Complete payment link -> Receive pickup location pin in Vrindavan.'
+      shortA: 'Select bike → confirm on WhatsApp → complete instant digital KYC → collect keys & start your Braj yatra.',
+      a: 'Browse bikes -> Click "Book on WhatsApp" -> Submit your preferred dates & vehicle -> Verify your ID & DL online -> Complete payment link -> Receive pickup location pin in Mathura or Vrindavan.'
     },
     {
       q: 'How does the bike inspection work?',
@@ -187,85 +192,129 @@ export const CustomerView = () => {
     {
       q: 'What happens if I need to cancel?',
       shortA: '100% free cancellation up to 12 hours before pickup. Cancellations within 12 hours receive a full 12-month credit voucher.',
-      a: 'Free cancellation up to 12 hours before pickup. Cancellations made within 12 hours receive a full credit voucher valid for 12 months for your next Vrindavan trip.'
+      a: 'Free cancellation up to 12 hours before pickup. Cancellations made within 12 hours receive a full credit voucher valid for 12 months for your next Mathura-Vrindavan trip.'
     },
     {
       q: 'How does protection/insurance work?',
       shortA: 'Protection plans cover 24/7 on-ground roadside assistance across Mathura-Vrindavan, third-party liability, and digital damage audit.',
-      a: 'Our optional Protection Plan covers roadside assistance in Vrindavan, third-party liability, and digital inspection audit protection without requiring huge security cash deposits.'
+      a: 'Our optional Protection Plan covers roadside assistance across Mathura and Vrindavan, third-party liability, and digital inspection audit protection without requiring huge security cash deposits.'
     }
   ];
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-16 font-sans">
-      {/* HERO SECTION */}
-      <section className="relative bg-gradient-to-r from-slate-950 via-teal-950 to-slate-950 text-white py-10 sm:py-16 px-4 overflow-hidden border-b border-teal-900/50">
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute top-1/2 -left-32 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      {/* =========================================================================
+          HERO SECTION (High-Performance Mobility Portal - Mathura & Vrindavan)
+          ========================================================================= */}
+      <section className="relative bg-gradient-to-b from-slate-950 via-[#061417] to-slate-950 text-white pt-8 pb-14 sm:pt-12 sm:pb-18 px-3 sm:px-6 lg:px-8 overflow-hidden border-b border-emerald-900/40">
+        {/* Subtle Ambient Radial Glows & Grid Mesh */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f2a2e12_1px,transparent_1px),linear-gradient(to_bottom,#0f2a2e12_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+        <div className="absolute -top-36 -right-36 w-[550px] h-[550px] bg-teal-500/12 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/3 -left-36 w-[450px] h-[450px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute -bottom-24 right-1/4 w-[400px] h-[400px] bg-amber-500/8 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center mb-8 sm:mb-12">
-            {/* Left Column: Heading & Value Proposition */}
-            <div className="lg:col-span-7">
-              <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-amber-500/20 to-teal-500/20 border border-amber-400/40 text-amber-300 text-xs font-extrabold px-3.5 py-1.5 rounded-full mb-4 shadow-sm">
-                <VrindavanFeatherIcon className="w-4 h-4 text-amber-400" />
-                <span>Rent • Ride • Explore — Vrindavan &amp; Mathura</span>
-              </span>
+        <div className="max-w-7xl mx-auto relative z-10 space-y-8 sm:space-y-10">
+          
+          {/* Main 2-Column Hero Header */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            {/* Left Column: Heading, Value Props, CTAs, Social Proof */}
+            <div className="lg:col-span-7 space-y-5">
+              
+              {/* Live Availability Pill */}
+              <div className="inline-flex items-center gap-2 bg-slate-900/90 hover:bg-slate-800/90 border border-emerald-500/40 text-emerald-300 text-[11px] sm:text-xs font-bold px-3.5 py-1.5 rounded-full shadow-lg backdrop-blur-md transition-all">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span className="font-semibold text-slate-200">Live Mobility Network:</span>
+                <span className="text-emerald-300 font-extrabold">Mathura &amp; Vrindavan</span>
+                <span className="text-slate-400 hidden sm:inline">• 15-Min Doorstep Drop</span>
+              </div>
 
-              <h1 className="font-heading text-3xl sm:text-5xl lg:text-5xl font-extrabold tracking-tight text-white mb-4 leading-[1.15]">
-                Bike on Rent in Vrindavan &mdash; Scooty &amp; Two Wheeler Rental
+              {/* High-Intent SEO Main Heading */}
+              <h1 className="font-heading text-3xl sm:text-5xl lg:text-[44px] xl:text-[52px] font-black tracking-tight text-white leading-[1.12]">
+                Bike &amp; Scooty on Rent in{' '}
+                <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-300 bg-clip-text text-transparent">
+                  Mathura &amp; Vrindavan
+                </span>
+                <span className="block text-base sm:text-xl lg:text-2xl font-bold text-slate-300 mt-2 font-sans tracking-normal">
+                  Peer-to-Peer Two-Wheeler Rental from ₹299/Day (₹40/Hr)
+                </span>
               </h1>
 
-              <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-6 font-normal max-w-2xl">
-                Looking for a verified <strong>bike on rent in Vrindavan</strong> or the most reliable <strong>Vrindavan rental</strong> service? Rent Honda Activa 6G, EV scooters &amp; Royal Enfield for seamless temple darshan and Govardhan Parikrama. Transparent daily rates from ₹299/day or ₹40/hr with ₹0 deposit and free doorstep delivery to your ashram or railway station.
+              {/* Comprehensive SEO Content Paragraph */}
+              <p className="text-slate-300 text-xs sm:text-sm lg:text-[15px] leading-relaxed max-w-2xl font-normal">
+                Skip crowded auto haggling and experience unrestricted mobility across Braj Bhoomi. Rent verified <strong>Honda Activa 6G</strong>, long-range <strong>EV scooters</strong> &amp; <strong>Royal Enfield Classic 350</strong> cruisers. Enjoy <strong>₹0 cash deposit options</strong>, 2 sanitized ISI helmets, phone mount navigation, and instant 15-minute doorstep delivery at <strong>Mathura Junction (MTJ)</strong>, <strong>Near BSA College</strong>, <strong>Mathura Bus Stand (ISBT)</strong>, <strong>Dampier Nagar</strong>, <strong>Prem Mandir</strong>, and all hotels &amp; ashrams.
               </p>
 
-              {/* Key Value Points */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-6 text-xs text-slate-200 max-w-2xl">
-                <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 shadow-xs">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>₹0 Cash Deposit Available</span>
+              {/* 4 Feature Value Pillars Grid (Sleek Glass Cards) */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1 text-xs">
+                <div className="bg-slate-900/70 border border-slate-800/90 hover:border-emerald-500/40 rounded-2xl p-2.5 sm:p-3 backdrop-blur-md transition-all shadow-xs group">
+                  <div className="flex items-center gap-1.5 text-emerald-400 font-bold mb-0.5">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span className="text-[11px] text-white font-extrabold group-hover:text-emerald-300">₹0 Deposit</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 leading-tight">Digital KYC in 2 mins</p>
                 </div>
-                <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 shadow-xs">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>2 Free Clean Helmets</span>
+
+                <div className="bg-slate-900/70 border border-slate-800/90 hover:border-teal-500/40 rounded-2xl p-2.5 sm:p-3 backdrop-blur-md transition-all shadow-xs group">
+                  <div className="flex items-center gap-1.5 text-teal-400 font-bold mb-0.5">
+                    <HelmetsIcon className="w-4 h-4 text-teal-400 shrink-0" />
+                    <span className="text-[11px] text-white font-extrabold group-hover:text-teal-300">2 ISI Helmets</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 leading-tight">Sanitized + Tilak liners</p>
                 </div>
-                <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 shadow-xs">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>15-Min Doorstep Drop</span>
+
+                <div className="bg-slate-900/70 border border-slate-800/90 hover:border-amber-500/40 rounded-2xl p-2.5 sm:p-3 backdrop-blur-md transition-all shadow-xs group">
+                  <div className="flex items-center gap-1.5 text-amber-400 font-bold mb-0.5">
+                    <Clock className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span className="text-[11px] text-white font-extrabold group-hover:text-amber-300">15-Min Drop</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 leading-tight">Station, College &amp; Hotels</p>
+                </div>
+
+                <div className="bg-slate-900/70 border border-slate-800/90 hover:border-purple-500/40 rounded-2xl p-2.5 sm:p-3 backdrop-blur-md transition-all shadow-xs group">
+                  <div className="flex items-center gap-1.5 text-purple-400 font-bold mb-0.5">
+                    <CheckCircle2 className="w-4 h-4 text-purple-400 shrink-0" />
+                    <span className="text-[11px] text-white font-extrabold group-hover:text-purple-300">UP-85 Fleet</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 leading-tight">Commercial insurance</p>
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+              {/* Action Buttons & WhatsApp Helpline */}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
                 <button
                   onClick={() => router.push('/bikes')}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm py-3.5 px-6 rounded-xl flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition-transform active:scale-95 shrink-0 cursor-pointer"
+                  className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs sm:text-sm py-3 px-5 sm:px-6 rounded-xl flex items-center gap-2 shadow-lg shadow-emerald-950/40 transition-all hover:shadow-emerald-600/30 active:scale-98 shrink-0 cursor-pointer"
                 >
                   <VrindavanScooterIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.2} />
-                  <span>Browse Available Bikes</span>
+                  <span>Browse Available Fleet</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
 
                 <a
-                  href={`https://wa.me/${legalConfig.supportWhatsApp.replace(/[^0-9]/g, '')}`}
+                  href={`https://wa.me/${legalConfig.supportWhatsApp.replace(/[^0-9]/g, '')}?text=Namaste%2C+I+want+to+book+a+bike%2Fscooty+in+Mathura+or+Vrindavan`}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="Book Vrindavan Bike on WhatsApp Helpline"
-                  className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-xs sm:text-sm py-3.5 px-6 rounded-xl flex items-center gap-2 shadow-md transition-transform active:scale-95 shrink-0"
+                  aria-label="Book Mathura Vrindavan Bike on WhatsApp Helpline"
+                  className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-xs sm:text-sm py-3 px-5 sm:px-6 rounded-xl flex items-center gap-2 shadow-md transition-all active:scale-98 shrink-0"
                 >
                   <WhatsAppBrandIcon className="w-4 h-4 sm:w-5 sm:h-5 fill-white" />
-                  <span>WhatsApp Booking Help</span>
+                  <span>WhatsApp Instant Booking</span>
                 </a>
 
                 {currentUser && (
-                  <div className="bg-slate-900/80 border border-emerald-500/40 text-emerald-300 font-bold text-xs py-2.5 sm:py-3 px-3.5 sm:px-4 rounded-xl flex items-center gap-2">
+                  <div className="bg-slate-900/90 border border-emerald-500/40 text-emerald-300 font-bold text-xs py-2 px-3.5 rounded-xl flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Logged in: <strong>{currentUser.name}</strong></span>
+                    <span>Hi, <strong>{currentUser.name}</strong></span>
                   </div>
                 )}
               </div>
 
-              {/* Pilgrim Social Proof Micro-bar */}
-              <div className="flex items-center gap-3 mt-6 pt-4 border-t border-slate-800/80 text-xs text-slate-300">
+              {/* Trust Social Proof Bar */}
+              <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-slate-800/80 text-xs text-slate-300">
                 <div className="flex items-center text-amber-400">
                   <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                   <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
@@ -273,60 +322,73 @@ export const CustomerView = () => {
                   <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                   <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                 </div>
-                <div>
+                <div className="flex items-center gap-1.5 flex-wrap">
                   <strong className="text-white font-bold">4.9 / 5</strong>
-                  <span className="text-slate-400 ml-1.5">• 1,200+ Yatris &amp; Pilgrims Served in Vrindavan</span>
+                  <span className="text-slate-400">• 1,240+ Yatris, Pilgrims &amp; Students across Mathura &amp; Vrindavan</span>
+                  <span className="text-emerald-400 font-semibold">• 100% Verified UP-85 Hosts</span>
                 </div>
               </div>
+
             </div>
 
-            {/* Right Column: Hero Visual Photo Card */}
+            {/* Right Column: Hero Visual Showcase Card */}
             <div className="lg:col-span-5">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-teal-500/30 group bg-slate-900">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-teal-500/30 group bg-slate-900/90 ring-1 ring-emerald-500/20">
+                
+                {/* Visual Image */}
                 <picture>
                   <source srcSet="/images/hero-rider-vrindavan.webp" type="image/webp" />
                   <img
                     src="/images/hero-rider-vrindavan.webp"
-                    alt="Pilgrim riding verified Honda Activa scooter on rent past ancient temples in Vrindavan"
+                    alt="Pilgrim riding verified Honda Activa scooter on rent across temples in Mathura and Vrindavan"
                     width={800}
                     height={533}
-                    className="w-full h-72 sm:h-84 lg:h-[390px] object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-72 sm:h-84 lg:h-[390px] object-cover object-center group-hover:scale-105 transition-transform duration-700"
                     fetchPriority="high"
                     decoding="sync"
                   />
                 </picture>
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent pointer-events-none" />
 
-                {/* Top Floating Badge */}
+                {/* Top Floating Badges */}
                 <div className="absolute top-3.5 left-3.5 bg-slate-950/85 backdrop-blur-md border border-amber-400/40 text-amber-300 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
                   <span>UP-85 Mathura Registered Fleet</span>
                 </div>
 
-                {/* Bottom Floating Price & Action Badge */}
+                <div className="absolute top-3.5 right-3.5 bg-slate-950/85 backdrop-blur-md border border-emerald-400/40 text-emerald-300 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
+                  <Zap className="w-3 h-3 text-emerald-400" />
+                  <span>15-Min Delivery</span>
+                </div>
+
+                {/* Bottom Interactive Fleet Rate Strip */}
                 <div className="absolute bottom-3.5 left-3.5 right-3.5 bg-slate-950/90 backdrop-blur-md border border-slate-700/80 p-3 sm:p-3.5 rounded-2xl flex items-center justify-between text-xs shadow-xl">
                   <div>
-                    <span className="text-slate-400 block text-[10px] font-semibold uppercase tracking-wider">Activa &amp; EV Scooters</span>
-                    <span className="font-heading font-black text-amber-400 text-sm sm:text-base">From ₹299/day <span className="text-slate-400 text-[11px] font-normal">(₹40/hr)</span></span>
+                    <span className="text-slate-400 block text-[10px] font-semibold uppercase tracking-wider">Activa 6G &amp; EV Scooters</span>
+                    <span className="font-heading font-black text-amber-400 text-sm sm:text-base">
+                      From ₹299/day <span className="text-slate-400 text-[11px] font-normal">(₹40/hr)</span>
+                    </span>
                   </div>
                   <button
                     onClick={() => router.push('/bikes')}
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 shadow-sm"
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition-all cursor-pointer shrink-0 shadow-sm flex items-center gap-1"
                   >
-                    View Fleet &rarr;
+                    <span>View Fleet</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
             </div>
+
           </div>
 
           {/* Account Quick Access Bar - only shown when logged in */}
           {currentUser && (
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-slate-900/80 border border-slate-800 backdrop-blur-md rounded-2xl p-3 px-4 mb-4 text-xs text-slate-300 shadow-lg">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-slate-900/80 border border-slate-800 backdrop-blur-md rounded-2xl p-3 px-4 text-xs text-slate-300 shadow-lg">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>
-                  Logged in as <strong className="text-white">{currentUser.name}</strong> ({currentUser.phone || currentUser.email}) • View your active rental bookings & inspections.
+                  Logged in as <strong className="text-white">{currentUser.name}</strong> ({currentUser.phone || currentUser.email}) • View your active rental bookings &amp; inspections.
                 </span>
               </div>
               <button
@@ -338,70 +400,119 @@ export const CustomerView = () => {
             </div>
           )}
 
-          {/* SEARCH MODULE */}
-          <div className="bg-white rounded-2xl p-4 sm:p-6 text-slate-900 shadow-2xl border border-amber-500/30">
-            <div className="flex items-center gap-2 mb-3 text-xs font-bold text-slate-700">
-              <Search className="w-4 h-4 text-emerald-600" />
-              <span>Search &amp; Book Scooty on Rent in Vrindavan</span>
+          {/* SEARCH MODULE (Next-Gen Clean Elevated Booking Console) */}
+          <div className="bg-white rounded-3xl p-5 sm:p-7 text-slate-900 shadow-2xl shadow-emerald-950/25 border border-slate-200/90 space-y-4">
+            
+            {/* Search Header Strip */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-slate-100">
+              <div className="flex items-center gap-2 text-xs font-extrabold text-slate-800">
+                <div className="w-6 h-6 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700">
+                  <Search className="w-3.5 h-3.5" />
+                </div>
+                <span>Search &amp; Book Scooty on Rent in Mathura &amp; Vrindavan</span>
+              </div>
+              <div className="flex items-center gap-2 text-[11px] font-semibold text-emerald-700">
+                <span className="inline-flex items-center gap-1 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  <Check className="w-3 h-3 text-emerald-600" />
+                  <span>₹0 Cash Deposit</span>
+                </span>
+                <span className="inline-flex items-center gap-1 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
+                  <Check className="w-3 h-3 text-teal-600" />
+                  <span>2 Free Helmets</span>
+                </span>
+              </div>
             </div>
 
-            <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            {/* Form Fields Grid */}
+            <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 items-end">
               <div>
-                <label className="block text-[10px] uppercase font-extrabold text-slate-500 mb-1">Pickup Location</label>
+                <label className="block text-[10px] uppercase font-extrabold text-slate-500 mb-1 flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-emerald-600" />
+                  <span>Pickup Location Hub</span>
+                </label>
                 <select
                   value={searchLocation}
                   onChange={(e) => setSearchLocation(e.target.value)}
-                  className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:outline-none focus:border-emerald-600 font-semibold"
+                  className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 font-semibold transition-all"
                 >
-                  <option value="all">All Vrindavan Hubs</option>
-                  <option value="Prem Mandir Road">Prem Mandir Road</option>
-                  <option value="Bankey Bihari Temple Road">Bankey Bihari Temple Road</option>
-                  <option value="ISKCON Temple Chowk">ISKCON Temple Chowk</option>
-                  <option value="Vrindavan Railway Station">Vrindavan Railway Station</option>
-                  <option value="Chattikara Road">Chattikara Road</option>
-                  <option value="Seva Kunj Road">Seva Kunj Road</option>
+                  <option value="all">All Mathura &amp; Vrindavan Hubs</option>
+                  <optgroup label="Mathura City &amp; Transit Hubs">
+                    <option value="Mathura Junction Railway Station">Mathura Junction Railway Station (MTJ)</option>
+                    <option value="Near BSA College of Engineering">Near BSA College of Engg. &amp; Tech.</option>
+                    <option value="Mathura Bus Stand">Mathura Bus Stand (ISBT / New Bus Stand)</option>
+                    <option value="Dampier Nagar">Dampier Nagar (City Center)</option>
+                    <option value="Shri Krishna Janmabhoomi">Shri Krishna Janmabhoomi</option>
+                    <option value="Dwarkadhish Temple & Vishram Ghat">Dwarkadhish Temple &amp; Vishram Ghat</option>
+                    <option value="Goverdhan Chauraha (Mathura)">Goverdhan Chauraha / NH-19 Bypass</option>
+                    <option value="Mathura Cantt Railway Station">Mathura Cantt Railway Station</option>
+                    <option value="GLA University Campus">GLA University (NH-19 Mathura)</option>
+                    <option value="Refinery Nagar">Refinery Nagar &amp; IOCL Township</option>
+                  </optgroup>
+                  <optgroup label="Vrindavan Temple Hubs">
+                    <option value="Prem Mandir Road">Prem Mandir &amp; Raman Reti</option>
+                    <option value="Bankey Bihari Temple Road">Bankey Bihari Temple Road</option>
+                    <option value="ISKCON Temple Chowk">ISKCON Temple Chowk</option>
+                    <option value="Chattikara Road">Chattikara Road / NH-19 Entry</option>
+                    <option value="Seva Kunj Road">Seva Kunj &amp; Nidhivan</option>
+                    <option value="Vrindavan Railway Station">Vrindavan Railway Station</option>
+                  </optgroup>
+                  <optgroup label="Expressway &amp; Parikrama Hubs">
+                    <option value="Mathura Cut Yamuna Expressway">Mathura Cut (Yamuna Expressway)</option>
+                    <option value="Raya Cut Yamuna Expressway">Raya Cut (Yamuna Expressway)</option>
+                    <option value="Govardhan Parikrama Marg">Govardhan 21 km Parikrama Marg</option>
+                    <option value="Barsana Dham">Barsana Shri Radha Rani</option>
+                  </optgroup>
                 </select>
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase font-extrabold text-slate-500 mb-1">Start Date</label>
+                <label className="block text-[10px] uppercase font-extrabold text-slate-500 mb-1 flex items-center gap-1">
+                  <Calendar className="w-3 h-3 text-emerald-600" />
+                  <span>Start Date</span>
+                </label>
                 <input
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 focus:outline-none focus:border-emerald-600 font-semibold"
+                  className="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 font-semibold transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase font-extrabold text-slate-500 mb-1">End Date</label>
+                <label className="block text-[10px] uppercase font-extrabold text-slate-500 mb-1 flex items-center gap-1">
+                  <Calendar className="w-3 h-3 text-emerald-600" />
+                  <span>End Date</span>
+                </label>
                 <input
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 focus:outline-none focus:border-emerald-600 font-semibold"
+                  className="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 font-semibold transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase font-extrabold text-slate-500 mb-1">Vehicle Type</label>
+                <label className="block text-[10px] uppercase font-extrabold text-slate-500 mb-1 flex items-center gap-1">
+                  <Bike className="w-3 h-3 text-emerald-600" />
+                  <span>Vehicle Type</span>
+                </label>
                 <select
                   value={vehicleType}
                   onChange={(e) => setVehicleType(e.target.value)}
-                  className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:outline-none focus:border-emerald-600 font-semibold"
+                  className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 font-semibold transition-all"
                 >
-                  <option value="all">All Types (Scooter/Bike/Bicycle/EV)</option>
-                  <option value="scooter">Scooters (Activa, Jupiter, Access)</option>
-                  <option value="bicycle">Bicycles / Cycles (Hero Lectro, Firefox, Decathlon)</option>
+                  <option value="all">All Two-Wheelers</option>
+                  <option value="scooter">Scooters (Activa 6G, Jupiter)</option>
+                  <option value="electric">Electric EV (100km Range)</option>
                   <option value="cruiser">Cruisers (Classic 350, Hunter)</option>
-                  <option value="motorcycle">Motorcycles (Shine, Raider, FZ)</option>
-                  <option value="electric">Electric (Ather 450X)</option>
+                  <option value="motorcycle">Bikes (Shine, Raider, FZ)</option>
+                  <option value="bicycle">Bicycles / Cycles</option>
                 </select>
               </div>
 
               <div className="flex flex-col justify-between">
                 <div className="flex justify-between items-center mb-1">
-                  <label className="text-[10px] uppercase font-extrabold text-slate-500">Price Range</label>
+                  <label className="text-[10px] uppercase font-extrabold text-slate-500">Max Budget</label>
                   <span className="text-xs font-bold text-emerald-700">Under ₹{maxPrice}/day</span>
                 </div>
                 <input
@@ -411,17 +522,46 @@ export const CustomerView = () => {
                   step="50"
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(Number(e.target.value))}
-                  className="w-full accent-emerald-600 cursor-pointer mt-1"
+                  className="w-full accent-emerald-600 cursor-pointer mt-0.5 mb-1.5"
                 />
                 <button
                   type="submit"
-                  className="mt-2 w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2 rounded-xl flex items-center justify-center gap-1 shadow-sm"
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-98 cursor-pointer"
                 >
                   <Search className="w-3.5 h-3.5 text-emerald-400" />
-                  Find Bikes
+                  <span>Find Available Bikes</span>
                 </button>
               </div>
             </form>
+
+            {/* Quick Micro-Location Shortcut Chips */}
+            <div className="pt-2 flex flex-wrap items-center gap-1.5 text-xs border-t border-slate-100">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">Trending Hubs:</span>
+              {[
+                { label: 'Mathura Junction (MTJ)', val: 'Mathura Junction Railway Station' },
+                { label: 'Near BSA College', val: 'Near BSA College of Engineering' },
+                { label: 'Mathura Bus Stand', val: 'Mathura Bus Stand' },
+                { label: 'Dampier Nagar', val: 'Dampier Nagar' },
+                { label: 'Prem Mandir', val: 'Prem Mandir Road' },
+                { label: 'Bankey Bihari', val: 'Bankey Bihari Temple Road' },
+                { label: 'Krishna Janmabhoomi', val: 'Shri Krishna Janmabhoomi' },
+                { label: 'Govardhan Parikrama', val: 'Govardhan Parikrama Marg' }
+              ].map((chip, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setSearchLocation(chip.val)}
+                  className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
+                    searchLocation === chip.val
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
+                      : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              ))}
+            </div>
+
           </div>
         </div>
       </section>
@@ -601,53 +741,53 @@ export const CustomerView = () => {
               </div>
             </div>
 
-            {/* Right: Key Temple Circuits */}
+            {/* Right: Key Temple & City Circuits */}
             <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
-                <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs mb-2.5">
+                <div className="w-9 h-9 rounded-xl bg-orange-100 text-orange-800 flex items-center justify-center font-bold text-xs mb-2.5">
                   01
                 </div>
                 <h3 className="font-heading font-bold text-slate-900 text-sm mb-1">
-                  Prem Mandir &amp; ISKCON Temple
+                  Mathura Junction &amp; Bus Stand to Vrindavan
                 </h3>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Wide Raman Reti corridor with dedicated two-wheeler parking. Ideal for evening musical fountain darshan and sandhya aarti.
+                  Doorstep delivery outside Platform 1 exit or Mathura ISBT. Reach Vrindavan, BSA College, or Dampier Nagar in 15-20 minutes without auto haggling.
+                </p>
+              </div>
+
+              <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
+                <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs mb-2.5">
+                  02
+                </div>
+                <h3 className="font-heading font-bold text-slate-900 text-sm mb-1">
+                  Sri Krishna Janmabhoomi &amp; Vishram Ghat
+                </h3>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Tour Lord Krishna’s sacred birthplace, Potra Kund, and holy Yamuna evening aarti at Vishram Ghat. Smooth navigation through historic Mathura galis.
                 </p>
               </div>
 
               <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
                 <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs mb-2.5">
-                  02
+                  03
                 </div>
                 <h3 className="font-heading font-bold text-slate-900 text-sm mb-1">
-                  Shri Bankey Bihari &amp; Nidhivan
+                  Prem Mandir, ISKCON &amp; Bankey Bihari
                 </h3>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Inner parikrama marg restricts 4-wheelers. Reach VIP Marg easily and park securely at Vidyapeeth Chauraha or Harinikunj.
+                  Wide Raman Reti corridor for Prem Mandir fountain show, plus direct two-wheeler access to Vidyapeeth Chauraha and Nidhivan silence corridors.
                 </p>
               </div>
 
               <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
                 <div className="w-9 h-9 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-xs mb-2.5">
-                  03
-                </div>
-                <h3 className="font-heading font-bold text-slate-900 text-sm mb-1">
-                  Govardhan 21 km Sacred Parikrama
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Complete the holy parikrama at your own peaceful pace on a smooth Activa or EV scooter without fixed taxi time pressures.
-                </p>
-              </div>
-
-              <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
-                <div className="w-9 h-9 rounded-xl bg-orange-100 text-orange-800 flex items-center justify-center font-bold text-xs mb-2.5">
                   04
                 </div>
                 <h3 className="font-heading font-bold text-slate-900 text-sm mb-1">
-                  Mathura Junction (MTJ) to Vrindavan
+                  Govardhan 21 km Sacred Parikrama &amp; Barsana
                 </h3>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Doorstep delivery available directly outside Platform 1 exit. Reach your hotel or ashram in 20 minutes without negotiation.
+                  Complete holy Giriraj parikrama (Radha Kund, Dan Ghati) and Barsana Radha Rani temple comfortably on an Activa 6G or quiet high-range EV scooter.
                 </p>
               </div>
             </div>
@@ -743,7 +883,7 @@ export const CustomerView = () => {
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-xs font-extrabold text-emerald-700 uppercase tracking-wider">Trust & Quality Guarantees</span>
           <h2 className="font-heading font-extrabold text-3xl text-slate-900 mt-1">Why Rent With Us</h2>
-          <p className="text-xs text-slate-500 mt-1">Built specifically for Vrindavan tourists, pilgrims, and local vehicle hosts.</p>
+          <p className="text-xs text-slate-500 mt-1">Built specifically for Mathura &amp; Vrindavan tourists, pilgrims, students, and local vehicle hosts.</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -753,7 +893,7 @@ export const CustomerView = () => {
             { title: 'Transparent Pricing', desc: 'No hidden charges, zero security deposit options, clear daily rates in ₹.', icon: IndianRupee, badge: 'No Deposit' },
             { title: 'WhatsApp Support', desc: 'Direct WhatsApp booking & 24/7 on-ground assistance during your trip.', icon: MessageSquare, badge: 'Fast Response' },
             { title: 'Digital Inspection', desc: 'Before & after 6-angle photo audit protecting both renter and owner.', icon: Camera, badge: 'Dual Signature' },
-            { title: 'Protection Options', desc: 'Roadside assistance in Vrindavan & third-party liability coverage.', icon: Award, badge: 'Configurable' }
+            { title: 'Protection Options', desc: 'Roadside assistance across Mathura & Vrindavan & third-party liability coverage.', icon: Award, badge: 'Configurable' }
           ].map((item, idx) => {
             const IconComp = item.icon;
             return (
@@ -865,7 +1005,7 @@ export const CustomerView = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent pointer-events-none"></div>
                 <div className="absolute top-3.5 left-3.5 bg-slate-950/85 backdrop-blur-md border border-amber-400/40 text-amber-300 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
                   <Key className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Host in Vrindavan • UP-85</span>
+                  <span>Host in Mathura &amp; Vrindavan • UP-85</span>
                 </div>
                 <div className="absolute bottom-3.5 left-3.5 right-3.5 bg-slate-950/90 backdrop-blur-md p-3 rounded-xl border border-slate-700 text-xs">
                   <p className="font-bold text-amber-300">Verified Pilgrims Only</p>
@@ -1043,7 +1183,7 @@ export const CustomerView = () => {
           <div className="text-center mb-8">
             <span className="text-xs font-extrabold text-emerald-700 uppercase tracking-wider font-mono">Got Questions?</span>
             <h2 className="font-heading font-extrabold text-3xl text-slate-900 mt-1">Frequently Asked Questions</h2>
-            <p className="text-xs text-slate-500 mt-1">Quick, transparent answers for yatris, tourists, and bike renters in Vrindavan.</p>
+            <p className="text-xs text-slate-500 mt-1">Quick, transparent answers for yatris, tourists, students, and bike renters in Mathura &amp; Vrindavan.</p>
           </div>
 
           {/* Quick Answers at a Glance for Most Common Questions */}

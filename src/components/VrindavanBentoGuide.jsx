@@ -91,12 +91,12 @@ export const VrindavanBentoGuide = () => {
   // Universal Modal handlers for deep information
   const openTariffModal = () => {
     openUniversalModal({
-      title: 'Vrindavan Bike & Scooty Rental Tariff Table (2026)',
+      title: 'Mathura & Vrindavan Bike & Scooty Rental Tariff Table (2026)',
       subtitle: 'Transparent all-inclusive rates with zero hidden charges and ₹0 cash deposit.',
       badge: 'Official Tariff 2026',
       badgeColor: 'emerald',
       image: '/images/hero-rider-vrindavan.webp',
-      imageAlt: 'Rent on Cent Vrindavan Bike Tariff',
+      imageAlt: 'Rent on Cent Mathura & Vrindavan Bike Tariff',
       size: 'xl',
       content: (
         <div className="space-y-4 text-slate-200">
@@ -161,9 +161,9 @@ export const VrindavanBentoGuide = () => {
 
   const openRoutesModal = () => {
     openUniversalModal({
-      title: 'Popular Vrindavan Temple Circuits & Transit Times',
+      title: 'Popular Mathura & Vrindavan Temple & City Circuits (2026)',
       subtitle: 'Smart routes, travel durations, and hassle-free scooter parking tips.',
-      badge: 'Temple Travel Guide',
+      badge: 'Twin-City Travel Guide',
       badgeColor: 'amber',
       image: '/images/prem-mandir-ride.webp',
       imageAlt: 'Prem Mandir Vrindavan Temple Route',
@@ -171,9 +171,19 @@ export const VrindavanBentoGuide = () => {
       content: (
         <div className="space-y-4 text-xs text-slate-300">
           <p>
-            Vrindavan municipality restricts 4-wheelers and large cabs inside inner parikrama corridors. Rented scooters have 100% unrestricted access to all major temples:
+            Mathura and Vrindavan inner corridors have heavy e-rickshaw traffic and strict 4-wheeler restrictions. Rented scooters provide unrestricted door-to-door access across twin-city circuits:
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700">
+              <div className="font-bold text-amber-300 text-sm">Mathura Junction to Vrindavan</div>
+              <div className="text-[11px] text-slate-400 mt-0.5">20 Mins • 12 km via Mathura-Vrindavan Marg</div>
+              <p className="mt-1.5 text-slate-300">Bypass auto queues straight from Platform 1 exit. Reach Prem Mandir &amp; Raman Reti smoothly.</p>
+            </div>
+            <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700">
+              <div className="font-bold text-amber-300 text-sm">BSA College &amp; Dampier Nagar to Janmabhoomi</div>
+              <div className="text-[11px] text-slate-400 mt-0.5">8 Mins • 2.5 km via Deeg Gate</div>
+              <p className="mt-1.5 text-slate-300">Quick connectivity for students and business travelers to Shri Krishna Janmasthan and Vishram Ghat aarti.</p>
+            </div>
             <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700">
               <div className="font-bold text-amber-300 text-sm">Shri Bankey Bihari Ji</div>
               <div className="text-[11px] text-slate-400 mt-0.5">8 Mins • 2.1 km from Raman Reti</div>
@@ -186,12 +196,12 @@ export const VrindavanBentoGuide = () => {
             </div>
             <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700">
               <div className="font-bold text-teal-300 text-sm">Govardhan 21 km Parikrama</div>
-              <div className="text-[11px] text-slate-400 mt-0.5">35 Mins • 23 km via NH-509</div>
-              <p className="mt-1.5 text-slate-300">Smooth tarred roads. Complete Dan Ghati, Radha Kund, and Mansi Ganga at your own peaceful spiritual pace.</p>
+              <div className="text-[11px] text-slate-400 mt-0.5">35 Mins • 23 km via Goverdhan Chauraha</div>
+              <p className="mt-1.5 text-slate-300">Smooth highway via Goverdhan Chauraha bypass. Complete Dan Ghati, Radha Kund, and Mansi Ganga at your own pace.</p>
             </div>
             <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700">
               <div className="font-bold text-teal-300 text-sm">Barsana Shri Radha Rani</div>
-              <div className="text-[11px] text-slate-400 mt-0.5">1 Hr 10 Mins • 42 km via Chhata</div>
+              <div className="text-[11px] text-slate-400 mt-0.5">1 Hr 10 Mins • 42 km via Chhata / NH-19</div>
               <p className="mt-1.5 text-slate-300">Scenic rural Braj highway. Scooters park right at the foot of Bhanugarh hill for ropeway / staircase.</p>
             </div>
           </div>
@@ -249,7 +259,7 @@ export const VrindavanBentoGuide = () => {
 
   const openExpresswayModal = () => {
     openUniversalModal({
-      title: 'Yamuna Expressway & Railway Station Doorstep Delivery',
+      title: 'Yamuna Expressway, Railway Stations & Bus Stand Delivery',
       subtitle: 'Skip crowded shared autos and step directly onto your rented scooter.',
       badge: 'Express Doorstep Handover',
       badgeColor: 'amber',
@@ -259,20 +269,24 @@ export const VrindavanBentoGuide = () => {
       content: (
         <div className="space-y-3 text-xs text-slate-300">
           <p>
-            Arriving via Yamuna Expressway bus from Delhi/Noida/Agra, or by train at Mathura Junction? We arrange direct roadside or platform-gate handovers:
+            Arriving via Yamuna Expressway bus, Mathura Bus Stand (ISBT), or by train at Mathura Junction / Cantt? We arrange direct roadside or platform-gate handovers:
           </p>
           <div className="space-y-2">
+            <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+              <div className="font-bold text-emerald-300">Mathura Junction (MTJ) Platform 1 Exit</div>
+              <p className="text-slate-400 mt-0.5">Step out of your Vande Bharat, Shatabdi, or express train directly onto your pre-booked Activa.</p>
+            </div>
+            <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+              <div className="font-bold text-amber-300">Mathura Bus Stand (ISBT) &amp; Near BSA College</div>
+              <p className="text-slate-400 mt-0.5">Doorstep delivery near ISBT depot, BSA College campus, and Dampier Nagar commercial centers.</p>
+            </div>
             <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
               <div className="font-bold text-amber-300">Mathura Cut (Yamuna Expressway Exit)</div>
               <p className="text-slate-400 mt-0.5">Host waits at the service lane toll plaza exit. Handover in under 5 minutes.</p>
             </div>
             <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
               <div className="font-bold text-amber-300">Raya Cut (Yamuna Expressway Exit)</div>
-              <p className="text-slate-400 mt-0.5">Ideal for tourists heading directly to Gokul or Raman Reti ashrams.</p>
-            </div>
-            <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
-              <div className="font-bold text-emerald-300">Mathura Junction (MTJ) Platform 1 Exit</div>
-              <p className="text-slate-400 mt-0.5">Step out of your Vande Bharat or Shatabdi train directly onto your pre-booked Activa.</p>
+              <p className="text-slate-400 mt-0.5">Ideal for travelers heading directly to Gokul or Vrindavan via Raya bypass.</p>
             </div>
           </div>
         </div>
@@ -298,15 +312,15 @@ export const VrindavanBentoGuide = () => {
         <div className="max-w-4xl mx-auto text-center space-y-3.5">
           <div className="inline-flex items-center gap-2 bg-emerald-100/90 border border-emerald-300/90 text-emerald-800 text-xs font-extrabold px-3.5 py-1.5 rounded-full shadow-2xs backdrop-blur-md">
             <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Braj Pilgrimage &amp; Two-Wheeler Mobility Guide (2026)</span>
+            <span>Mathura &amp; Vrindavan Braj Pilgrimage &amp; Mobility Guide (2026)</span>
           </div>
 
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 font-heading tracking-tight leading-tight">
-            Vrindavan Rental &amp; Two-Wheeler Hire &mdash; Bike on Rent in Vrindavan Guide
+            Mathura &amp; Vrindavan Rental &amp; Two-Wheeler Hire &mdash; Bike on Rent in Mathura &amp; Vrindavan Guide
           </h2>
 
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-3xl mx-auto">
-            Looking for a verified <strong>bike on rent in Vrindavan</strong> or the most reliable <strong>Vrindavan rental</strong> service? Rent on Cent (<a href="https://rentoncent.bond" className="text-emerald-700 font-bold underline">rentoncent.bond</a>) connects yatris directly with verified local two-wheeler hosts. Glide through heritage temple galis, bypass heavy traffic, and explore Bankey Bihari, Prem Mandir, and Govardhan at your own divine rhythm.
+            Looking for a verified <strong>bike on rent in Mathura or Vrindavan</strong> or the most reliable <strong>Mathura &amp; Vrindavan rental</strong> service? Rent on Cent (<a href="https://rentoncent.bond" className="text-emerald-700 font-bold underline">rentoncent.bond</a>) connects yatris, tourists, and students directly with verified local two-wheeler hosts. Glide through heritage temple galis, campus roads near BSA College, Dampier Nagar markets, bypass highway jams, and explore Bankey Bihari, Prem Mandir, Shri Krishna Janmabhoomi, and Govardhan with zero hassle.
           </p>
         </div>
 
@@ -440,28 +454,36 @@ export const VrindavanBentoGuide = () => {
               </span>
 
               <h3 className="text-xl font-extrabold text-slate-900 font-heading">
-                Expressway &amp; Railway Handover
+                Mathura Junction, Bus Stand &amp; Expressway Handover
               </h3>
 
               <p className="text-xs text-slate-600 leading-relaxed">
-                Skip crowded auto haggling. Step off your Delhi/Agra bus or train directly onto your pre-booked scooter.
+                Skip crowded auto haggling. Step off your train at Mathura Junction, bus at ISBT, or Yamuna Expressway exit directly onto your pre-booked scooter.
               </p>
 
               <div className="space-y-2 pt-1">
+                <div className="bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-200/80 text-xs">
+                  <div className="font-bold text-emerald-950 flex items-center gap-1">
+                    <Zap className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Mathura Junction (MTJ)</span>
+                  </div>
+                  <p className="text-slate-600 text-[11px] mt-0.5">Platform 1 gate handover as your train arrives.</p>
+                </div>
+
+                <div className="bg-amber-50/70 p-2.5 rounded-xl border border-amber-200/80 text-xs">
+                  <div className="font-bold text-amber-950 flex items-center gap-1">
+                    <Zap className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Mathura Bus Stand &amp; BSA College</span>
+                  </div>
+                  <p className="text-slate-600 text-[11px] mt-0.5">Handover near ISBT and BSA College campus.</p>
+                </div>
+
                 <div className="bg-sky-50/70 p-2.5 rounded-xl border border-sky-200/80 text-xs">
                   <div className="font-bold text-sky-950 flex items-center gap-1">
                     <Zap className="w-3.5 h-3.5 text-sky-600" />
                     <span>Mathura Cut (Yamuna Exp.)</span>
                   </div>
                   <p className="text-slate-600 text-[11px] mt-0.5">Toll plaza exit handover in 5 mins.</p>
-                </div>
-
-                <div className="bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-200/80 text-xs">
-                  <div className="font-bold text-emerald-950 flex items-center gap-1">
-                    <Zap className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Mathura Junction (MTJ)</span>
-                  </div>
-                  <p className="text-slate-600 text-[11px] mt-0.5">Platform 1 gate handover as train arrives.</p>
                 </div>
               </div>
             </div>
@@ -587,46 +609,46 @@ export const VrindavanBentoGuide = () => {
             </div>
           </div>
 
-          {/* CARD 5: 13+ Pickup Locations & Expressway Cuts (Span 2) */}
+          {/* CARD 5: 21+ Pickup Locations & Expressway Cuts (Span 2) */}
           <div className="lg:col-span-2 apple-glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden flex flex-col justify-between space-y-5">
             <div className="space-y-3">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-teal-900 bg-teal-100 border border-teal-300 px-2.5 py-0.5 rounded-full shadow-2xs">
-                  13+ Micro-Locations &amp; Doorstep Hubs
+                  21+ Micro-Locations &amp; Doorstep Hubs
                 </span>
                 <Link
                   href="/rent-bike-cars-scooty-in"
                   className="text-xs text-emerald-700 hover:text-emerald-900 font-bold flex items-center gap-1"
                 >
-                  <span>View All 13+ Hubs</span>
+                  <span>View All 21+ Hubs</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
 
               <div>
                 <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 font-heading">
-                  Doorstep Delivery Across Vrindavan &amp; Mathura
+                  Doorstep Delivery Across Mathura &amp; Vrindavan
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 mt-1">
-                  Get your scooty delivered outside Mathura Junction (MTJ), Yamuna Expressway cuts, or directly to your ashram/hotel within 15 minutes.
+                  Get your scooty delivered outside Mathura Junction (MTJ), Mathura Bus Stand, Near BSA College, Dampier Nagar, Goverdhan Chauraha, Yamuna Expressway cuts, or directly to your hotel/ashram within 15 minutes.
                 </p>
               </div>
 
               {/* Micro-Location Quick Cloud */}
               <div className="flex flex-wrap gap-2 pt-2">
                 {[
-                  { name: 'Mathura Cut (Yamuna Exp.)', slug: 'mathura-cut-yamuna-expressway' },
-                  { name: 'Raya Cut (Yamuna Exp.)', slug: 'raya-cut-yamuna-expressway' },
+                  { name: 'Near BSA College (Mathura)', slug: 'bsa-college-engineering-mathura' },
+                  { name: 'Mathura Bus Stand (ISBT)', slug: 'mathura-bus-stand' },
+                  { name: 'Mathura Junction (MTJ)', slug: 'mathura-junction-railway-station' },
+                  { name: 'Dampier Nagar (Mathura)', slug: 'dampier-nagar-mathura' },
+                  { name: 'Krishna Janmabhoomi', slug: 'mathura-krishna-janmabhoomi' },
+                  { name: 'Dwarkadhish & Vishram Ghat', slug: 'dwarkadhish-temple-vishram-ghat' },
+                  { name: 'Goverdhan Chauraha', slug: 'goverdhan-chauraha-mathura' },
                   { name: 'Prem Mandir & Raman Reti', slug: 'prem-mandir-raman-reti' },
                   { name: 'Bankey Bihari (Vidyapeeth)', slug: 'bankey-bihari-temple' },
-                  { name: 'Mathura Junction (MTJ)', slug: 'mathura-junction-railway-station' },
                   { name: 'Govardhan Parikrama', slug: 'govardhan-parikrama' },
-                  { name: 'ISKCON Krishna Balaram', slug: 'iskcon-temple-vrindavan' },
-                  { name: 'Nidhivan & Seva Kunj', slug: 'nidhivan-seva-kunj' },
-                  { name: 'Barsana Radha Rani', slug: 'barsana-radha-rani-temple' },
-                  { name: 'Krishna Janmabhoomi', slug: 'mathura-krishna-janmabhoomi' },
-                  { name: 'Gokul & Brahmand Ghat', slug: 'gokul-raman-reti' },
-                  { name: 'Chattikara Road', slug: 'chattikara-road' }
+                  { name: 'Mathura Cut (Yamuna Exp.)', slug: 'mathura-cut-yamuna-expressway' },
+                  { name: 'GLA University (NH-19)', slug: 'gla-university-nh19-mathura' }
                 ].map((loc, idx) => (
                   <Link
                     key={idx}
@@ -642,13 +664,13 @@ export const VrindavanBentoGuide = () => {
 
             <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200">
               <span className="text-xs text-slate-600 font-medium">
-                15-Minute delivery window anywhere within Vrindavan municipality limits.
+                15-Minute delivery window anywhere within Mathura &amp; Vrindavan twin-city limits.
               </span>
               <Link
                 href="/rent-bike-cars-scooty-in"
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-800 hover:text-teal-950 bg-teal-100 hover:bg-teal-200 border border-teal-300 px-3.5 py-1.5 rounded-xl transition-all cursor-pointer shadow-2xs"
               >
-                <span>Explore All 13+ Pickup Hubs &amp; Routes</span>
+                <span>Explore All 21+ Pickup Hubs &amp; Routes</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -795,7 +817,7 @@ export const VrindavanBentoGuide = () => {
 
             <div className="pt-3 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200">
               <span className="text-xs text-slate-600 font-medium">
-                🛡️ Zero security deposit options, free helmets, and 24x7 roadside assist across Vrindavan.
+                🛡️ Zero security deposit options, free helmets, and 24x7 roadside assist across Mathura &amp; Vrindavan.
               </span>
               <div className="flex items-center gap-2">
                 <button
