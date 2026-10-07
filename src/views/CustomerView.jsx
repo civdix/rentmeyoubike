@@ -20,6 +20,63 @@ import {
   OdometerGaugeIcon, DigitalInspectionIcon, RupeeStackIcon, KeyHandoverIcon, BikeSaathiIcon
 } from '../components/CustomIcons';
 
+const HERO_FLEET_MODELS = {
+  activa: {
+    id: 'activa',
+    tabLabel: 'Honda Activa 6G',
+    tabSub: '₹299/day',
+    tabIcon: '🛵',
+    name: 'Honda Activa 6G (110cc Auto)',
+    badge: 'Top Yatri Choice • ₹299/Day',
+    badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40',
+    dailyRate: 299,
+    hourlyRate: 40,
+    mileage: '45-50 km/l Mileage',
+    transmission: 'Automatic (Gearless)',
+    specs: ['2 Free ISI Helmets', 'Sanitized Tilak Liners', 'Phone Mount GPS', '33L Prasad Boot Space'],
+    highlight: 'Glides easily through narrow Bankey Bihari & Janmasthan temple galis',
+    image: '/images/hero-rider-vrindavan.webp',
+    imageAlt: 'Honda Activa 6G scooter on rent in Mathura and Vrindavan',
+    popularHubs: ['Mathura Junction Platform 1', 'Near BSA College', 'Prem Mandir']
+  },
+  ev: {
+    id: 'ev',
+    tabLabel: 'Eco EV Scooter',
+    tabSub: '₹299/day',
+    tabIcon: '⚡',
+    name: 'High-Range Electric EV',
+    badge: '100 km Silent Range • ₹299/Day',
+    badgeClass: 'bg-teal-500/20 text-teal-300 border-teal-400/40',
+    dailyRate: 299,
+    hourlyRate: 40,
+    mileage: '100 km True Range',
+    transmission: 'Silent Auto Direct Drive',
+    specs: ['Free Hotel Charger Cable', 'Zero Petrol Expense', 'Silent Eco-Ride', '2 Clean Helmets'],
+    highlight: 'Peaceful Govardhan 21 km Parikrama & Raman Reti with zero noise',
+    image: '/images/prem-mandir-ride.webp',
+    imageAlt: 'Silent electric scooter EV for Govardhan Parikrama and Vrindavan temples',
+    popularHubs: ['Goverdhan Chauraha', 'Raman Reti', 'Raya Cut Expressway']
+  },
+  cruiser: {
+    id: 'cruiser',
+    tabLabel: 'Royal Enfield 350',
+    tabSub: '₹1,199/day',
+    tabIcon: '🏍️',
+    name: 'Royal Enfield Classic 350',
+    badge: 'Braj Highway Cruiser',
+    badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-400/40',
+    dailyRate: 1199,
+    hourlyRate: 150,
+    mileage: '350cc Twin-Spark Engine',
+    transmission: 'Manual 5-Speed',
+    specs: ['Dual-Channel ABS', 'Highway State Permit', 'Crash Leg Guard', 'Luggage Carrier Rack'],
+    highlight: 'Powerful highway ride for Barsana Radha Rani, Nandgaon & Yamuna Expressway',
+    image: '/images/vrindavan-host-handover.webp',
+    imageAlt: 'Royal Enfield Classic 350 bike rental in Mathura and Vrindavan',
+    popularHubs: ['Mathura Cut Expressway', 'Mathura Junction', 'Dampier Nagar']
+  }
+};
+
 export const CustomerView = () => {
   const router = useRouter();
   const {
@@ -77,6 +134,7 @@ export const CustomerView = () => {
   const [endDate, setEndDate] = useState(tomorrowStr);
   const [vehicleType, setVehicleType] = useState('all');
   const [maxPrice, setMaxPrice] = useState(1000);
+  const [activeHeroTab, setActiveHeroTab] = useState('activa');
 
   // Booking Form Drawer State
   const [bookingDrawerVehicle, setBookingDrawerVehicle] = useState(null);
@@ -331,53 +389,139 @@ export const CustomerView = () => {
 
             </div>
 
-            {/* Right Column: Hero Visual Showcase Card */}
-            <div className="lg:col-span-5">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-teal-500/30 group bg-slate-900/90 ring-1 ring-emerald-500/20">
-                
-                {/* Visual Image */}
-                <picture>
-                  <source srcSet="/images/hero-rider-vrindavan.webp" type="image/webp" />
-                  <img
-                    src="/images/hero-rider-vrindavan.webp"
-                    alt="Pilgrim riding verified Honda Activa scooter on rent across temples in Mathura and Vrindavan"
-                    width={800}
-                    height={533}
-                    className="w-full h-72 sm:h-84 lg:h-[390px] object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                    fetchPriority="high"
-                    decoding="sync"
-                  />
-                </picture>
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent pointer-events-none" />
-
-                {/* Top Floating Badges */}
-                <div className="absolute top-3.5 left-3.5 bg-slate-950/85 backdrop-blur-md border border-amber-400/40 text-amber-300 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>UP-85 Mathura Registered Fleet</span>
-                </div>
-
-                <div className="absolute top-3.5 right-3.5 bg-slate-950/85 backdrop-blur-md border border-emerald-400/40 text-emerald-300 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
-                  <Zap className="w-3 h-3 text-emerald-400" />
-                  <span>15-Min Delivery</span>
-                </div>
-
-                {/* Bottom Interactive Fleet Rate Strip */}
-                <div className="absolute bottom-3.5 left-3.5 right-3.5 bg-slate-950/90 backdrop-blur-md border border-slate-700/80 p-3 sm:p-3.5 rounded-2xl flex items-center justify-between text-xs shadow-xl">
-                  <div>
-                    <span className="text-slate-400 block text-[10px] font-semibold uppercase tracking-wider">Activa 6G &amp; EV Scooters</span>
-                    <span className="font-heading font-black text-amber-400 text-sm sm:text-base">
-                      From ₹299/day <span className="text-slate-400 text-[11px] font-normal">(₹40/hr)</span>
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => router.push('/bikes')}
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition-all cursor-pointer shrink-0 shadow-sm flex items-center gap-1"
-                  >
-                    <span>View Fleet</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+            {/* Right Column: Hero Visual Interactive Showcase Hub */}
+            <div className="lg:col-span-5 space-y-3">
+              
+              {/* Interactive Vehicle Switcher Tabs */}
+              <div className="flex items-center gap-1.5 bg-slate-900/95 p-1.5 rounded-2xl border border-slate-800 backdrop-blur-md shadow-xl">
+                {Object.values(HERO_FLEET_MODELS).map((m) => {
+                  const isActive = activeHeroTab === m.id;
+                  return (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => setActiveHeroTab(m.id)}
+                      className={`flex-1 flex flex-col items-center justify-center py-2 px-1.5 rounded-xl transition-all cursor-pointer text-center ${
+                        isActive
+                          ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 text-white font-bold shadow-md shadow-emerald-950/40'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                      }`}
+                    >
+                      <span className="text-xs font-heading font-black flex items-center gap-1">
+                        <span>{m.tabIcon}</span>
+                        <span className="hidden sm:inline">{m.tabLabel}</span>
+                        <span className="sm:hidden">{m.id.toUpperCase()}</span>
+                      </span>
+                      <span className={`text-[10px] ${isActive ? 'text-emerald-100 font-extrabold' : 'text-slate-500'}`}>
+                        {m.tabSub}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
+
+              {/* Showcase Card for Active Model */}
+              {(() => {
+                const currentModel = HERO_FLEET_MODELS[activeHeroTab] || HERO_FLEET_MODELS.activa;
+                return (
+                  <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-teal-500/30 group bg-slate-900/95 ring-1 ring-emerald-500/20 transition-all duration-300">
+                    
+                    {/* Visual Image */}
+                    <div className="relative aspect-[16/11] overflow-hidden bg-slate-950">
+                      <img
+                        key={currentModel.id}
+                        src={currentModel.image}
+                        alt={currentModel.imageAlt}
+                        width={800}
+                        height={550}
+                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 filter brightness-95"
+                        fetchPriority="high"
+                        decoding="sync"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent pointer-events-none" />
+
+                      {/* Top Badges */}
+                      <div className="absolute top-3 left-3 bg-slate-950/90 backdrop-blur-md border border-amber-400/40 text-amber-300 text-[10px] sm:text-[11px] font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1.5">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>UP-85 Fleet</span>
+                      </div>
+
+                      <div className="absolute top-3 right-3 bg-slate-950/90 backdrop-blur-md border border-emerald-400/40 text-emerald-300 text-[10px] sm:text-[11px] font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
+                        <Zap className="w-3 h-3 text-emerald-400" />
+                        <span>15-Min Delivery</span>
+                      </div>
+
+                      {/* Floating model highlight pill */}
+                      <div className="absolute bottom-3 left-3 right-3 bg-slate-950/85 backdrop-blur-md border border-slate-700/80 text-[11px] text-slate-200 px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-md">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                        <span className="font-medium truncate">{currentModel.highlight}</span>
+                      </div>
+                    </div>
+
+                    {/* Bottom Details Drawer */}
+                    <div className="p-4 sm:p-5 bg-gradient-to-b from-slate-900/90 to-slate-950 border-t border-slate-800/80 space-y-3">
+                      
+                      {/* Name & Rate */}
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-heading font-black text-base sm:text-lg text-white">
+                              {currentModel.name}
+                            </h3>
+                            <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${currentModel.badgeClass}`}>
+                              {currentModel.badge}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
+                            <span>{currentModel.mileage}</span>
+                            <span>•</span>
+                            <span>{currentModel.transmission}</span>
+                          </p>
+                        </div>
+
+                        <div className="text-right">
+                          <div className="font-heading font-black text-amber-400 text-lg sm:text-xl">
+                            ₹{currentModel.dailyRate}
+                            <span className="text-xs font-normal text-slate-400">/day</span>
+                          </div>
+                          <div className="text-[10px] text-emerald-400 font-bold">
+                            ₹{currentModel.hourlyRate}/hr • ₹0 Deposit
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Specs Pill List */}
+                      <div className="grid grid-cols-2 gap-1.5 pt-0.5 text-[11px]">
+                        {currentModel.specs.map((sp, sIdx) => (
+                          <div key={sIdx} className="bg-slate-800/60 border border-slate-700/60 rounded-xl px-2.5 py-1.5 text-slate-300 flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            <span className="truncate">{sp}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* CTA & Delivery locations */}
+                      <div className="pt-1 flex items-center justify-between gap-3 flex-wrap">
+                        <div className="text-[10px] text-slate-400">
+                          <span className="font-bold text-slate-300">Fast Delivery: </span>
+                          <span>Mathura Jn, BSA College, Dampier Nagar</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => router.push('/bikes')}
+                          className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-4 py-2 rounded-xl transition-all cursor-pointer shadow-md flex items-center gap-1.5 shrink-0"
+                        >
+                          <span>Reserve This Bike</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                    </div>
+
+                  </div>
+                );
+              })()}
+
             </div>
 
           </div>
@@ -562,6 +706,49 @@ export const CustomerView = () => {
               ))}
             </div>
 
+          </div>
+
+          {/* Live Twin-City Transit Ticker / 4-Metric Strip */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+            <div className="bg-slate-900/60 border border-slate-800/80 hover:border-emerald-500/40 rounded-2xl p-3.5 backdrop-blur-md flex items-center gap-3 transition-all shadow-xs group">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 group-hover:scale-105 transition-transform">
+                <Clock className="w-5 h-5 text-emerald-400" />
+              </div>
+              <div>
+                <div className="text-white font-black text-xs sm:text-sm font-heading">15-Min Delivery</div>
+                <div className="text-[11px] text-slate-400">Station, College &amp; Hotels</div>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/60 border border-slate-800/80 hover:border-teal-500/40 rounded-2xl p-3.5 backdrop-blur-md flex items-center gap-3 transition-all shadow-xs group">
+              <div className="w-10 h-10 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-teal-400 shrink-0 group-hover:scale-105 transition-transform">
+                <MapPin className="w-5 h-5 text-teal-400" />
+              </div>
+              <div>
+                <div className="text-white font-black text-xs sm:text-sm font-heading">21 Verified Hubs</div>
+                <div className="text-[11px] text-slate-400">Mathura &amp; Vrindavan</div>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/60 border border-slate-800/80 hover:border-amber-500/40 rounded-2xl p-3.5 backdrop-blur-md flex items-center gap-3 transition-all shadow-xs group">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0 group-hover:scale-105 transition-transform">
+                <ShieldCheck className="w-5 h-5 text-amber-400" />
+              </div>
+              <div>
+                <div className="text-white font-black text-xs sm:text-sm font-heading">₹0 Cash Deposit</div>
+                <div className="text-[11px] text-slate-400">DigiLocker KYC in 2 Mins</div>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/60 border border-slate-800/80 hover:border-purple-500/40 rounded-2xl p-3.5 backdrop-blur-md flex items-center gap-3 transition-all shadow-xs group">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0 group-hover:scale-105 transition-transform">
+                <Star className="w-5 h-5 fill-purple-400 text-purple-400" />
+              </div>
+              <div>
+                <div className="text-white font-black text-xs sm:text-sm font-heading">4.9 / 5 Rating</div>
+                <div className="text-[11px] text-slate-400">1,240+ Verified Pilgrims</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
