@@ -75,6 +75,8 @@ export async function sendEmail({ to, subject, text, html }) {
         ? `=?UTF-8?B?${Buffer.from(cleanSubject, 'utf-8').toString('base64')}?=`
         : cleanSubject;
 
+      const headerText = plainText.replace(/[\r\n\t]+/g, ' ').replace(/[^\x20-\x7E]/g, '').trim();
+
       const singleLineHtml = htmlContent.replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
       const headerHtml = Array.from(singleLineHtml)
         .map((char) => (char.codePointAt(0) > 127 ? `&#${char.codePointAt(0)};` : char))
@@ -87,7 +89,7 @@ export async function sendEmail({ to, subject, text, html }) {
           'Content-Type': 'application/json',
           'X-Email-To': normalized,
           'X-Email-Subject': headerSubject,
-          'X-Email-Text': plainText,
+          'X-Email-Text': headerText,
           'X-Email-HTML': headerHtml,
           'X-Email-Reply-To': senderEmail
         },
