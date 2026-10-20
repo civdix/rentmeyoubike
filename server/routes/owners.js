@@ -110,8 +110,8 @@ router.put('/payout/upi', async (req, res) => {
   }
 });
 
-// GET /api/owners - List fleet owners (Password never exposed)
-router.get('/', async (req, res) => {
+// GET /api/owners - List fleet owners (Admin only, password never exposed)
+router.get('/', requireRole('admin'), async (req, res) => {
   try {
     const { search } = req.query;
     let query = `SELECT ${SAFE_OWNER_COLUMNS} FROM owners WHERE 1=1`;
@@ -131,9 +131,20 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/owners/:id - Fetch owner details by id (Password never exposed)
+// GET /api/owners/:id - Fetch owner details by id (Restricted to Admin or self, password never exposed)
 router.get('/:id', async (req, res) => {
   try {
+    if (!req.user || !req.user.isAuthenticated) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    const isAdmin = req.user.role === 'admin';
+    const isSelf = req.user.id === req.params.id ||
+      String(req.user.id).replace(/^(own|usr|cust)-/, '') === String(req.params.id).replace(/^(own|usr|cust)-/, '');
+
+    if (!isAdmin && !isSelf) {
+      return res.status(403).json({ error: 'Access denied: You can only view your own host profile.' });
+    }
+
     const row = await db.prepare(`SELECT ${SAFE_OWNER_COLUMNS} FROM owners WHERE id = ?`).get(req.params.id);
     if (!row) {
       return res.status(404).json({ error: 'Owner not found' });

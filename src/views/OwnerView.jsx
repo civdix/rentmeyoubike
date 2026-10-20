@@ -202,28 +202,44 @@ export const OwnerView = () => {
 
   // Check if host's KYC / Identity (Aadhaar & PAN) has already been verified
   const existingVerifiedListing = React.useMemo(() => {
-    return vehicles.find(
-      (v) =>
-        (v.ownerId === currentUser?.id ||
-          (currentUser?.phone && v.ownerPhone === currentUser?.phone) ||
-          (currentUser?.name && v.ownerName === currentUser?.name) ||
-          (ownerPhone && v.ownerPhone === ownerPhone) ||
-          (ownerName && v.ownerName?.toLowerCase().trim() === ownerName.toLowerCase().trim())) &&
-        (v.verificationStatus === 'Verified' || v.vehicleVerified || v.documentsVerified || v.ownerVerified)
-    );
-  }, [vehicles, currentUser, ownerPhone, ownerName]);
+    if (!currentUser) return null;
+    const cleanUserId = currentUser.id ? String(currentUser.id).replace(/^(own|usr|cust)-/, '') : '';
+    const userPhoneDigits = (currentUser.phone || ownerPhone || '').replace(/[^0-9]/g, '');
+    const userEmail = (currentUser.email || ownerEmail || '').toLowerCase().trim();
+
+    return vehicles.find((v) => {
+      const vCleanOwnerId = v.ownerId ? String(v.ownerId).replace(/^(own|usr|cust)-/, '') : '';
+      const vPhoneDigits = (v.ownerPhone || '').replace(/[^0-9]/g, '');
+      const vEmail = (v.ownerEmail || '').toLowerCase().trim();
+
+      const isOwnerMatch =
+        (cleanUserId && vCleanOwnerId && cleanUserId === vCleanOwnerId) ||
+        (userEmail && vEmail && userEmail === vEmail) ||
+        (userPhoneDigits.length >= 10 && vPhoneDigits.length >= 10 && userPhoneDigits.slice(-10) === vPhoneDigits.slice(-10));
+
+      return isOwnerMatch && (v.verificationStatus === 'Verified' || v.vehicleVerified || v.documentsVerified || v.ownerVerified);
+    });
+  }, [vehicles, currentUser, ownerPhone, ownerEmail]);
 
   const existingListingWithDocs = React.useMemo(() => {
-    return vehicles.find(
-      (v) =>
-        (v.ownerId === currentUser?.id ||
-          (currentUser?.phone && v.ownerPhone === currentUser?.phone) ||
-          (currentUser?.name && v.ownerName === currentUser?.name) ||
-          (ownerPhone && v.ownerPhone === ownerPhone) ||
-          (ownerName && v.ownerName?.toLowerCase().trim() === ownerName.toLowerCase().trim())) &&
-        (v.documents?.panNumber || v.documents?.governmentIdNumber || v.documents?.panCardUrl || v.documents?.governmentIdUrl)
-    );
-  }, [vehicles, currentUser, ownerPhone, ownerName]);
+    if (!currentUser) return null;
+    const cleanUserId = currentUser.id ? String(currentUser.id).replace(/^(own|usr|cust)-/, '') : '';
+    const userPhoneDigits = (currentUser.phone || ownerPhone || '').replace(/[^0-9]/g, '');
+    const userEmail = (currentUser.email || ownerEmail || '').toLowerCase().trim();
+
+    return vehicles.find((v) => {
+      const vCleanOwnerId = v.ownerId ? String(v.ownerId).replace(/^(own|usr|cust)-/, '') : '';
+      const vPhoneDigits = (v.ownerPhone || '').replace(/[^0-9]/g, '');
+      const vEmail = (v.ownerEmail || '').toLowerCase().trim();
+
+      const isOwnerMatch =
+        (cleanUserId && vCleanOwnerId && cleanUserId === vCleanOwnerId) ||
+        (userEmail && vEmail && userEmail === vEmail) ||
+        (userPhoneDigits.length >= 10 && vPhoneDigits.length >= 10 && userPhoneDigits.slice(-10) === vPhoneDigits.slice(-10));
+
+      return isOwnerMatch && (v.documents?.panNumber || v.documents?.governmentIdNumber || v.documents?.panCardUrl || v.documents?.governmentIdUrl);
+    });
+  }, [vehicles, currentUser, ownerPhone, ownerEmail]);
 
   const isHostIdentityVerified = React.useMemo(() => {
     // 1. Current user session verification flags
@@ -232,14 +248,22 @@ export const OwnerView = () => {
     }
 
     // 2. Owners directory check (Admin verified)
-    if (owners && owners.length > 0) {
-      const matchOwner = owners.find(
-        (o) =>
-          (currentUser?.id && o.id === currentUser.id) ||
-          (currentUser?.phone && o.phone === currentUser.phone) ||
-          (ownerPhone && o.phone === ownerPhone) ||
-          (ownerName && o.name?.toLowerCase().trim() === ownerName.toLowerCase().trim())
-      );
+    if (owners && owners.length > 0 && currentUser) {
+      const cleanUserId = currentUser.id ? String(currentUser.id).replace(/^(own|usr|cust)-/, '') : '';
+      const userPhoneDigits = (currentUser.phone || '').replace(/[^0-9]/g, '');
+      const userEmail = (currentUser.email || '').toLowerCase().trim();
+
+      const matchOwner = owners.find((o) => {
+        const oCleanId = o.id ? String(o.id).replace(/^(own|usr|cust)-/, '') : '';
+        const oPhoneDigits = (o.phone || '').replace(/[^0-9]/g, '');
+        const oEmail = (o.email || '').toLowerCase().trim();
+
+        return (
+          (cleanUserId && oCleanId && cleanUserId === oCleanId) ||
+          (userEmail && oEmail && userEmail === oEmail) ||
+          (userPhoneDigits.length >= 10 && oPhoneDigits.length >= 10 && userPhoneDigits.slice(-10) === oPhoneDigits.slice(-10))
+        );
+      });
       if (matchOwner && (matchOwner.verificationStatus === 'Verified' || matchOwner.verified || matchOwner.kycVerified)) {
         return true;
       }
@@ -249,10 +273,10 @@ export const OwnerView = () => {
     if (existingVerifiedListing) return true;
 
     // 4. LocalStorage vr_verified_hosts check
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && currentUser) {
       try {
         const verifiedHosts = JSON.parse(localStorage.getItem('vr_verified_hosts') || '[]');
-        const checkKeys = [currentUser?.id, currentUser?.phone, currentUser?.name, ownerPhone, ownerName].filter(Boolean);
+        const checkKeys = [currentUser?.id, currentUser?.phone, currentUser?.email].filter(Boolean);
         if (checkKeys.some((k) => verifiedHosts.includes(k))) {
           return true;
         }
@@ -640,31 +664,64 @@ export const OwnerView = () => {
 
   // Filter ONLY vehicles belonging to this specific host/owner
   const myVehicles = vehicles.filter((v) => {
-    const currentHostPhone = (ownerPhone || '').replace(/[^0-9]/g, '');
+    if (!currentUser) return false;
+
+    // 1. Direct ownerId match (handling ID prefixes like usr-, own-, cust-)
+    if (v.ownerId && currentUser.id) {
+      if (v.ownerId === currentUser.id) return true;
+      const cleanUserId = String(currentUser.id).replace(/^(own|usr|cust)-/, '');
+      const cleanOwnerId = String(v.ownerId).replace(/^(own|usr|cust)-/, '');
+      if (cleanUserId && cleanOwnerId && cleanUserId === cleanOwnerId) return true;
+    }
+
+    // 2. Verified owner email match
+    const cEmail = (currentUser.email || ownerEmail || '').toLowerCase().trim();
+    const vEmail = (v.ownerEmail || '').toLowerCase().trim();
+    if (cEmail && vEmail && cEmail === vEmail) {
+      return true;
+    }
+
+    // 3. Verified 10-digit phone number match
+    const currentHostPhone = (currentUser.phone || ownerPhone || '').replace(/[^0-9]/g, '');
     const vOwnerPhone = (v.ownerPhone || '').replace(/[^0-9]/g, '');
-    if (currentHostPhone && vOwnerPhone && currentHostPhone.slice(-10) === vOwnerPhone.slice(-10)) {
+    if (currentHostPhone.length >= 10 && vOwnerPhone.length >= 10 && currentHostPhone.slice(-10) === vOwnerPhone.slice(-10)) {
       return true;
     }
-    if (v.ownerName && ownerName && v.ownerName.toLowerCase().trim() === ownerName.toLowerCase().trim()) {
-      return true;
-    }
+
     return false;
   });
 
   // Filter ONLY bookings for this host's fleet
   const myBookings = bookings.filter((b) => {
-    const currentHostPhone = (ownerPhone || currentUser?.phone || '').replace(/[^0-9]/g, '');
-    const bOwnerPhone = (b.ownerPhone || '').replace(/[^0-9]/g, '');
-    if (currentHostPhone && bOwnerPhone && currentHostPhone.slice(-10) === bOwnerPhone.slice(-10)) {
-      return true;
-    }
-    const currentName = (ownerName || currentUser?.name || '').toLowerCase().trim();
-    if (b.ownerName && currentName && b.ownerName.toLowerCase().trim() === currentName) {
-      return true;
-    }
+    if (!currentUser) return false;
+
+    // 1. Direct match: booking belongs to a vehicle in this host's isolated fleet
     if (b.vehicleId && myVehicles.some((v) => v.id === b.vehicleId)) {
       return true;
     }
+
+    // 2. Direct owner ID match
+    if (b.ownerId && currentUser.id) {
+      if (b.ownerId === currentUser.id) return true;
+      const cleanUserId = String(currentUser.id).replace(/^(own|usr|cust)-/, '');
+      const cleanOwnerId = String(b.ownerId).replace(/^(own|usr|cust)-/, '');
+      if (cleanUserId && cleanOwnerId && cleanUserId === cleanOwnerId) return true;
+    }
+
+    // 3. Verified host email match
+    const cEmail = (currentUser.email || '').toLowerCase().trim();
+    const bEmail = (b.ownerEmail || '').toLowerCase().trim();
+    if (cEmail && bEmail && cEmail === bEmail) {
+      return true;
+    }
+
+    // 4. Verified 10-digit phone number match
+    const currentHostPhone = (currentUser.phone || ownerPhone || '').replace(/[^0-9]/g, '');
+    const bOwnerPhone = (b.ownerPhone || '').replace(/[^0-9]/g, '');
+    if (currentHostPhone.length >= 10 && bOwnerPhone.length >= 10 && currentHostPhone.slice(-10) === bOwnerPhone.slice(-10)) {
+      return true;
+    }
+
     return false;
   });
 
@@ -824,7 +881,7 @@ export const OwnerView = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-heading font-extrabold text-slate-900 text-xl">My Listed Vehicles ({myVehicles.length})</h3>
-                  <p className="text-xs text-slate-500">Only showing two-wheelers registered under your host profile ({ownerPhone}).</p>
+                  <p className="text-xs text-slate-500">Only showing two-wheelers registered under your host account ({currentUser?.email || currentUser?.phone || ownerPhone}).</p>
                 </div>
                 <button
                   onClick={() => {

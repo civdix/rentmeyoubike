@@ -16,20 +16,68 @@ function formatBooking(row) {
   };
 }
 
-// GET /api/bookings - List all bookings
+// GET /api/bookings - List bookings (Scoped to authenticated user, host, or admin)
 router.get('/', async (req, res) => {
   try {
     const { status, customerPhone, search } = req.query;
+    const currentUser = req.user && req.user.isAuthenticated ? req.user : null;
+    const isAdmin = currentUser && currentUser.role === 'admin';
 
     let query = 'SELECT * FROM bookings WHERE 1=1';
     const params = {};
+
+    if (!isAdmin) {
+      if (currentUser) {
+        // Authenticated user/host sees only bookings for their customer account OR their vehicles
+        const userDigits = (currentUser.phone || '').replace(/[^0-9]/g, '');
+        const userEmail = (currentUser.email || '').trim().toLowerCase();
+        const cleanUserId = String(currentUser.id).replace(/^(own|usr|cust)-/, '');
+
+        query += ` AND (
+          customerId = @userId 
+          OR customerId = @custPrefixedId
+          OR ownerId = @userId 
+          OR ownerId = @ownPrefixedId
+          OR vehicleId IN (
+            SELECT id FROM vehicles 
+            WHERE ownerId = @userId 
+               OR ownerId = @ownPrefixedId
+               OR (ownerPhone IS NOT NULL AND @userPhone != '' AND ownerPhone = @userPhone)
+          )
+        `;
+        params.userId = currentUser.id;
+        params.custPrefixedId = `cust-${cleanUserId}`;
+        params.ownPrefixedId = `own-${cleanUserId}`;
+        params.userPhone = currentUser.phone || '';
+
+        if (userEmail) {
+          query += ' OR LOWER(customerEmail) = @userEmail OR LOWER(ownerEmail) = @userEmail';
+          params.userEmail = userEmail;
+        }
+
+        if (userDigits.length >= 10) {
+          query += ` OR REPLACE(REPLACE(customerPhone, ' ', ''), '-', '') LIKE @phoneTail`;
+          query += ` OR REPLACE(REPLACE(ownerPhone, ' ', ''), '-', '') LIKE @phoneTail`;
+          params.phoneTail = `%${userDigits.slice(-10)}`;
+        }
+
+        query += ')';
+      } else if (customerPhone) {
+        // Guest querying by their verified phone
+        query += ' AND customerPhone = @customerPhone';
+        params.customerPhone = customerPhone;
+      } else {
+        // Anonymous visitor without query param cannot dump the entire database
+        return res.json([]);
+      }
+    }
 
     if (status && status !== 'all') {
       query += ' AND status = @status';
       params.status = status;
     }
 
-    if (customerPhone) {
+    if (customerPhone && !params.customerPhone) {
       query += ' AND customerPhone = @customerPhone';
       params.customerPhone = customerPhone;
     }
@@ -49,13 +97,38 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/bookings/:id - Single booking
+// GET /api/bookings/:id - Single booking (Restricted to involved rider, host, or admin)
 router.get('/:id', async (req, res) => {
   try {
     const row = await db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
     if (!row) {
       return res.status(404).json({ error: 'Booking not found' });
     }
+
+    const currentUser = req.user && req.user.isAuthenticated ? req.user : null;
+    const isAdmin = currentUser && currentUser.role === 'admin';
+
+    if (!isAdmin && currentUser) {
+      const userDigits = (currentUser.phone || '').replace(/[^0-9]/g, '');
+      const userEmail = (currentUser.email || '').trim().toLowerCase();
+      const bPhoneDigits = (row.customerPhone || '').replace(/[^0-9]/g, '');
+      const bEmail = (row.customerEmail || '').trim().toLowerCase();
+      const bOwnerDigits = (row.ownerPhone || '').replace(/[^0-9]/g, '');
+      const bOwnerEmail = (row.ownerEmail || '').trim().toLowerCase();
+
+      const isParticipant =
+        row.customerId === currentUser.id ||
+        row.ownerId === currentUser.id ||
+        (bEmail && userEmail && bEmail === userEmail) ||
+        (bOwnerEmail && userEmail && bOwnerEmail === userEmail) ||
+        (userDigits.length >= 10 && bPhoneDigits.length >= 10 && userDigits.slice(-10) === bPhoneDigits.slice(-10)) ||
+        (userDigits.length >= 10 && bOwnerDigits.length >= 10 && userDigits.slice(-10) === bOwnerDigits.slice(-10));
+
+      if (!isParticipant) {
+        return res.status(403).json({ error: 'Access denied: You are not authorized to view this booking.' });
+      }
+    }
+
     res.json(formatBooking(row));
   } catch (error) {
     console.error('Error fetching booking by id:', error);

@@ -25,7 +25,7 @@ function formatVehicle(row) {
 
 // Helper to verify if an authenticated user is the host/owner of a vehicle or platform admin
 export async function isAuthorizedVehicleHost(vehicle, user) {
-  if (!vehicle || !user) return false;
+  if (!vehicle || !user || !user.isAuthenticated) return false;
   // 1. Admin always has full edit rights
   if (user.role === 'admin') return true;
 
@@ -37,24 +37,19 @@ export async function isAuthorizedVehicleHost(vehicle, user) {
     if (cleanUserId && cleanOwnerId && cleanUserId === cleanOwnerId) return true;
   }
 
-  // 3. Phone matching (compare last 10 digits to normalize +91, spaces, dashes)
+  // 3. Email matching (case-insensitive normalized)
+  const userEmail = String(user.email || '').trim().toLowerCase();
+  const ownerEmail = String(vehicle.ownerEmail || '').trim().toLowerCase();
+  if (userEmail && ownerEmail && userEmail === ownerEmail) return true;
+
+  // 4. Phone matching (compare last 10 digits to normalize +91, spaces, dashes)
   const userDigits = String(user.phone || '').replace(/[^0-9]/g, '');
   const ownerDigits = String(vehicle.ownerPhone || '').replace(/[^0-9]/g, '');
   if (userDigits.length >= 10 && ownerDigits.length >= 10) {
     if (userDigits.slice(-10) === ownerDigits.slice(-10)) return true;
   }
 
-  // 4. Email matching (case-insensitive normalized)
-  const userEmail = String(user.email || '').trim().toLowerCase();
-  const ownerEmail = String(vehicle.ownerEmail || '').trim().toLowerCase();
-  if (userEmail && ownerEmail && userEmail === ownerEmail) return true;
-
-  // 5. Name matching (case-insensitive, trimmed)
-  const userName = String(user.name || '').trim().toLowerCase();
-  const ownerName = String(vehicle.ownerName || '').trim().toLowerCase();
-  if (userName && ownerName && userName === ownerName && userName.length > 2) return true;
-
-  // 6. Check database cross-reference: does the user match an owner record linked to this vehicle?
+  // 5. Check database cross-reference: does the user match an owner record linked to this vehicle?
   try {
     if (vehicle.ownerId) {
       const dbOwner = await db.prepare('SELECT * FROM owners WHERE id = ?').get(vehicle.ownerId);
@@ -70,7 +65,7 @@ export async function isAuthorizedVehicleHost(vehicle, user) {
     }
   } catch (e) {}
 
-  // 7. Check database cross-reference: does user record in customers/owners match vehicle's ownerPhone/ownerEmail?
+  // 6. Check database cross-reference: does user record in customers/owners match vehicle's ownerPhone/ownerEmail?
   try {
     if (user.id) {
       const dbUser = (await db.prepare('SELECT phone, email FROM customers WHERE id = ?').get(user.id)) ||
@@ -87,21 +82,96 @@ export async function isAuthorizedVehicleHost(vehicle, user) {
     }
   } catch (e) {}
 
-  // 8. Self-hosted unassigned vehicle or default self listing
-  if (!vehicle.ownerId || vehicle.ownerId === 'self' || vehicle.ownerId === 'self-hosted') {
-    return true;
-  }
-
   return false;
 }
 
-// GET /api/vehicles - List all vehicles with optional filters
+// GET /api/vehicles - List vehicles (Public marketplace or Host Fleet)
 router.get('/', async (req, res) => {
   try {
-    const { type, category, transmission, area, maxPrice, status, search } = req.query;
+    const { type, category, transmission, area, maxPrice, status, search, mine } = req.query;
+    const currentUser = req.user && req.user.isAuthenticated ? req.user : null;
+    const isAdmin = currentUser && currentUser.role === 'admin';
 
+    // 1. Host Fleet View: ?mine=true (Strictly scoped to logged-in host)
+    if (mine === 'true' || mine === true) {
+      if (!currentUser) {
+        return res.status(401).json({ error: 'Authentication required to view your listed vehicles.' });
+      }
+
+      if (isAdmin) {
+        const rows = await db.prepare('SELECT * FROM vehicles ORDER BY id DESC').all();
+        return res.json(rows.map(formatVehicle));
+      }
+
+      const userPhoneDigits = (currentUser.phone || '').replace(/[^0-9]/g, '');
+      const userEmail = (currentUser.email || '').trim().toLowerCase();
+      const cleanUserId = String(currentUser.id).replace(/^(own|usr|cust)-/, '');
+
+      let hostQuery = `
+        SELECT * FROM vehicles 
+        WHERE ownerId = @userId 
+           OR ownerId = @ownId 
+           OR ownerId = @usrId
+      `;
+      const hostParams = {
+        userId: currentUser.id,
+        ownId: `own-${cleanUserId}`,
+        usrId: `usr-${cleanUserId}`
+      };
+
+      if (userEmail) {
+        hostQuery += ' OR LOWER(ownerEmail) = @userEmail';
+        hostParams.userEmail = userEmail;
+      }
+
+      if (userPhoneDigits.length >= 10) {
+        hostQuery += ` OR (ownerPhone IS NOT NULL AND REPLACE(REPLACE(ownerPhone, ' ', ''), '-', '') LIKE @phoneTail)`;
+        hostParams.phoneTail = `%${userPhoneDigits.slice(-10)}`;
+      }
+
+      hostQuery += ' ORDER BY id DESC';
+
+      const rows = await db.prepare(hostQuery).all(hostParams);
+      return res.json(rows.map(formatVehicle));
+    }
+
+    // 2. Public Marketplace Catalog View
     let query = 'SELECT * FROM vehicles WHERE 1=1';
     const params = {};
+
+    // For public catalog, show active/approved vehicles plus the current user's own listings (even if pending)
+    if (!isAdmin) {
+      const cleanUserId = currentUser ? String(currentUser.id).replace(/^(own|usr|cust)-/, '') : '';
+      const userPhoneDigits = currentUser && currentUser.phone ? currentUser.phone.replace(/[^0-9]/g, '') : '';
+      const userEmail = currentUser && currentUser.email ? currentUser.email.trim().toLowerCase() : '';
+
+      let ownerClause = '';
+      if (currentUser) {
+        ownerClause = ' OR ownerId = @curUserId OR ownerId = @curOwnId OR ownerId = @curUsrId';
+        params.curUserId = currentUser.id;
+        params.curOwnId = `own-${cleanUserId}`;
+        params.curUsrId = `usr-${cleanUserId}`;
+        if (userEmail) {
+          ownerClause += ' OR LOWER(ownerEmail) = @curEmail';
+          params.curEmail = userEmail;
+        }
+        if (userPhoneDigits.length >= 10) {
+          ownerClause += ` OR (ownerPhone IS NOT NULL AND REPLACE(REPLACE(ownerPhone, ' ', ''), '-', '') LIKE @curPhoneTail)`;
+          params.curPhoneTail = `%${userPhoneDigits.slice(-10)}`;
+        }
+      }
+
+      if (status && status !== 'all') {
+        query += ' AND status = @status';
+        params.status = status;
+      } else {
+        query += ` AND ((status = 'active' OR status IS NULL)${ownerClause})`;
+      }
+      query += ` AND ((vehicleVerified = 1 OR verificationStatus = 'Verified')${ownerClause})`;
+    } else if (status && status !== 'all') {
+      query += ' AND status = @status';
+      params.status = status;
+    }
 
     const targetType = category || type;
     if (targetType && targetType !== 'all') {
@@ -124,11 +194,6 @@ router.get('/', async (req, res) => {
       params.maxPrice = Number(maxPrice);
     }
 
-    if (status && status !== 'all') {
-      query += ' AND status = @status';
-      params.status = status;
-    }
-
     if (search) {
       query += ' AND (name LIKE @search OR make LIKE @search OR model LIKE @search OR locationArea LIKE @search OR registrationNumber LIKE @search)';
       params.search = `%${search}%`;
@@ -137,7 +202,16 @@ router.get('/', async (req, res) => {
     query += ' ORDER BY rating DESC, id DESC';
 
     const rows = await db.prepare(query).all(params);
-    const vehicles = rows.map(formatVehicle);
+    const vehicles = rows.map(formatVehicle).map((v) => {
+      if (isAdmin) return v;
+      // Mask / omit private host contact info for public view
+      return {
+        ...v,
+        ownerAddress: undefined,
+        ownerEmail: undefined,
+        ownerPhone: v.ownerPhone ? `${String(v.ownerPhone).slice(0, 3)}****${String(v.ownerPhone).slice(-3)}` : undefined
+      };
+    });
     res.json(vehicles);
   } catch (error) {
     console.error('Error fetching vehicles:', error);
@@ -187,6 +261,12 @@ router.post('/', requireRole('owner', 'admin'), async (req, res) => {
       )
     `);
 
+    const isAdmin = req.user.role === 'admin';
+    const hostId = isAdmin && v.ownerId ? v.ownerId : (req.user.id || v.ownerId || `own-${Date.now()}`);
+    const hostName = isAdmin && v.ownerName ? v.ownerName : (req.user.name || v.ownerName || 'Host Owner');
+    const hostPhone = isAdmin && v.ownerPhone ? v.ownerPhone : (req.user.phone || v.ownerPhone || '');
+    const hostEmail = isAdmin && v.ownerEmail ? v.ownerEmail : (req.user.email || v.ownerEmail || '');
+
     const newVehicleData = {
       id: newId,
       name: v.name || `${v.make || ''} ${v.model || ''}`,
@@ -202,10 +282,10 @@ router.post('/', requireRole('owner', 'admin'), async (req, res) => {
       depositAmount: Number(v.depositAmount) || 0,
       locationArea: v.locationArea || 'Prem Mandir Road',
       pickupAddress: v.pickupAddress || '',
-      ownerId: req.user.role === 'owner' ? req.user.id : (v.ownerId || `owner-${Date.now()}`),
-      ownerName: req.user.role === 'owner' ? req.user.name : (v.ownerName || 'Host Owner'),
-      ownerPhone: req.user.role === 'owner' ? (req.user.phone || v.ownerPhone) : (v.ownerPhone || ''),
-      ownerEmail: req.user.role === 'owner' ? (req.user.email || v.ownerEmail) : (v.ownerEmail || ''),
+      ownerId: hostId,
+      ownerName: hostName,
+      ownerPhone: hostPhone,
+      ownerEmail: hostEmail,
       ownerCity: v.ownerCity || 'Vrindavan',
       ownerAddress: v.ownerAddress || '',
       ownerVerified: 1,

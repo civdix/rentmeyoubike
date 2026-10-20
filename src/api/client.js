@@ -87,9 +87,14 @@ export async function apiFetchVehicles(params = {}) {
   if (params.maxPrice) query.append('maxPrice', params.maxPrice);
   if (params.status && params.status !== 'all') query.append('status', params.status);
   if (params.search) query.append('search', params.search);
+  if (params.mine) query.append('mine', 'true');
 
   const qs = query.toString();
   return request(`/vehicles${qs ? `?${qs}` : ''}`);
+}
+
+export async function apiFetchMyVehicles() {
+  return request('/vehicles?mine=true');
 }
 
 export async function apiFetchVehicleById(id) {
