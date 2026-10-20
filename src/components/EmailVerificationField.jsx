@@ -6,8 +6,9 @@ export const EmailVerificationField = ({
   value = '',
   onChange,
   role = 'customer',
-  isVerified = false,
+  isVerified: externalIsVerified,
   onVerified,
+  onVerifiedChange,
   label = 'Email Address',
   required = true,
   theme = 'emerald', // 'emerald' | 'amber'
@@ -16,6 +17,21 @@ export const EmailVerificationField = ({
   disabled = false,
   showDistinction = false
 }) => {
+  const [internalVerified, setInternalVerified] = useState(false);
+  const isVerified = externalIsVerified !== undefined ? Boolean(externalIsVerified) : internalVerified;
+
+  const markAsVerified = (emailStr) => {
+    setInternalVerified(true);
+    if (onVerified) onVerified(emailStr);
+    if (onVerifiedChange) onVerifiedChange(true);
+  };
+
+  const markAsUnverified = () => {
+    setInternalVerified(false);
+    if (onVerified) onVerified(null);
+    if (onVerifiedChange) onVerifiedChange(false);
+  };
+
   const [checking, setChecking] = useState(false);
   const [distinction, setDistinction] = useState(null); // { status, message, maskedPhone, registeredAs }
   const [formatError, setFormatError] = useState('');
@@ -83,8 +99,8 @@ export const EmailVerificationField = ({
           });
 
           // If backend already marked this email as verified
-          if (res.isEmailVerified && !isVerified && onVerified) {
-            onVerified(trimmed);
+          if (res.isEmailVerified && !isVerified) {
+            markAsVerified(trimmed);
           }
         }
       } catch (err) {
@@ -155,7 +171,7 @@ export const EmailVerificationField = ({
         setShowOtpInput(false);
         setOtpCode('');
         setOtpSentMessage('');
-        if (onVerified) onVerified(trimmed);
+        markAsVerified(trimmed);
       } else {
         setOtpError(res?.error || 'Invalid OTP code. Please try again.');
       }
@@ -217,8 +233,8 @@ export const EmailVerificationField = ({
           onChange={(e) => {
             onChange(e.target.value);
             // Reset verified status if email changed
-            if (isVerified && onVerified && e.target.value.trim() !== value.trim()) {
-              onVerified(null);
+            if (isVerified && e.target.value.trim() !== value.trim()) {
+              markAsUnverified();
             }
           }}
           disabled={disabled}

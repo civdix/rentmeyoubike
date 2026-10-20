@@ -84,12 +84,20 @@ export async function sendEmail({ to, subject, text, html }) {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${process.env.EMAIL_API_TOKEN.trim()}`,
+          'Content-Type': 'application/json',
           'X-Email-To': normalized,
           'X-Email-Subject': headerSubject,
           'X-Email-Text': plainText,
           'X-Email-HTML': headerHtml,
           'X-Email-Reply-To': senderEmail
-        }
+        },
+        body: JSON.stringify({
+          to: normalized,
+          subject: cleanSubject,
+          text: plainText,
+          html: htmlContent,
+          replyTo: senderEmail
+        })
       });
 
       if (apiRes.status === 200) {
