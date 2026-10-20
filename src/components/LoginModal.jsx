@@ -439,7 +439,9 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
                     setSignupEmail(val);
                     setIsSignupEmailVerified(false);
                   }}
-                  onVerifiedChange={(verified) => setIsSignupEmailVerified(verified)}
+                  isVerified={isSignupEmailVerified}
+                  onVerified={(verifiedEmail) => setIsSignupEmailVerified(Boolean(verifiedEmail))}
+                  onVerifiedChange={(verified) => setIsSignupEmailVerified(Boolean(verified))}
                   role="customer"
                   theme="dark"
                   label="Email Address (OTP Verification Required)"
@@ -477,10 +479,11 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
               <button
                 type="submit"
                 disabled={loading || !isSignupEmailVerified}
-                className={`w-full mt-2 py-3 rounded-xl text-sm font-extrabold transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] ${isSignupEmailVerified
-                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                    : 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                  }`}
+                className={`w-full mt-2 py-3 rounded-xl text-sm font-extrabold transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] ${
+                  isSignupEmailVerified
+                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40 ring-2 ring-emerald-400/50'
+                    : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700/50'
+                }`}
               >
                 {loading ? (
                   <span>Creating Account...</span>
@@ -491,6 +494,18 @@ export const LoginModal = ({ initialMode = 'login', initialRole = 'customer', on
                   </>
                 )}
               </button>
+
+              {!isSignupEmailVerified ? (
+                <p className="text-[11px] text-amber-400/90 text-center flex items-center justify-center gap-1.5 pt-0.5">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                  <span>Verify your email with OTP above to enable account creation</span>
+                </p>
+              ) : (
+                <p className="text-[11px] text-emerald-400 text-center flex items-center justify-center gap-1.5 pt-0.5 font-semibold animate-fadeIn">
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                  <span>Email verified! You can now create your Rent on Cent account</span>
+                </p>
+              )}
 
               <div className="pt-2 text-center">
                 <p className="text-xs text-slate-400">

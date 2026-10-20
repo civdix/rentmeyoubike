@@ -19,15 +19,18 @@ export const EmailVerificationField = ({
 }) => {
   const [internalVerified, setInternalVerified] = useState(false);
   const isVerified = externalIsVerified !== undefined ? Boolean(externalIsVerified) : internalVerified;
+  const [verificationSuccess, setVerificationSuccess] = useState('');
 
-  const markAsVerified = (emailStr) => {
+  const markAsVerified = (emailStr, customMsg) => {
     setInternalVerified(true);
+    setVerificationSuccess(customMsg || 'Email verified successfully!');
     if (onVerified) onVerified(emailStr);
     if (onVerifiedChange) onVerifiedChange(true);
   };
 
   const markAsUnverified = () => {
     setInternalVerified(false);
+    setVerificationSuccess('');
     if (onVerified) onVerified(null);
     if (onVerifiedChange) onVerifiedChange(false);
   };
@@ -140,6 +143,7 @@ export const EmailVerificationField = ({
     setSendingOtp(true);
     setOtpError('');
     setOtpSentMessage('');
+    setVerificationSuccess('');
 
     try {
       const res = await apiSendEmailOtp(trimmed, role);
@@ -171,7 +175,8 @@ export const EmailVerificationField = ({
         setShowOtpInput(false);
         setOtpCode('');
         setOtpSentMessage('');
-        markAsVerified(trimmed);
+        setOtpError('');
+        markAsVerified(trimmed, res?.message || 'Email verified successfully! You can now create your account.');
       } else {
         setOtpError(res?.error || 'Invalid OTP code. Please try again.');
       }
@@ -253,12 +258,12 @@ export const EmailVerificationField = ({
         {/* Action button inside input */}
         <div className="absolute right-2 top-2">
           {isVerified ? (
-            <div className={`flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg border ${
+            <div className={`flex items-center gap-1.5 text-xs font-extrabold px-2.5 py-1 rounded-lg border shadow-xs animate-fadeIn ${
               isDark
-                ? 'text-emerald-400 bg-emerald-950/60 border-emerald-500/40'
-                : 'text-emerald-900 bg-emerald-100 border-emerald-300'
+                ? 'text-emerald-400 bg-emerald-950/70 border-emerald-500/50'
+                : 'text-emerald-900 bg-emerald-100 border-emerald-400'
             }`}>
-              <ShieldCheck className="w-3.5 h-3.5" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>Verified</span>
             </div>
           ) : (
@@ -288,6 +293,18 @@ export const EmailVerificationField = ({
 
       {/* Real-time Validation & Distinction Feedback */}
       <div className="space-y-1">
+        {/* Verification Success Feedback */}
+        {isVerified && (
+          <div className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs font-bold animate-fadeIn ${
+            isDark
+              ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300'
+              : 'bg-emerald-50 border-emerald-300 text-emerald-950'
+          }`}>
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>{verificationSuccess || 'Email address verified successfully!'}</span>
+          </div>
+        )}
+
         {checking && (
           <div className={`flex items-center gap-1.5 text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
             <Loader2 className="w-3 h-3 animate-spin text-slate-400" />
@@ -375,7 +392,16 @@ export const EmailVerificationField = ({
               maxLength={6}
               value={otpCode}
               onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  if (otpCode.trim().length === 6 && !verifyingOtp) {
+                    handleVerifyOtp();
+                  }
+                }
+              }}
               placeholder="000000"
+              autoFocus
               className={`flex-1 px-3 py-2 rounded-xl border text-center font-mono tracking-widest text-base font-extrabold focus:outline-none ${focusBorderClass} ${
                 isDark
                   ? 'bg-slate-900 text-white border-slate-700'
